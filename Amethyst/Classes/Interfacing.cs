@@ -13,6 +13,7 @@ using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppNotifications;
+using Newtonsoft.Json;
 
 namespace Amethyst.Classes;
 
@@ -83,7 +84,7 @@ public static class Interfacing
     public static bool AlreadyAddedTrackersScanRequested = false;
 
     // Amethyst language resource trees
-    private static JsonObject _localResources = new(), _englishResources = new();
+    private static LocalisationFileJson _localResources = new(), _englishResources = new();
 
     // Is NUX currently opened?
     public static bool IsNuxPending = false;
@@ -545,10 +546,10 @@ public static class Interfacing
             // If everything's ok, load the resources into the current resource tree
 
             // Parse the loaded json
-            _localResources = JsonObject.Parse(File.ReadAllText(resourcePath));
+            _localResources = JsonConvert.DeserializeObject<LocalisationFileJson>(File.ReadAllText(resourcePath));
 
             // Check if the resource root is fine
-            if (_localResources is null || _localResources.Count <= 0)
+            if (_localResources is null || !_localResources.Messages.Any())
                 Logger.Error("The current resource root is empty! App interface will be broken!");
             else
                 Logger.Info($"Successfully loaded language resources with key \"{languageKey}\"!");
@@ -584,10 +585,10 @@ public static class Interfacing
             // If everything's ok, load the resources into the current resource tree
 
             // Parse the loaded json
-            _englishResources = JsonObject.Parse(File.ReadAllText(resourcePath));
+            _englishResources = JsonConvert.DeserializeObject<LocalisationFileJson>(File.ReadAllText(resourcePath));
 
             // Check if the resource root is fine
-            if (_englishResources is null || _englishResources.Count <= 0)
+            if (_englishResources is null || !_englishResources.Messages.Any())
                 Logger.Error("The current resource root is empty! App interface will be broken!");
             else
                 Logger.Info("Successfully loaded language resources with key \"en\"!");
@@ -606,8 +607,34 @@ public static class Interfacing
         try
         {
             // Check if the resource root is fine
-            if (_localResources is not null && _localResources.Count > 0)
-                return _localResources.GetNamedString(resourceKey);
+            if (_localResources?.Messages?.Any() ?? false)
+                return _localResources.Messages.FirstOrDefault(x => x.Id == resourceKey, new LocalizedMessage
+                    { Translation = EnglishJsonString(resourceKey, lineNumber, filePath, memberName) }).Translation;
+
+            Logger.Error("The current resource root is empty! App interface will be broken!");
+            return resourceKey; // Just give up
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"JSON error at key: \"{resourceKey}\"! Message: {e.Message}\n" +
+                         "Path of the local caller that requested the localized resource string: " +
+                         $"{Path.GetFileName(filePath)}::{memberName}:{lineNumber}");
+
+            // Else return they key alone
+            return resourceKey;
+        }
+    }
+
+    // Get a string from runtime JSON resources, language from settings
+    public static string EnglishJsonString(string resourceKey,
+        [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
+        [CallerMemberName] string memberName = "")
+    {
+        try
+        {
+            // Check if the resource root is fine
+            if (_englishResources.Messages?.Any(x => x.Id == resourceKey) ?? false)
+                return _englishResources.Messages.FirstOrDefault(x => x.Id == resourceKey)?.Translation ?? resourceKey;
 
             Logger.Error("The current resource root is empty! App interface will be broken!");
             return resourceKey; // Just give up
@@ -686,8 +713,8 @@ public static class Interfacing
                 {
                     // Check if the resource root is fine
                     var resourceRootDevice = device?.LocalizationResourcesRoot.Root;
-                    if (resourceRootDevice is not null && resourceRootDevice.Count > 0)
-                        return resourceRootDevice.GetNamedString(key); // Return if ok
+                    if (resourceRootDevice?.Messages?.Any(x => x.Id == key) ?? false)
+                        return resourceRootDevice.Messages.FirstOrDefault(x => x.Id == key)?.Translation ?? key;
                 }
 
                 // Check if the request was from a service
@@ -695,8 +722,8 @@ public static class Interfacing
                 {
                     // Check if the resource root is fine
                     var resourceRootService = service?.LocalizationResourcesRoot.Root;
-                    if (resourceRootService is not null && resourceRootService.Count > 0)
-                        return resourceRootService.GetNamedString(key); // Return if ok
+                    if (resourceRootService?.Messages?.Any(x => x.Id == key) ?? false)
+                        return resourceRootService.Messages.FirstOrDefault(x => x.Id == key)?.Translation ?? key;
                 }
 
                 // Still here?!? We're screwed!
@@ -762,11 +789,11 @@ public static class Interfacing
                 {
                     // Parse the loaded json
                     device.LocalizationResourcesRoot =
-                        (JsonObject.Parse(File.ReadAllText(resourcePath)), path);
+                        (JsonConvert.DeserializeObject<LocalisationFileJson>(File.ReadAllText(resourcePath)), path);
 
                     // Check if the resource root is fine
                     var resourceRoot = device.LocalizationResourcesRoot.Root;
-                    if (resourceRoot is null || resourceRoot.Count <= 0)
+                    if (!(resourceRoot?.Messages?.Any() ?? false))
                     {
                         Logger.Error($"[Requested by device with GUID {guid}] " +
                                      $"Could not load language resources at \"{resourcePath}\"," +
@@ -804,11 +831,11 @@ public static class Interfacing
                 {
                     // Parse the loaded json
                     service.LocalizationResourcesRoot =
-                        (JsonObject.Parse(File.ReadAllText(resourcePath)), path);
+                        (JsonConvert.DeserializeObject<LocalisationFileJson>(File.ReadAllText(resourcePath)), path);
 
                     // Check if the resource root is fine
                     var resourceRoot = service.LocalizationResourcesRoot.Root;
-                    if (resourceRoot is null || resourceRoot.Count <= 0)
+                    if (!(resourceRoot?.Messages?.Any() ?? false))
                     {
                         Logger.Error($"[Requested by service with GUID {guid}] " +
                                      $"Could not load language resources at \"{resourcePath}\"," +

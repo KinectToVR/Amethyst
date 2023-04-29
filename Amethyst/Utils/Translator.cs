@@ -1,5 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using Amethyst.Classes;
+using Newtonsoft.Json;
 
 namespace Amethyst.Utils;
 
@@ -18,4 +21,17 @@ public class Translator : INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
+}
+
+public class LocalisationFileJson
+{
+    [JsonProperty("language")] public string Language = string.Empty;
+    [JsonProperty("messages")] public List<LocalizedMessage> Messages = new();
+}
+
+public class LocalizedMessage
+{
+    [JsonProperty("id")] public string Id = string.Empty;
+    [JsonProperty("translation")] public string Translation = string.Empty;
+    [JsonProperty("translatorComment")] public string Comment = string.Empty;
 }

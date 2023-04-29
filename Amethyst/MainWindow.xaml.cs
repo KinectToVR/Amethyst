@@ -423,7 +423,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation,
                         new Version(plugin.Metadata.Version), plugin.Value)
                     {
-                        LocalizationResourcesRoot = (new JsonObject(), Path.Join(pluginFolder, "Assets", "Strings"))
+                        LocalizationResourcesRoot = (new LocalisationFileJson(),
+                            Path.Join(pluginFolder, "Assets", "Strings"))
                     });
 
                     // Set the device's string resources root to its provided folder
@@ -627,7 +628,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation,
                         new Version(plugin.Metadata.Version), plugin.Value)
                     {
-                        LocalizationResourcesRoot = (new JsonObject(), Path.Join(pluginFolder, "Assets", "Strings"))
+                        LocalizationResourcesRoot = (new LocalisationFileJson(),
+                            Path.Join(pluginFolder, "Assets", "Strings"))
                     });
 
                     // Set the device's string resources root to its provided folder

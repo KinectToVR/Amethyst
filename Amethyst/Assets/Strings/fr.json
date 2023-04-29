@@ -1,453 +1,1761 @@
 {
-  "/GeneralPage/Buttons/Abort": "Annuler",
-  "/GeneralPage/Buttons/Calibration/Base": "Base",
-  "/GeneralPage/Buttons/Calibration/Begin": "Calibrage",
-  "/GeneralPage/Buttons/Calibration/Override": "Substitut",
-  "/GeneralPage/Buttons/Cancel": "Annuler",
-  "/GeneralPage/Buttons/Discard": "Oublier",
-  "/GeneralPage/Buttons/Help/Discord": "Support sur Discord",
-  "/GeneralPage/Buttons/Help/Docs": "Voir les docs",
-  "/GeneralPage/Buttons/Offsets": "Ajuster l'alignement",
-  "/GeneralPage/Buttons/Save": "Sauvegarder",
-  "/GeneralPage/Buttons/Skeleton/Freeze": "Bloquer les trackers",
-  "/GeneralPage/Buttons/Skeleton/Hide": "Cacher l'aperçu",
-  "/GeneralPage/Buttons/Skeleton/Show": "Afficher l'aperçu",
-  "/GeneralPage/Buttons/Skeleton/Unfreeze": "Débloquer les trackers",
-  "/GeneralPage/Buttons/TrackersToggle/Connect": "Connecter les trackers",
-  "/GeneralPage/Buttons/TrackersToggle/Disconnect": "Déconnecter les trackers",
-  "/GeneralPage/Buttons/TrackersToggle/Reconnect": "Reconnecter les trackers",
-  "/GeneralPage/Buttons/DeviceSettings": "View {0} device settings",
-  "/GeneralPage/Calibration/Captions/Aborted": "Calibration annulée!",
-  "/GeneralPage/Calibration/Captions/Automatic": "Tenez-vous à 3  de votre espace de jeu.",
-  "/GeneralPage/Calibration/Captions/Captured": "Position capturée!",
-  "/GeneralPage/Calibration/Captions/Done": "Calibration terminée!",
-  "/GeneralPage/Calibration/Captions/Manual": "Déplacez les trackers avec vos manettes de VR.",
-  "/GeneralPage/Calibration/Captions/Move": "Position {0} de {1}\nChangez d'endroit",
-  "/GeneralPage/Calibration/Captions/Points": "Essayez d'augmenter le nombre de points de calibration si les trackers ne sont pas bien alignés après la calibration.",
-  "/GeneralPage/Calibration/Captions/Recommended": "Recommandé",
-  "/GeneralPage/Calibration/Captions/Stand": "Position {0} de {1}\nNe bougez pas!",
-  "/GeneralPage/Calibration/Captions/Start": "En attente...",
-  "/GeneralPage/Calibration/Headers/Automatic": "Calibration Automatique",
-  "/GeneralPage/Calibration/Headers/Manual": "Calibration Manuelle",
-  "/GeneralPage/Calibration/Labels/Brief/Left": "L",
-  "/GeneralPage/Calibration/Labels/Brief/Right": "R",
-  "/GeneralPage/Calibration/Labels/Grips/Both": "Gâchettes L+R",
-  "/GeneralPage/Calibration/Labels/Grips/Left": "Gâchette L",
-  "/GeneralPage/Calibration/Labels/Grips/Right": "Gâchette R",
-  "/GeneralPage/Calibration/Labels/InputsNotice": "Les boutons pourraient être différents si vous utilisez un layout personalisé. Référez-vous à l'interface dans ce cas.",
-  "/GeneralPage/Calibration/Labels/Triggers/Both": "Gâchettes Index L+R",
-  "/GeneralPage/Calibration/Labels/Triggers/Left": "Gâchette Index L",
-  "/GeneralPage/Calibration/Labels/Triggers/Right": "Gâchette Index R",
-  "/GeneralPage/Calibration/LabelsWhat/Brief/Left": "Mouv. Gauche/Droit/Avant/Arrière\nRotation sur l'axe Y",
-  "/GeneralPage/Calibration/LabelsWhat/Brief/Right": "Mouvement Haut/Bas\nRotation sur l'axe X",
-  "/GeneralPage/Calibration/LabelsWhat/Grips/Left": "Ajustement précis",
-  "/GeneralPage/Calibration/LabelsWhat/Grips/Right": "Changer entre mouvement/rotation",
-  "/GeneralPage/Calibration/LabelsWhat/Triggers": "Confirmer",
-  "/GeneralPage/Calibration/Titles/Automatic": "Automatique",
-  "/GeneralPage/Calibration/Titles/Choose": "Choisissez un mode de calibration",
-  "/GeneralPage/Calibration/Titles/Device": "Choose a device to calibrate",
-  "/GeneralPage/Calibration/Titles/Manual": "Manuelle",
-  "/GeneralPage/Calibration/Titles/Points": "Points de calibration:",
-  "/GeneralPage/Captions/CalibrateOverrides": "Vous avez un substitut d'activé, quel appareil voulez-vous calibrer?",
-  "/GeneralPage/Captions/Device/Name": "Appareil Actif:",
-  "/GeneralPage/Captions/Device/Status": "Statut:",
-  "/GeneralPage/Captions/DriverStatus": "Succès! (Code 1)",
-  "/GeneralPage/Captions/DriverStatus/Label": "{0} Statut:",
-  "/GeneralPage/Captions/FreezeLowerOnly": "Geler seul le corps inférieur",
-  "/GeneralPage/Captions/Offsets/Orientation/X": "Pas (X):",
-  "/GeneralPage/Captions/Offsets/Orientation/Y": "Lacet (Y):",
-  "/GeneralPage/Captions/Offsets/Orientation/Z": "Normal (Z):",
-  "/GeneralPage/Captions/Offsets/Position/X": "X (Gauche):",
-  "/GeneralPage/Captions/Offsets/Position/Y": "Y (Haut):",
-  "/GeneralPage/Captions/Offsets/Position/Z": "Z (Devant):",
-  "/GeneralPage/Captions/OverrideDevice/Name": "Substitut Actif:",
-  "/GeneralPage/Captions/Preview/Disabled": "Aperçu désactivé",
-  "/GeneralPage/Captions/Preview/DisabledText": "Pour le réactiver,\ncliquez sur \"Afficher l'aperçu\".",
-  "/GeneralPage/Captions/Preview/Force": "Forcer l'aperçu",
-  "/GeneralPage/Captions/Preview/NoDashboard": "Le tableau de bord est fermé",
-  "/GeneralPage/Captions/Preview/NoDashboardText": "L'aperçu est désactivé pour sauver les ressources système.\nIl se réactivera lorsque vous ouvrirez le tableau de bord.",
-  "/GeneralPage/Captions/Preview/NoFocus": "La fenêtre est en arrière-plan",
-  "/GeneralPage/Captions/Preview/NoFocusText": "L'aperçu est désactivé et reviendra\nlorsque vous cliquerez sur la fenêtre.",
-  "/GeneralPage/Captions/Preview/NoSkeleton": "Le capteur ne vous voit pas",
-  "/GeneralPage/Captions/Preview/NoSkeletonText": "Assurez-vous que le capteur fonctionne et qu'il\npeut bien vous voir pour que le tracking fonctionne.",
-  "/GeneralPage/Captions/Preview/NoSkeletonTextCalibrating": "Votre tracking ne fonctionne pas.\nLa calibration ne peut se faire sans.",
-  "/GeneralPage/Captions/Tooltips/Orientation": "La rotation est en degrés.",
-  "/GeneralPage/Captions/Tooltips/Position": "La position est en centimètres.",
-  "/GeneralPage/Captions/VersionText": "Version d'Amethyst:",
-  "/GeneralPage/Captions/OtherErrors/Line1": "You have additional device errors!",
-  "/GeneralPage/Captions/OtherErrors/Line2": "Click here to inspect them now",
-  "/GeneralPage/Labels/Inferred": "Inféré",
-  "/GeneralPage/Labels/Tracking": "Traqué",
-  "/GeneralPage/Tips/NoCalibration/Footer": "Device you're trying to calibrate is reporting a status error.\nPlease make sure it's connected and working properly.",
-  "/GeneralPage/Tips/NoCalibration/Header": "This device can't be calibrated right now!",
-  "/GeneralPage/Titles/Device": "Appareil",
-  "/GeneralPage/Titles/Status": "Statut",
-  "/GeneralPage/Titles/Trackers": "Trackers",
-
-  "/SettingsPage/Buttons/Error/Dismiss": "Annuler",
-  "/SettingsPage/Buttons/Reset": "Supprimer la configuration et relancer",
-  "/SettingsPage/Buttons/RestartService": "Relancer {0}",
-  "/SettingsPage/Buttons/ViewLogs": "Ouvrez le dossier des logs d'Amethyst",
-  "/SettingsPage/Buttons/ServiceSettings": "View {0} service settings",
-  "/SettingsPage/Captions/AutoStart": "Lancer automatiquement avec {0}",
-  "/SettingsPage/Captions/CalibrateExtFlip": "Cliquez pour calibrer",
-  "/SettingsPage/Captions/ExtFlip": "Lorsqu'actif: Amethyst décidera si vous êtes retourné\nen se basant sur le tracker actif avec le rôle de taille.",
-  "/SettingsPage/Captions/ExtFlipStatus/Active": "Détecté et en cours d'exécution!",
-  "/SettingsPage/Captions/ExtFlipStatus/Disabled": "Désactivé!",
-  "/SettingsPage/Captions/ExtFlipStatus/NoTracker": "Pas de traceur de taille externe ou d'annulation détectée!",
-  "/SettingsPage/Captions/FaceTheKinect": "Faites face à la Kinect!",
-  "/SettingsPage/Captions/Filters/Orientation": "Options de rotation:",
-  "/SettingsPage/Captions/Filters/Position": "Filtres de position:",
-  "/SettingsPage/Captions/SkeletonFlip": "Retourner les trackers quand vous êtes dos à {0}.",
-  "/SettingsPage/Captions/Sounds": "Activer les sons de l'app",
-  "/SettingsPage/Captions/TrackerPairs": "Combiner les trackers en paires",
-  "/SettingsPage/Captions/TrackersAutoCheck": "Désactiver les trackers qui existent déjà",
-  "/SettingsPage/Captions/TrackersAutoSpawn": "Connecter les trackers automatiquement quand l'app est lancée",
-  "/SettingsPage/Captions/TrackersRestart/Line1": "Activer ou désactiver un tracker nécessaite de relancer {0}",
-  "/SettingsPage/Captions/TrackersRestart/Line2": "et Amethyst pour que les changements prennent effet.",
-  "/SettingsPage/Captions/Services": "Send trackers to:",
-  "/SettingsPage/Captions/ServiceRestart": "{0} needs to be restarted to enable/disable trackers properly.",
-  "/SettingsPage/Elements/ExtFlipCalibration/ToolTip": "Calibration",
-  "/SettingsPage/Elements/FlipToggle/ToolTip": "Désactiver pour empêcher les trackers de\nvous suivre en tournant.",
-  "/SettingsPage/Filters/Orientation/Device": "Default Orientation",
-  "/SettingsPage/Filters/Orientation/HMD": "Follow VR Headset",
-  "/SettingsPage/Filters/Orientation/MathBased": "Ankle-based Orientation",
-  "/SettingsPage/Filters/Orientation/MathBasedV2": "Leg-based Orientation",
-  "/SettingsPage/Filters/Orientation/Off": "Disable Orientation",
-  "/SettingsPage/Filters/Position/Kalman": "Filtre Kalman Étendu",
-  "/SettingsPage/Filters/Position/LERP": "Interpolation Linéaire",
-  "/SettingsPage/Filters/Position/LowPass": "Filtre passe-bas",
-  "/SettingsPage/Filters/Position/Prediction": "Adaptive Prediction",
-  "/SettingsPage/Filters/Position/Off": "Désactiver le filtre",
-  "/SettingsPage/Filters/Managed": "Managed by '{0}'",
-  "/SettingsPage/ReManifest/Error/NotFound": "Le manifest n'a pu être installé.\nAssurez-vous qu'il existe dans le dossier où se trouve Amethyst.exe",
-  "/SettingsPage/ReManifest/Error/Other": "Le manifest n'a pu être installé.\nVérifiez les logs et considérez rapporter le bug.",
-  "/SettingsPage/ReRegister/Error/NotFound": "L'éxécutable du Crash Handler pour Amethyst n'a pas été\ntrouvé. Il est nécessaire pour ré-inscrire l'extension. Vérifiez qu'il est présent.",
-  "/SettingsPage/Titles/ExtFlip": "Utiliser le tracking externe au lieu de l'orientation du casque",
-  "/SettingsPage/Titles/SkeletonFlip": "Retournement",
-  "/SettingsPage/Titles/Application": "Application",
-  "/SettingsPage/Titles/TrackerConfig/Header": "Configuration des trackers",
-  "/SettingsPage/Titles/TrackerConfig/Learn": "À propos de ces paramêtres",
-  "/SettingsPage/Titles/Services": "Tracking Output",
-  "/SettingsPage/Titles/Troubleshooting": "Dépannage",
-  "/SettingsPage/Themes/System": "Thème Système",
-  "/SettingsPage/Themes/Dark": "Sombre",
-  "/SettingsPage/Themes/White": "Clair",
-  "/SettingsPage/Labels/DisplayLanguage": "Langue de l'application",
-  "/SettingsPage/Labels/AppTheme": "Thème de l'application",
-
-  "/SettingsLearn/Captions/Filters/Explanations/EKF": "Plus grande latence de tous le filtres, mais d'excellents résultats fluides.\nLes mouvements rapides restent sensibles vu que le filtre est prédictif.",
-  "/SettingsLearn/Captions/Filters/Explanations/LERP": "Latence minimale, donne l'impression que le tracking est plus rapide qu'il l'est vraiment.\nLes instabilités sont encore visibles.",
-  "/SettingsLearn/Captions/Filters/Explanations/LowPass": "La latence est un peu visible, mais c'est plus fluide que sans filtre et les instabilités sont cachées.",
-  "/SettingsLearn/Captions/Filters/Explanations/None": "Le squelette a 30hz directement du capteur.",
-  "/SettingsLearn/Captions/Filters/Names/EKF": "- Filtre Kalman Étendu",
-  "/SettingsLearn/Captions/Filters/Names/LERP": "- Interpolation Linéaire (Défaut)",
-  "/SettingsLearn/Captions/Filters/Names/LowPass": "- Filtre pass-bas",
-  "/SettingsLearn/Captions/Filters/Names/None": "- Déasctier le filtre",
-  "/SettingsLearn/Captions/ManageTrackers": "Lorsqu'un tracker est activé ou désactivé, il apparait immédiatement\ndans {0}. Sauf que lorsque vous désactivez un tracker qui était présent. Il existe encore dans la liste, juste éteint.\nEt restera dans cet état jusqu'a ce que vous relanciez {0}.",
-  "/SettingsLearn/Captions/Orientation/Explanations/Default": "Cette option peut être instable pour certains utilisateurs sur la Kinect One. Si c'est le cas, \nessayez avec la rotation calculée logiciel. L'orientation de chaque articulation est inférée par le SDK\nde la Kinect basée sur la position de chaque partie du corps. Imaginez qu'une flèche est attachée au bout\nde chaque articulation, et que le tracker pointe dans cette direction. Cette option fonctionne différemment\nsur Kinect 360 et Kinect One.\nSur la Kinect Xbox One, la rotation est basée sur le bout du pied, donc vous pouvez tourner vos pieds.\nSur la Kinect Xbox 360, elle est basée sur le talon, donc le tracker suit seulement la jambe.",
-  "/SettingsLearn/Captions/Orientation/Explanations/HMD": "Les trackers suivent l'orientation du casque de VR sur l'axe Y\nmais perdent toute rotation dans les deux autres.",
-  "/SettingsLearn/Captions/Orientation/Explanations/MathBased": "Cette option est disponible seulement pour les pieds.\nLa direction des pieds est calculée en se basant sur l'orientation du bout des pieds jusqu'au talon.\nLe mouvement est limité à 50% pour éviter les glitch. Cette option permet de tourner les pieds sur la Kinect 360.",
-  "/SettingsLearn/Captions/Orientation/Explanations/MathBasedV2": "This option is only available for feet trackers.\nThe orientation of your feet is calculated from the joints' poses of your whole leg and waist.\nThere's some additions to make it more responsive. This allows for foot rotation on Xbox One Kinect.",
-  "/SettingsLearn/Captions/Orientation/Explanations/None": "Les trackers ne tournent pas. Sauf quand le retournement est actif en étant dos à la Kinect.",
-  "/SettingsLearn/Captions/Orientation/Introduction": "Toutes les options de rotation sont affectées par le retournement des trackers.",
-  "/SettingsLearn/Captions/Orientation/Names/Default": "- Default Orientation",
-  "/SettingsLearn/Captions/Orientation/Names/HMD": "- Follow VR Headset",
-  "/SettingsLearn/Captions/Orientation/Names/MathBased": "- Ankle-based Orientation",
-  "/SettingsLearn/Captions/Orientation/Names/MathBasedV2": "- Leg-based Orientation",
-  "/SettingsLearn/Captions/Orientation/Names/None": "- Disable Orientation",
-  "/SettingsLearn/Captions/TrackerConfig": "Amethyst supporte jusqu'à 7 trackers de base, et des trackers additionels peuvent être\nactivés ou désactivés en cliquant sur l'icône d'engrenage. Chaque tracker ou ensemble de trackers\na ses propres paramêtres pour configurer comment leur rotation fonctionne et quel filtre est utilisé\npour les mouvements. Ceci vous permet par exemple d'appliquer un filtre plus rapide aux coudes et\nun filtre plus prononcé sur les pieds si vous comptez vous asseoir souvent.",
-  "/SettingsLearn/Captions/TrackerConfigNote": "Note: Certaines de ces options fonctionnent seulement avec Kinect.",
-  "/SettingsLearn/Titles/FilterSettings": "Paramêtres de filtre:",
-  "/SettingsLearn/Titles/ManageTrackers": "Activer/désactiver les trackers:",
-  "/SettingsLearn/Titles/RotationSettings": "Paramêtres de rotation:",
-  "/SettingsLearn/Titles/TrackerConfig": "À propos de la configuration des trackers",
-
-  "/DevicesPage/Buttons/Deselect/ToolTip": "Désélectionner cet appareil va\nretirer son rôle de substitut.",
-  "/DevicesPage/Buttons/Deselect": "Désélectionner",
-  "/DevicesPage/Buttons/Disconnect": "Déconnecter",
-  "/DevicesPage/Buttons/JoinDiscord": "Joindre le Discord",
-  "/DevicesPage/Buttons/NoJoints/Dismiss": "Annuler",
-  "/DevicesPage/Buttons/Reconnect": "Actualiser",
-  "/DevicesPage/Buttons/SetAs/Base/ToolTip": "Cet appareil définit la position et\nrotation de base pour les trackers virtuels.",
-  "/DevicesPage/Buttons/SetAs/Base": "Définir comme base",
-  "/DevicesPage/Buttons/SetAs/Header/ToolTip": "Définir l'appareil actif\nen tant que base ou substitut.",
-  "/DevicesPage/Buttons/SetAs/Header": "Définir en tant que...",
-  "/DevicesPage/Buttons/SetAs/Override/ToolTip": "La position et rotation de un ou plusieurs\ntrackers virtuels sera modifiée par cet appareil.",
-  "/DevicesPage/Buttons/SetAs/Override": "Définir comme substitut.",
-  "/DevicesPage/Buttons/ViewDocs": "Voir les docs",
-  "/DevicesPage/Placeholders/Joints/Disabled/PlaceholderText": "Articulation inactive",
-  "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText": "Aucun substitut",
-  "/DevicesPage/Titles/Check/Orientation": "Rotation",
-  "/DevicesPage/Titles/Check/Position": "Position",
-  "/DevicesPage/Titles/CurrentDevice": "Traque présentement",
-  "/DevicesPage/Titles/DeviceBase": "Appareil:",
-  "/DevicesPage/Titles/DeviceHasNoJoints": "Cet appareil n'a aucune articulation disponible\net ne peut être utilisé comme substitut.",
-  "/DevicesPage/Titles/DeviceOverride": "Substitut:",
-  "/DevicesPage/Titles/Devices": "Appareils:",
-  "/DevicesPage/Titles/DeviceSettings": "Options de l'appareil",
-  "/DevicesPage/Titles/DeviceStatus": "Statut:",
-  "/DevicesPage/Titles/Joints/Assign": "Assigner les articulations",
-  "/DevicesPage/Titles/Joints/ElbowsAndKnees": "Trackers pour les coudes et genous",
-  "/DevicesPage/Titles/Joints/Other": "Autres Trackers",
-  "/DevicesPage/Titles/Joints/WaistAndFeet": "Trackers pour les pieds et la taille",
-  "/DevicesPage/Titles/NoOverrides": "Aucun substitut",
-  "/DevicesPage/Titles/Overrides/Header": "Substituts",
-  "/DevicesPage/Titles/Set/Orientation": "Rotation:",
-  "/DevicesPage/Titles/Set/Position": "Position:",
-  "/DevicesPage/Titles/Set/TrackedJoint": "Articulation traquée:",
-  "/DevicesPage/Titles/Set/Tracker": "Tracker:",
-  "/DevicesPage/Titles/SetAsDevice": "Définir en tant qu'appareil de tracking:",
-  "/DevicesPage/Badges/Devices/Base": "Base",
-  "/DevicesPage/Badges/Devices/Override": "Override",
-  "/DevicesPage/Badges/Devices/Error": "Error",
-  "/DevicesPage/ToolTips/Overrides/Overlapping": "This joint is currently overridden by {0}",
-  "/DevicesPage/Devices/Reload/Title": "Plugin configuration has changed!",
-  "/DevicesPage/Devices/Reload/Content": "A new plugin has been added or removed. Amethyst must be restarted for these changes to take effect.",
-  "/DevicesPage/Devices/Reload/Restart": "Restart Amethyst",
-  "/DevicesPage/Devices/Manager/Open": "Manage Plugins",
-  "/DevicesPage/Devices/Manager/Title": "Manage Plugins",
-  "/DevicesPage/Devices/Manager/Labels/Blocked": "This plugin has encountered an error whilst loading, it will remain blocked as long as the error persists. Please see the reason below and check logs for more information.",
-  "/DevicesPage/Devices/Manager/Labels/Reason": "Reason:",
-  "/DevicesPage/Devices/Manager/Labels/GUID": "GUID:",
-  "/DevicesPage/Devices/Manager/Labels/Location": "Location:",
-  "/DevicesPage/Devices/Manager/Labels/Publisher": "by",
-  "/DevicesPage/Devices/Manager/Labels/Website": "Website:",
-  "/DevicesPage/Devices/Manager/Labels/Unknown": "Some other unexpected error happened, please reach out to us on our Discord server.",
-  "/DevicesPage/Devices/Manager/Labels/NoError": "Everything's fine, celebration time!",
-  "/DevicesPage/Devices/Manager/Labels/LoadingSkipped": "Disabled in the application settings by the user.",
-  "/DevicesPage/Devices/Manager/Labels/NoPluginFolder": "The specified plugin folder wasn't found, please check if the folder is still there.",
-  "/DevicesPage/Devices/Manager/Labels/NoPluginDll": "The plugin class library file (plugin*.dll) is missing. Please check if it is there.",
-  "/DevicesPage/Devices/Manager/Labels/NoPluginDependencyDll": "One of the files this plugin needs wasn't found. Please check if all dependencies are there.",
-  "/DevicesPage/Devices/Manager/Labels/PluginDllLinkError": "Linking to the plugin class library (.dll) failed.",
-  "/DevicesPage/Devices/Manager/Labels/InvalidFactory": "Calling the plugin factory (lazy loading) method failed.",
-  "/DevicesPage/Devices/Manager/Labels/BadOrDuplicateGuid": "GUID of this plugin is either empty, invalid, or already in use by another one.",
-  "/DevicesPage/Devices/Manager/Labels/Other": "This plugin doesn't seem to be valid for some reason....",
-  "/DevicesPage/Devices/Manager/Buttons/Update": "Update and relaunch",
-  "/DevicesPage/Devices/Manager/Labels/UpdateAvailable": "Update scheduled!",
-  "/DevicesPage/Devices/Manager/Labels/UpdateMessage": "Restart Amethyst to update {0} to {1}",
-
-  "/InfoPage/AppCaption": "par K2VR Team",
-  "/InfoPage/AppTitle": "Amethyst",
-  "/InfoPage/Credits/Community": "Et tout le monde qui nous ont aidés.",
-  "/InfoPage/Credits/Header": "Crédits",
-  "/InfoPage/Credits/Helpers/Title": "Aide:",
-  "/InfoPage/Credits/Donators/Title": "Donators:",
-  "/InfoPage/Credits/MainTeam/Roles/Akaya": "Développeur principal:",
-  "/InfoPage/Credits/MainTeam/Roles/Aria": "Support (Inactif):",
-  "/InfoPage/Credits/MainTeam/Roles/Artemis": "Support:",
-  "/InfoPage/Credits/MainTeam/Roles/Noelle": "Gestion du projet:",
-  "/InfoPage/Credits/MainTeam/Roles/Hekky": "Développement de l'installateur:",
-  "/InfoPage/Credits/MainTeam/Roles/Himbeer": "Développement de l'installateur:",
-  "/InfoPage/Credits/MainTeam/Roles/Ollie": "Support:",
-  "/InfoPage/Credits/MainTeam/Title": "Équipe principale:",
-  "/InfoPage/Credits/Translators/Title": "Traducteurs:",
-  "/InfoPage/Telemetry/Header": "Collected data and privacy policy",
-  "/InfoPage/Telemetry/Notice": "Amethyst uses Microsoft App Center to collect anonymous data which helps us with app development and troubleshooting major bugs. \nInformation sent to App Center is anonymous and free of any user or contextual data. Additionally, you can disable sending it at any time.",
-  "/InfoPage/Telemetry/Switch": "Toggle the switch below to disable/enable sending anything to App Center.",
-  "/InfoPage/Telemetry/Toggle/On": "Data collection is enabled",
-  "/InfoPage/Telemetry/Toggle/Off": "Data collection is disabled",
-
-  "/BlockedPage/Buttons/Kill": "End task",
-  "/BlockedPage/Buttons/Skip": "Skip updating {0}",
-  "/BlockedPage/Headers/Blocked": "Couldn't update {0}!",
-  "/BlockedPage/Contents/Blocked": "Some processes are blocking {0} from being updated automatically, please shut them down manually, kill each process using the button next to it, or skip updating {0} for now.",
-  "/BlockedPage/Flyouts/Elevated/Notice": "This process is currently running with administrator privileges, \nAmethyst will need to ask for additional permissions to kill it.",
-
-  "/SharedStrings/Buttons/Devices": "Appareils",
-  "/SharedStrings/Buttons/General": "Général",
-  "/SharedStrings/Buttons/Help/Developers": "Pour les développeurs",
-  "/SharedStrings/Buttons/Help/Discord": "Communauté K2VR",
-  "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overrides": "Comment fonctionnent les substituts",
-  "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overview": "À propos des appareils",
-  "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Automatic": "Instructions sur la calibration automatique",
-  "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Main": "Comment calibrer",
-  "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Manual": "Instructions sur la calibration manuelle",
-  "/SharedStrings/Buttons/Help/Docs/GeneralPage/Offsets": "À propos de l'alignement",
-  "/SharedStrings/Buttons/Help/Docs/GeneralPage/Overview": "Infos sur la page générale",
-  "/SharedStrings/Buttons/Help/Docs/InfoPage/OpenCollective": "Faire un don",
-  "/SharedStrings/Buttons/Help/Docs/SettingsPage/Overview": "Plus d'info sur les paramètres",
-  "/SharedStrings/Buttons/Help/Header": "Aide",
-  "/SharedStrings/Buttons/Help/Licenses": "Licences Open-Source",
-  "/SharedStrings/Buttons/Info": "Info",
-  "/SharedStrings/Buttons/Plugins": "Plugins",
-  "/SharedStrings/Buttons/Settings": "Paramètres",
-  "/SharedStrings/Buttons/Updates/Header": "Mises à jour",
-  "/SharedStrings/Buttons/Updates/Install": "Update and relaunch",
-  "/SharedStrings/Buttons/PluginUpdates/Inspect": "Update and relaunch",
-  "/SharedStrings/Joints/Enum/0": "Main",
-  "/SharedStrings/Joints/Enum/1": "Pied gauche",
-  "/SharedStrings/Joints/Enum/10": "Poitrine",
-  "/SharedStrings/Joints/Enum/11": "Caméra",
-  "/SharedStrings/Joints/Enum/12": "Clavier",
-  "/SharedStrings/Joints/Enum/2": "Pied droit",
-  "/SharedStrings/Joints/Enum/3": "Epaule gauche",
-  "/SharedStrings/Joints/Enum/4": "Epaule droite",
-  "/SharedStrings/Joints/Enum/5": "Coude gauche",
-  "/SharedStrings/Joints/Enum/6": "Coude droit",
-  "/SharedStrings/Joints/Enum/7": "Genou gauche",
-  "/SharedStrings/Joints/Enum/8": "Genou droit",
-  "/SharedStrings/Joints/Enum/9": "Taille",
-  "/SharedStrings/Joints/Pairs/1": "Feet Trackers",
-  "/SharedStrings/Joints/Pairs/3": "Shoulder Trackers",
-  "/SharedStrings/Joints/Pairs/5": "Elbow Trackers",
-  "/SharedStrings/Joints/Pairs/7": "Knee Trackers",
-  "/SharedStrings/Joints/NotSupported/Flag": "(Not supported)",
-  "/SharedStrings/Joints/NotSupported/Tooltip": "Trackers with this role aren't supported by {0}",
-  "/SharedStrings/Toasts/AutoSpawnFailed": "Les trackers n'ont pas pu être ajoutés qu'une erreur s'est produite au niveau du serveur.",
-  "/SharedStrings/Toasts/AutoSpawnFailed/Title": "Les trackers n'ont pas pu être ajoutés automatiquement!",
-  "/SharedStrings/Toasts/RestartFailed": "Essayez de le faire manuellement.",
-  "/SharedStrings/Toasts/RestartFailed/Title": "On ne peut pas relancer Amethyst pour vous.",
-  "/SharedStrings/Toasts/TrackersAutoDisabled": "Des trackers qui étaient actifs dans Amethyst ont été trouvés déja présents et ont donc été désactivés.",
-  "/SharedStrings/Toasts/TrackersAutoDisabled/Title": "Un ou plusieurs trackers on été désactivés",
-  "/SharedStrings/Toasts/TrackersConfigChanged": "Relancez {0} pour applique les changements.",
-  "/SharedStrings/Toasts/TrackersConfigChanged/Title": "La configuration des trackers a changée",
-  "/SharedStrings/Updates/NewUpdateFound": "New Update Available!",
-  "/SharedStrings/Updates/NewUpdateMessage": "Restart Amethyst to update it to version v{0}",
-  "/SharedStrings/Updates/Suggestions": "Please tell us if you have any ideas\nfor the next Amethyst update.",
-  "/SharedStrings/Updates/PluginUpdates/Title": "New plugin updates available!",
-  "/SharedStrings/Updates/PluginUpdates/Message": "Restart Amethyst to apply all pending plugin updates.",
-  "/SharedStrings/Updates/PluginInstall/Title": "Plugin installations pending!",
-  "/SharedStrings/Updates/PluginInstall/Message": "Restart Amethyst to execute all queued plugin installs.",
-  "/SharedStrings/Updates/PluginInstall/Action": "Restart now",
-  "/SharedStrings/Updates/PluginUninstall/Title": "Plugin uninstallations pending!",
-  "/SharedStrings/Updates/PluginUninstall/Message": "Restart Amethyst to execute all queued plugin uninstalls.",
-  "/SharedStrings/Updates/PluginUninstall/Action": "Restart now",
-  "/SharedStrings/Updates/UpToDate": "Vous êtes à jour",
-
-  "/SharedStrings/Updates/Headers/Downloading": "Updating to Amethyst v{0}",
-  "/SharedStrings/Updates/Headers/Preparing": "Preparing for the update...",
-  "/SharedStrings/Updates/Headers/Status": "Statut:",
-  "/SharedStrings/Updates/Statuses/Downloading": "Téléchargement - 0%",
-  "/SharedStrings/Updates/Statuses/Error": "Erreur de téléchargement !",
-
-  "/SharedStrings/Plugins/Updates/Headers/Downloading": "Updating {0} to v{1}",
-  "/SharedStrings/Plugins/Updates/Headers/Preparing": "Preparing for the update...",
-  "/SharedStrings/Plugins/Updates/Headers/Restart": "{0} will have been updated by the next time Amethyst opens!",
-  "/SharedStrings/Plugins/Updates/Headers/Status": "Status:",
-  "/SharedStrings/Plugins/Updates/Statuses/Downloading": "Downloading {0} v{1}...",
-  "/SharedStrings/Plugins/Updates/Statuses/Error": "Error updating {0}!",
-  "/SharedStrings/Plugins/Store/Headers/Downloading": "Installing {0} {1}",
-  "/SharedStrings/Plugins/Store/Headers/Preparing": "Preparing the plugin package...",
-  "/SharedStrings/Plugins/Store/Headers/Restart": "{0} will have been installed by the next time Amethyst opens!",
-  "/SharedStrings/Plugins/Store/Headers/Status": "Status:",
-  "/SharedStrings/Plugins/Store/Statuses/Downloading": "Downloading {0} {1}...",
-  "/SharedStrings/Plugins/Store/Statuses/Error": "Error installing {0}!",
-  "/SharedStrings/Plugins/Store/Headers/Search": "Search or paste a link:",
-  "/SharedStrings/Plugins/Store/Contents/Search": "Search for plugins, or paste the link to a plugin repo",
-  "/SharedStrings/Plugins/Store/Headers/SearchTip/Search": "Search for plugins using keywords from their names or descriptions, \nor just paste the link to a plugin repository located on GitHub.",
-  "/SharedStrings/Plugins/Store/Headers/SearchTip/Drag": "You can also drag-and-drop a plugin link/folder/zip here to install it.",
-  "/SharedStrings/Plugins/Store/Headers/ErrorTip/Content": "A fatal exception occurred whilst executing the plugin search query, \nor you've just exceeded the GitHub API request rate limit.",
-  "/SharedStrings/Plugins/Store/Headers/ErrorTip/Drag": "You can still install plugins via drag-and-drop or using a link/folder/zip.",
-  "/SharedStrings/Plugins/Store/Headers/RateTip/Start": "GitHub API rate exceeded. Please wait a while, or",
-  "/SharedStrings/Plugins/Store/Headers/RateTip/Link": "log in to GitHub",
-  "/SharedStrings/Plugins/Store/Headers/RateTip/End": "to search for more Amethyst plugins. You can still install plugins using drag-and-drop.",
-  "/SharedStrings/Plugins/Store/Headers/NoResults": "Your search happened not to return any results. \n...or was it just the wind all along, who knows?",
-  "/SharedStrings/Plugins/Store/Headers/Login/Instructions": "Paste this code into the prompt your web browser has just shown.",
-  "/SharedStrings/Plugins/Store/Headers/Login/Message": "This will log you in to the GitHub API, allowing higher query rate.",
-  "/SharedStrings/Plugins/Store/Tips/Official": "Published by K2VR Team",
-  "/SharedStrings/Plugins/Store/Tips/AlreadyInstalled": "This plugin is already installed, do you wish to uninstall it?",
-  "/SharedStrings/Plugins/Store/Labels/Description": "Plugin description:",
-  "/SharedStrings/Plugins/Store/Labels/NoReleases": "This plugin has no releases and can't be installed using the store.\nFeel free to contact the author about testing or preview releases.",
-  "/SharedStrings/Plugins/Store/Labels/Title": "Release title:",
-  "/SharedStrings/Plugins/Store/Labels/Date": "Published on:",
-  "/SharedStrings/Plugins/Store/Labels/Changelog": "Changelog:",
-  "/SharedStrings/Plugins/Store/Buttons/Install": "Install",
-
-  "/SharedStrings/Plugins/Drop/Headers/Error/Validating": "Error validating {0}!",
-  "/SharedStrings/Plugins/Drop/Headers/Error/Installing": "Error installing {0}!",
-  "/SharedStrings/Plugins/Drop/Headers/Error/Exception": "Error installing the package!",
-  "/SharedStrings/Plugins/Drop/Headers/Downloading": "Downloading {0}...",
-  "/SharedStrings/Plugins/Drop/Headers/Validating": "Validating {0}...",
-  "/SharedStrings/Plugins/Drop/Headers/Installing": "Installing {0}...",
-  "/SharedStrings/Plugins/Drop/Headers/Installed": "Installed {0}!",
-  "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound": "{0} does not contain a plugin class library file (plugin*.dll) and can't be installed. Please validate the package manually.",
-  "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound/Plural": "{0} do not contain a plugin class library file (plugin*.dll) and can't be installed. Please validate the package manually.",
-  "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid": "{0} is not a valid plugin package (has to be a .zip file) and can't be installed. Please validate the package manually.",
-  "/SharedStrings/Plugins/Drop/Statuses/Error/Exception": "Couldn't process the package due to an exception: {0}. Please install the package manually.",
-  "/SharedStrings/Plugins/Drop/Statuses/Installed": "Successfully parsed the plugin package! {0} will have been installed by the next time Amethyst opens!",
-  "/SharedStrings/Plugins/Drop/Resources/Files": "files",
-  "/SharedStrings/Plugins/Drop/Resources/Folder": "folder",
-  "/SharedStrings/Plugins/Drop/Resources/Package": "package",
-
-  "/PluginStore/Titles/Install": "Install {0} {1}",
-  "/PluginStore/Titles/Installing/Setup": "Enqueued {0} installation!",
-  "/PluginStore/Titles/Uninstalling/Notice": "Enqueued {0} removal!",
-  "/PluginStore/Captions/Uninstalling/Notice": "Amethyst should delete it during the next startup.",
-  "/PluginStore/Captions/Installing/Setup": "Restart Amethyst to install it.",
-
-  "/CrashHandler/Content/AlreadyRunning": "Looks like the app is already running\nand you've tried to launch a second instance,\nthis action is not currently supported.\n\nPlease check if the app isn't opened.\nIf problem persists, press the 'Force Exit' button.",
-  "/CrashHandler/Content/Crash/NoPlugins": "There were no appropriate plugins available to load and use in Amethyst.\n\nPlease check if you have all dependencies installed, like proper Service or Framework Runtime and other dependency libraries needed by your plugins.",
-  "/CrashHandler/Content/Crash/NoDevices": "There were no appropriate device plugins available to load and use for body tracking.\n\nPlease check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices.",
-  "/CrashHandler/Content/Crash/NoServices": "There were no appropriate service plugins available to load and use for endpoints.\n\nPlease check if you have all dependencies installed, like proper Service Runtime and other dependency libraries needed by your services.",
-  "/CrashHandler/Content/Crash/NoJoints": "There were no valid loaded device plugins available to handle body tracking.\n\nPlease check if all your device plugins are valid and working. This error occurs when none of the loaded devices provides valid tracked joints, upon init.",
-  "/CrashHandler/Content/Crash/OpenVR": "The app couldn't successfully initialize OpenVR (SteamVR) and decided to give up.\n\nPlease check if SteamVR is running, and your VR headset is connected properly to it. Furthermore, you can try restarting and checking the log files.",
-  "/CrashHandler/Content/Crash/Panic": "The main program loop has crashed consequently more than 7 times so Amethyst was shut down.\n\nPlease check if all your plugins are working and check the log files. Optionally, you can reset the (outer) app config and try running it again.",
-  "/CrashHandler/Content/Crash/Unknown": "Quelque chose de bizarre est arrivé.\n\nNe paniquez pas (encore), ce n'est probablement pas votre faute.\n\nTentez de relancer l'application.\nSi le problème persiste, envoyez nous les logs sur Discord.",
-  "/CrashHandler/Content/Crash/UnknownStack": "Looks like some weird thing happened to the app.\n\nDon't panic yet, it (probably) isn't even your fault.\n\nPlease try re-running the app.\nIf problem persists, grab logs and reach us on Discord.\n\nAvailable crash info:\n{0}",
-  "/CrashHandler/Content/Crash/Elevated": "SteamVR est actuellement surélevé et Amethyst ne peut pas communiquer avec lui.\n\nSoit Steam, soit SteamVR a été modifié pour provoquer ce problème. Annulez ces modifications et réessayez.",
-  "/CrashHandler/Content/Recovery": "Vous avez lancé le Crash Handler manuellement, que voulez-vous faire?\n\nSi l'extension SteamVR pour Amethyst n'est pas détectée correctement, vous pouvez la ré-inscrire dans la liste (bouton ci-dessous) et essayer à nouveau.",
-  "/CrashHandler/PrimaryButton/AlreadyRunning": "Quitter de force",
-  "/CrashHandler/PrimaryButton/Crash/Default": "Voir les docs",
-  "/CrashHandler/PrimaryButton/Crash/Panic": "Supprimer config",
-  "/CrashHandler/PrimaryButton/Crash/Unknown": "Serveur Discord",
-  "/CrashHandler/PrimaryButton/Recovery": "Ré-inscrire l'extension",
-  "/CrashHandler/ReRegister/DriverNotFound": "L'extension SteamVR pour Amethyst n'a pas été trouvée.\nEst-elle présente dans le même dossier que le Crash Handler?",
-  "/CrashHandler/ReRegister/ExistingDrivers/Content": "Une ou plusieurs extensions nommées `Amethyst` sont déjà inscrites dans la liste.\nVoulez-vous les enlever?",
-  "/CrashHandler/ReRegister/ExistingDrivers/Content_K2EX": "Une ou plusieurs extensions nommées `KinectToVR` sont inscrites dans la liste.\nVoulez-vous les enlever?",
-  "/CrashHandler/ReRegister/ExistingDrivers/PrimaryButton": "Enlever",
-  "/CrashHandler/ReRegister/ExistingDrivers/PrimaryButton_K2EX": "Enlever",
-  "/CrashHandler/ReRegister/ExistingDrivers/SecondaryButton": "Annuler",
-  "/CrashHandler/ReRegister/ExistingDrivers/SecondaryButton_K2EX": "Annuler",
-  "/CrashHandler/ReRegister/FatalRegisterException": "L'extension pour Amethyst n'a pu être inscrite.\nUn problème est survenu.",
-  "/CrashHandler/ReRegister/FatalRemoveException": "L'extension pour Amethyst n'a pu être enlevée.\nUn problème est survenu.",
-  "/CrashHandler/ReRegister/FatalRemoveException_K2EX": "L'extension pour KinectToVR n'a pu être enlevée.\nUn problème est survenu.",
-  "/CrashHandler/ReRegister/Finished": "Et voila, c'est prêt!",
-  "/CrashHandler/ReRegister/KillSteamVR/Content": "SteamVR doit être fermé\npour inscrire l'extension, Voulez-vous le faire maintenant?",
-  "/CrashHandler/ReRegister/KillSteamVR/PrimaryButton": "Quitter SteamVR",
-  "/CrashHandler/ReRegister/KillSteamVR/SecondaryButton": "Annuler",
-  "/CrashHandler/ReRegister/OpenVRPathsError": "Impossible de lire OpenVRPaths.\nAssurez vous que le fichier n'est pas corrompu\net d'avoir lancé SteamVR au moins une fois.",
-  "/CrashHandler/ReRegister/OpenVRPathsWriteError": "Impossible d'inscire l'extension pour Amethyst.\nErreur lors de l'écriture du fichier OpenVRPaths.",
-  "/CrashHandler/ReRegister/SteamVRNotFound": "Impossible de trouver SteamVR.\nL'avez-vous bien installé?",
-  "/CrashHandler/SecondaryButton/Recovery": "Quitter",
-  "/CrashHandler/Title/AlreadyRunning": "Amethyst est déjà lancé!",
-  "/CrashHandler/Title/Crash": "Amethyst vous a laissé tomber!",
-  "/CrashHandler/Title/Recovery": "Maintenance d'Amethyst",
-  "/CrashHandler/Title/Elevated": "SteamVR comme admin!",
-
-  "/NUX/Replay": "Replay the welcome tour",
-  "/NUX/Prev": "Go back",
-  "/NUX/Next": "Next",
-  "/NUX/Skip": "Skip tutorial",
-  "/NUX/Finish": "Finish",
-  "/NUX/Tip0/Title": "Are you sure?",
-  "/NUX/Tip0/Content": "Amethyst must be running for tracking to work. Click again to exit.\n\nThis message will only show once.",
-  "/NUX/Tip1/Title": "Welcome to Amethyst",
-  "/NUX/Tip1/Content": "Let's take a tour of the app and how to use it.\n\nYou can replay this tutorial at any time from the Settings tab.\n\n1 of 14",
-  "/NUX/Tip2/Title": "Connecting trackers",
-  "/NUX/Tip2/Content": "Click here to connect the Amethyst trackers to {0}. (If your VR controllers are unresponsive, disconnect and reconnect the trackers)\n\n2 of 14",
-  "/NUX/Tip3/Title": "Calibration and alignment",
-  "/NUX/Tip3/Content": "Before using your trackers, you must go through calibration to align them to your existing VR play area.\n\n3 of 14",
-  "/NUX/Tip4/Title": "Devices at a glance",
-  "/NUX/Tip4/Content": "Here you can see what devices are currently active for tracking.\nAny problems or errors will show up here too.\n\n4 of 14",
-  "/NUX/Tip5/Title": "Configuring trackers",
-  "/NUX/Tip5/Content": "You can enable or disable trackers here, and set their rotation and filter settings by expanding each category.\nSee the link on the right for more info.\n\n5 of 14",
-  "/NUX/Tip6/Title": "Enable more trackers",
-  "/NUX/Tip6/Content": "Click the gear icon to enable or disable more trackers than shown by default. (Not all trackers are supported by every app)\n\n6 of 14",
-  "/NUX/Tip7/Title": "Start Amethyst with {0}",
-  "/NUX/Tip7/Content": "Instead of searching for the app on your computer each time, you can click the dropdown to enable Amethyst start alongside {0}.\n\n7 of 14",
-  "/NUX/Tip8/Title": "Available devices",
-  "/NUX/Tip8/Content": "Here you can see the list of devices available to Amethyst. If something is missing, you most likely don't have the drivers for it.\n\n8 of 14",
-  "/NUX/Tip9/Title": "Configure and check on devices",
-  "/NUX/Tip9/Content": "Check the the status of devices and change per-device settings.\nErrors will show up here.\n\n9 of 14",
-  "/NUX/Tip10/Title": "Overrides and troubleshooting",
-  "/NUX/Tip10/Content": "The buttons on the right will let you set a device as the base or override, refresh it and get help whenever an error happens.\n\n10 of 14",
-  "/NUX/Tip11/Title": "Getting help and support",
-  "/NUX/Tip11/Content": "Click the Help button on any page to get links to documentation about that page. Join us on Discord if you have any questions.\n\n11 of 14",
-  "/NUX/Tip12/Title": "Managing plugins",
-  "/NUX/Tip12/Content": "These are the plugins that are currently installed on Amethyst. From this list, you can toggle each plugin on or off, update them, and see any errors.\n\n12 of 14",
-  "/NUX/Tip13/Title": "Getting new plugins",
-  "/NUX/Tip13/Content": "Amethyst allows you to search for new plugins and install them directly within the app. You can also paste direct links, or drag in ZIP files.\n\n13 of 14",
-  "/NUX/Tip14/Title": "Thank you!",
-  "/NUX/Tip14/Content": "Amethyst took a while to make and get it to where it's at now.\nSo, you better go have fun.\n\n14 of 14"
+  "language": "fr",
+  "messages": [
+    {
+      "id": "/GeneralPage/Buttons/Abort",
+      "translation": "Annuler"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Calibration/Base",
+      "translation": "Base"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Calibration/Begin",
+      "translation": "Calibrage"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Calibration/Override",
+      "translation": "Substitut"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Cancel",
+      "translation": "Annuler"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Discard",
+      "translation": "Oublier"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Help/Discord",
+      "translation": "Support sur Discord"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Help/Docs",
+      "translation": "Voir les docs"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Offsets",
+      "translation": "Ajuster l'alignement"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Save",
+      "translation": "Sauvegarder"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Skeleton/Freeze",
+      "translation": "Bloquer les trackers"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Skeleton/Hide",
+      "translation": "Cacher l'aperçu"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Skeleton/Show",
+      "translation": "Afficher l'aperçu"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Skeleton/Unfreeze",
+      "translation": "Débloquer les trackers"
+    },
+    {
+      "id": "/GeneralPage/Buttons/TrackersToggle/Connect",
+      "translation": "Connecter les trackers"
+    },
+    {
+      "id": "/GeneralPage/Buttons/TrackersToggle/Disconnect",
+      "translation": "Déconnecter les trackers"
+    },
+    {
+      "id": "/GeneralPage/Buttons/TrackersToggle/Reconnect",
+      "translation": "Reconnecter les trackers"
+    },
+    {
+      "id": "/GeneralPage/Buttons/DeviceSettings",
+      "translation": "View {0} device settings"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Aborted",
+      "translation": "Calibration annulée!"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Automatic",
+      "translation": "Tenez-vous à 3  de votre espace de jeu."
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Captured",
+      "translation": "Position capturée!"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Done",
+      "translation": "Calibration terminée!"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Manual",
+      "translation": "Déplacez les trackers avec vos manettes de VR."
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Move",
+      "translation": "Position {0} de {1}\nChangez d'endroit"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Points",
+      "translation": "Essayez d'augmenter le nombre de points de calibration si les trackers ne sont pas bien alignés après la calibration."
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Recommended",
+      "translation": "Recommandé"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Stand",
+      "translation": "Position {0} de {1}\nNe bougez pas!"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Start",
+      "translation": "En attente..."
+    },
+    {
+      "id": "/GeneralPage/Calibration/Headers/Automatic",
+      "translation": "Calibration Automatique"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Headers/Manual",
+      "translation": "Calibration Manuelle"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Brief/Left",
+      "translation": "L"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Brief/Right",
+      "translation": "R"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Grips/Both",
+      "translation": "Gâchettes L+R"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Grips/Left",
+      "translation": "Gâchette L"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Grips/Right",
+      "translation": "Gâchette R"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/InputsNotice",
+      "translation": "Les boutons pourraient être différents si vous utilisez un layout personalisé. Référez-vous à l'interface dans ce cas."
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Triggers/Both",
+      "translation": "Gâchettes Index L+R"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Triggers/Left",
+      "translation": "Gâchette Index L"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Triggers/Right",
+      "translation": "Gâchette Index R"
+    },
+    {
+      "id": "/GeneralPage/Calibration/LabelsWhat/Brief/Left",
+      "translation": "Mouv. Gauche/Droit/Avant/Arrière\nRotation sur l'axe Y"
+    },
+    {
+      "id": "/GeneralPage/Calibration/LabelsWhat/Brief/Right",
+      "translation": "Mouvement Haut/Bas\nRotation sur l'axe X"
+    },
+    {
+      "id": "/GeneralPage/Calibration/LabelsWhat/Grips/Left",
+      "translation": "Ajustement précis"
+    },
+    {
+      "id": "/GeneralPage/Calibration/LabelsWhat/Grips/Right",
+      "translation": "Changer entre mouvement/rotation"
+    },
+    {
+      "id": "/GeneralPage/Calibration/LabelsWhat/Triggers",
+      "translation": "Confirmer"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Titles/Automatic",
+      "translation": "Automatique"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Titles/Choose",
+      "translation": "Choisissez un mode de calibration"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Titles/Device",
+      "translation": "Choose a device to calibrate"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Titles/Manual",
+      "translation": "Manuelle"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Titles/Points",
+      "translation": "Points de calibration:"
+    },
+    {
+      "id": "/GeneralPage/Captions/CalibrateOverrides",
+      "translation": "Vous avez un substitut d'activé, quel appareil voulez-vous calibrer?"
+    },
+    {
+      "id": "/GeneralPage/Captions/Device/Name",
+      "translation": "Appareil Actif:"
+    },
+    {
+      "id": "/GeneralPage/Captions/Device/Status",
+      "translation": "Statut:"
+    },
+    {
+      "id": "/GeneralPage/Captions/DriverStatus",
+      "translation": "Succès! (Code 1)"
+    },
+    {
+      "id": "/GeneralPage/Captions/DriverStatus/Label",
+      "translation": "{0} Statut:"
+    },
+    {
+      "id": "/GeneralPage/Captions/FreezeLowerOnly",
+      "translation": "Geler seul le corps inférieur"
+    },
+    {
+      "id": "/GeneralPage/Captions/Offsets/Orientation/X",
+      "translation": "Pas (X):"
+    },
+    {
+      "id": "/GeneralPage/Captions/Offsets/Orientation/Y",
+      "translation": "Lacet (Y):"
+    },
+    {
+      "id": "/GeneralPage/Captions/Offsets/Orientation/Z",
+      "translation": "Normal (Z):"
+    },
+    {
+      "id": "/GeneralPage/Captions/Offsets/Position/X",
+      "translation": "X (Gauche):"
+    },
+    {
+      "id": "/GeneralPage/Captions/Offsets/Position/Y",
+      "translation": "Y (Haut):"
+    },
+    {
+      "id": "/GeneralPage/Captions/Offsets/Position/Z",
+      "translation": "Z (Devant):"
+    },
+    {
+      "id": "/GeneralPage/Captions/OverrideDevice/Name",
+      "translation": "Substitut Actif:"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/Disabled",
+      "translation": "Aperçu désactivé"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/DisabledText",
+      "translation": "Pour le réactiver,\ncliquez sur \"Afficher l'aperçu\"."
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/Force",
+      "translation": "Forcer l'aperçu"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoDashboard",
+      "translation": "Le tableau de bord est fermé"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoDashboardText",
+      "translation": "L'aperçu est désactivé pour sauver les ressources système.\nIl se réactivera lorsque vous ouvrirez le tableau de bord."
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoFocus",
+      "translation": "La fenêtre est en arrière-plan"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoFocusText",
+      "translation": "L'aperçu est désactivé et reviendra\nlorsque vous cliquerez sur la fenêtre."
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoSkeleton",
+      "translation": "Le capteur ne vous voit pas"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoSkeletonText",
+      "translation": "Assurez-vous que le capteur fonctionne et qu'il\npeut bien vous voir pour que le tracking fonctionne."
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoSkeletonTextCalibrating",
+      "translation": "Votre tracking ne fonctionne pas.\nLa calibration ne peut se faire sans."
+    },
+    {
+      "id": "/GeneralPage/Captions/Tooltips/Orientation",
+      "translation": "La rotation est en degrés."
+    },
+    {
+      "id": "/GeneralPage/Captions/Tooltips/Position",
+      "translation": "La position est en centimètres."
+    },
+    {
+      "id": "/GeneralPage/Captions/VersionText",
+      "translation": "Version d'Amethyst:"
+    },
+    {
+      "id": "/GeneralPage/Captions/OtherErrors/Line1",
+      "translation": "You have additional device errors!"
+    },
+    {
+      "id": "/GeneralPage/Captions/OtherErrors/Line2",
+      "translation": "Click here to inspect them now"
+    },
+    {
+      "id": "/GeneralPage/Labels/Inferred",
+      "translation": "Inféré"
+    },
+    {
+      "id": "/GeneralPage/Labels/Tracking",
+      "translation": "Traqué"
+    },
+    {
+      "id": "/GeneralPage/Tips/NoCalibration/Footer",
+      "translation": "Device you're trying to calibrate is reporting a status error.\nPlease make sure it's connected and working properly."
+    },
+    {
+      "id": "/GeneralPage/Tips/NoCalibration/Header",
+      "translation": "This device can't be calibrated right now!"
+    },
+    {
+      "id": "/GeneralPage/Titles/Device",
+      "translation": "Appareil"
+    },
+    {
+      "id": "/GeneralPage/Titles/Status",
+      "translation": "Statut"
+    },
+    {
+      "id": "/GeneralPage/Titles/Trackers",
+      "translation": "Trackers"
+    },
+    {
+      "id": "/SettingsPage/Buttons/Error/Dismiss",
+      "translation": "Annuler"
+    },
+    {
+      "id": "/SettingsPage/Buttons/Reset",
+      "translation": "Supprimer la configuration et relancer"
+    },
+    {
+      "id": "/SettingsPage/Buttons/RestartService",
+      "translation": "Relancer {0}"
+    },
+    {
+      "id": "/SettingsPage/Buttons/ViewLogs",
+      "translation": "Ouvrez le dossier des logs d'Amethyst"
+    },
+    {
+      "id": "/SettingsPage/Buttons/ServiceSettings",
+      "translation": "View {0} service settings"
+    },
+    {
+      "id": "/SettingsPage/Captions/AutoStart",
+      "translation": "Lancer automatiquement avec {0}"
+    },
+    {
+      "id": "/SettingsPage/Captions/CalibrateExtFlip",
+      "translation": "Cliquez pour calibrer"
+    },
+    {
+      "id": "/SettingsPage/Captions/ExtFlip",
+      "translation": "Lorsqu'actif: Amethyst décidera si vous êtes retourné\nen se basant sur le tracker actif avec le rôle de taille."
+    },
+    {
+      "id": "/SettingsPage/Captions/ExtFlipStatus/Active",
+      "translation": "Détecté et en cours d'exécution!"
+    },
+    {
+      "id": "/SettingsPage/Captions/ExtFlipStatus/Disabled",
+      "translation": "Désactivé!"
+    },
+    {
+      "id": "/SettingsPage/Captions/ExtFlipStatus/NoTracker",
+      "translation": "Pas de traceur de taille externe ou d'annulation détectée!"
+    },
+    {
+      "id": "/SettingsPage/Captions/FaceTheKinect",
+      "translation": "Faites face à la Kinect!"
+    },
+    {
+      "id": "/SettingsPage/Captions/Filters/Orientation",
+      "translation": "Options de rotation:"
+    },
+    {
+      "id": "/SettingsPage/Captions/Filters/Position",
+      "translation": "Filtres de position:"
+    },
+    {
+      "id": "/SettingsPage/Captions/SkeletonFlip",
+      "translation": "Retourner les trackers quand vous êtes dos à {0}."
+    },
+    {
+      "id": "/SettingsPage/Captions/Sounds",
+      "translation": "Activer les sons de l'app"
+    },
+    {
+      "id": "/SettingsPage/Captions/TrackerPairs",
+      "translation": "Combiner les trackers en paires"
+    },
+    {
+      "id": "/SettingsPage/Captions/TrackersAutoCheck",
+      "translation": "Désactiver les trackers qui existent déjà"
+    },
+    {
+      "id": "/SettingsPage/Captions/TrackersAutoSpawn",
+      "translation": "Connecter les trackers automatiquement quand l'app est lancée"
+    },
+    {
+      "id": "/SettingsPage/Captions/TrackersRestart/Line1",
+      "translation": "Activer ou désactiver un tracker nécessaite de relancer {0}"
+    },
+    {
+      "id": "/SettingsPage/Captions/TrackersRestart/Line2",
+      "translation": "et Amethyst pour que les changements prennent effet."
+    },
+    {
+      "id": "/SettingsPage/Captions/Services",
+      "translation": "Send trackers to:"
+    },
+    {
+      "id": "/SettingsPage/Captions/ServiceRestart",
+      "translation": "{0} needs to be restarted to enable/disable trackers properly."
+    },
+    {
+      "id": "/SettingsPage/Elements/ExtFlipCalibration/ToolTip",
+      "translation": "Calibration"
+    },
+    {
+      "id": "/SettingsPage/Elements/FlipToggle/ToolTip",
+      "translation": "Désactiver pour empêcher les trackers de\nvous suivre en tournant."
+    },
+    {
+      "id": "/SettingsPage/Filters/Orientation/Device",
+      "translation": "Default Orientation"
+    },
+    {
+      "id": "/SettingsPage/Filters/Orientation/HMD",
+      "translation": "Follow VR Headset"
+    },
+    {
+      "id": "/SettingsPage/Filters/Orientation/MathBased",
+      "translation": "Ankle-based Orientation"
+    },
+    {
+      "id": "/SettingsPage/Filters/Orientation/MathBasedV2",
+      "translation": "Leg-based Orientation"
+    },
+    {
+      "id": "/SettingsPage/Filters/Orientation/Off",
+      "translation": "Disable Orientation"
+    },
+    {
+      "id": "/SettingsPage/Filters/Position/Kalman",
+      "translation": "Filtre Kalman Étendu"
+    },
+    {
+      "id": "/SettingsPage/Filters/Position/LERP",
+      "translation": "Interpolation Linéaire"
+    },
+    {
+      "id": "/SettingsPage/Filters/Position/LowPass",
+      "translation": "Filtre passe-bas"
+    },
+    {
+      "id": "/SettingsPage/Filters/Position/Prediction",
+      "translation": "Adaptive Prediction"
+    },
+    {
+      "id": "/SettingsPage/Filters/Position/Off",
+      "translation": "Désactiver le filtre"
+    },
+    {
+      "id": "/SettingsPage/Filters/Managed",
+      "translation": "Managed by '{0}'"
+    },
+    {
+      "id": "/SettingsPage/ReManifest/Error/NotFound",
+      "translation": "Le manifest n'a pu être installé.\nAssurez-vous qu'il existe dans le dossier où se trouve Amethyst.exe"
+    },
+    {
+      "id": "/SettingsPage/ReManifest/Error/Other",
+      "translation": "Le manifest n'a pu être installé.\nVérifiez les logs et considérez rapporter le bug."
+    },
+    {
+      "id": "/SettingsPage/ReRegister/Error/NotFound",
+      "translation": "L'éxécutable du Crash Handler pour Amethyst n'a pas été\ntrouvé. Il est nécessaire pour ré-inscrire l'extension. Vérifiez qu'il est présent."
+    },
+    {
+      "id": "/SettingsPage/Titles/ExtFlip",
+      "translation": "Utiliser le tracking externe au lieu de l'orientation du casque"
+    },
+    {
+      "id": "/SettingsPage/Titles/SkeletonFlip",
+      "translation": "Retournement"
+    },
+    {
+      "id": "/SettingsPage/Titles/Application",
+      "translation": "Application"
+    },
+    {
+      "id": "/SettingsPage/Titles/TrackerConfig/Header",
+      "translation": "Configuration des trackers"
+    },
+    {
+      "id": "/SettingsPage/Titles/TrackerConfig/Learn",
+      "translation": "À propos de ces paramêtres"
+    },
+    {
+      "id": "/SettingsPage/Titles/Services",
+      "translation": "Tracking Output"
+    },
+    {
+      "id": "/SettingsPage/Titles/Troubleshooting",
+      "translation": "Dépannage"
+    },
+    {
+      "id": "/SettingsPage/Themes/System",
+      "translation": "Thème Système"
+    },
+    {
+      "id": "/SettingsPage/Themes/Dark",
+      "translation": "Sombre"
+    },
+    {
+      "id": "/SettingsPage/Themes/White",
+      "translation": "Clair"
+    },
+    {
+      "id": "/SettingsPage/Labels/DisplayLanguage",
+      "translation": "Langue de l'application"
+    },
+    {
+      "id": "/SettingsPage/Labels/AppTheme",
+      "translation": "Thème de l'application"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Explanations/EKF",
+      "translation": "Plus grande latence de tous le filtres, mais d'excellents résultats fluides.\nLes mouvements rapides restent sensibles vu que le filtre est prédictif."
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Explanations/LERP",
+      "translation": "Latence minimale, donne l'impression que le tracking est plus rapide qu'il l'est vraiment.\nLes instabilités sont encore visibles."
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Explanations/LowPass",
+      "translation": "La latence est un peu visible, mais c'est plus fluide que sans filtre et les instabilités sont cachées."
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Explanations/None",
+      "translation": "Le squelette a 30hz directement du capteur."
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Names/EKF",
+      "translation": "- Filtre Kalman Étendu"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Names/LERP",
+      "translation": "- Interpolation Linéaire (Défaut)"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Names/LowPass",
+      "translation": "- Filtre pass-bas"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Names/None",
+      "translation": "- Déasctier le filtre"
+    },
+    {
+      "id": "/SettingsLearn/Captions/ManageTrackers",
+      "translation": "Lorsqu'un tracker est activé ou désactivé, il apparait immédiatement\ndans {0}. Sauf que lorsque vous désactivez un tracker qui était présent. Il existe encore dans la liste, juste éteint.\nEt restera dans cet état jusqu'a ce que vous relanciez {0}."
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Explanations/Default",
+      "translation": "Cette option peut être instable pour certains utilisateurs sur la Kinect One. Si c'est le cas, \nessayez avec la rotation calculée logiciel. L'orientation de chaque articulation est inférée par le SDK\nde la Kinect basée sur la position de chaque partie du corps. Imaginez qu'une flèche est attachée au bout\nde chaque articulation, et que le tracker pointe dans cette direction. Cette option fonctionne différemment\nsur Kinect 360 et Kinect One.\nSur la Kinect Xbox One, la rotation est basée sur le bout du pied, donc vous pouvez tourner vos pieds.\nSur la Kinect Xbox 360, elle est basée sur le talon, donc le tracker suit seulement la jambe."
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Explanations/HMD",
+      "translation": "Les trackers suivent l'orientation du casque de VR sur l'axe Y\nmais perdent toute rotation dans les deux autres."
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Explanations/MathBased",
+      "translation": "Cette option est disponible seulement pour les pieds.\nLa direction des pieds est calculée en se basant sur l'orientation du bout des pieds jusqu'au talon.\nLe mouvement est limité à 50% pour éviter les glitch. Cette option permet de tourner les pieds sur la Kinect 360."
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Explanations/MathBasedV2",
+      "translation": "This option is only available for feet trackers.\nThe orientation of your feet is calculated from the joints' poses of your whole leg and waist.\nThere's some additions to make it more responsive. This allows for foot rotation on Xbox One Kinect."
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Explanations/None",
+      "translation": "Les trackers ne tournent pas. Sauf quand le retournement est actif en étant dos à la Kinect."
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Introduction",
+      "translation": "Toutes les options de rotation sont affectées par le retournement des trackers."
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Names/Default",
+      "translation": "- Default Orientation"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Names/HMD",
+      "translation": "- Follow VR Headset"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Names/MathBased",
+      "translation": "- Ankle-based Orientation"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Names/MathBasedV2",
+      "translation": "- Leg-based Orientation"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Names/None",
+      "translation": "- Disable Orientation"
+    },
+    {
+      "id": "/SettingsLearn/Captions/TrackerConfig",
+      "translation": "Amethyst supporte jusqu'à 7 trackers de base, et des trackers additionels peuvent être\nactivés ou désactivés en cliquant sur l'icône d'engrenage. Chaque tracker ou ensemble de trackers\na ses propres paramêtres pour configurer comment leur rotation fonctionne et quel filtre est utilisé\npour les mouvements. Ceci vous permet par exemple d'appliquer un filtre plus rapide aux coudes et\nun filtre plus prononcé sur les pieds si vous comptez vous asseoir souvent."
+    },
+    {
+      "id": "/SettingsLearn/Captions/TrackerConfigNote",
+      "translation": "Note: Certaines de ces options fonctionnent seulement avec Kinect."
+    },
+    {
+      "id": "/SettingsLearn/Titles/FilterSettings",
+      "translation": "Paramêtres de filtre:"
+    },
+    {
+      "id": "/SettingsLearn/Titles/ManageTrackers",
+      "translation": "Activer/désactiver les trackers:"
+    },
+    {
+      "id": "/SettingsLearn/Titles/RotationSettings",
+      "translation": "Paramêtres de rotation:"
+    },
+    {
+      "id": "/SettingsLearn/Titles/TrackerConfig",
+      "translation": "À propos de la configuration des trackers"
+    },
+    {
+      "id": "/DevicesPage/Buttons/Deselect/ToolTip",
+      "translation": "Désélectionner cet appareil va\nretirer son rôle de substitut."
+    },
+    {
+      "id": "/DevicesPage/Buttons/Deselect",
+      "translation": "Désélectionner"
+    },
+    {
+      "id": "/DevicesPage/Buttons/Disconnect",
+      "translation": "Déconnecter"
+    },
+    {
+      "id": "/DevicesPage/Buttons/JoinDiscord",
+      "translation": "Joindre le Discord"
+    },
+    {
+      "id": "/DevicesPage/Buttons/NoJoints/Dismiss",
+      "translation": "Annuler"
+    },
+    {
+      "id": "/DevicesPage/Buttons/Reconnect",
+      "translation": "Actualiser"
+    },
+    {
+      "id": "/DevicesPage/Buttons/SetAs/Base/ToolTip",
+      "translation": "Cet appareil définit la position et\nrotation de base pour les trackers virtuels."
+    },
+    {
+      "id": "/DevicesPage/Buttons/SetAs/Base",
+      "translation": "Définir comme base"
+    },
+    {
+      "id": "/DevicesPage/Buttons/SetAs/Header/ToolTip",
+      "translation": "Définir l'appareil actif\nen tant que base ou substitut."
+    },
+    {
+      "id": "/DevicesPage/Buttons/SetAs/Header",
+      "translation": "Définir en tant que..."
+    },
+    {
+      "id": "/DevicesPage/Buttons/SetAs/Override/ToolTip",
+      "translation": "La position et rotation de un ou plusieurs\ntrackers virtuels sera modifiée par cet appareil."
+    },
+    {
+      "id": "/DevicesPage/Buttons/SetAs/Override",
+      "translation": "Définir comme substitut."
+    },
+    {
+      "id": "/DevicesPage/Buttons/ViewDocs",
+      "translation": "Voir les docs"
+    },
+    {
+      "id": "/DevicesPage/Placeholders/Joints/Disabled/PlaceholderText",
+      "translation": "Articulation inactive"
+    },
+    {
+      "id": "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText",
+      "translation": "Aucun substitut"
+    },
+    {
+      "id": "/DevicesPage/Titles/Check/Orientation",
+      "translation": "Rotation"
+    },
+    {
+      "id": "/DevicesPage/Titles/Check/Position",
+      "translation": "Position"
+    },
+    {
+      "id": "/DevicesPage/Titles/CurrentDevice",
+      "translation": "Traque présentement"
+    },
+    {
+      "id": "/DevicesPage/Titles/DeviceBase",
+      "translation": "Appareil:"
+    },
+    {
+      "id": "/DevicesPage/Titles/DeviceHasNoJoints",
+      "translation": "Cet appareil n'a aucune articulation disponible\net ne peut être utilisé comme substitut."
+    },
+    {
+      "id": "/DevicesPage/Titles/DeviceOverride",
+      "translation": "Substitut:"
+    },
+    {
+      "id": "/DevicesPage/Titles/Devices",
+      "translation": "Appareils:"
+    },
+    {
+      "id": "/DevicesPage/Titles/DeviceSettings",
+      "translation": "Options de l'appareil"
+    },
+    {
+      "id": "/DevicesPage/Titles/DeviceStatus",
+      "translation": "Statut:"
+    },
+    {
+      "id": "/DevicesPage/Titles/Joints/Assign",
+      "translation": "Assigner les articulations"
+    },
+    {
+      "id": "/DevicesPage/Titles/Joints/ElbowsAndKnees",
+      "translation": "Trackers pour les coudes et genous"
+    },
+    {
+      "id": "/DevicesPage/Titles/Joints/Other",
+      "translation": "Autres Trackers"
+    },
+    {
+      "id": "/DevicesPage/Titles/Joints/WaistAndFeet",
+      "translation": "Trackers pour les pieds et la taille"
+    },
+    {
+      "id": "/DevicesPage/Titles/NoOverrides",
+      "translation": "Aucun substitut"
+    },
+    {
+      "id": "/DevicesPage/Titles/Overrides/Header",
+      "translation": "Substituts"
+    },
+    {
+      "id": "/DevicesPage/Titles/Set/Orientation",
+      "translation": "Rotation:"
+    },
+    {
+      "id": "/DevicesPage/Titles/Set/Position",
+      "translation": "Position:"
+    },
+    {
+      "id": "/DevicesPage/Titles/Set/TrackedJoint",
+      "translation": "Articulation traquée:"
+    },
+    {
+      "id": "/DevicesPage/Titles/Set/Tracker",
+      "translation": "Tracker:"
+    },
+    {
+      "id": "/DevicesPage/Titles/SetAsDevice",
+      "translation": "Définir en tant qu'appareil de tracking:"
+    },
+    {
+      "id": "/DevicesPage/Badges/Devices/Base",
+      "translation": "Base"
+    },
+    {
+      "id": "/DevicesPage/Badges/Devices/Override",
+      "translation": "Override"
+    },
+    {
+      "id": "/DevicesPage/Badges/Devices/Error",
+      "translation": "Error"
+    },
+    {
+      "id": "/DevicesPage/ToolTips/Overrides/Overlapping",
+      "translation": "This joint is currently overridden by {0}"
+    },
+    {
+      "id": "/DevicesPage/Devices/Reload/Title",
+      "translation": "Plugin configuration has changed!"
+    },
+    {
+      "id": "/DevicesPage/Devices/Reload/Content",
+      "translation": "A new plugin has been added or removed. Amethyst must be restarted for these changes to take effect."
+    },
+    {
+      "id": "/DevicesPage/Devices/Reload/Restart",
+      "translation": "Restart Amethyst"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Open",
+      "translation": "Manage Plugins"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Title",
+      "translation": "Manage Plugins"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Blocked",
+      "translation": "This plugin has encountered an error whilst loading, it will remain blocked as long as the error persists. Please see the reason below and check logs for more information."
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Reason",
+      "translation": "Reason:"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/GUID",
+      "translation": "GUID:"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Location",
+      "translation": "Location:"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Publisher",
+      "translation": "by"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Website",
+      "translation": "Website:"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Unknown",
+      "translation": "Some other unexpected error happened, please reach out to us on our Discord server."
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/NoError",
+      "translation": "Everything's fine, celebration time!"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/LoadingSkipped",
+      "translation": "Disabled in the application settings by the user."
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/NoPluginFolder",
+      "translation": "The specified plugin folder wasn't found, please check if the folder is still there."
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/NoPluginDll",
+      "translation": "The plugin class library file (plugin*.dll) is missing. Please check if it is there."
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/NoPluginDependencyDll",
+      "translation": "One of the files this plugin needs wasn't found. Please check if all dependencies are there."
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/PluginDllLinkError",
+      "translation": "Linking to the plugin class library (.dll) failed."
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/InvalidFactory",
+      "translation": "Calling the plugin factory (lazy loading) method failed."
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/BadOrDuplicateGuid",
+      "translation": "GUID of this plugin is either empty, invalid, or already in use by another one."
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Other",
+      "translation": "This plugin doesn't seem to be valid for some reason...."
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Buttons/Update",
+      "translation": "Update and relaunch"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/UpdateAvailable",
+      "translation": "Update scheduled!"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/UpdateMessage",
+      "translation": "Restart Amethyst to update {0} to {1}"
+    },
+    {
+      "id": "/InfoPage/AppCaption",
+      "translation": "par K2VR Team"
+    },
+    {
+      "id": "/InfoPage/AppTitle",
+      "translation": "Amethyst"
+    },
+    {
+      "id": "/InfoPage/Credits/Community",
+      "translation": "Et tout le monde qui nous ont aidés."
+    },
+    {
+      "id": "/InfoPage/Credits/Header",
+      "translation": "Crédits"
+    },
+    {
+      "id": "/InfoPage/Credits/Helpers/Title",
+      "translation": "Aide:"
+    },
+    {
+      "id": "/InfoPage/Credits/Donators/Title",
+      "translation": "Donators:"
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Akaya",
+      "translation": "Développeur principal:"
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Aria",
+      "translation": "Support (Inactif):"
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Artemis",
+      "translation": "Support:"
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Noelle",
+      "translation": "Gestion du projet:"
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Hekky",
+      "translation": "Développement de l'installateur:"
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Himbeer",
+      "translation": "Développement de l'installateur:"
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Ollie",
+      "translation": "Support:"
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Title",
+      "translation": "Équipe principale:"
+    },
+    {
+      "id": "/InfoPage/Credits/Translators/Title",
+      "translation": "Traducteurs:"
+    },
+    {
+      "id": "/InfoPage/Telemetry/Header",
+      "translation": "Collected data and privacy policy"
+    },
+    {
+      "id": "/InfoPage/Telemetry/Notice",
+      "translation": "Amethyst uses Microsoft App Center to collect anonymous data which helps us with app development and troubleshooting major bugs. \nInformation sent to App Center is anonymous and free of any user or contextual data. Additionally, you can disable sending it at any time."
+    },
+    {
+      "id": "/InfoPage/Telemetry/Switch",
+      "translation": "Toggle the switch below to disable/enable sending anything to App Center."
+    },
+    {
+      "id": "/InfoPage/Telemetry/Toggle/On",
+      "translation": "Data collection is enabled"
+    },
+    {
+      "id": "/InfoPage/Telemetry/Toggle/Off",
+      "translation": "Data collection is disabled"
+    },
+    {
+      "id": "/BlockedPage/Buttons/Kill",
+      "translation": "End task"
+    },
+    {
+      "id": "/BlockedPage/Buttons/Skip",
+      "translation": "Skip updating {0}"
+    },
+    {
+      "id": "/BlockedPage/Headers/Blocked",
+      "translation": "Couldn't update {0}!"
+    },
+    {
+      "id": "/BlockedPage/Contents/Blocked",
+      "translation": "Some processes are blocking {0} from being updated automatically, please shut them down manually, kill each process using the button next to it, or skip updating {0} for now."
+    },
+    {
+      "id": "/BlockedPage/Flyouts/Elevated/Notice",
+      "translation": "This process is currently running with administrator privileges, \nAmethyst will need to ask for additional permissions to kill it."
+    },
+    {
+      "id": "/SharedStrings/Buttons/Devices",
+      "translation": "Appareils"
+    },
+    {
+      "id": "/SharedStrings/Buttons/General",
+      "translation": "Général"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Developers",
+      "translation": "Pour les développeurs"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Discord",
+      "translation": "Communauté K2VR"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overrides",
+      "translation": "Comment fonctionnent les substituts"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overview",
+      "translation": "À propos des appareils"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Automatic",
+      "translation": "Instructions sur la calibration automatique"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Main",
+      "translation": "Comment calibrer"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Manual",
+      "translation": "Instructions sur la calibration manuelle"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Offsets",
+      "translation": "À propos de l'alignement"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Overview",
+      "translation": "Infos sur la page générale"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/InfoPage/OpenCollective",
+      "translation": "Faire un don"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/SettingsPage/Overview",
+      "translation": "Plus d'info sur les paramètres"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Header",
+      "translation": "Aide"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Licenses",
+      "translation": "Licences Open-Source"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Info",
+      "translation": "Info"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Plugins",
+      "translation": "Plugins"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Settings",
+      "translation": "Paramètres"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Updates/Header",
+      "translation": "Mises à jour"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Updates/Install",
+      "translation": "Update and relaunch"
+    },
+    {
+      "id": "/SharedStrings/Buttons/PluginUpdates/Inspect",
+      "translation": "Update and relaunch"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/0",
+      "translation": "Main"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/1",
+      "translation": "Pied gauche"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/10",
+      "translation": "Poitrine"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/11",
+      "translation": "Caméra"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/12",
+      "translation": "Clavier"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/2",
+      "translation": "Pied droit"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/3",
+      "translation": "Epaule gauche"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/4",
+      "translation": "Epaule droite"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/5",
+      "translation": "Coude gauche"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/6",
+      "translation": "Coude droit"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/7",
+      "translation": "Genou gauche"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/8",
+      "translation": "Genou droit"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/9",
+      "translation": "Taille"
+    },
+    {
+      "id": "/SharedStrings/Joints/Pairs/1",
+      "translation": "Feet Trackers"
+    },
+    {
+      "id": "/SharedStrings/Joints/Pairs/3",
+      "translation": "Shoulder Trackers"
+    },
+    {
+      "id": "/SharedStrings/Joints/Pairs/5",
+      "translation": "Elbow Trackers"
+    },
+    {
+      "id": "/SharedStrings/Joints/Pairs/7",
+      "translation": "Knee Trackers"
+    },
+    {
+      "id": "/SharedStrings/Joints/NotSupported/Flag",
+      "translation": "(Not supported)"
+    },
+    {
+      "id": "/SharedStrings/Joints/NotSupported/Tooltip",
+      "translation": "Trackers with this role aren't supported by {0}"
+    },
+    {
+      "id": "/SharedStrings/Toasts/AutoSpawnFailed",
+      "translation": "Les trackers n'ont pas pu être ajoutés qu'une erreur s'est produite au niveau du serveur."
+    },
+    {
+      "id": "/SharedStrings/Toasts/AutoSpawnFailed/Title",
+      "translation": "Les trackers n'ont pas pu être ajoutés automatiquement!"
+    },
+    {
+      "id": "/SharedStrings/Toasts/RestartFailed",
+      "translation": "Essayez de le faire manuellement."
+    },
+    {
+      "id": "/SharedStrings/Toasts/RestartFailed/Title",
+      "translation": "On ne peut pas relancer Amethyst pour vous."
+    },
+    {
+      "id": "/SharedStrings/Toasts/TrackersAutoDisabled",
+      "translation": "Des trackers qui étaient actifs dans Amethyst ont été trouvés déja présents et ont donc été désactivés."
+    },
+    {
+      "id": "/SharedStrings/Toasts/TrackersAutoDisabled/Title",
+      "translation": "Un ou plusieurs trackers on été désactivés"
+    },
+    {
+      "id": "/SharedStrings/Toasts/TrackersConfigChanged",
+      "translation": "Relancez {0} pour applique les changements."
+    },
+    {
+      "id": "/SharedStrings/Toasts/TrackersConfigChanged/Title",
+      "translation": "La configuration des trackers a changée"
+    },
+    {
+      "id": "/SharedStrings/Updates/NewUpdateFound",
+      "translation": "New Update Available!"
+    },
+    {
+      "id": "/SharedStrings/Updates/NewUpdateMessage",
+      "translation": "Restart Amethyst to update it to version v{0}"
+    },
+    {
+      "id": "/SharedStrings/Updates/Suggestions",
+      "translation": "Please tell us if you have any ideas\nfor the next Amethyst update."
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginUpdates/Title",
+      "translation": "New plugin updates available!"
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginUpdates/Message",
+      "translation": "Restart Amethyst to apply all pending plugin updates."
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginInstall/Title",
+      "translation": "Plugin installations pending!"
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginInstall/Message",
+      "translation": "Restart Amethyst to execute all queued plugin installs."
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginInstall/Action",
+      "translation": "Restart now"
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginUninstall/Title",
+      "translation": "Plugin uninstallations pending!"
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginUninstall/Message",
+      "translation": "Restart Amethyst to execute all queued plugin uninstalls."
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginUninstall/Action",
+      "translation": "Restart now"
+    },
+    {
+      "id": "/SharedStrings/Updates/UpToDate",
+      "translation": "Vous êtes à jour"
+    },
+    {
+      "id": "/SharedStrings/Updates/Headers/Downloading",
+      "translation": "Updating to Amethyst v{0}"
+    },
+    {
+      "id": "/SharedStrings/Updates/Headers/Preparing",
+      "translation": "Preparing for the update..."
+    },
+    {
+      "id": "/SharedStrings/Updates/Headers/Status",
+      "translation": "Statut:"
+    },
+    {
+      "id": "/SharedStrings/Updates/Statuses/Downloading",
+      "translation": "Téléchargement - 0%"
+    },
+    {
+      "id": "/SharedStrings/Updates/Statuses/Error",
+      "translation": "Erreur de téléchargement !"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Updates/Headers/Downloading",
+      "translation": "Updating {0} to v{1}"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Updates/Headers/Preparing",
+      "translation": "Preparing for the update..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Updates/Headers/Restart",
+      "translation": "{0} will have been updated by the next time Amethyst opens!"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Updates/Headers/Status",
+      "translation": "Status:"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Updates/Statuses/Downloading",
+      "translation": "Downloading {0} v{1}..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Updates/Statuses/Error",
+      "translation": "Error updating {0}!"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Downloading",
+      "translation": "Installing {0} {1}"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Preparing",
+      "translation": "Preparing the plugin package..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Restart",
+      "translation": "{0} will have been installed by the next time Amethyst opens!"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Status",
+      "translation": "Status:"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Statuses/Downloading",
+      "translation": "Downloading {0} {1}..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Statuses/Error",
+      "translation": "Error installing {0}!"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Search",
+      "translation": "Search or paste a link:"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Contents/Search",
+      "translation": "Search for plugins, or paste the link to a plugin repo"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/SearchTip/Search",
+      "translation": "Search for plugins using keywords from their names or descriptions, \nor just paste the link to a plugin repository located on GitHub."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/SearchTip/Drag",
+      "translation": "You can also drag-and-drop a plugin link/folder/zip here to install it."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/ErrorTip/Content",
+      "translation": "A fatal exception occurred whilst executing the plugin search query, \nor you've just exceeded the GitHub API request rate limit."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/ErrorTip/Drag",
+      "translation": "You can still install plugins via drag-and-drop or using a link/folder/zip."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/RateTip/Start",
+      "translation": "GitHub API rate exceeded. Please wait a while, or"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/RateTip/Link",
+      "translation": "log in to GitHub"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/RateTip/End",
+      "translation": "to search for more Amethyst plugins. You can still install plugins using drag-and-drop."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/NoResults",
+      "translation": "Your search happened not to return any results. \n...or was it just the wind all along, who knows?"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Login/Instructions",
+      "translation": "Paste this code into the prompt your web browser has just shown."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Login/Message",
+      "translation": "This will log you in to the GitHub API, allowing higher query rate."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Tips/Official",
+      "translation": "Published by K2VR Team"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Tips/AlreadyInstalled",
+      "translation": "This plugin is already installed, do you wish to uninstall it?"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Labels/Description",
+      "translation": "Plugin description:"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Labels/NoReleases",
+      "translation": "This plugin has no releases and can't be installed using the store.\nFeel free to contact the author about testing or preview releases."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Labels/Title",
+      "translation": "Release title:"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Labels/Date",
+      "translation": "Published on:"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Labels/Changelog",
+      "translation": "Changelog:"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Buttons/Install",
+      "translation": "Install"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Error/Validating",
+      "translation": "Error validating {0}!"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Error/Installing",
+      "translation": "Error installing {0}!"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Error/Exception",
+      "translation": "Error installing the package!"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Downloading",
+      "translation": "Downloading {0}..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Validating",
+      "translation": "Validating {0}..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Installing",
+      "translation": "Installing {0}..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Installed",
+      "translation": "Installed {0}!"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound",
+      "translation": "{0} does not contain a plugin class library file (plugin*.dll) and can't be installed. Please validate the package manually."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound/Plural",
+      "translation": "{0} do not contain a plugin class library file (plugin*.dll) and can't be installed. Please validate the package manually."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid",
+      "translation": "{0} is not a valid plugin package (has to be a .zip file) and can't be installed. Please validate the package manually."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Statuses/Error/Exception",
+      "translation": "Couldn't process the package due to an exception: {0}. Please install the package manually."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Statuses/Installed",
+      "translation": "Successfully parsed the plugin package! {0} will have been installed by the next time Amethyst opens!"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Resources/Files",
+      "translation": "files"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Resources/Folder",
+      "translation": "folder"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Resources/Package",
+      "translation": "package"
+    },
+    {
+      "id": "/PluginStore/Titles/Install",
+      "translation": "Install {0} {1}"
+    },
+    {
+      "id": "/PluginStore/Titles/Installing/Setup",
+      "translation": "Enqueued {0} installation!"
+    },
+    {
+      "id": "/PluginStore/Titles/Uninstalling/Notice",
+      "translation": "Enqueued {0} removal!"
+    },
+    {
+      "id": "/PluginStore/Captions/Uninstalling/Notice",
+      "translation": "Amethyst should delete it during the next startup."
+    },
+    {
+      "id": "/PluginStore/Captions/Installing/Setup",
+      "translation": "Restart Amethyst to install it."
+    },
+    {
+      "id": "/CrashHandler/Content/AlreadyRunning",
+      "translation": "Looks like the app is already running\nand you've tried to launch a second instance,\nthis action is not currently supported.\n\nPlease check if the app isn't opened.\nIf problem persists, press the 'Force Exit' button."
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/NoPlugins",
+      "translation": "There were no appropriate plugins available to load and use in Amethyst.\n\nPlease check if you have all dependencies installed, like proper Service or Framework Runtime and other dependency libraries needed by your plugins."
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/NoDevices",
+      "translation": "There were no appropriate device plugins available to load and use for body tracking.\n\nPlease check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices."
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/NoServices",
+      "translation": "There were no appropriate service plugins available to load and use for endpoints.\n\nPlease check if you have all dependencies installed, like proper Service Runtime and other dependency libraries needed by your services."
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/NoJoints",
+      "translation": "There were no valid loaded device plugins available to handle body tracking.\n\nPlease check if all your device plugins are valid and working. This error occurs when none of the loaded devices provides valid tracked joints, upon init."
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/OpenVR",
+      "translation": "The app couldn't successfully initialize OpenVR (SteamVR) and decided to give up.\n\nPlease check if SteamVR is running, and your VR headset is connected properly to it. Furthermore, you can try restarting and checking the log files."
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/Panic",
+      "translation": "The main program loop has crashed consequently more than 7 times so Amethyst was shut down.\n\nPlease check if all your plugins are working and check the log files. Optionally, you can reset the (outer) app config and try running it again."
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/Unknown",
+      "translation": "Quelque chose de bizarre est arrivé.\n\nNe paniquez pas (encore), ce n'est probablement pas votre faute.\n\nTentez de relancer l'application.\nSi le problème persiste, envoyez nous les logs sur Discord."
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/UnknownStack",
+      "translation": "Looks like some weird thing happened to the app.\n\nDon't panic yet, it (probably) isn't even your fault.\n\nPlease try re-running the app.\nIf problem persists, grab logs and reach us on Discord.\n\nAvailable crash info:\n{0}"
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/Elevated",
+      "translation": "SteamVR est actuellement surélevé et Amethyst ne peut pas communiquer avec lui.\n\nSoit Steam, soit SteamVR a été modifié pour provoquer ce problème. Annulez ces modifications et réessayez."
+    },
+    {
+      "id": "/CrashHandler/Content/Recovery",
+      "translation": "Vous avez lancé le Crash Handler manuellement, que voulez-vous faire?\n\nSi l'extension SteamVR pour Amethyst n'est pas détectée correctement, vous pouvez la ré-inscrire dans la liste (bouton ci-dessous) et essayer à nouveau."
+    },
+    {
+      "id": "/CrashHandler/PrimaryButton/AlreadyRunning",
+      "translation": "Quitter de force"
+    },
+    {
+      "id": "/CrashHandler/PrimaryButton/Crash/Default",
+      "translation": "Voir les docs"
+    },
+    {
+      "id": "/CrashHandler/PrimaryButton/Crash/Panic",
+      "translation": "Supprimer config"
+    },
+    {
+      "id": "/CrashHandler/PrimaryButton/Crash/Unknown",
+      "translation": "Serveur Discord"
+    },
+    {
+      "id": "/CrashHandler/PrimaryButton/Recovery",
+      "translation": "Ré-inscrire l'extension"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/DriverNotFound",
+      "translation": "L'extension SteamVR pour Amethyst n'a pas été trouvée.\nEst-elle présente dans le même dossier que le Crash Handler?"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/ExistingDrivers/Content",
+      "translation": "Une ou plusieurs extensions nommées `Amethyst` sont déjà inscrites dans la liste.\nVoulez-vous les enlever?"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/ExistingDrivers/Content_K2EX",
+      "translation": "Une ou plusieurs extensions nommées `KinectToVR` sont inscrites dans la liste.\nVoulez-vous les enlever?"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/ExistingDrivers/PrimaryButton",
+      "translation": "Enlever"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/ExistingDrivers/PrimaryButton_K2EX",
+      "translation": "Enlever"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/ExistingDrivers/SecondaryButton",
+      "translation": "Annuler"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/ExistingDrivers/SecondaryButton_K2EX",
+      "translation": "Annuler"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/FatalRegisterException",
+      "translation": "L'extension pour Amethyst n'a pu être inscrite.\nUn problème est survenu."
+    },
+    {
+      "id": "/CrashHandler/ReRegister/FatalRemoveException",
+      "translation": "L'extension pour Amethyst n'a pu être enlevée.\nUn problème est survenu."
+    },
+    {
+      "id": "/CrashHandler/ReRegister/FatalRemoveException_K2EX",
+      "translation": "L'extension pour KinectToVR n'a pu être enlevée.\nUn problème est survenu."
+    },
+    {
+      "id": "/CrashHandler/ReRegister/Finished",
+      "translation": "Et voila, c'est prêt!"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/KillSteamVR/Content",
+      "translation": "SteamVR doit être fermé\npour inscrire l'extension, Voulez-vous le faire maintenant?"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/KillSteamVR/PrimaryButton",
+      "translation": "Quitter SteamVR"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/KillSteamVR/SecondaryButton",
+      "translation": "Annuler"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/OpenVRPathsError",
+      "translation": "Impossible de lire OpenVRPaths.\nAssurez vous que le fichier n'est pas corrompu\net d'avoir lancé SteamVR au moins une fois."
+    },
+    {
+      "id": "/CrashHandler/ReRegister/OpenVRPathsWriteError",
+      "translation": "Impossible d'inscire l'extension pour Amethyst.\nErreur lors de l'écriture du fichier OpenVRPaths."
+    },
+    {
+      "id": "/CrashHandler/ReRegister/SteamVRNotFound",
+      "translation": "Impossible de trouver SteamVR.\nL'avez-vous bien installé?"
+    },
+    {
+      "id": "/CrashHandler/SecondaryButton/Recovery",
+      "translation": "Quitter"
+    },
+    {
+      "id": "/CrashHandler/Title/AlreadyRunning",
+      "translation": "Amethyst est déjà lancé!"
+    },
+    {
+      "id": "/CrashHandler/Title/Crash",
+      "translation": "Amethyst vous a laissé tomber!"
+    },
+    {
+      "id": "/CrashHandler/Title/Recovery",
+      "translation": "Maintenance d'Amethyst"
+    },
+    {
+      "id": "/CrashHandler/Title/Elevated",
+      "translation": "SteamVR comme admin!"
+    },
+    {
+      "id": "/NUX/Replay",
+      "translation": "Replay the welcome tour"
+    },
+    {
+      "id": "/NUX/Prev",
+      "translation": "Go back"
+    },
+    {
+      "id": "/NUX/Next",
+      "translation": "Next"
+    },
+    {
+      "id": "/NUX/Skip",
+      "translation": "Skip tutorial"
+    },
+    {
+      "id": "/NUX/Finish",
+      "translation": "Finish"
+    },
+    {
+      "id": "/NUX/Tip0/Title",
+      "translation": "Are you sure?"
+    },
+    {
+      "id": "/NUX/Tip0/Content",
+      "translation": "Amethyst must be running for tracking to work. Click again to exit.\n\nThis message will only show once."
+    },
+    {
+      "id": "/NUX/Tip1/Title",
+      "translation": "Welcome to Amethyst"
+    },
+    {
+      "id": "/NUX/Tip1/Content",
+      "translation": "Let's take a tour of the app and how to use it.\n\nYou can replay this tutorial at any time from the Settings tab.\n\n1 of 14"
+    },
+    {
+      "id": "/NUX/Tip2/Title",
+      "translation": "Connecting trackers"
+    },
+    {
+      "id": "/NUX/Tip2/Content",
+      "translation": "Click here to connect the Amethyst trackers to {0}. (If your VR controllers are unresponsive, disconnect and reconnect the trackers)\n\n2 of 14"
+    },
+    {
+      "id": "/NUX/Tip3/Title",
+      "translation": "Calibration and alignment"
+    },
+    {
+      "id": "/NUX/Tip3/Content",
+      "translation": "Before using your trackers, you must go through calibration to align them to your existing VR play area.\n\n3 of 14"
+    },
+    {
+      "id": "/NUX/Tip4/Title",
+      "translation": "Devices at a glance"
+    },
+    {
+      "id": "/NUX/Tip4/Content",
+      "translation": "Here you can see what devices are currently active for tracking.\nAny problems or errors will show up here too.\n\n4 of 14"
+    },
+    {
+      "id": "/NUX/Tip5/Title",
+      "translation": "Configuring trackers"
+    },
+    {
+      "id": "/NUX/Tip5/Content",
+      "translation": "You can enable or disable trackers here, and set their rotation and filter settings by expanding each category.\nSee the link on the right for more info.\n\n5 of 14"
+    },
+    {
+      "id": "/NUX/Tip6/Title",
+      "translation": "Enable more trackers"
+    },
+    {
+      "id": "/NUX/Tip6/Content",
+      "translation": "Click the gear icon to enable or disable more trackers than shown by default. (Not all trackers are supported by every app)\n\n6 of 14"
+    },
+    {
+      "id": "/NUX/Tip7/Title",
+      "translation": "Start Amethyst with {0}"
+    },
+    {
+      "id": "/NUX/Tip7/Content",
+      "translation": "Instead of searching for the app on your computer each time, you can click the dropdown to enable Amethyst start alongside {0}.\n\n7 of 14"
+    },
+    {
+      "id": "/NUX/Tip8/Title",
+      "translation": "Available devices"
+    },
+    {
+      "id": "/NUX/Tip8/Content",
+      "translation": "Here you can see the list of devices available to Amethyst. If something is missing, you most likely don't have the drivers for it.\n\n8 of 14"
+    },
+    {
+      "id": "/NUX/Tip9/Title",
+      "translation": "Configure and check on devices"
+    },
+    {
+      "id": "/NUX/Tip9/Content",
+      "translation": "Check the the status of devices and change per-device settings.\nErrors will show up here.\n\n9 of 14"
+    },
+    {
+      "id": "/NUX/Tip10/Title",
+      "translation": "Overrides and troubleshooting"
+    },
+    {
+      "id": "/NUX/Tip10/Content",
+      "translation": "The buttons on the right will let you set a device as the base or override, refresh it and get help whenever an error happens.\n\n10 of 14"
+    },
+    {
+      "id": "/NUX/Tip11/Title",
+      "translation": "Getting help and support"
+    },
+    {
+      "id": "/NUX/Tip11/Content",
+      "translation": "Click the Help button on any page to get links to documentation about that page. Join us on Discord if you have any questions.\n\n11 of 14"
+    },
+    {
+      "id": "/NUX/Tip12/Title",
+      "translation": "Managing plugins"
+    },
+    {
+      "id": "/NUX/Tip12/Content",
+      "translation": "These are the plugins that are currently installed on Amethyst. From this list, you can toggle each plugin on or off, update them, and see any errors.\n\n12 of 14"
+    },
+    {
+      "id": "/NUX/Tip13/Title",
+      "translation": "Getting new plugins"
+    },
+    {
+      "id": "/NUX/Tip13/Content",
+      "translation": "Amethyst allows you to search for new plugins and install them directly within the app. You can also paste direct links, or drag in ZIP files.\n\n13 of 14"
+    },
+    {
+      "id": "/NUX/Tip14/Title",
+      "translation": "Thank you!"
+    },
+    {
+      "id": "/NUX/Tip14/Content",
+      "translation": "Amethyst took a while to make and get it to where it's at now.\nSo, you better go have fun.\n\n14 of 14"
+    }
+  ]
 }

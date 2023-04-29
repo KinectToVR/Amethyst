@@ -52,7 +52,7 @@ public class TrackingDevice : INotifyPropertyChanged
     // Each must have its own role or _Manual to force user's manual set
     public List<TrackedJoint> TrackedJoints => Device.TrackedJoints.ToList();
 
-    public (JsonObject Root, string Directory) LocalizationResourcesRoot { get; set; }
+    public (LocalisationFileJson Root, string Directory) LocalizationResourcesRoot { get; set; }
 
     // Is the device connected/started?
     public bool IsInitialized => Device.IsInitialized;

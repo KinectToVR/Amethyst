@@ -112,7 +112,7 @@ public class ServiceEndpoint : INotifyPropertyChanged
         set => Service.AutoCloseAmethyst = value;
     }
 
-    public (JsonObject Root, string Directory) LocalizationResourcesRoot { get; set; } = new();
+    public (LocalisationFileJson Root, string Directory) LocalizationResourcesRoot { get; set; } = new();
 
     // Get the absolute pose of the HMD, calibrated against the play space
     // Return null if unknown to the service or unavailable
