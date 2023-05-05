@@ -17,6 +17,7 @@
         <BaseOutputPath></BaseOutputPath>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
         <PublishTrimmed>false</PublishTrimmed>
+        <EmbedManifest>true</EmbedManifest>
 
         <ApplicationIcon>Assets\crashhandler.ico</ApplicationIcon>
         <Authors>K2VR Team</Authors>

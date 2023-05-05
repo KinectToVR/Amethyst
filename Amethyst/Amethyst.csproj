@@ -17,6 +17,7 @@
         <BaseOutputPath></BaseOutputPath>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
         <PublishTrimmed>false</PublishTrimmed>
+        <EmbedManifest>true</EmbedManifest>
         
         <AppxPackage>false</AppxPackage>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
