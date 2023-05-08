@@ -687,11 +687,18 @@ public static class CollectionExtensions
             return false; // Don't do anything stupid
         }
 
-        // Delete the vendor plugin contract, just in case
-        item.GetFiles("Amethyst.Plugins.Contract.dll").FirstOrDefault()?.Delete();
-        item.GetFiles("Microsoft.Windows.SDK.NET.dll").FirstOrDefault()?.Delete();
-        item.GetFiles("Microsoft.WinUI.dll").FirstOrDefault()?.Delete();
-        item.GetFiles("WinRT.Runtime.dll").FirstOrDefault()?.Delete();
+        try
+        {
+            // Delete the vendor plugin contract, just in case
+            item.GetFiles("Amethyst.Plugins.Contract.dll").FirstOrDefault()?.Delete();
+            item.GetFiles("Microsoft.Windows.SDK.NET.dll").FirstOrDefault()?.Delete();
+            item.GetFiles("Microsoft.WinUI.dll").FirstOrDefault()?.Delete();
+            item.GetFiles("WinRT.Runtime.dll").FirstOrDefault()?.Delete();
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(e);
+        }
 
         // Zero possible plugin files to be loaded
         if (item.GetFiles("plugin*.dll").Length <= 0)

@@ -198,6 +198,8 @@
                     <Run xml:space="preserve">Skye (DergnNamedSkye)    </Run>
                     <Run xml:space="preserve">Sara the Maid    </Run>
                     <Run xml:space="preserve">m1nt_ (Rubber Duck Shobe)    </Run>
+                    <Run xml:space="preserve">Stiggimy    </Run>
+                    <Run xml:space="preserve">bijavix    </Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
