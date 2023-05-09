@@ -113,7 +113,7 @@
     },
     {
       "id": "/GeneralPage/Calibration/Captions/Move",
-      "translation": "Posizione {1} di {2}\nMuoviti da un'altra parte",
+      "translation": "Posizione {0} di {1}\nMuoviti da un'altra parte",
       "translatorComment": ""
     },
     {
@@ -128,7 +128,7 @@
     },
     {
       "id": "/GeneralPage/Calibration/Captions/Stand",
-      "translation": "Posizione {1} di {2}\nPer favore non muoverti!",
+      "translation": "Posizione {0} di {1}\nPer favore non muoverti!",
       "translatorComment": ""
     },
     {
@@ -198,7 +198,7 @@
     },
     {
       "id": "/GeneralPage/Calibration/LabelsWhat/Brief/Right",
-      "translation": "Muovi su/giù\\Ruota sull'asse X",
+      "translation": "Muovi su/giù\nRuota sull'asse X",
       "translatorComment": ""
     },
     {
@@ -598,7 +598,7 @@
     },
     {
       "id": "/SettingsPage/Elements/FlipToggle/ToolTip",
-      "translation": "La disattivazione farà smettere ai tracker\\di specchiarsi quando volti le spalle al Kinect.",
+      "translation": "La disattivazione farà smettere ai tracker\ndi specchiarsi quando volti le spalle al Kinect.",
       "translatorComment": ""
     },
     {
@@ -1643,7 +1643,7 @@
     },
     {
       "id": "/CrashHandler/Content/Crash/Unknown",
-      "translation": "Sembra che sia successo qualcosa di strano all'app.\n\nNiente panico, (probabilmente) non è nemmeno colpa tua.\n\nProva a riavviare l'app.\nSe il problema persiste, prendi i log e contattaci su Discord.",
+      "translation": "Sembra che sia successo qualcosa di strano all'app.\n\nNiente panico, (probabilmente) non è nemmeno colpa tua.\n\nProva a riavviare l'app.\nSe il problema persiste, prendi i log e contattaci su\nDiscord.",
       "translatorComment": ""
     },
     {
