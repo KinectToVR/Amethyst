@@ -178,6 +178,11 @@ public class TrackingDevice : INotifyPropertyChanged
         return value ? 1.0 : 0.0;
     }
 
+    public double BoolToOpacityHalf(bool value)
+    {
+        return value ? 1.0 : 0.5;
+    }
+
     public double BoolToOpacityMultiple(bool v1, bool v2)
     {
         return v1 && v2 ? 1.0 : 0.0;

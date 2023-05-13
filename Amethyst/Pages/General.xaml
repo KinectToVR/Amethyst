@@ -276,7 +276,7 @@
                                     <DataTemplate x:DataType="mvvm:TrackingDevice">
 
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                              Opacity="{x:Bind BoolToOpacity(StatusOk), Mode=OneWay}">
+                                              Opacity="{x:Bind BoolToOpacityHalf(StatusOk), Mode=OneWay}">
 
                                             <Border Height="20" CornerRadius="3" Padding="5,0"
                                                     Margin="0,-15,15,0"
