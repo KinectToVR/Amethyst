@@ -467,15 +467,24 @@ public static class Main
                     JointRotationTrackingOption.DeviceInferredRotation)
                 {
                     // Standard, also apply calibration-related flipped orientation fixes
-                    tracker.Orientation = Support
-                        .FixFlippedOrientation(isJointFlipped
-                            ? Quaternion.Inverse(joint.Orientation).Projected()
-                            : joint.Orientation.Projected()).Q();
+                    tracker.Orientation = isJointFlipped
+                        ? Quaternion.Inverse(joint.Orientation)
+                        : joint.Orientation;
 
-                    tracker.PreviousOrientation = Support
-                        .FixFlippedOrientation(isJointFlipped
-                            ? Quaternion.Inverse(joint.PreviousOrientation).Projected()
-                            : joint.PreviousOrientation.Projected()).Q();
+                    tracker.PreviousOrientation = isJointFlipped
+                        ? Quaternion.Inverse(joint.PreviousOrientation)
+                        : joint.PreviousOrientation;
+
+                    // Apply calibration-related flipped orientation fixes
+                    if (isJointFlipped && tracker.OrientationTrackingOption
+                        != JointRotationTrackingOption.FollowHmdRotation)
+                    {
+                        // Note: only in flip mode
+                        tracker.Orientation = Support
+                            .FixFlippedOrientation(tracker.Orientation.Projected()).Q();
+                        tracker.PreviousOrientation = Support
+                            .FixFlippedOrientation(tracker.PreviousOrientation.Projected()).Q();
+                    }
                 }
 
                 // ReSharper disable once InvertIf | If overridden w/ position
