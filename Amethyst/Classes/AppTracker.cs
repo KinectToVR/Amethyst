@@ -35,7 +35,6 @@ public class AppTracker : INotifyPropertyChanged
     private Vector3 _lowPassPosition = new(0);
 
     // Does the managing device request no pos filtering?
-    private bool _noPositionFilteringRequested;
 
     // Position filter update option
     private RotationTrackingFilterOption _orientationTrackingFilterOption =
@@ -98,18 +97,7 @@ public class AppTracker : INotifyPropertyChanged
     }
 
     [JsonIgnore]
-    public bool NoPositionFilteringRequested
-    {
-        get => _noPositionFilteringRequested;
-        set
-        {
-            // Guard: don't do anything on actual no changes
-            if (_noPositionFilteringRequested == value) return;
-
-            _noPositionFilteringRequested = value;
-            OnPropertyChanged();
-        }
-    }
+    public bool NoPositionFilteringRequested { get; set; }
 
     // Override device's GUID
     public string OverrideGuid { get; set; } = string.Empty;
