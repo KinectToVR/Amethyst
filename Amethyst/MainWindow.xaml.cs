@@ -763,6 +763,32 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             }
         else Logger.Info("No default configuration found! [defaults.json]");
 
+        // Validate the saved service plugin guid
+        Logger.Info("Checking if the saved service endpoint exists in loaded plugins...");
+        if (!AppPlugins.ServiceEndpointsList.ContainsKey(AppData.Settings.ServiceEndpointGuid))
+        {
+            if (!string.IsNullOrEmpty(defaultSettings.ServiceGuid) && // Check the guid first
+                AppPlugins.ServiceEndpointsList.ContainsKey(defaultSettings.ServiceGuid))
+            {
+                Logger.Info($"The selected service endpoint ({AppData.Settings.ServiceEndpointGuid}) is invalid! " +
+                            $"Resetting it to the default one selected in defaults: ({defaultSettings.ServiceGuid})!");
+                AppData.Settings.ServiceEndpointGuid = defaultSettings.ServiceGuid;
+            }
+            else
+            {
+                Logger.Info($"The default service endpoint ({AppData.Settings.ServiceEndpointGuid}) is invalid! " +
+                            $"Resetting it to the first one: ({AppPlugins.ServiceEndpointsList.First().Key})!");
+                AppData.Settings.ServiceEndpointGuid = AppPlugins.ServiceEndpointsList.First().Key;
+            }
+        }
+
+        // Priority: Connect to the tracking service
+        Logger.Info("Initializing the selected service endpoint...");
+        AppPlugins.CurrentServiceEndpoint.Initialize();
+
+        Logger.Info("Checking the selected service endpoint...");
+        Interfacing.ServiceEndpointSetup();
+
         // Validate the saved base plugin guid
         Logger.Info("Checking if the saved base device exists in loaded plugins...");
         if (!AppPlugins.TrackingDevicesList.ContainsKey(AppData.Settings.TrackingDeviceGuid))
@@ -852,32 +878,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             Logger.Info($"Initializing the selected override device ({overrideGuid})...");
             AppPlugins.GetDevice(overrideGuid).Device.Initialize();
         }
-
-        // Validate the saved service plugin guid
-        Logger.Info("Checking if the saved service endpoint exists in loaded plugins...");
-        if (!AppPlugins.ServiceEndpointsList.ContainsKey(AppData.Settings.ServiceEndpointGuid))
-        {
-            if (!string.IsNullOrEmpty(defaultSettings.ServiceGuid) && // Check the guid first
-                AppPlugins.ServiceEndpointsList.ContainsKey(defaultSettings.ServiceGuid))
-            {
-                Logger.Info($"The selected service endpoint ({AppData.Settings.ServiceEndpointGuid}) is invalid! " +
-                            $"Resetting it to the default one selected in defaults: ({defaultSettings.ServiceGuid})!");
-                AppData.Settings.ServiceEndpointGuid = defaultSettings.ServiceGuid;
-            }
-            else
-            {
-                Logger.Info($"The default service endpoint ({AppData.Settings.ServiceEndpointGuid}) is invalid! " +
-                            $"Resetting it to the first one: ({AppPlugins.ServiceEndpointsList.First().Key})!");
-                AppData.Settings.ServiceEndpointGuid = AppPlugins.ServiceEndpointsList.First().Key;
-            }
-        }
-
-        // Priority: Connect to the tracking service
-        Logger.Info("Initializing the selected service endpoint...");
-        AppPlugins.CurrentServiceEndpoint.Initialize();
-
-        Logger.Info("Checking the selected service endpoint...");
-        Interfacing.ServiceEndpointSetup();
 
         Logger.Info("Checking application settings config for loaded plugins...");
         AppData.Settings.CheckSettings();
