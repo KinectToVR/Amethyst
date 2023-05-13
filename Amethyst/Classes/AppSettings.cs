@@ -218,7 +218,7 @@ public class AppSettings : INotifyPropertyChanged
         CheckSettings(true); // Check partially
     }
 
-    public void CheckSettings(bool partial = false, TrackingDevice device = null,
+    public void CheckSettings(bool partial = false, TrackingDevice device = null, bool blockEvents = true,
         [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
         [CallerMemberName] string memberName = "")
     {
@@ -227,6 +227,7 @@ public class AppSettings : INotifyPropertyChanged
                     "Checking Amethyst AppSettings [global] configuration...");
 
         CheckingSettings = true; // Don't check interface
+        BlockRaisedEvents = blockEvents; // Don't refresh
 
         // Check if the trackers vector is broken
         var vectorBroken = TrackersVector.Count < 7;
@@ -410,6 +411,7 @@ public class AppSettings : INotifyPropertyChanged
 
         // That's all for basic config!
         CheckingSettings = false;
+        BlockRaisedEvents = false;
         if (partial) return; // Don't.
 
         // Advanced config: runtime and tracking settings
@@ -511,8 +513,10 @@ public class AppSettings : INotifyPropertyChanged
         }
     }
 
+    private bool BlockRaisedEvents { get; set; } = false;
     public void OnPropertyChanged(string propName = null)
     {
+        if (BlockRaisedEvents) return; // Don't notify if blocked
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 }

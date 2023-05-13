@@ -377,6 +377,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
             Logger.Info("Refreshing shared properties of all other devices...");
             AppPlugins.TrackingDevicesList.ToList()
                 .ForEach(x => x.Value.OnPropertyChanged());
+            Shared.Events.RequestJointSettingsRefreshEvent?.Invoke(this, EventArgs.Empty);
 
             // Check the application config, save
             Logger.Info("Saving the configuration...");
@@ -423,6 +424,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
             Logger.Info("Refreshing shared properties of all other devices...");
             AppPlugins.TrackingDevicesList.ToList()
                 .ForEach(x => x.Value.OnPropertyChanged());
+            Shared.Events.RequestJointSettingsRefreshEvent?.Invoke(this, EventArgs.Empty);
 
             // Check the application config, save
             Logger.Info("Saving the configuration...");

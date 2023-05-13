@@ -77,10 +77,15 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
 
     private int PositionTrackingDisplayOption
     {
-        get => Trackers.FirstOrDefault()?.PositionTrackingDisplayOption ?? -1;
+        get => NoPositionFilteringRequested ? -1 : Trackers.FirstOrDefault()?.PositionTrackingDisplayOption ?? -1;
         set
         {
-            if (_filterInteractionsBlocked) return;
+            if (NoPositionFilteringRequested)
+            {
+                OnPropertyChanged();
+                return; // Don't care
+            }
+
             Trackers.ToList().ForEach(x => x.PositionTrackingDisplayOption = value);
         }
     }
@@ -88,15 +93,11 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
     private int OrientationTrackingDisplayOption
     {
         get => Trackers.FirstOrDefault()?.OrientationTrackingDisplayOption ?? -1;
-        set
-        {
-            if (_filterInteractionsBlocked) return;
-            Trackers.ToList().ForEach(x => x.OrientationTrackingDisplayOption = value);
-        }
+        set => Trackers.ToList().ForEach(x => x.OrientationTrackingDisplayOption = value);
     }
 
     private string ManagingDevicePlaceholder => Trackers.FirstOrDefault()?.ManagingDevicePlaceholder ?? "INVALID";
-    private bool NoPositionFilteringRequested => Trackers.FirstOrDefault()?.NoPositionFilteringRequested ?? false;
+    private bool NoPositionFilteringRequested => Trackers.Any(x => x.NoPositionFilteringRequested);
     private bool AppOrientationSupported => Trackers.All(x => x.AppOrientationSupported);
 
     private bool Show
@@ -135,25 +136,23 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
 
     private void ResubscribeListeners()
     {
+        // Unregister all reload events
+        AppData.Settings.PropertyChanged -= OnPropertyChanged;
+        AppData.Settings.TrackersVector.CollectionChanged -= OnPropertyChanged;
+        Shared.Events.RequestJointSettingsRefreshEvent -= OnPropertyChanged;
+        Trackers.ForEach(x => x.PropertyChanged -= OnPropertyChanged);
+
         // Register for any pending changes
-        AppData.Settings.PropertyChanged += (_, _) => OnPropertyChanged();
+        AppData.Settings.PropertyChanged += OnPropertyChanged;
+        AppData.Settings.TrackersVector.CollectionChanged += OnPropertyChanged;
+        Shared.Events.RequestJointSettingsRefreshEvent += OnPropertyChanged;
+        Trackers.ForEach(x => x.PropertyChanged += OnPropertyChanged);
     }
 
-    public void OnPropertyChanged(string propName = null)
+    public void OnPropertyChanged(object propName = null, object e = null)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-
-        // Block all ComboBox interactions
-        _filterInteractionsBlocked = true;
-
-        // Refresh ComboBox selected (display) items
-        PositionFilterComboBox.SelectedIndex = -1;
-        PositionFilterComboBox.SelectedIndex = PositionTrackingDisplayOption;
-        OrientationOptionComboBox.SelectedIndex = -1;
-        OrientationOptionComboBox.SelectedIndex = OrientationTrackingDisplayOption;
-
-        // Unblock all ComboBox interactions
-        _filterInteractionsBlocked = false;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(
+            propName is string ? propName.ToString() : null));
     }
 
     private bool InvertBool(bool v)
@@ -255,7 +254,13 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
-    private void CheckComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void PositionFilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if ((sender as ComboBox)!.SelectedIndex < 0 && !NoPositionFilteringRequested)
+            (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];
+    }
+
+    private void OrientationOptionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if ((sender as ComboBox)!.SelectedIndex < 0)
             (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];

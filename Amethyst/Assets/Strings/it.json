@@ -653,7 +653,7 @@
     },
     {
       "id": "/SettingsPage/Filters/Managed",
-      "translation": "Controllato da '{0}'",
+      "translation": "Controllato da {0}",
       "translatorComment": ""
     },
     {

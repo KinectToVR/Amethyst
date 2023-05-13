@@ -479,7 +479,7 @@
     },
     {
       "id": "/SettingsPage/Filters/Managed",
-      "translation": "Gestionado por '{0}'"
+      "translation": "Gestionado por {0}"
     },
     {
       "id": "/SettingsPage/ReManifest/Error/NotFound",

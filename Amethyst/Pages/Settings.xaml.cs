@@ -258,6 +258,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         // Check for autostart
         AutoStartCheckBox.IsChecked = AppPlugins.CurrentServiceEndpoint.AutoStartAmethyst;
+        Shared.Events.RequestJointSettingsRefreshEvent?.Invoke(this, EventArgs.Empty);
 
         // Optionally show the foreign language grid
         if (!File.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings",

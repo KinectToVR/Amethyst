@@ -57,9 +57,11 @@ public static class Shared
         }
 
         public delegate Task RequestEvent(object sender, EventArgs e);
+        public delegate void RaisedEvent(object sender, EventArgs e);
 
         public static RequestEvent RequestJointSelectorExpandersCollapseEvent;
         public static RequestEvent RequestOverrideExpandersCollapseEvent;
+        public static RaisedEvent RequestJointSettingsRefreshEvent;
     }
 
     public static class Main

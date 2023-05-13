@@ -84,7 +84,11 @@ public class AppTracker : INotifyPropertyChanged
     public bool IsPositionOverridden
     {
         get => !string.IsNullOrEmpty(OverrideGuid) && AppPlugins.IsOverride(OverrideGuid) && _isPositionOverridden;
-        set => _isPositionOverridden = value;
+        set
+        {
+            _isPositionOverridden = value;
+            Shared.Events.RequestJointSettingsRefreshEvent?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public bool IsOrientationOverridden
@@ -267,8 +271,9 @@ public class AppTracker : INotifyPropertyChanged
         IsPositionOverridden ? OverrideGuid : AppData.Settings.TrackingDeviceGuid;
 
     [JsonIgnore]
-    public string ManagingDevicePlaceholder => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Filters/Managed"), ManagingDeviceGuid);
+    public string ManagingDevicePlaceholder => string.Format(
+        Interfacing.LocalizedJsonString("/SettingsPage/Filters/Managed"),
+        AppPlugins.GetDevice(ManagingDeviceGuid).Device?.Name ?? "INVALID");
 
     [JsonIgnore]
     public bool IsTrackerExpanderOpen
@@ -367,7 +372,7 @@ public class AppTracker : INotifyPropertyChanged
 
             lock (Interfacing.UpdateLock)
             {
-                AppData.Settings.CheckSettings(); // Full
+                AppData.Settings.CheckSettings(blockEvents: true);
                 AppData.Settings.SaveSettings(); // Save it!
             }
 
@@ -514,7 +519,12 @@ public class AppTracker : INotifyPropertyChanged
     // and to select it, the filter number must be < 0
     public Quaternion GetFilteredOrientation(RotationTrackingFilterOption? filter = null)
     {
-        return (filter ?? _orientationTrackingFilterOption) switch
+        var computedFilter =
+            NoPositionFilteringRequested // If filtering is force-disabled
+                ? RotationTrackingFilterOption.NoOrientationTrackingFilter
+                : filter ?? _orientationTrackingFilterOption;
+
+        return computedFilter switch
         {
             RotationTrackingFilterOption.OrientationTrackingFilterSlerp => _slerpOrientation,
             RotationTrackingFilterOption.OrientationTrackingFilterSlerpSlow => _slerpSlowOrientation,
@@ -723,8 +733,11 @@ public class AppTracker : INotifyPropertyChanged
 
     public void OnPropertyChanged(string propName = null)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        PropertyChangedEvent?.Invoke(this, new PropertyChangedEventArgs(propName));
+        Shared.Main.DispatcherQueue?.TryEnqueue(() =>
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+            PropertyChangedEvent?.Invoke(this, new PropertyChangedEventArgs(propName));
+        });
     }
 
     // MVVM stuff
