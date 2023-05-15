@@ -97,7 +97,7 @@
                 <ResourceDictionary x:Key="Light">
                     <AcrylicBrush x:Key="CalibrationPaneBackgroundAcrylicBrush"
                                   TintOpacity="0.1" TintLuminosityOpacity="0.1"
-                                  TintColor="#FF000000" FallbackColor="#FF000000" />
+                                  TintColor="#FF000000" FallbackColor="#20000000" />
 
                     <SolidColorBrush x:Key="NoThemeColorSolidColorBrush" Color="White" />
                     <SolidColorBrush x:Key="NoThemeColorSolidColorBrushOpposite" Color="Black" />
@@ -110,7 +110,7 @@
                 <ResourceDictionary x:Key="Dark">
                     <AcrylicBrush x:Key="CalibrationPaneBackgroundAcrylicBrush"
                                   TintOpacity="0.1" TintLuminosityOpacity="0.2"
-                                  TintColor="#FF000000" FallbackColor="#FF000000" />
+                                  TintColor="#FF000000" FallbackColor="#33000000" />
 
                     <SolidColorBrush x:Key="NoThemeColorSolidColorBrush" Color="Black" />
                     <SolidColorBrush x:Key="NoThemeColorSolidColorBrushOpposite" Color="White" />
@@ -123,7 +123,7 @@
                 <ResourceDictionary x:Key="HighContrast">
                     <AcrylicBrush x:Key="CalibrationPaneBackgroundAcrylicBrush"
                                   TintOpacity="0.1" TintLuminosityOpacity="0.2"
-                                  TintColor="#FF000000" FallbackColor="#FF000000" />
+                                  TintColor="#FF000000" FallbackColor="#55000000" />
 
                     <SolidColorBrush x:Key="NoThemeColorSolidColorBrush" Color="Black" />
                     <SolidColorBrush x:Key="NoThemeColorSolidColorBrushOpposite" Color="White" />
