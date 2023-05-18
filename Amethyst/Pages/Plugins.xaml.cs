@@ -1263,13 +1263,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
     {
         return value ? 1.0 : 0.0;
     }
-
-    private void Expander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
-    {
-        if (!(sender?.IsLoaded ?? false)) return;
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
-    }
-
+    
     private async void PluginsListTeachingTip_ActionButtonClick(TeachingTip sender, object args)
     {
         // Play a sound

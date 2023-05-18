@@ -44,6 +44,9 @@ public static class AppPlugins
     // Written to at the first plugin load
     public static readonly ObservableCollection<LoadAttemptedPlugin> LoadAttemptedPluginsList = new();
 
+    public static IEnumerable<LoadAttemptedPlugin> LoadedPluginsList => LoadAttemptedPluginsList.Where(x => x.IsLoaded);
+    public static IEnumerable<LoadAttemptedPlugin> ErrorPluginsList => LoadAttemptedPluginsList.Where(x => !x.IsLoaded);
+
     // Plugin settings (Note: GUIDs must not overlap)
     public static AppPluginSettings PluginSettings { get; set; } = new();
 

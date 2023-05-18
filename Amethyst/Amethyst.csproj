@@ -74,6 +74,7 @@
     <ItemGroup>
         <None Remove="Controls\JointSelectorExpander.xaml" />
         <None Remove="Controls\JointSettingsExpander.xaml" />
+        <None Remove="Controls\LoadAttemptedPluginsView.xaml" />
         <None Remove="Controls\OverrideExpander.xaml" />
         <None Remove="Pages\Devices.xaml" />
         <None Remove="Pages\General.xaml" />
@@ -95,6 +96,11 @@
         <Content Include="Assets\**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Controls\LoadAttemptedPluginsView.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
     <ItemGroup>
       <Page Update="Popups\Blocked.xaml">

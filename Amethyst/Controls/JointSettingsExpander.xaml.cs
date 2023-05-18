@@ -19,7 +19,6 @@ namespace Amethyst.Controls;
 public sealed partial class JointSettingsExpander : UserControl, INotifyPropertyChanged
 {
     private bool _blockPropertyToggleSignals;
-    private bool _filterInteractionsBlocked;
 
     public JointSettingsExpander()
     {
