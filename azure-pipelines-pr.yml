@@ -1,7 +1,7 @@
-trigger:
-- main
+trigger: none
 
-pr: none
+pr:
+- main
 
 pool:
   vmImage: 'windows-latest'
@@ -13,23 +13,7 @@ variables:
     value: 'x64'
   - name: buildConfiguration
     value: 'Release'
-  - name: publishDirectory
-    value: 'Pack/Output'
-  - name: artifactDirectory
-    value: 'Pack/Zip'
-  - group: AppCenter
   
-parameters:
-  - name: 'plugins'
-    type: object
-    default: 
-      - "plugin_KinectV1"
-      - "plugin_KinectV2"
-      - "plugin_PSMoveService"
-      - "plugin_owoTrackVR"
-      - "plugin_OpenVR"
-      - "plugin_OSC"
-
 name: 1.2.$(Date:yyyyMMdd).$(Rev:r)
 
 steps:
@@ -54,9 +38,7 @@ steps:
   displayName: Add version data to Amethyst
 
 - pwsh: |
-    ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_API_TOKEN', "$(AppToken)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
     ((Get-Content -path .\Amethyst\App.xaml.cs -Raw) -replace 'AZ_COMMIT_SHA', "$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\App.xaml.cs
-    ((Get-Content -path .\Amethyst\App.xaml.cs -Raw) -replace 'AZ_APPSECRET', "$(AppSecret)") | Set-Content -Path .\Amethyst\App.xaml.cs
     (((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace '<!--AZ_COMMIT_DATA', '') -replace 'AZ_COMMIT_DATA-->', '') | Set-Content -Path .\Amethyst\Pages\Info.xaml
     ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_SHA', "$("$(Build.SourceVersion)".Substring(0,7))") | Set-Content -Path .\Amethyst\Pages\Info.xaml
     ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_LINK', "https://github.com/KinectToVR/Amethyst/commit/$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\Pages\Info.xaml
@@ -77,68 +59,3 @@ steps:
     solution: '$(solution)'
     configuration: '$(buildConfiguration)'
     msbuildArgs: '/restore /p:Platform=x64 /p:PlatformTarget=x64 /p:Configuration=Release /p:RuntimeIdentifier=win10-x64 /t:K2CrashHandler:Publish /p:PublishProfile=K2CrashHandler\Properties\PublishProfiles\FolderProfile.pubxml'
-
-- task: CopyFiles@2
-  displayName: Pack Amethyst
-  inputs:
-    SourceFolder: 'Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\publish'
-    Contents: '**'
-    TargetFolder: $(publishDirectory)
-    preserveTimestamp: true
-
-- task: CopyFiles@2
-  displayName: Pack K2CrashHandler
-  inputs:
-    SourceFolder: 'K2CrashHandler\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\publish'
-    Contents: '**'
-    TargetFolder: $(publishDirectory)\K2CrashHandler
-    preserveTimestamp: true
-
-- ${{each plugin in parameters.plugins}}:
-  - task: DownloadGitHubRelease@0
-    displayName: 'Download plugin ${{ plugin  }}'
-    inputs:
-      connection: github.com_KimihikoAkayasaki
-      userRepository: 'KinectToVR/${{ plugin  }}'
-      defaultVersionType: latest
-      version: latest
-      downloadPath: $(artifactDirectory)
-  - task: ExtractFiles@1
-    displayName: 'Pack plugin ${{ plugin  }}'
-    inputs:
-      archiveFilePatterns: '$(artifactDirectory)/${{ plugin  }}.zip'
-      destinationFolder: '$(publishDirectory)/Plugins/${{ plugin  }}'
-      cleanDestinationFolder: false
-
-- task: ArchiveFiles@2
-  displayName: Archive published files
-  inputs:
-    rootFolderOrFile: $(publishDirectory)
-    includeRootFolder: false
-    archiveFile: $(Build.ArtifactStagingDirectory)/Amethyst.$(Build.BuildNumber).zip
-
-- task: GitHubRelease@1
-  displayName: Prepare for artifact upload
-  inputs:
-    gitHubConnection: github.com_KimihikoAkayasaki
-    action: delete
-    tagSource: userSpecifiedTag
-    tag: latest
-    tagPattern: .*
-
-- script: git push --delete origin latest
-  displayName: Cleanup tags before uploading
-
-- task: GitHubRelease@1
-  displayName: Upload packed app artifact
-  inputs:
-    gitHubConnection: github.com_KimihikoAkayasaki
-    action: create
-    tagSource: userSpecifiedTag
-    tag: latest
-    tagPattern: .*
-    title: 'Amethyst $(Build.BuildNumber)'
-    changeLogCompareToRelease: lastFullRelease
-    changeLogType: commitBased
-    isPreRelease: true
-    assetUploadMode: delete
