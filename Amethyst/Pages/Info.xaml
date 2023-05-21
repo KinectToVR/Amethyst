@@ -217,7 +217,8 @@
                     <Run xml:space="preserve">Sky (P. S.)    </Run>
                     <Run xml:space="preserve">Sylva    </Run>
                     <Run xml:space="preserve">TeH_Venom    </Run>
-                    <Run xml:space="preserve">vexa (vexatag)</Run>
+                    <Run xml:space="preserve">vexa (vexatag)    </Run>
+                    <Run xml:space="preserve">Stiggimy</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
