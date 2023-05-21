@@ -523,7 +523,7 @@
     },
     {
       "id": "/SettingsPage/Captions/ExtFlip",
-      "translation": "Quando è attivo Amethyst will deciderà se sei voltato di spalle,\ncontrollando il tracker del busto attualmente attivo su SteamVR (se presente)",
+      "translation": "Se attivato Amethyst capirà se sei voltato di spalle tramite i dati di rotazione\ndel tracker del busto attualmente attivo su SteamVR (se presente)",
       "translatorComment": ""
     },
     {
@@ -718,7 +718,7 @@
     },
     {
       "id": "/SettingsPage/Titles/ExtFlip",
-      "translation": "Usa dati del tracker del busto esterno anziché quelli del visore quando rilevato",
+      "translation": "Usa rotazione del tracker esterno del busto anziché quella del visore quando è possibile",
       "translatorComment": ""
     },
     {
