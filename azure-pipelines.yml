@@ -20,6 +20,7 @@ variables:
   - name: packageVersion
     value: 1.2.1.5
   - group: AppCenter
+  - group: Protected
   
 parameters:
   - name: 'plugins'
@@ -87,6 +88,9 @@ steps:
       destinationFolder: 'Amethyst/Plugins/${{ plugin  }}'
       cleanDestinationFolder: false
 
+- pwsh: Import-PfxCertificate -CertStoreLocation Cert:\CurrentUser\My -FilePath "$(signingCert.secureFilePath)" -Password $(ConvertTo-SecureString "$(PackageCertificatePassword)" -AsPlainText -Force)
+  displayName: Import the signing certificate
+
 - task: VSBuild@1
   displayName: Build (publish) Amethyst
   inputs:
@@ -95,9 +99,9 @@ steps:
     configuration: '$(buildConfiguration)'
     msbuildArgs: '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true 
                   /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml 
-                  /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\" 
-                  /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="./Amethyst_TestingKey.pfx" 
-                  /p:PackageCertificateThumbprint="2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1"'
+                  /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\" 
+                  /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)" 
+                  /p:PackageCertificateThumbprint="2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1" /p:PackageCertificatePassword="$(PackageCertificatePassword)"'
 
 - task: VSBuild@1
   displayName: Build (publish) K2CrashHandler
@@ -107,9 +111,9 @@ steps:
     configuration: '$(buildConfiguration)'
     msbuildArgs: '/t:K2CrashHandler /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true 
                   /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=K2CrashHandler\Properties\PublishProfiles\win10-$(buildPlatform).pubxml 
-                  /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\" 
-                  /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="./Amethyst_TestingKey.pfx" 
-                  /p:PackageCertificateThumbprint="2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1"'
+                  /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\" 
+                  /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)" 
+                  /p:PackageCertificateThumbprint="2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1" /p:PackageCertificatePassword="$(PackageCertificatePassword)"'
 
 - task: CopyFiles@2
   displayName: Pack Amethyst
