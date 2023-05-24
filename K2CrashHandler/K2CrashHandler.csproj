@@ -13,7 +13,7 @@
         <UseWinUI>true</UseWinUI>
         <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
         
-        <WindowsPackageType>None</WindowsPackageType>
+        <!--<WindowsPackageType>None</WindowsPackageType>-->
         <BaseOutputPath></BaseOutputPath>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
         <PublishTrimmed>false</PublishTrimmed>
@@ -28,6 +28,15 @@
         <FileVersion>1.2.1.3</FileVersion>
         <AssemblyVersion>1.2.1.3</AssemblyVersion>
         <RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
+        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+        <PackageCertificateThumbprint>2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1</PackageCertificateThumbprint>
+        <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+        <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+        <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+        <GenerateTestArtifacts>True</GenerateTestArtifacts>
+        <AppxBundle>Never</AppxBundle>
+        <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     </PropertyGroup>
 
     <ItemGroup>

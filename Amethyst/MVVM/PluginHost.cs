@@ -246,16 +246,10 @@ public class PluginHost : IAmethystHost
         Shared.Main.DispatcherQueue.TryEnqueue(async () =>
         {
             // Launch the crash handler if fatal
-            if (fatal)
-            {
-                var hPath = Path.Combine(ProgramLocation.DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
-                if (File.Exists(hPath)) Process.Start(hPath, new[] { "plugin_message", message, Guid });
-                else Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
-            }
+            if (fatal) await Launcher.LaunchUriAsync(new Uri($"amethyst-crash:message#{message}"));
 
             // Handle all the exit actions (if needed)
-            if (!IsExitHandled)
-                await HandleAppExit(1000);
+            if (!IsExitHandled) await HandleAppExit(1000);
 
             // Finally exit with code 0
             Environment.Exit(0);

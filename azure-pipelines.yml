@@ -1,5 +1,5 @@
 trigger:
-- main
+- packaged
 
 pr: none
 
@@ -17,6 +17,8 @@ variables:
     value: 'Pack/Output'
   - name: artifactDirectory
     value: 'Pack/Zip'
+  - name: packageVersion
+    value: 1.2.1.5
   - group: AppCenter
   
 parameters:
@@ -62,37 +64,11 @@ steps:
     ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_LINK', "https://github.com/KinectToVR/Amethyst/commit/$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\Pages\Info.xaml
   displayName: Add commit data to Amethyst
 
-- task: VSBuild@1
-  displayName: Build (publish) Amethyst
+- task: DownloadSecureFile@1
+  name: signingCert
+  displayName: Download the signing certificate
   inputs:
-    platform: 'x64'
-    solution: '$(solution)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/restore /p:Platform=x64 /p:PlatformTarget=x64 /p:Configuration=Release /p:RuntimeIdentifier=win10-x64 /t:Amethyst:Publish /p:PublishProfile=Amethyst\Properties\PublishProfiles\FolderProfile.pubxml'
-
-- task: VSBuild@1
-  displayName: Build (publish) K2CrashHandler
-  inputs:
-    platform: 'x64'
-    solution: '$(solution)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/restore /p:Platform=x64 /p:PlatformTarget=x64 /p:Configuration=Release /p:RuntimeIdentifier=win10-x64 /t:K2CrashHandler:Publish /p:PublishProfile=K2CrashHandler\Properties\PublishProfiles\FolderProfile.pubxml'
-
-- task: CopyFiles@2
-  displayName: Pack Amethyst
-  inputs:
-    SourceFolder: 'Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\publish'
-    Contents: '**'
-    TargetFolder: $(publishDirectory)
-    preserveTimestamp: true
-
-- task: CopyFiles@2
-  displayName: Pack K2CrashHandler
-  inputs:
-    SourceFolder: 'K2CrashHandler\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\publish'
-    Contents: '**'
-    TargetFolder: $(publishDirectory)\K2CrashHandler
-    preserveTimestamp: true
+    secureFile: 'Amethyst_TestingKey.pfx'
 
 - ${{each plugin in parameters.plugins}}:
   - task: DownloadGitHubRelease@0
@@ -103,19 +79,53 @@ steps:
       defaultVersionType: latest
       version: latest
       downloadPath: $(artifactDirectory)
+
   - task: ExtractFiles@1
     displayName: 'Pack plugin ${{ plugin  }}'
     inputs:
       archiveFilePatterns: '$(artifactDirectory)/${{ plugin  }}.zip'
-      destinationFolder: '$(publishDirectory)/Plugins/${{ plugin  }}'
+      destinationFolder: 'Amethyst/Plugins/${{ plugin  }}'
       cleanDestinationFolder: false
 
-- task: ArchiveFiles@2
-  displayName: Archive published files
+- task: VSBuild@1
+  displayName: Build (publish) Amethyst
   inputs:
-    rootFolderOrFile: $(publishDirectory)
-    includeRootFolder: false
-    archiveFile: $(Build.ArtifactStagingDirectory)/Amethyst.$(Build.BuildNumber).zip
+    platform: '$(buildPlatform)'
+    solution: '$(solution)'
+    configuration: '$(buildConfiguration)'
+    msbuildArgs: '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true 
+                  /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml 
+                  /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\" 
+                  /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="./Amethyst_TestingKey.pfx" 
+                  /p:PackageCertificateThumbprint="2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1"'
+
+- task: VSBuild@1
+  displayName: Build (publish) K2CrashHandler
+  inputs:
+    platform: '$(buildPlatform)'
+    solution: '$(solution)'
+    configuration: '$(buildConfiguration)'
+    msbuildArgs: '/t:K2CrashHandler /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true 
+                  /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=K2CrashHandler\Properties\PublishProfiles\win10-$(buildPlatform).pubxml 
+                  /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\" 
+                  /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="./Amethyst_TestingKey.pfx" 
+                  /p:PackageCertificateThumbprint="2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1"'
+
+- task: CopyFiles@2
+  displayName: Pack Amethyst
+  inputs:
+    SourceFolder: 'Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test\Amethyst_$(packageVersion)_$(buildPlatform).msix'
+    Contents: '**'
+    TargetFolder: $(Build.ArtifactStagingDirectory)
+    preserveTimestamp: true
+
+- task: CopyFiles@2
+  displayName: Pack K2CrashHandler
+  inputs:
+    SourceFolder: 'K2CrashHandler\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\K2CrashHandler_$(packageVersion)_Test\K2CrashHandler_$(packageVersion)_$(buildPlatform).msix'
+    Contents: '**'
+    TargetFolder: $(Build.ArtifactStagingDirectory)
+    preserveTimestamp: true
 
 - task: GitHubRelease@1
   displayName: Prepare for artifact upload

@@ -1,10 +1,13 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 using Windows.Web.Http;
 using K2CrashHandler.Helpers;
 using Microsoft.UI.Xaml;
 using Newtonsoft.Json.Linq;
+using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -60,9 +63,9 @@ public partial class App : Application
                     using var response = await client.GetAsync(new Uri("https://docs.k2vr.tech/shared/locales.json"));
                     using var content = response.Content;
                     var json = await content.ReadAsStringAsync();
-
+                    
                     // Optionally fall back to English
-                    if (JArray.Parse(json)[Shared.DocsLanguageCode] == null)
+                    if (JObject.Parse(json)[Shared.DocsLanguageCode] == null)
                         Shared.DocsLanguageCode = "en";
                 }
                 catch (Exception)

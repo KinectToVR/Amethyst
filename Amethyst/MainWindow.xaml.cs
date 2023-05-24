@@ -1214,6 +1214,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
         try
         {
+            // TODO Updates will be provided via Windows Update as per APPX/MSIX update schema
             // Optional auto-restart scenario "-o" (happens when the user clicks 'update now')
             Process.Start(new ProcessStartInfo
             {

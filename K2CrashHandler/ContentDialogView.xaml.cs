@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -70,9 +71,9 @@ public sealed partial class ContentDialogView
                 Environment.SpecialFolder.ApplicationData), "Amethyst\\logs\\"));
     }
 
-    private void DiscordHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)
+    private async void DiscordHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)
     {
-        Process.Start("explorer.exe", "https://discord.gg/YBQCRDG");
+        await Launcher.LaunchUriAsync(new Uri("https://discord.gg/YBQCRDG"));
     }
 
     public async Task<bool> HandlePrimaryButtonConfirmationFlyout(string content, string confirmButtonText,

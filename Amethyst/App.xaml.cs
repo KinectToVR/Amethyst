@@ -21,6 +21,7 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -250,13 +251,7 @@ public partial class App : Application
             if (!needToCreateNew)
             {
                 Logger.Fatal(new AbandonedMutexException("Startup failed! The app is already running."));
-
-                if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
-                        "K2CrashHandler", "K2CrashHandler.exe")))
-                    Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
-                        "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
-                else
-                    Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
+                await Launcher.LaunchUriAsync(new Uri("amethyst-crash:already_running"));
 
                 await Task.Delay(3000);
                 Environment.Exit(0); // Exit peacefully
@@ -264,30 +259,17 @@ public partial class App : Application
         }
         catch (Exception e)
         {
-            Logger.Fatal(new AbandonedMutexException(
-                $"Startup failed! Multi-instance lock mutex creation error: {e.Message}"));
-
-            if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
-                    "K2CrashHandler", "K2CrashHandler.exe")))
-                Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
-                    "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
-            else
-                Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
+            Logger.Fatal(new AbandonedMutexException($"Startup failed! Mutex creation error: {e.Message}"));
+            await Launcher.LaunchUriAsync(new Uri("amethyst-crash:already_running"));
 
             await Task.Delay(3000);
             Environment.Exit(0); // Exit peacefully
         }
 
-        // Priority: Launch the crash handler
         Logger.Info("Starting the crash handler passing the app PID...");
-
-        if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
-                "K2CrashHandler", "K2CrashHandler.exe")))
-            Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
-                "K2CrashHandler", "K2CrashHandler.exe"), $"{Environment.ProcessId} \"{Logger.LogFilePath}\"");
-        else
-            Logger.Warn(
-                $"Crash handler exe ({Path.Combine(Interfacing.ProgramLocation.DirectoryName, "K2CrashHandler", "K2CrashHandler.exe")}) not found!");
+        await Launcher.LaunchUriAsync( // Priority: Launch the crash handler
+            new Uri($"amethyst-crash:watchdog?pid={Environment.ProcessId}&log={Logger.LogFilePath}" +
+                    $"&crash={Path.Join(Interfacing.ProgramLocation.DirectoryName, ".crash")}"));
 
         // Disable internal sounds
         ElementSoundPlayer.State = ElementSoundPlayerState.Off;

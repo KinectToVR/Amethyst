@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Data.Json;
+using Windows.System;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -141,13 +142,11 @@ public static class Interfacing
     public static void Fail(string message)
     {
         IsExitHandled = true;
-
-        // Find the crash handler and show it with a custom message
-        var hPath = Path.Combine(ProgramLocation.DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
-        if (File.Exists(hPath)) Process.Start(hPath, new[] { "message", message });
-        else Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
-
-        Environment.Exit(0);
+        Task.Run(async () =>
+        {
+            await Launcher.LaunchUriAsync(new Uri($"amethyst-crash:message#{message}"));
+            Environment.Exit(0); // Find the crash handler and show it with a custom message
+        });
     }
 
     // Show SteamVR toast / notification

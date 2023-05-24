@@ -13,13 +13,13 @@
         <UseWinUI>true</UseWinUI>
         <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 
-        <WindowsPackageType>None</WindowsPackageType>
+        <!--<WindowsPackageType>None</WindowsPackageType>-->
         <BaseOutputPath></BaseOutputPath>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
         <PublishTrimmed>false</PublishTrimmed>
         <EmbedManifest>true</EmbedManifest>
         
-        <AppxPackage>false</AppxPackage>
+        <!--<AppxPackage>false</AppxPackage>-->
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <StartupObject>Amethyst.Program</StartupObject>
 
@@ -37,6 +37,15 @@
     <PropertyGroup>
         <CsWinRTIncludes>AmethystSupport</CsWinRTIncludes>
         <CsWinRTGeneratedFilesDir>$(OutDir)</CsWinRTGeneratedFilesDir>
+        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+        <PackageCertificateThumbprint>2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1</PackageCertificateThumbprint>
+        <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+        <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+        <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+        <GenerateTestArtifacts>True</GenerateTestArtifacts>
+        <AppxBundle>Never</AppxBundle>
+        <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -72,6 +81,11 @@
         <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
     </PropertyGroup>
     <ItemGroup>
+        <None Remove="Assets\Visuals\StoreLogo.scale-100.png" />
+        <None Remove="Assets\Visuals\StoreLogo.scale-125.png" />
+        <None Remove="Assets\Visuals\StoreLogo.scale-150.png" />
+        <None Remove="Assets\Visuals\StoreLogo.scale-200.png" />
+        <None Remove="Assets\Visuals\StoreLogo.scale-400.png" />
         <None Remove="Controls\JointSelectorExpander.xaml" />
         <None Remove="Controls\JointSettingsExpander.xaml" />
         <None Remove="Controls\LoadAttemptedPluginsView.xaml" />
@@ -94,6 +108,11 @@
     </ItemGroup>
     <ItemGroup>
         <Content Include="Assets\**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="Plugins\**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>

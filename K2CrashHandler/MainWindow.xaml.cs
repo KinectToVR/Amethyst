@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Web;
+using Windows.ApplicationModel;
 using Windows.Graphics;
 using Windows.System;
 using K2CrashHandler.Helpers;
@@ -12,6 +15,8 @@ using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using WinRT.Interop;
+using Windows.UI.Popups;
+using AppInstance = Microsoft.Windows.AppLifecycle.AppInstance;
 
 namespace K2CrashHandler;
 // To learn more about WinUI, the WinUI project structure,
@@ -19,7 +24,7 @@ namespace K2CrashHandler;
 
 public sealed partial class MainWindow : Window
 {
-    public static HandlerMode CrashHandlerMode;
+    public static HandlerMode CrashHandlerMode = HandlerMode.None;
     public static int ProcessExitCode;
     public static ContentDialogView DialogView;
 
@@ -66,30 +71,25 @@ public sealed partial class MainWindow : Window
             handlerContent = LangResString("Content/Recovery"),
             primaryButtonText = LangResString("PrimaryButton/Recovery"),
             secondaryButtonText = LangResString("SecondaryButton/Recovery"),
-            logFileLocation = "0";
+            logFileLocation = "0", crashFileLocation = string.Empty;
 
         // Prepare placeholder callbacks (recovery mode)
         RoutedEventHandler primaryButtonHandler = Action_OpenCollective,
             secondaryButtonHandler = Action_Close;
 
-        // Check if there's any argv[1]
-        var args = Environment.GetCommandLineArgs();
+        // Check if there's any launch arguments
+        var activationUri = (AppInstance.GetCurrent().GetActivatedEventArgs().Data as
+            Windows.ApplicationModel.Activation.ProtocolActivatedEventArgs)?.Uri;
 
-        CrashHandlerMode = args.Length > 1
-            ? HandlerMode.CrashWatchdog
-            : HandlerMode.None;
-
-        if (CrashHandlerMode == HandlerMode.CrashWatchdog)
-        {
-            if (args[1].Contains("already_running"))
-                CrashHandlerMode = HandlerMode.AlreadyRunning;
-
-            else if (args[1].Contains("vr_elevated"))
-                CrashHandlerMode = HandlerMode.RunningElevated;
-
-            else if (args[1].Contains("message"))
-                CrashHandlerMode = HandlerMode.CrashMessage;
-        }
+        if (activationUri is not null && activationUri.Segments.Length > 0)
+            CrashHandlerMode = activationUri?.Segments.First() switch
+            {
+                "already_running" => HandlerMode.AlreadyRunning,
+                "vr_elevated" => HandlerMode.RunningElevated,
+                "message" => HandlerMode.CrashMessage,
+                "watchdog" => HandlerMode.CrashWatchdog,
+                _ => CrashHandlerMode // In any other case
+            };
 
         // If we're OK then don't use recovery mode
         //    and wait + optionally parse the crash
@@ -97,16 +97,17 @@ public sealed partial class MainWindow : Window
         {
             case HandlerMode.CrashWatchdog:
             {
-                // Get argv[1] for the launch
-                var appPid = args[1];
-                if (args.Length > 2)
-                    logFileLocation = args[2];
-
                 // Wait for the app to exit and grab the exit code
                 try
                 {
-                    var pid = int.Parse(appPid);
+                    var queryDictionary = System.Web.HttpUtility
+                        .ParseQueryString(activationUri!.Query.TrimStart('?'));
+
+                    var pid = int.Parse(queryDictionary["pid"]!);
                     var process = Process.GetProcessById(pid);
+
+                    logFileLocation = queryDictionary["log"];
+                    crashFileLocation = queryDictionary["crash"];
 
                     process.EnableRaisingEvents = true;
                     process.Exited += ProcessEnded;
@@ -132,13 +133,7 @@ public sealed partial class MainWindow : Window
                         Close(); // We're OK to exit
 
                     // Don't handle post-exit crashes
-                    if (!File.Exists(
-                            Path.Combine(
-                                Directory.GetParent(
-                                    Directory.GetParent(
-                                        Assembly.GetExecutingAssembly().Location
-                                    ).ToString()).ToString(),
-                                ".crash")))
+                    if (!File.Exists(crashFileLocation))
                         Close(); // We're OK to exit
 
                     // Parse the exit code into strings
@@ -255,7 +250,7 @@ public sealed partial class MainWindow : Window
 
                 handlerTitle = LangResString("Title/Crash");
                 primaryButtonText = LangResString("PrimaryButton/Crash/Default");
-                handlerContent = args[2];
+                handlerContent = HttpUtility.UrlDecode(activationUri?.Fragment.TrimStart('#'));
                 break;
             }
 
@@ -321,7 +316,7 @@ public sealed partial class MainWindow : Window
 
         // Another one
         AppWindow.Show(true);
-        
+
         // And show it (forcibly)
         SetForegroundWindow(WindowNative
             .GetWindowHandle(this));
@@ -329,13 +324,14 @@ public sealed partial class MainWindow : Window
         // Construct the dialog
         DialogView = new ContentDialogView
         (
-            handlerTitle,
+            Package.Current.MutablePath,
+            // handlerTitle,
             handlerContent,
             primaryButtonText,
             secondaryButtonText,
             primaryButtonHandler,
             secondaryButtonHandler,
-            args.Length > 1,
+            CrashHandlerMode != HandlerMode.None,
             logFileLocation
         );
 
