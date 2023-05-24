@@ -148,6 +148,8 @@ steps:
     tag: latest
     tagPattern: .*
     title: 'Amethyst $(Build.BuildNumber)'
+    releaseNotesSource: 'inline'
+    releaseNotesInline: '![Register](https://i.imgur.com/8PdCbMB.mp4)'
     changeLogCompareToRelease: lastFullRelease
     changeLogType: commitBased
     isPreRelease: true
