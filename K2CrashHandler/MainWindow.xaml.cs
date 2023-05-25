@@ -324,8 +324,7 @@ public sealed partial class MainWindow : Window
         // Construct the dialog
         DialogView = new ContentDialogView
         (
-            Package.Current.MutablePath,
-            // handlerTitle,
+            handlerTitle,
             handlerContent,
             primaryButtonText,
             secondaryButtonText,
