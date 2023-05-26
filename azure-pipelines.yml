@@ -131,30 +131,28 @@ steps:
     TargetFolder: $(Build.ArtifactStagingDirectory)
     preserveTimestamp: true
 
-- task: GitHubRelease@1
-  displayName: Prepare for artifact upload
+- task: AppCenterDistribute@3
+  displayName: Upload packed Amethyst artifact
   inputs:
-    gitHubConnection: github.com_KimihikoAkayasaki
-    action: delete
-    tagSource: userSpecifiedTag
-    tag: latest
-    tagPattern: .*
+    serverEndpoint: K2VR
+    appSlug: K2VR/Amethyst
+    appFile: '$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform).msix'
+    buildVersion: $(packageVersion)
+    releaseNotesOption: 'input'
+    releaseNotesInput: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, the [Crash Handler](https://install.appcenter.ms/orgs/k2vr/apps/amethyst-crashhandler/distribution_groups/public/releases/latest) and [Amethyst itself]((https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest))  \n(Note: The cert import is one-time, no need to redo it each time)  \n(Note: You'll get protocol run errors if the crash handler is missing)  \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
+    isMandatory: true
+    destinationType: 'groups'
+    distributionGroupId: 'dd3c18b6-8f5a-4b66-8a9b-83575b32c9ce'
 
-- script: git push --delete origin latest
-  displayName: Cleanup tags before uploading
-
-- task: GitHubRelease@1
-  displayName: Upload packed app artifact
+- task: AppCenterDistribute@3
+  displayName: Upload packed K2CrashHandler artifact
   inputs:
-    gitHubConnection: github.com_KimihikoAkayasaki
-    action: create
-    tagSource: userSpecifiedTag
-    tag: latest
-    tagPattern: .*
-    title: 'Amethyst $(Build.BuildNumber)'
-    releaseNotesSource: 'inline'
-    releaseNotesInline: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate and both appx packages  \n(Note: The cert import is one-time, no need to redo it each time)  \n(Note: You'll get protocol run errors if the crash handler is missing)  \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
-    changeLogCompareToRelease: lastFullRelease
-    changeLogType: commitBased
-    isPreRelease: true
-    assetUploadMode: delete
+    serverEndpoint: K2VR
+    appSlug: K2VR/Amethyst-CrashHandler
+    appFile: '$(Build.ArtifactStagingDirectory)/K2CrashHandler_$(packageVersion)_$(buildPlatform).msix'
+    buildVersion: $(packageVersion)
+    releaseNotesOption: 'input'
+    releaseNotesInput: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, the [Crash Handler](https://install.appcenter.ms/orgs/k2vr/apps/amethyst-crashhandler/distribution_groups/public/releases/latest) and [Amethyst itself]((https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest))  \n(Note: The cert import is one-time, no need to redo it each time)  \n(Note: You'll get protocol run errors if the crash handler is missing)  \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
+    isMandatory: true
+    destinationType: 'groups'
+    distributionGroupId: '7d5625f2-908d-49c7-899a-498c86d37396'
