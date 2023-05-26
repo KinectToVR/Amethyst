@@ -142,11 +142,16 @@ public static class Interfacing
     public static void Fail(string message)
     {
         IsExitHandled = true;
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
-            await Launcher.LaunchUriAsync(new Uri($"amethyst-crash:message#{message}"));
-            Environment.Exit(0); // Find the crash handler and show it with a custom message
-        });
+            Logger.Info($"Activating the crash handler with #message: {message}");
+            await $"amethyst-crash:message#{message}".ToUri().LaunchAsync();
+
+            Logger.Info("Waiting...");
+            await Task.Delay(1000); // Wait for the crash handler to be activated
+        }).Wait();
+
+        Environment.Exit(0); // Exit
     }
 
     // Show SteamVR toast / notification

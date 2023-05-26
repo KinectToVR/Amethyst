@@ -266,7 +266,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         if (catalog.Catalogs.Count < 1)
         {
-            Logger.Fatal(new CompositionException("No plugins directories found! Shutting down..."));
+            Logger.Fatal(new CompositionException("No plugin directories found! Shutting down..."));
             Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoPlugins"));
         }
 

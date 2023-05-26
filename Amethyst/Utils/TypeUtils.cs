@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using Windows.Storage;
+using Windows.System;
 
 namespace Amethyst.Utils;
 
@@ -350,5 +351,22 @@ public static class StorageExtensions
             Logger.Info($"Copying file {source} to {destination}\\");
             newPath.CopyTo(newPath.FullName.Replace(source.FullName, destination), true);
         }
+    }
+}
+
+public static class UriExtensions
+{
+    public static Uri ToUri(this string source)
+    {
+        return new Uri(source);
+    }
+
+    public static async Task LaunchAsync(this Uri uri)
+    {
+        if (await Launcher.QueryAppUriSupportAsync(uri) is not LaunchQuerySupportStatus.AppNotInstalled)
+            await Launcher.LaunchUriAsync(uri); // Launch only if everything is all fine...
+        else
+            Logger.Warn($"No application registered to handle Uri{{{uri}}}," +
+                        $" query result: {await Launcher.QueryAppUriSupportAsync(uri)}");
     }
 }
