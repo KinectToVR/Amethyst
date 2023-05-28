@@ -1327,10 +1327,14 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     var response = await client.ExecuteGetAsync(
                         $"https://api.appcenter.ms/v0.1/sdk/apps/{AppData.AppSecret}/releases/latest",
                         new RestRequest().AddHeader("X-API-Token", AppData.UpdateToken));
-                    
+
+                    // Check the received response
+                    response.ThrowIfError();
+
                     // Deserialize as the prepared object class, compare
                     var release = JsonConvert.DeserializeObject<AppRelease>(response.Content!);
-                    Interfacing.UpdateFound = release?.version.CompareTo(Package.Current.Id.Version.AsVersion()) > 0;
+                    Interfacing.UpdateFound =
+                        (release?.version?.CompareTo(Package.Current.Id.Version.AsVersion()) ?? -1) > 0;
 
                     // Return the version if run for results
                     if (result) return release;

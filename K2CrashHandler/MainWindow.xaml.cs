@@ -365,7 +365,8 @@ public sealed partial class MainWindow : Window
         {
             File.Delete(Path.Combine(Environment.GetFolderPath(
                     Environment.SpecialFolder.ApplicationData), "Packages",
-                new PackageManager().FindPackage("K2VRTeam.Amethyst.App").Id.FamilyName,
+                new PackageManager().FindPackagesForUser("")
+                    .First(x => x.Id.Name is "K2VRTeam.Amethyst.App").Id.FamilyName,
                 "LocalState", "AmethystSettings.json"));
         }
         catch (Exception)

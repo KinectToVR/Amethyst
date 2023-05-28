@@ -18,6 +18,7 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using Windows.Storage;
 using Windows.System;
+using Windows.Management.Deployment;
 
 namespace Amethyst.Utils;
 
@@ -364,11 +365,20 @@ public static class UriExtensions
 
     public static async Task LaunchAsync(this Uri uri)
     {
-        if (await Launcher.QueryAppUriSupportAsync(uri) is not LaunchQuerySupportStatus.AppNotInstalled)
-            await Launcher.LaunchUriAsync(uri); // Launch only if everything is all fine...
-        else
-            Logger.Warn($"No application registered to handle Uri{{{uri}}}," +
-                        $" query result: {await Launcher.QueryAppUriSupportAsync(uri)}");
+        try
+        {
+            if (await Launcher.QueryAppUriSupportAsync(uri) is LaunchQuerySupportStatus.Available ||
+                (uri.Scheme is "amethyst-crash" && new PackageManager().FindPackagesForUser("")
+                    .Any(x => x.Id.Name is "K2VRTeam.Amethyst.CrashHandler")))
+                await Launcher.LaunchUriAsync(uri); // Launch only if everything is all fine...
+            else
+                Logger.Warn($"No application registered to handle uri of \"{uri.Scheme}:\"," +
+                            $" query result: {await Launcher.QueryAppUriSupportAsync(uri)}");
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
     }
 }
 

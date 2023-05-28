@@ -18,7 +18,7 @@ variables:
   - name: artifactDirectory
     value: 'Pack/Zip'
   - name: packageVersion
-    value: 1.2.1.5
+    value: 1.2.1.6
   - group: AppCenter
   - group: Protected
   
@@ -64,6 +64,13 @@ steps:
     ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_SHA', "$("$(Build.SourceVersion)".Substring(0,7))") | Set-Content -Path .\Amethyst\Pages\Info.xaml
     ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_LINK', "https://github.com/KinectToVR/Amethyst/commit/$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\Pages\Info.xaml
   displayName: Add commit data to Amethyst
+
+- pwsh: |
+    ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_APPCENTER_SECRET', "$(Amethyst_AppSecret)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
+    ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_APPCENTER_RO_TOKEN', "$(UserApiToken_ReadOnly)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
+    ((Get-Content -path .\K2CrashHandler\Helpers\UpdateHelper.cs -Raw) -replace 'AZ_APPCENTER_SECRET', "$(CrashHandler_AppSecret)") | Set-Content -Path .\K2CrashHandler\Helpers\UpdateHelper.cs
+    ((Get-Content -path .\K2CrashHandler\Helpers\UpdateHelper.cs -Raw) -replace 'AZ_APPCENTER_RO_TOKEN', "$(UserApiToken_ReadOnly)") | Set-Content -Path .\K2CrashHandler\Helpers\UpdateHelper.cs
+  displayName: Add api keys to Amethyst
 
 - task: DownloadSecureFile@1
   name: signingCert
