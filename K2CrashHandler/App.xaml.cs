@@ -63,7 +63,7 @@ public partial class App : Application
                     using var response = await client.GetAsync(new Uri("https://docs.k2vr.tech/shared/locales.json"));
                     using var content = response.Content;
                     var json = await content.ReadAsStringAsync();
-                    
+
                     // Optionally fall back to English
                     if (JObject.Parse(json)[Shared.DocsLanguageCode] == null)
                         Shared.DocsLanguageCode = "en";
@@ -73,6 +73,9 @@ public partial class App : Application
                     Shared.DocsLanguageCode = "en";
                 }
             });
+
+            // Update in the meantime
+            Task.Factory.StartNew(UpdateHelper.CheckForUpdates);
         }
         catch (Exception)
         {

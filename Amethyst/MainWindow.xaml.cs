@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Data.Json;
 using Windows.Graphics;
 using Windows.Storage;
@@ -41,10 +42,12 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Windows.AppNotifications;
+using Newtonsoft.Json;
 using RestSharp;
 using WinRT;
 using WinRT.Interop;
 using WinUI.Fluent.Icons;
+using Windows.Management.Deployment;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -906,7 +909,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         };
 
         Logger.Info($"Setting up shared events for '{GetType().FullName}'...");
-        RequestUpdateEvent += (_, _) => DownloadUpdates();
+        RequestUpdateEvent += (_, _) => DownloadUpdates(force: true);
 
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
@@ -1033,15 +1036,20 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     private bool CanShowUpdateBar =>
         !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
 
-    private bool CanShowPluginsInstallBar =>
+    private bool CanShowUpdateDownloadingBar =>
         !UpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
 
-    private bool CanShowPluginsUninstallBar =>
-        !PluginsInstallInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
+    private bool CanShowPluginsInstallBar =>
+        !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
         !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
 
+    private bool CanShowPluginsUninstallBar =>
+        !PluginsInstallInfoBar.IsOpen && !UpdateDownloadingInfoBar.IsOpen &&
+        !UpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
     private bool CanShowReloadBar =>
-        !PluginsUninstallInfoBar.IsOpen && !PluginsInstallInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
+        !PluginsUninstallInfoBar.IsOpen && !PluginsInstallInfoBar.IsOpen &&
+        !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
         !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
 
     // MVVM stuff
@@ -1210,47 +1218,50 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         HelpIcon.Symbol = FluentSymbol.QuestionCircle24;
     }
 
-    private bool InstallUpdates(bool reopen = false)
+    private async Task<bool> InstallUpdates(bool reopen = false, bool force = false)
     {
         try
         {
-            // TODO Updates will be provided via Windows Update as per APPX/MSIX update schema
-            // Optional auto-restart scenario "-o" (happens when the user clicks 'update now')
-            Process.Start(new ProcessStartInfo
+            if (reopen)
             {
-                UseShellExecute = true,
-                Verb = "runas",
-                FileName = Path.Combine(Interfacing.AppDataTempDir.FullName, "Amethyst-Installer.exe"),
-                Arguments =
-                    $"--update {(reopen ? "-o" : "")} -path \"{Interfacing.ProgramLocation.DirectoryName}\""
-            });
-        }
-        catch (Win32Exception ex)
-        {
-            if (ex.NativeErrorCode == 1223)
-                Logger.Warn($"You need to pass UAC to run the installer! Message: {ex.Message}");
-            return false; // Keep the update banner available
+                // Register the active instance of the application for restart in the update method
+                var result = RelaunchHelper.RegisterApplicationRestart(null, RelaunchHelper.RestartFlags.NONE);
+                if (result is not 0) Logger.Error($"RegisterApplicationRestart error! Result: {result}");
+            }
+
+            // Mark exit actions as handled
+            Interfacing.IsExitHandled = true;
+
+            // Update the package via the package manager now
+            await new PackageManager().UpdatePackageAsync(
+                new Uri(Path.Join(Interfacing.AppDataTempDir.FullName, Interfacing.UpdateFilePath), UriKind.Absolute),
+                null,
+                force // Prepare update flags passed to the handler
+                    ? DeploymentOptions.ForceApplicationShutdown | DeploymentOptions.ForceUpdateFromAnyVersion
+                    : DeploymentOptions.ForceApplicationShutdown);
         }
         catch (Exception ex)
         {
             Logger.Error(new Exception($"Update failed, an exception occurred. Message: {ex.Message}"));
-            return false; // Keep the update banner available
+
+            UpdateInfoBar.IsOpen = false;
+            UpdateInfoBar.Opacity = 1.0;
+            OnPropertyChanged(); // Visibility
         }
 
-        // Exit, cleanup should be automatic
-        Interfacing.ManualUpdate = true;
-        Environment.Exit(0);
-        return true; // Will exit before
+        // Failed - go back to normal
+        Interfacing.IsExitHandled = false;
+        return false; // Should exit before
     }
 
-    private async Task CheckUpdates(uint delay = 0)
+    private async Task<AppRelease> CheckUpdates(uint delay = 0, bool result = false)
     {
         // Attempt only after init
-        if (!_mainPageInitFinished) return;
+        if (!_mainPageInitFinished) return null;
 
         // Check if we're midway updating
         if (Interfacing.UpdatingNow)
-            return; // Don't proceed further
+            return null; // Don't proceed further
 
         await Task.Delay((int)delay);
 
@@ -1263,175 +1274,143 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Check for updates
             try
             {
-                using var client = new HttpClient();
-                string getReleaseVersion = "", getDocsLanguages = "en";
-
-                // Release
-                try
-                {
-                    Logger.Info("Checking for updates... [GET]");
-                    using var response =
-                        await client.GetAsync(new Uri($"https://api.k2vr.tech/v{AppData.ApiVersion}/update"));
-                    getReleaseVersion = await response.Content.ReadAsStringAsync();
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(new Exception($"Error getting the release info! Message: {e.Message}"));
-                }
+                using var client = new RestClient();
+                var getDocsLanguages = "en";
 
                 // Language
                 try
                 {
                     Logger.Info("Checking available languages... [GET]");
-                    using var response =
-                        await client.GetAsync(new Uri("https://docs.k2vr.tech/shared/locales.json"));
-                    getDocsLanguages = await response.Content.ReadAsStringAsync();
+                    var response = await client.ExecuteGetAsync("https://docs.k2vr.tech/shared/locales.json",
+                        new RestRequest());
+                    getDocsLanguages = response.Content ?? "en";
                 }
                 catch (Exception e)
                 {
                     Logger.Error(new Exception($"Error getting the language info! Message: {e.Message}"));
+                    Logger.Error(e); // Log the actual exception in the next message
                 }
 
-                // If the read string isn't empty, proceed to checking for updates
-                if (!string.IsNullOrEmpty(getReleaseVersion))
+                // Language
+                try
                 {
-                    Logger.Info($"Update-check successful, string:\n{getReleaseVersion}");
-
-                    // Parse the loaded json
-                    var jsonHead = JsonObject.Parse(getReleaseVersion);
-
-                    if (!jsonHead.ContainsKey("amethyst"))
-                        Logger.Error(new InvalidDataException("The latest release's manifest was invalid!"));
-
-                    // Parse the amethyst entry
-                    var jsonRoot = jsonHead.GetNamedObject("amethyst");
-
-                    if (!jsonRoot.ContainsKey("version") ||
-                        !jsonRoot.ContainsKey("version_string"))
+                    if (!string.IsNullOrEmpty(getDocsLanguages))
                     {
-                        Logger.Error("The latest release's manifest was invalid!");
-                    }
+                        // Parse the loaded json
+                        var jsonRoot = JsonObject.Parse(getDocsLanguages);
 
+                        // Check if the resource root is fine & the language code exists
+                        Interfacing.DocsLanguageCode = AppData.Settings.AppLanguage;
+
+                        if (jsonRoot is null || !jsonRoot.ContainsKey(Interfacing.DocsLanguageCode))
+                        {
+                            Logger.Info("Docs do not contain a language with code " +
+                                        $"\"{Interfacing.DocsLanguageCode}\", falling back to \"en\" (English)!");
+                            Interfacing.DocsLanguageCode = "en";
+                        }
+                    }
                     else
                     {
-                        // Get the version tag (uint, fallback to latest)
-                        var remoteVersion = (int)jsonRoot.GetNamedNumber("version", AppData.InternalVersion);
-
-                        // Get the remote version name
-                        _remoteVersionString = jsonRoot.GetNamedString("version_string");
-
-                        Logger.Info($"Local version: {AppData.InternalVersion}");
-                        Logger.Info($"Remote version: {remoteVersion}");
-
-                        Logger.Info($"Local version string: {AppData.VersionString.Display}");
-                        Logger.Info($"Remote version string: {_remoteVersionString}");
-
-                        // Check the version
-                        if (AppData.InternalVersion < remoteVersion)
-                            Interfacing.UpdateFound = true;
+                        Logger.Error(new NoNullAllowedException("Language-check failed, the string was empty."));
                     }
                 }
-                else
+                catch (Exception e)
                 {
-                    Logger.Error(new NoNullAllowedException("Update-check failed, the string was empty."));
+                    Logger.Error(new Exception($"Error updating the language info! Message: {e.Message}"));
+                    Logger.Error(e); // Log the actual exception in the next message
                 }
 
-                if (!string.IsNullOrEmpty(getDocsLanguages))
+                // Release
+                try
                 {
-                    // Parse the loaded json
-                    var jsonRoot = JsonObject.Parse(getDocsLanguages);
+                    Logger.Info("Checking for updates... [GET]");
+                    var response = await client.ExecuteGetAsync(
+                        $"https://api.appcenter.ms/v0.1/sdk/apps/{AppData.AppSecret}/releases/latest",
+                        new RestRequest().AddHeader("X-API-Token", AppData.UpdateToken));
+                    
+                    // Deserialize as the prepared object class, compare
+                    var release = JsonConvert.DeserializeObject<AppRelease>(response.Content!);
+                    Interfacing.UpdateFound = release?.version.CompareTo(Package.Current.Id.Version.AsVersion()) > 0;
 
-                    // Check if the resource root is fine & the language code exists
-                    Interfacing.DocsLanguageCode = AppData.Settings.AppLanguage;
+                    // Return the version if run for results
+                    if (result) return release;
 
-                    if (jsonRoot is null || !jsonRoot.ContainsKey(Interfacing.DocsLanguageCode))
-                    {
-                        Logger.Info("Docs do not contain a language with code " +
-                                    $"\"{Interfacing.DocsLanguageCode}\", falling back to \"en\" (English)!");
-                        Interfacing.DocsLanguageCode = "en";
-                    }
+                    // If there's an update, try to download and install it
+                    if (release?.status is "available" && Interfacing.UpdateFound)
+                        await DownloadUpdates(release);
+                    else
+                        Logger.Error(new NoNullAllowedException("Update-check failed, the string was empty."));
                 }
-                else
+                catch (Exception e)
                 {
-                    Logger.Error(new NoNullAllowedException("Language-check failed, the string was empty."));
+                    Logger.Error(new Exception($"Error getting the release info! Message: {e.Message}"));
+                    Logger.Error(e); // Log the actual exception in the next message
                 }
             }
             catch (Exception e)
             {
                 Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
+                Logger.Error(e); // Log the actual exception in the next message
             }
-
-            // Download the update and show the notice
-            if (Interfacing.UpdateFound)
-                await DownloadUpdates();
         }
 
         // Check for plugin updates
         await Parallel.ForEachAsync(AppPlugins.LoadAttemptedPluginsList,
             async (x, _) => await x.CheckUpdates());
+
+        return null;
     }
 
-    private async Task DownloadUpdates()
+    private async Task DownloadUpdates(AppRelease appRelease = null, bool force = false)
     {
         Interfacing.UpdatingNow = true;
         await Task.Delay(500);
+
+        var release = appRelease ?? await CheckUpdates(result: true);
+        if (release is null) return; // Validate the release
 
         // Success? ...or nah?
         var updateError = false;
 
         // Download the latest installer/updater
-        // https://github.com/KinectToVR/Amethyst-Installer-Releases/releases/latest/download/Amethyst-Installer.exe
         try
         {
             using var client = new RestClient();
-            var installerUri = "";
-
-            Logger.Info("Checking out the updater version... [GET]");
-
-            // Get the installer download Uri
-            try
-            {
-                var response = await client.ExecuteGetAsync(
-                    "https://api.k2vr.tech/v0/installer/version", new RestRequest());
-
-                if (!string.IsNullOrEmpty(response.Content))
-                {
-                    var jsonRoot = JsonObject.Parse(response.Content);
-
-                    // Parse the loaded json
-                    if (jsonRoot.ContainsKey("download"))
-                    {
-                        installerUri = jsonRoot.GetNamedString("download");
-                    }
-                    else
-                    {
-                        Logger.Error(new KeyNotFoundException(
-                            "Installer-uri-check failed, the \"download\" key wasn't found."));
-                        updateError = true; // Skill issue
-                    }
-                }
-                else
-                {
-                    Logger.Error(new NoNullAllowedException("Installer-uri-check failed, the string was empty."));
-                    updateError = true; // What happened?
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(new Exception($"Error checking the updater download Uri! Message: {e.Message}"));
-                updateError = true; // Something else
-            }
+            Logger.Info("Downloading the update package... [GET]");
 
             // Download if we're ok
-            if (!updateError)
+            if (release.download_url != null)
                 try
                 {
-                    // Create a stream reader using the received Installer Uri
-                    await using var stream = await client.ExecuteDownloadStreamAsync(installerUri, new RestRequest());
+                    // Show a toast with the update status
+                    Interfacing.ShowToast(string.Format(
+                            Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading"),
+                            release.version.ToString()),
+                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Preparing"),
+                        true); // Also mark as a high-priority notification
 
-                    var installerFile = // Replace or create our installer file
+                    UpdateDownloadingInfoBar.Title = string.Format(
+                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading"),
+                        release.version.ToString());
+
+                    UpdateDownloadingInfoBar.Message =
+                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Preparing");
+
+                    UpdateDownloadingInfoBar.IsOpen = true;
+                    UpdateDownloadingInfoBar.Opacity = 1.0;
+                    OnPropertyChanged(); // Visibility
+
+                    // Create a stream reader using the received Installer Uri
+                    await using var stream =
+                        await client.ExecuteDownloadStreamAsync(release.download_url, new RestRequest());
+
+                    // Compose the file name of the installation package
+                    Interfacing.UpdateFilePath = $"{release.app_name}_{release.version}.{release.fileExtension}";
+
+                    // Replace or create our installer file
+                    var installerFile =
                         await (await StorageFolder.GetFolderFromPathAsync(Interfacing.AppDataTempDir.FullName))
-                            .CreateFileAsync("Amethyst-Installer.exe", CreationCollisionOption.ReplaceExisting);
+                            .CreateFileAsync(Interfacing.UpdateFilePath, CreationCollisionOption.ReplaceExisting);
 
                     // Create an output stream and push all the available data to it
                     await using var fsInstallerFile = await installerFile.OpenStreamForWriteAsync();
@@ -1449,6 +1428,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             updateError = true;
         }
 
+        UpdateDownloadingInfoBar.IsOpen = false;
+        UpdateDownloadingInfoBar.Opacity = 0.0;
+        OnPropertyChanged(); // Visibility
+
         // Check the file result and the DL result
         if (updateError) return;
 
@@ -1465,7 +1448,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         {
             Name = "Update Amethyst using the Installer",
             Priority = false, // First download plugin updates, then everything else
-            Action = () => Task.FromResult(Interfacing.ManualUpdate || InstallUpdates())
+            Action = async () => Interfacing.ManualUpdate || await InstallUpdates(force: force)
         });
     }
 
@@ -1674,10 +1657,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
-    private void InstallNowButton_Click(object sender, RoutedEventArgs e)
+    private async void InstallNowButton_Click(object sender, RoutedEventArgs e)
     {
         // Try installing
-        InstallUpdates(true);
+        await InstallUpdates(true);
     }
 
     private async void PluginsUpdateButton_Click(object sender, RoutedEventArgs e)

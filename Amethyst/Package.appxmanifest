@@ -12,7 +12,7 @@
   <Identity
     Name="K2VRTeam.Amethyst.App"
     Publisher="CN=K2VR Team"
-    Version="1.2.1.5" />
+    Version="1.2.1.4" />
 
   <Properties>
     <DisplayName>Amethyst</DisplayName>
@@ -75,7 +75,10 @@
   </Applications>
 
   <Capabilities>
+    <rescap:Capability Name="internetClientServer" />
+    <rescap:Capability Name="privateNetworkClientServer" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="modifiableApp" />
+    <rescap:Capability Name="packageManagement" />
   </Capabilities>
 </Package>

@@ -1243,7 +1243,7 @@
     },
     {
       "id": "/SharedStrings/Updates/Headers/Preparing",
-      "translation": "Preparing for the update..."
+      "translation": "Preparing for the update, this might take a few moments..."
     },
     {
       "id": "/SharedStrings/Updates/Headers/Status",

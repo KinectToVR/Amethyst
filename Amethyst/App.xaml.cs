@@ -124,7 +124,6 @@ public partial class App : Application
         Logger.Info($"Running on {Environment.OSVersion}");
 
         Logger.Info($"Amethyst version: {AppData.VersionString}");
-        Logger.Info($"Amethyst internal version: {AppData.InternalVersion}");
         Logger.Info($"Amethyst web API version: {AppData.ApiVersion}");
         Logger.Info("Amethyst build commit: AZ_COMMIT_SHA");
 

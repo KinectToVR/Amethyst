@@ -7,16 +7,16 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Web;
-using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 using Windows.Graphics;
+using Windows.Management.Deployment;
 using Windows.System;
 using K2CrashHandler.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppLifecycle;
 using WinRT.Interop;
-using Windows.UI.Popups;
-using AppInstance = Microsoft.Windows.AppLifecycle.AppInstance;
 
 namespace K2CrashHandler;
 // To learn more about WinUI, the WinUI project structure,
@@ -24,10 +24,6 @@ namespace K2CrashHandler;
 
 public sealed partial class MainWindow : Window
 {
-    public static HandlerMode CrashHandlerMode = HandlerMode.None;
-    public static int ProcessExitCode;
-    public static ContentDialogView DialogView;
-
     public MainWindow()
     {
         InitializeComponent();
@@ -71,7 +67,8 @@ public sealed partial class MainWindow : Window
             handlerContent = LangResString("Content/Recovery"),
             primaryButtonText = LangResString("PrimaryButton/Recovery"),
             secondaryButtonText = LangResString("SecondaryButton/Recovery"),
-            logFileLocation = "0", crashFileLocation = string.Empty;
+            logFileLocation = "0",
+            crashFileLocation = string.Empty;
 
         // Prepare placeholder callbacks (recovery mode)
         RoutedEventHandler primaryButtonHandler = Action_OpenCollective,
@@ -79,7 +76,7 @@ public sealed partial class MainWindow : Window
 
         // Check if there's any launch arguments
         var activationUri = (AppInstance.GetCurrent().GetActivatedEventArgs().Data as
-            Windows.ApplicationModel.Activation.ProtocolActivatedEventArgs)?.Uri;
+            ProtocolActivatedEventArgs)?.Uri;
 
         if (activationUri is not null && activationUri.Segments.Length > 0)
             CrashHandlerMode = activationUri?.Segments.First() switch
@@ -100,7 +97,7 @@ public sealed partial class MainWindow : Window
                 // Wait for the app to exit and grab the exit code
                 try
                 {
-                    var queryDictionary = System.Web.HttpUtility
+                    var queryDictionary = HttpUtility
                         .ParseQueryString(activationUri!.Query.TrimStart('?'));
 
                     var pid = int.Parse(queryDictionary["pid"]!);
@@ -121,12 +118,19 @@ public sealed partial class MainWindow : Window
                             process.Refresh();
                     } while (!process.WaitForExit(3000));
 
-                    // Overwrite the _latest.log log file
-                    if (!string.IsNullOrEmpty(logFileLocation))
-                        File.Copy(logFileLocation,
-                            Path.Combine(
-                                Directory.GetParent(logFileLocation).ToString(),
-                                "_latest.log"), true);
+                    try
+                    {
+                        // Overwrite the _latest.log log file
+                        if (!string.IsNullOrEmpty(logFileLocation))
+                            File.Copy(logFileLocation,
+                                Path.Combine(
+                                    Directory.GetParent(logFileLocation).ToString(),
+                                    "_latest.log"), true);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
 
                     // Handle normal exit
                     if (ProcessExitCode == 0)
@@ -338,6 +342,10 @@ public sealed partial class MainWindow : Window
         RGrid.Children.Add(DialogView);
     }
 
+    private static HandlerMode CrashHandlerMode { get; set; } = HandlerMode.None;
+    private static int ProcessExitCode { get; set; }
+    private static ContentDialogView DialogView { get; set; }
+
     private static string LangResString(string key)
     {
         return Shared.AppStrings.TryGetValue(
@@ -353,8 +361,17 @@ public sealed partial class MainWindow : Window
 
     private void Action_ResetConfig(object sender, RoutedEventArgs e)
     {
-        File.Delete(Path.Combine(Environment.GetFolderPath(
-            Environment.SpecialFolder.ApplicationData), "Amethyst", "AmethystSettings.json"));
+        try
+        {
+            File.Delete(Path.Combine(Environment.GetFolderPath(
+                    Environment.SpecialFolder.ApplicationData), "Packages",
+                new PackageManager().FindPackage("K2VRTeam.Amethyst.App").Id.FamilyName,
+                "LocalState", "AmethystSettings.json"));
+        }
+        catch (Exception)
+        {
+            //ignored
+        }
     }
 
     private async void Action_VRDocs(object sender, RoutedEventArgs e)

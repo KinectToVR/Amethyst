@@ -45,8 +45,10 @@
         <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
         <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
         <GenerateTestArtifacts>True</GenerateTestArtifacts>
-        <AppxBundle>Never</AppxBundle>
+        <AppxBundle>Always</AppxBundle>
         <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+        <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+        <AppInstallerUri>https://contoso.com</AppInstallerUri>
     </PropertyGroup>
 
     <ItemGroup>
@@ -99,9 +101,6 @@
         <None Remove="Popups\Blocked.xaml" />
         <None Remove="Popups\Host.xaml" />
         <None Remove="Popups\Splash.xaml" />
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="MVVM\" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Amethyst.Support\Amethyst.Support.vcxproj" />

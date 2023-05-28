@@ -40,6 +40,9 @@ public static class Interfacing
         ManualUpdate = false,
         UpdatingNow = false;
 
+    // Update file
+    public static string UpdateFilePath = null;
+
     // Position helpers for devices -> GUID, Pose
     public static readonly SortedDictionary<string, (Vector3 Position, Quaternion Orientation)>
         DeviceHookJointPosition = new(); // This one applies to both

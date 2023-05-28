@@ -8,6 +8,7 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using AmethystSupport;
@@ -368,5 +369,18 @@ public static class UriExtensions
         else
             Logger.Warn($"No application registered to handle Uri{{{uri}}}," +
                         $" query result: {await Launcher.QueryAppUriSupportAsync(uri)}");
+    }
+}
+
+public static class VersionExtensions
+{
+    public static Version AsVersion(this PackageVersion version)
+    {
+        return new Version(version.Major, version.Minor, version.Build, version.Revision);
+    }
+
+    public static string AsString(this PackageVersion version)
+    {
+        return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
     }
 }
