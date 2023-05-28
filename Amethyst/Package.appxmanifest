@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -12,7 +12,7 @@
   <Identity
     Name="K2VRTeam.Amethyst.App"
     Publisher="CN=K2VR Team"
-    Version="1.2.1.4" />
+    Version="1.2.1.6" />
 
   <Properties>
     <DisplayName>Amethyst</DisplayName>
@@ -32,7 +32,7 @@
   <Extensions>
     <desktop8:Extension Category="windows.userMutablePackageDirectories">
       <desktop8:UserMutablePackageDirectories>
-        <desktop8:UserMutablePackageDirectory Target='Amethyst' />
+        <desktop8:UserMutablePackageDirectory Target='K2VRTeam.Amethyst.App' />
       </desktop8:UserMutablePackageDirectories>
     </desktop8:Extension>
   </Extensions>
@@ -43,7 +43,7 @@
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="Amethyst"
-        Description="Amethyst"
+        Description="Amethyst Desktop"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Visuals\Square150x150Logo.png"
         Square44x44Logo="Assets\Visuals\Square44x44Logo.png">
@@ -75,10 +75,9 @@
   </Applications>
 
   <Capabilities>
-    <rescap:Capability Name="internetClientServer" />
-    <rescap:Capability Name="privateNetworkClientServer" />
+    <rescap:Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
-    <rescap:Capability Name="modifiableApp" />
     <rescap:Capability Name="packageManagement" />
+    <rescap:Capability Name="modifiableApp" />
   </Capabilities>
 </Package>
