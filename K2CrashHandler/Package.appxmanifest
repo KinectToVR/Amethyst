@@ -29,6 +29,14 @@
     <Resource Language="x-generate"/>
   </Resources>
 
+  <Extensions>
+    <desktop8:Extension Category="windows.userMutablePackageDirectories">
+      <desktop8:UserMutablePackageDirectories>
+        <desktop8:UserMutablePackageDirectory Target='K2VRTeam.Amethyst.CrashHandler' />
+      </desktop8:UserMutablePackageDirectories>
+    </desktop8:Extension>
+  </Extensions>
+
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
@@ -58,6 +66,7 @@
     <rescap:Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="packageManagement" />
+    <rescap:Capability Name="modifiableApp" />
     <rescap:Capability Name="packageQuery" />
   </Capabilities>
 </Package>

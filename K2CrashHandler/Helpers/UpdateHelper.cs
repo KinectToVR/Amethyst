@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Microsoft.VisualBasic;
 using Windows.Foundation.Collections;
 using Windows.Management.Deployment;
+using Windows.System;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming
@@ -31,14 +32,14 @@ public static class UpdateHelper
             client.DefaultRequestHeaders.Add(new KeyValuePair<string, string>("X-API-Token", ApiToken));
             using var response =
                 await client.GetAsync(new Uri($"https://api.appcenter.ms/v0.1/sdk/apps/{AppSecret}/releases/latest"));
-
+            
             using var content = response.Content;
             var json = await content.ReadAsStringAsync();
-
+            
             // Deserialize as the prepared object class, compare
             var release = JsonConvert.DeserializeObject<AppRelease>(json);
-            var updateFound = release?.version.CompareTo(Package.Current.Id.Version.AsVersion()) > 0;
-
+            var updateFound = (release?.version?.CompareTo(Package.Current.Id.Version.AsVersion()) ?? -1) > 0;
+            
             // If there's an update, try to download and install it
             if (release?.status is "available" && updateFound)
                 await new PackageManager().UpdatePackageAsync(new Uri(release.download_url),
