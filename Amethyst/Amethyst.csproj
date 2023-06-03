@@ -22,7 +22,6 @@
         <!--<AppxPackage>false</AppxPackage>-->
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <StartupObject>Amethyst.Program</StartupObject>
-        <DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 
         <ApplicationIcon>Assets\ktvr.ico</ApplicationIcon>
         <Authors>K2VR Team</Authors>
