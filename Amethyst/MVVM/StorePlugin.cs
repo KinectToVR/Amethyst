@@ -221,39 +221,27 @@ public class StorePlugin : INotifyPropertyChanged
                     await GithubClient.DownloadStreamAsync(new RestRequest(LatestRelease.Download));
 
                 // Search for an empty folder in AppData
-                var installFolder = Interfacing.GetAppDataPluginFolderDir(
+                var installFolder = await Interfacing.GetAppDataPluginFolder(
                     string.Join("_", LatestRelease.Guid.Split(
                         Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                 // Create an empty folder in TempAppData
-                var downloadFolder = Interfacing.GetTempPluginFolderDir(
+                var downloadFolder = await Interfacing.GetTempPluginFolder(
                     string.Join("_", Guid.NewGuid().ToString().ToUpper()
                         .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                 // Randomize the path if already exists
                 // Delete if only a single null folder
-                if (Directory.Exists(installFolder))
-                {
-                    if (Directory.EnumerateFileSystemEntries(installFolder).Any())
-                        installFolder = Interfacing.GetAppDataPluginFolderDir(
-                            string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
-
-                    // Else delete if empty
-                    else Directory.Delete(installFolder, true);
-                }
+                if ((await installFolder.GetItemsAsync()).Any())
+                    installFolder = await Interfacing.GetAppDataPluginFolder(
+                        string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                            .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                 // Try reserving the install folder
-                if (Directory.Exists(installFolder!))
-                    Directory.Delete(installFolder!, true);
-
-                // Try creating the download folder
-                if (!Directory.Exists(downloadFolder!))
-                    Directory.CreateDirectory(downloadFolder!);
+                await installFolder.DeleteAsync();
 
                 // Replace or create our installer file
-                var pluginArchive = await (await StorageFolder
-                    .GetFolderFromPathAsync(downloadFolder)).CreateFileAsync(
+                var pluginArchive = await downloadFolder.CreateFileAsync(
                     "package.zip", CreationCollisionOption.ReplaceExisting);
 
                 // Create an output stream and push all the available data to it
@@ -266,13 +254,13 @@ public class StorePlugin : INotifyPropertyChanged
 
                 // Unpack the archive now
                 Logger.Info("Unpacking the new plugin from its archive...");
-                ZipFile.ExtractToDirectory(pluginArchive.Path, downloadFolder, true);
+                ZipFile.ExtractToDirectory(pluginArchive.Path, downloadFolder.Path, true);
 
                 Logger.Info("Deleting the plugin installation package...");
                 File.Delete(pluginArchive.Path); // Cleanup after the install
 
                 // Rename the plugin folder if everything's fine
-                Directory.Move(downloadFolder, installFolder);
+                Directory.Move(downloadFolder.Path, installFolder.Path);
             }
             catch (Exception e)
             {

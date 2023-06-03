@@ -188,7 +188,7 @@ public class AppSettings : INotifyPropertyChanged
         {
             // Save application settings to $env:AppData/Amethyst/
             File.WriteAllText(
-                Interfacing.GetAppDataFileDir("AmethystSettings.json"),
+                Interfacing.GetAppDataFilePath("AmethystSettings.json"),
                 JsonConvert.SerializeObject(AppData.Settings, Formatting.Indented));
         }
         catch (Exception e)
@@ -204,7 +204,7 @@ public class AppSettings : INotifyPropertyChanged
         {
             // Read application settings from $env:AppData/Amethyst/
             AppData.Settings = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(
-                Interfacing.GetAppDataFileDir("AmethystSettings.json"))) ?? new AppSettings();
+                Interfacing.GetAppDataFilePath("AmethystSettings.json"))) ?? new AppSettings();
         }
         catch (Exception e)
         {

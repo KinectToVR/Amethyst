@@ -17,6 +17,7 @@ using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 using Windows.Data.Json;
 using Windows.Graphics;
 using Windows.Storage;
@@ -118,6 +119,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Shared.Main.NavigationItems.NavViewInfoButtonLabel = NavViewInfoButtonLabel;
         Shared.Main.NavigationItems.NavViewPluginsButtonLabel = NavViewPluginsButtonLabel;
 
+        Logger.Info("Setting up the main window asynchronously...");
+        AsyncUtils.RunSync(SetupMainWindow); // Run via our extra utils
+    }
+
+    private async Task SetupMainWindow()
+    {
         // Set up
         Logger.Info("Setting up the window decoration data...");
         Title = "Amethyst";
@@ -205,7 +212,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Iterate over all directories in Plugins dir and add all * dirs to catalogs
         Logger.Info("Searching for shared plugins now...");
         pluginDirectoryList.AddRange(Directory.EnumerateDirectories(
-            Interfacing.GetAppDataPluginFolderDir(""),
+            (await Interfacing.GetAppDataPluginFolder("")).Path,
             "*", SearchOption.TopDirectoryOnly));
 
         // Search for external plugins
@@ -214,7 +221,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Load the JSON source into buffer, parse
             Logger.Info("Searching for external plugins now...");
             var jsonRoot = JsonObject.Parse(
-                File.ReadAllText(Interfacing.GetAppDataFileDir("amethystpaths.k2path")));
+                await File.ReadAllTextAsync((await Interfacing.GetAppDataFile("amethystpaths.k2path")).Path));
 
             // Loop over all the external plugins and append
             if (jsonRoot.ContainsKey("external_plugins"))
@@ -249,8 +256,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         catch (FileNotFoundException e)
         {
             Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
-            Logger.Error($"Creating new {Interfacing.GetAppDataFileDir("amethystpaths.k2path")} config...");
-            File.Create(Interfacing.GetAppDataFileDir("amethystpaths.k2path")); // Create a placeholder file
+            Logger.Error($"Creating new {Interfacing.GetAppDataFile("amethystpaths.k2path")} config...");
         }
         catch (Exception e)
         {
@@ -982,15 +988,19 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         {
             Path = Path.Combine(Interfacing.ProgramLocation.DirectoryName, "Plugins"),
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
-            Filter = "*.dll", IncludeSubdirectories = true, EnableRaisingEvents = true
+            Filter = "*.dll",
+            IncludeSubdirectories = true,
+            EnableRaisingEvents = true
         };
 
         // Setup device change watchdog : external devices
         var externalWatcher = new FileSystemWatcher
         {
-            Path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Amethyst"),
+            Path = Interfacing.LocalFolder.Path,
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName | NotifyFilters.Size,
-            Filter = "amethystpaths.k2path", IncludeSubdirectories = true, EnableRaisingEvents = true
+            Filter = "amethystpaths.k2path",
+            IncludeSubdirectories = true,
+            EnableRaisingEvents = true
         };
 
         // Send a non-dismissible tip about reloading the app
@@ -1234,8 +1244,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
             // Update the package via the package manager now
             await new PackageManager().UpdatePackageAsync(
-                new Uri(Path.Join(Interfacing.AppDataTempDir.FullName, Interfacing.UpdateFilePath), UriKind.Absolute),
-                null,
+                new Uri((await Interfacing.TemporaryFolder.GetFileAsync(Interfacing.UpdateFileName)).Path,
+                    UriKind.Absolute), null,
                 force // Prepare update flags passed to the handler
                     ? DeploymentOptions.ForceApplicationShutdown | DeploymentOptions.ForceUpdateFromAnyVersion
                     : DeploymentOptions.ForceApplicationShutdown);
@@ -1409,12 +1419,11 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         await client.ExecuteDownloadStreamAsync(release.download_url, new RestRequest());
 
                     // Compose the file name of the installation package
-                    Interfacing.UpdateFilePath = $"{release.app_name}_{release.version}.{release.fileExtension}";
+                    Interfacing.UpdateFileName = $"{release.app_name}_{release.version}.{release.fileExtension}";
 
                     // Replace or create our installer file
-                    var installerFile =
-                        await (await StorageFolder.GetFolderFromPathAsync(Interfacing.AppDataTempDir.FullName))
-                            .CreateFileAsync(Interfacing.UpdateFilePath, CreationCollisionOption.ReplaceExisting);
+                    var installerFile = await Interfacing.TemporaryFolder.CreateFileAsync(
+                        Interfacing.UpdateFileName, CreationCollisionOption.ReplaceExisting);
 
                     // Create an output stream and push all the available data to it
                     await using var fsInstallerFile = await installerFile.OpenStreamForWriteAsync();
@@ -1513,28 +1522,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Literals
         Logger.Info("Reload has been invoked: trying to restart the app...");
 
-        // If we've found who asked
-        if (File.Exists(Interfacing.ProgramLocation.ToString()))
-        {
-            // Log the caller
-            Logger.Info($"The current caller process is: {Interfacing.ProgramLocation}");
-
-            // Exit the app
-            Logger.Info("Exiting in 500ms...");
-
-            // Don't execute the exit routine
-            Interfacing.IsExitHandled = true;
-
-            // Handle a typical app exit
-            await Interfacing.HandleAppExit(500);
-
-            // Restart and exit with code 0
-            Process.Start(Interfacing.ProgramLocation
-                .FullName.Replace(".dll", ".exe"));
-
-            // Exit without re-handling everything
-            Environment.Exit(0);
-        }
+        // Restart and exit with code 0
+        await Interfacing.ExecuteAppRestart();
 
         // Still here?
         Logger.Fatal(new InvalidDataException("App will not be restarted due to caller process identification error."));

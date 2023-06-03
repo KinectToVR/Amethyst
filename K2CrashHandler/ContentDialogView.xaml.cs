@@ -67,8 +67,7 @@ public sealed partial class ContentDialogView
     {
         OpenFolderAndSelectItem(File.Exists(_logFileLocation)
             ? _logFileLocation
-            : Path.Combine(Environment.GetFolderPath(
-                Environment.SpecialFolder.ApplicationData), "Amethyst\\logs\\"));
+            : Path.Combine(MainWindow.GetAmethystTempPath(), "logs\\"));
     }
 
     private async void DiscordHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)

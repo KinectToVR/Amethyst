@@ -363,11 +363,7 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            File.Delete(Path.Combine(Environment.GetFolderPath(
-                    Environment.SpecialFolder.ApplicationData), "Packages",
-                new PackageManager().FindPackagesForUser("")
-                    .First(x => x.Id.Name is "K2VRTeam.Amethyst.App").Id.FamilyName,
-                "LocalState", "AmethystSettings.json"));
+            File.Delete(Path.Combine(GetAmethystAppDataPath(), "AmethystSettings.json"));
         }
         catch (Exception)
         {
@@ -437,6 +433,22 @@ public sealed partial class MainWindow : Window
     {
         var process = sender as Process;
         if (process != null) ProcessExitCode = process.ExitCode;
+    }
+
+    public static string GetAmethystAppDataPath()
+    {
+        return Path.Combine(Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData), "Packages",
+            new PackageManager().FindPackagesForUser("")
+                .First(x => x.Id.Name is "K2VRTeam.Amethyst.App").Id.FamilyName, "LocalState");
+    }
+
+    public static string GetAmethystTempPath()
+    {
+        return Path.Combine(Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData), "Packages",
+            new PackageManager().FindPackagesForUser("")
+                .First(x => x.Id.Name is "K2VRTeam.Amethyst.App").Id.FamilyName, "TempState");
     }
 }
 

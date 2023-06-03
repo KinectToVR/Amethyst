@@ -9,8 +9,11 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
+using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Globalization;
+using Windows.Storage;
 using Windows.System.UserProfile;
 using Windows.UI.ViewManagement;
 using Amethyst.Classes;
@@ -21,9 +24,8 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
-using Windows.System;
-using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
+using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,9 +37,9 @@ namespace Amethyst;
 /// </summary>
 public partial class App : Application
 {
+    private bool _canCloseViews;
     private MainWindow _mWindow;
-    private bool _canCloseViews = false;
-    private List<Host> _views = new();
+    private readonly List<Host> _views = new();
 
     /// <summary>
     ///     Initializes the singleton application object.  This is the first line of authored code
@@ -94,13 +96,13 @@ public partial class App : Application
         ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 
         // Initialize the logger
-        Logger.Init(Interfacing.GetAppDataLogFileDir("Amethyst",
+        Logger.Init(Interfacing.GetAppDataLogFilePath(
             $"Amethyst_{DateTime.Now:yyyyMMdd-HHmmss.ffffff}.log"));
 
         // Create an empty file for checking for crashes
         try
         {
-            Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.ProgramLocation.DirectoryName, ".crash"));
+            Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.TemporaryFolder.Path, ".crash"));
             Interfacing.CrashFile.Create(); // Create the file
         }
         catch (Exception e)
@@ -111,7 +113,7 @@ public partial class App : Application
         try
         {
             // Try deleting the "latest" log file
-            File.Delete(Interfacing.GetAppDataLogFileDir("Amethyst", "_latest.log"));
+            File.Delete(Interfacing.GetAppDataLogFilePath("_latest.log"));
         }
         catch (Exception e)
         {
@@ -243,6 +245,69 @@ public partial class App : Application
             Environment.Exit(0); // Cancel further application startup
         }
 
+        // Check if activated via uri
+        var activationUri = (AppInstance.GetCurrent().GetActivatedEventArgs().Data as
+            ProtocolActivatedEventArgs)?.Uri;
+
+        // Check if there's any launch arguments
+        if (activationUri is not null && activationUri.Segments.Length > 0)
+        {
+            Logger.Info($"Activated via uri of: {activationUri}");
+            switch (activationUri.Segments.First())
+            {
+                case "logs":
+                {
+                    SystemShell.OpenFolderAndSelectItem(
+                        new DirectoryInfo(Interfacing.GetAppDataLogFilePath(""))
+                            .GetFiles().MaxBy(x => x.LastWriteTime)?.FullName
+                        ?? Interfacing.GetAppDataLogFilePath(""));
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
+                case "make-local":
+                {
+                    try
+                    {
+                        // Read the query string
+                        var queryDictionary = HttpUtility
+                            .ParseQueryString(activationUri!.Query.TrimStart('?'));
+
+                        // Read all needed query parameters
+                        var sourcePath = queryDictionary["source"];
+                        var targetFolderPath = queryDictionary["target"];
+
+                        // Validate our parameters
+                        if (sourcePath is not null)
+                        {
+                            // Modify our parameters
+                            sourcePath = Path.Join(Interfacing.ProgramLocation.DirectoryName!, sourcePath);
+                            var targetFolder = string.IsNullOrEmpty(targetFolderPath)
+                                ? Interfacing.LocalFolder // Copy to LocalState if not passed
+                                : await Interfacing.LocalFolder.CreateFolderAsync(targetFolderPath);
+
+                            if (File.Exists(sourcePath))
+                                await (await StorageFile.GetFileFromPathAsync(sourcePath)).CopyAsync(targetFolder);
+
+                            else if (Directory.Exists(sourcePath))
+                                new DirectoryInfo(sourcePath).CopyToFolder(
+                                    (await targetFolder.CreateFolderAsync(new DirectoryInfo(sourcePath).Name,
+                                        CreationCollisionOption.OpenIfExists)).Path);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e);
+                    }
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
+            }
+        }
+
         Logger.Info("Registering a named mutex for com_k2vr_amethyst...");
         try
         {
@@ -269,7 +334,7 @@ public partial class App : Application
 
         Logger.Info("Starting the crash handler passing the app PID...");
         await ($"amethyst-crash:watchdog?pid={Environment.ProcessId}&log={Logger.LogFilePath}" +
-               $"&crash={Path.Join(Interfacing.ProgramLocation.DirectoryName, ".crash")}").ToUri().LaunchAsync();
+               $"&crash={Path.Join(Interfacing.TemporaryFolder.Path, ".crash")}").ToUri().LaunchAsync();
 
         // Disable internal sounds
         ElementSoundPlayer.State = ElementSoundPlayerState.Off;

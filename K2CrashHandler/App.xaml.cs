@@ -31,8 +31,8 @@ public partial class App : Application
 
         try
         {
-            var amethystConfigText = File.ReadAllText(Path.Combine(Environment.GetFolderPath(
-                Environment.SpecialFolder.ApplicationData), "Amethyst", "AmethystSettings.json"));
+            var amethystConfigText =
+                File.ReadAllText(Path.Combine(MainWindow.GetAmethystAppDataPath(), "AmethystSettings.json"));
 
             Shared.LanguageCode = amethystConfigText.Contains("\"AppLanguage\": \"")
                 ? amethystConfigText.Substring(

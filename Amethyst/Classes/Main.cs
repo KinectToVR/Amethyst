@@ -424,8 +424,7 @@ public static class Main
         }
 
         // Override devices, loop over all overrides
-        foreach (var device in AppPlugins.TrackingDevicesList.Values.Where(
-                     device => AppData.Settings.OverrideDevicesGuidMap.Contains(device.Guid)))
+        foreach (var device in AppPlugins.TrackingDevicesList.Values.Where(device => device.IsOverride))
         {
             // Strategy:
             //  overwrite base device's poses, optionally apply flip

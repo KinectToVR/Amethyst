@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Data.Json;
+using Windows.Storage;
 using Windows.System;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
@@ -41,7 +42,7 @@ public static class Interfacing
         UpdatingNow = false;
 
     // Update file
-    public static string UpdateFilePath = null;
+    public static string UpdateFileName = null;
 
     // Position helpers for devices -> GUID, Pose
     public static readonly SortedDictionary<string, (Vector3 Position, Quaternion Orientation)>
@@ -103,49 +104,61 @@ public static class Interfacing
 
     public static FileInfo ProgramLocation => new(Assembly.GetExecutingAssembly().Location);
 
-    public static DirectoryInfo AppDataTempDir => Directory.CreateDirectory(Path.GetTempPath() + "Amethyst");
-
     public static AppSettingsReadEventHandler AppSettingsRead { get; set; } = (_, _) => { };
 
-    public static string GetAppDataFileDir(string relativeFilePath)
-    {
-        Directory.CreateDirectory(Path.Join(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Amethyst"));
+    public static StorageFolder TemporaryFolder => ApplicationData.Current.TemporaryFolder;
 
-        return Path.Join(Environment.GetFolderPath(
-            Environment.SpecialFolder.ApplicationData), "Amethyst", relativeFilePath);
+    public static StorageFolder LocalFolder => ApplicationData.Current.LocalFolder;
+
+    public static async Task<StorageFolder> GetPluginsFolder()
+    {
+        return await LocalFolder
+            .CreateFolderAsync("Plugins", CreationCollisionOption.OpenIfExists);
     }
 
-    public static string GetAppDataPluginFolderDir(string relativeFilePath)
+    public static async Task<StorageFolder> GetPluginsTempFolder()
     {
-        Directory.CreateDirectory(Path.Join(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Amethyst", "Plugins"));
-
-        return Path.Join(Environment.GetFolderPath(
-            Environment.SpecialFolder.ApplicationData), "Amethyst", "Plugins", relativeFilePath);
+        return await LocalFolder
+            .CreateFolderAsync("Plugins", CreationCollisionOption.OpenIfExists);
     }
 
-    public static string GetTempPluginFolderDir(string relativeFilePath)
+    public static async Task<StorageFile> GetAppDataFile(string relativeFilePath)
     {
-        Directory.CreateDirectory(Path.Join(Path.GetTempPath(), "Amethyst", "Plugins"));
-        return Path.Join(Path.GetTempPath(), "Amethyst", "Plugins", relativeFilePath);
+        return await LocalFolder.CreateFileAsync(relativeFilePath, CreationCollisionOption.OpenIfExists);
     }
 
-    public static string GetAppDataLogFileDir(string relativeFolderName, string relativeFilePath)
+    public static async Task<StorageFolder> GetAppDataPluginFolder(string relativeFilePath)
     {
-        Directory.CreateDirectory(Path.Join(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Amethyst", "logs", relativeFolderName));
+        return string.IsNullOrEmpty(relativeFilePath)
+            ? await GetPluginsFolder()
+            : await (await GetPluginsFolder())
+                .CreateFolderAsync(relativeFilePath, CreationCollisionOption.OpenIfExists);
+    }
 
-        return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Amethyst", "logs", relativeFolderName, relativeFilePath);
+    public static async Task<StorageFolder> GetTempPluginFolder(string relativeFilePath)
+    {
+        return string.IsNullOrEmpty(relativeFilePath)
+            ? await GetPluginsTempFolder()
+            : await (await GetPluginsTempFolder())
+                .CreateFolderAsync(relativeFilePath, CreationCollisionOption.OpenIfExists);
+    }
+
+    public static string GetAppDataFilePath(string relativeFilePath)
+    {
+        return Path.Join(LocalFolder.Path, relativeFilePath);
+    }
+
+    public static string GetAppDataLogFilePath(string relativeFilePath)
+    {
+        Directory.CreateDirectory(Path.Join(TemporaryFolder.Path, "Logs", "Amethyst"));
+        return Path.Join(TemporaryFolder.Path, "Logs", "Amethyst", relativeFilePath);
     }
 
     // Fail with an exit code (don't delete .crash)
     public static void Fail(string message)
     {
         IsExitHandled = true;
-        Task.Run(async Task () =>
+        Task.Run(async Task() =>
         {
             Logger.Info($"Activating the crash handler with #message: {message}");
             await $"amethyst-crash:message#{message}".ToUri().LaunchAsync();

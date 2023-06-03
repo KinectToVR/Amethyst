@@ -338,7 +338,7 @@ public static class StringExtensions
 
 public static class StorageExtensions
 {
-    public static void CopyToFolderAsync(this DirectoryInfo source, string destination, bool log = false)
+    public static void CopyToFolder(this DirectoryInfo source, string destination, bool log = false)
     {
         // Now Create all of the directories
         foreach (var dirPath in source.GetDirectories("*", SearchOption.AllDirectories))
