@@ -116,7 +116,7 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-        <Content Include="$(SolutionDir)\Resources\**">
+        <Content Include="$(SolutionDir)\Resources\**" Visible="false">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>

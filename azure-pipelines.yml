@@ -18,7 +18,7 @@ variables:
   - name: artifactDirectory
     value: 'Pack/Zip'
   - name: packageVersion
-    value: 1.2.1.6
+    value: 1.2.1.7
   - group: AppCenter
   - group: Protected
   

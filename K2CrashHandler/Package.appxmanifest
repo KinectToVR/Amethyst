@@ -12,7 +12,7 @@
   <Identity
     Name="K2VRTeam.Amethyst.CrashHandler"
     Publisher="CN=K2VR Team"
-    Version="1.2.1.6" />
+    Version="1.2.1.7" />
 
   <Properties>
     <DisplayName>K2CrashHandler</DisplayName>
