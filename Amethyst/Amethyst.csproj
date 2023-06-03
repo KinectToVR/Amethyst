@@ -18,7 +18,7 @@
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
         <PublishTrimmed>false</PublishTrimmed>
         <EmbedManifest>true</EmbedManifest>
-        
+
         <!--<AppxPackage>false</AppxPackage>-->
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <StartupObject>Amethyst.Program</StartupObject>
@@ -78,7 +78,8 @@
     Explorer "Package and Publish" context menu entry to be enabled for this project even if 
     the Windows App SDK Nuget package has not yet been restored.
   -->
-    <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <PropertyGroup
+        Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
         <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
     </PropertyGroup>
     <ItemGroup>
@@ -115,29 +116,34 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-      <Page Update="Controls\LoadAttemptedPluginsView.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
+        <Content Include="$(SolutionDir)\Resources\**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
     <ItemGroup>
-      <Page Update="Popups\Blocked.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
+        <Page Update="Controls\LoadAttemptedPluginsView.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
     </ItemGroup>
     <ItemGroup>
-      <Page Update="Popups\Splash.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
+        <Page Update="Popups\Blocked.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
     </ItemGroup>
     <ItemGroup>
-      <Page Update="Popups\Host.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
+        <Page Update="Popups\Splash.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
     </ItemGroup>
     <ItemGroup>
-      <Page Update="Pages\Plugins.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
+        <Page Update="Popups\Host.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Pages\Plugins.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
     </ItemGroup>
     <ItemGroup>
         <Page Update="Controls\JointSettingsExpander.xaml">
