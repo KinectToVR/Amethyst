@@ -437,16 +437,14 @@ public sealed partial class MainWindow : Window
 
     public static string GetAmethystAppDataPath()
     {
-        return Path.Combine(Environment.GetFolderPath(
-                Environment.SpecialFolder.ApplicationData), "Packages",
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Packages",
             new PackageManager().FindPackagesForUser("")
                 .First(x => x.Id.Name is "K2VRTeam.Amethyst.App").Id.FamilyName, "LocalState");
     }
 
     public static string GetAmethystTempPath()
     {
-        return Path.Combine(Environment.GetFolderPath(
-                Environment.SpecialFolder.ApplicationData), "Packages",
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Packages",
             new PackageManager().FindPackagesForUser("")
                 .First(x => x.Id.Name is "K2VRTeam.Amethyst.App").Id.FamilyName, "TempState");
     }
