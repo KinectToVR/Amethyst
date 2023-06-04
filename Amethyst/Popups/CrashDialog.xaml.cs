@@ -1,18 +1,26 @@
-﻿using System;
-using System.Diagnostics;
+using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
+using Amethyst.Classes;
+using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 
-namespace K2CrashHandler;
+// To learn more about WinUI, the WinUI project structure,
+// and more about our project templates, see: http://aka.ms/winui-project-info.
 
-public sealed partial class ContentDialogView
+namespace Amethyst.Popups;
+
+/// <summary>
+///     An empty page that can be used on its own or navigated to within a Frame.
+/// </summary>
+public sealed partial class CrashDialog
 {
     private readonly string _logFileLocation = "0";
 
@@ -23,12 +31,12 @@ public sealed partial class ContentDialogView
     private bool _confirmationFlyoutResult,
         _confirmationFlyoutRunning;
 
-    public ContentDialogView()
+    public CrashDialog()
     {
         InitializeComponent();
     }
 
-    public ContentDialogView
+    public CrashDialog
     (
         string title = "[NO TITLE]",
         string content = "[CONTENT NOT SET]",
@@ -65,9 +73,9 @@ public sealed partial class ContentDialogView
 
     private void LogsHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)
     {
-        OpenFolderAndSelectItem(File.Exists(_logFileLocation)
+        SystemShell.OpenFolderAndSelectItem(File.Exists(_logFileLocation)
             ? _logFileLocation
-            : Path.Combine(MainWindow.GetAmethystTempPath(), "logs\\"));
+            : Path.Combine(Interfacing.TemporaryFolder.Path, "logs\\"));
     }
 
     private async void DiscordHyperlink_OnClick(Hyperlink sender, HyperlinkClickEventArgs args)
@@ -193,58 +201,5 @@ public sealed partial class ContentDialogView
         };
 
         DialogSecondaryButton.Content = actionPending ? viewbox : _secondaryButtonText;
-    }
-
-    // An alternative to:
-    //      Process.Start("explorer.exe", $"/select,{filePath}");
-    // P/Invoke version allows us to do the same task without spawning a new instance of explorer.exe
-    // [Ripped straight from https://github.com/KinectToVR/Amethyst-Installer/blob/main/Amethyst-Installer]
-    public static void OpenFolderAndSelectItem(string filePath)
-    {
-        filePath = Path.GetFullPath(filePath); // Resolve absolute path
-        var folderPath = Path.GetDirectoryName(filePath);
-        var file = Path.GetFileName(filePath);
-
-        IntPtr nativeFolder;
-        SHParseDisplayName(folderPath, IntPtr.Zero, out nativeFolder, 0, out _);
-
-        if (nativeFolder == IntPtr.Zero)
-            return;
-
-        IntPtr nativeFile;
-        SHParseDisplayName(Path.Combine(folderPath, file), IntPtr.Zero, out nativeFile, 0, out _);
-
-        // Open the folder without the file selected if we can't find the file
-        IntPtr[] fileArray = { nativeFile != IntPtr.Zero ? nativeFile : nativeFolder };
-
-        SHOpenFolderAndSelectItems(nativeFolder, (uint)fileArray.Length, fileArray, 0);
-
-        Marshal.FreeCoTaskMem(nativeFolder);
-        if (nativeFile != IntPtr.Zero) Marshal.FreeCoTaskMem(nativeFile);
-    }
-
-    [DllImport("shell32.dll", SetLastError = true)]
-    private static extern int SHOpenFolderAndSelectItems(IntPtr pidlFolder, uint cidl,
-        [In] [MarshalAs(UnmanagedType.LPArray)]
-        IntPtr[] apidl, uint dwFlags);
-
-    [DllImport("shell32.dll", SetLastError = true)]
-    private static extern uint SHParseDisplayName([MarshalAs(UnmanagedType.LPWStr)] string name, IntPtr bindingContext,
-        [Out] out IntPtr pidl, uint sfgaoIn, [Out] out uint psfgaoOut);
-
-    [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-    private static extern uint SHGetNameFromIDList(IntPtr pidl, Sigdn sigdnName, [Out] out IntPtr ppszName);
-
-    private enum Sigdn : uint
-    {
-        Normaldisplay = 0x00000000,
-        Parentrelativeparsing = 0x80018001,
-        Desktopabsoluteparsing = 0x80028000,
-        Parentrelativeediting = 0x80031001,
-        Desktopabsoluteediting = 0x8004c000,
-        Filesyspath = 0x80058000,
-        Url = 0x80068000,
-        Parentrelativeforaddressbar = 0x8007c001,
-        Parentrelative = 0x80080001
     }
 }

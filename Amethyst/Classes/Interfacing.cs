@@ -75,6 +75,9 @@ public static class Interfacing
     // Server checking threads number, max num of them
     public static uint PingCheckingThreadsNumber;
 
+    // Disable app domain exception handling
+    public static bool SuppressAllDomainExceptions = false;
+
     // Server interfacing data
     public static int ServiceEndpointStatusCode;
     public static long PingTime;

@@ -78,8 +78,7 @@
     Explorer "Package and Publish" context menu entry to be enabled for this project even if 
     the Windows App SDK Nuget package has not yet been restored.
   -->
-    <PropertyGroup
-        Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
         <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
     </PropertyGroup>
     <ItemGroup>
@@ -98,6 +97,8 @@
         <None Remove="Pages\Plugins.xaml" />
         <None Remove="Pages\Settings.xaml" />
         <None Remove="Popups\Blocked.xaml" />
+        <None Remove="Popups\CrashDialog.xaml" />
+        <None Remove="Popups\CrashWindow.xaml" />
         <None Remove="Popups\Host.xaml" />
         <None Remove="Popups\Splash.xaml" />
     </ItemGroup>
@@ -119,6 +120,16 @@
         <Content Include="$(SolutionDir)\Resources\**" Visible="false">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Popups\CrashDialog.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Popups\CrashWindow.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
     <ItemGroup>
         <Page Update="Controls\LoadAttemptedPluginsView.xaml">

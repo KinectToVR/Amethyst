@@ -3,16 +3,17 @@
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:desktop8="http://schemas.microsoft.com/appx/manifest/desktop/windows10/8"
-  IgnorableNamespaces="uap rescap com desktop desktop8">
+  IgnorableNamespaces="uap uap10 rescap com desktop desktop8">
 
   <Identity
     Name="K2VRTeam.Amethyst.App"
     Publisher="CN=K2VR Team"
-    Version="1.2.1.7" />
+    Version="1.2.1.8" />
 
   <Properties>
     <DisplayName>Amethyst</DisplayName>
@@ -38,9 +39,9 @@
   </Extensions>
 
   <Applications>
-    <Application Id="App"
-      Executable="$targetnametoken$.exe"
-      EntryPoint="$targetentrypoint$">
+    <Application Id="Amethyst"
+                 Executable="$targetnametoken$.exe"
+                 EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="Amethyst"
         Description="Amethyst Desktop"
@@ -68,6 +69,30 @@
           <uap:Protocol Name="amethyst-app">
             <uap:Logo>Assets\Visuals\StoreLogo.png</uap:Logo>
             <uap:DisplayName>Amethyst Application URI Scheme</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+      </Extensions>
+    </Application>
+
+    <Application Id="K2CrashHandler"
+                 Executable="$targetnametoken$.exe"
+                 EntryPoint="$targetentrypoint$"
+                 uap10:Parameters="Crash">
+      <uap:VisualElements
+        DisplayName="Amethyst Crash Handler"
+        Description="Amethyst Desktop Crash Handler"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Visuals\Crash Handler\Square150x150Logo.png"
+        Square44x44Logo="Assets\Visuals\Crash Handler\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Visuals\Crash Handler\Wide310x150Logo.png"  Square71x71Logo="Assets\Visuals\Crash Handler\SmallTile.png" Square310x310Logo="Assets\Visuals\Crash Handler\LargeTile.png"/>
+        <uap:SplashScreen Image="Assets\Visuals\Crash Handler\SplashScreen.png" />
+      </uap:VisualElements>
+
+      <Extensions>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="amethyst-crash">
+            <uap:Logo>Assets\Visuals\Crash Handler\StoreLogo.png</uap:Logo>
+            <uap:DisplayName>Amethyst Crash Handler URI Scheme</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
       </Extensions>

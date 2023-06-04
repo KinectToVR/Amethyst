@@ -1507,7 +1507,7 @@
     },
     {
       "id": "/CrashHandler/Content/Recovery",
-      "translation": "Vous avez lancé le Crash Handler manuellement, que voulez-vous faire?\n\nSi l'extension SteamVR pour Amethyst n'est pas détectée correctement, vous pouvez la ré-inscrire dans la liste (bouton ci-dessous) et essayer à nouveau."
+      "translation": "Il semble que vous ayez lancé manuellement le Crash Handler. Que vouliez-vous faire?\n\nPendant que vous êtes encore ici, pensez à faire un don à notre OpenCollective, pour que nous puissions continuer à faire fonctionner tout ça. Oh, et merci d'utiliser Amethyst!"
     },
     {
       "id": "/CrashHandler/PrimaryButton/AlreadyRunning",
@@ -1527,7 +1527,7 @@
     },
     {
       "id": "/CrashHandler/PrimaryButton/Recovery",
-      "translation": "Ré-inscrire l'extension"
+      "translation": "OpenCollective"
     },
     {
       "id": "/CrashHandler/ReRegister/DriverNotFound",

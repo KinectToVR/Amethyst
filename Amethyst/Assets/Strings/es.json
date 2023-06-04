@@ -1507,7 +1507,7 @@
     },
     {
       "id": "/CrashHandler/Content/Recovery",
-      "translation": "Has iniciado el Crash Hangler de manera manual. ¿Que quieres hacer?\n\nSi el controlador Amethyst para SteamVR no se detecta correctamente, puedes volver a registrarlo (botón de abajo) y volver a intentarlo."
+      "translation": "Parece que has ejecutado manualmente el Crash Handler. ¿Qué querías hacer?\n\nYa que estás aquí, por favor considera hacer una donación a nuestro OpenCollective, para que podamos mantener todo esto en funcionamiento. Ah, ¡y gracias por usar Amethyst!"
     },
     {
       "id": "/CrashHandler/PrimaryButton/AlreadyRunning",
@@ -1527,7 +1527,7 @@
     },
     {
       "id": "/CrashHandler/PrimaryButton/Recovery",
-      "translation": "Re-Registrar controlador"
+      "translation": "OpenCollective"
     },
     {
       "id": "/CrashHandler/ReRegister/DriverNotFound",

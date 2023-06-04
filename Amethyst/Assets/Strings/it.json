@@ -1653,7 +1653,7 @@
     },
     {
       "id": "/CrashHandler/Content/Recovery",
-      "translation": "Sembra che hai eseguito manualmente il Gestore dei Crash. Cosa vorresti fare?\n\nSe il driver di Amethyst per SteamVR non viene rilevato correttamente, puoi ri-registrare il driver di SteamVR (bottone sotto) e riprovare.",
+      "translation": "Sembra che abbiate eseguito manualmente il Crash Handler. Cosa volevi fare?\n\nMentre sei ancora qui, considera la possibilità di fare una donazione alla nostra OpenCollective, in modo da poter mantenere tutto questo materiale attivo e funzionante. Oh, e grazie per aver usato Amethyst!",
       "translatorComment": ""
     },
     {
@@ -1678,7 +1678,7 @@
     },
     {
       "id": "/CrashHandler/PrimaryButton/Recovery",
-      "translation": "Ri-Registra Driver",
+      "translation": "OpenCollective",
       "translatorComment": ""
     },
     {

@@ -17,8 +17,6 @@ variables:
     value: 'Pack/Output'
   - name: artifactDirectory
     value: 'Pack/Zip'
-  - name: packageVersion
-    value: 1.2.1.7
   - group: AppCenter
   - group: Protected
   
@@ -50,9 +48,6 @@ steps:
     ((Get-Content -path .\Amethyst\Amethyst.csproj -Raw) -replace 'AZ_BUILD_DATA-->', "") | Set-Content -Path .\Amethyst\Amethyst.csproj
     ((Get-Content -path .\Amethyst\Amethyst.csproj -Raw) -replace '<!--AZ_BUILD_DATA', "") | Set-Content -Path .\Amethyst\Amethyst.csproj
     ((Get-Content -path .\Amethyst\Amethyst.csproj -Raw) -replace 'AZ_BUILD_NUMBER', "$(Build.BuildNumber)") | Set-Content -Path .\Amethyst\Amethyst.csproj
-    ((Get-Content -path .\K2CrashHandler\K2CrashHandler.csproj -Raw) -replace 'AZ_BUILD_DATA-->', "") | Set-Content -Path .\K2CrashHandler\K2CrashHandler.csproj
-    ((Get-Content -path .\K2CrashHandler\K2CrashHandler.csproj -Raw) -replace '<!--AZ_BUILD_DATA', "") | Set-Content -Path .\K2CrashHandler\K2CrashHandler.csproj
-    ((Get-Content -path .\K2CrashHandler\K2CrashHandler.csproj -Raw) -replace 'AZ_BUILD_NUMBER', "$(Build.BuildNumber)") | Set-Content -Path .\K2CrashHandler\K2CrashHandler.csproj
     ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_BUILD_NUMBER', "$(Build.BuildNumber)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
   displayName: Add version data to Amethyst
 
@@ -68,9 +63,8 @@ steps:
 - pwsh: |
     ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_APPCENTER_SECRET', "$(Amethyst_AppSecret)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
     ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_APPCENTER_RO_TOKEN', "$(UserApiToken_ReadOnly)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
-    ((Get-Content -path .\K2CrashHandler\Helpers\UpdateHelper.cs -Raw) -replace 'AZ_APPCENTER_SECRET', "$(CrashHandler_AppSecret)") | Set-Content -Path .\K2CrashHandler\Helpers\UpdateHelper.cs
-    ((Get-Content -path .\K2CrashHandler\Helpers\UpdateHelper.cs -Raw) -replace 'AZ_APPCENTER_RO_TOKEN', "$(UserApiToken_ReadOnly)") | Set-Content -Path .\K2CrashHandler\Helpers\UpdateHelper.cs
-  displayName: Add api keys to Amethyst
+    Write-Host "##vso[task.setvariable variable=packageVersion;]$(([xml](Get-Content .\Amethyst\Package.appxmanifest)).Package.Identity.Version)"
+  displayName: Add API keys to Amethyst
 
 - task: DownloadSecureFile@1
   name: signingCert
@@ -110,31 +104,11 @@ steps:
                   /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)" 
                   /p:PackageCertificateThumbprint="2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1" /p:PackageCertificatePassword="$(PackageCertificatePassword)"'
 
-- task: VSBuild@1
-  displayName: Build (publish) K2CrashHandler
-  inputs:
-    platform: '$(buildPlatform)'
-    solution: '$(solution)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/t:K2CrashHandler /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true 
-                  /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=K2CrashHandler\Properties\PublishProfiles\win10-$(buildPlatform).pubxml 
-                  /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\" 
-                  /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)" 
-                  /p:PackageCertificateThumbprint="2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1" /p:PackageCertificatePassword="$(PackageCertificatePassword)"'
-
 - task: CopyFiles@2
   displayName: Pack Amethyst
   inputs:
     SourceFolder: 'Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test'
     Contents: 'Amethyst_$(packageVersion)_$(buildPlatform).msix'
-    TargetFolder: $(Build.ArtifactStagingDirectory)
-    preserveTimestamp: true
-
-- task: CopyFiles@2
-  displayName: Pack K2CrashHandler
-  inputs:
-    SourceFolder: 'K2CrashHandler\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\K2CrashHandler_$(packageVersion)_Test'
-    Contents: 'K2CrashHandler_$(packageVersion)_$(buildPlatform).msix'
     TargetFolder: $(Build.ArtifactStagingDirectory)
     preserveTimestamp: true
 
@@ -146,20 +120,7 @@ steps:
     appFile: '$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform).msix'
     buildVersion: $(packageVersion)
     releaseNotesOption: 'input'
-    releaseNotesInput: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, the [Crash Handler](https://install.appcenter.ms/orgs/k2vr/apps/amethyst-crashhandler/distribution_groups/public/releases/latest) and [Amethyst itself](https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest)  \n(Note: The cert import is one-time, no need to redo it each time)  \n(Note: You'll get protocol run errors if the crash handler is missing)  \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
+    releaseNotesInput: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, then install [Amethyst itself](https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest)  \n(Note: The cert import is one-time, no need to redo it each time)  \n(Note: You'll get protocol run errors if the crash handler is missing)  \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)\n\n### Note: This will install both Amethyst and the Crash Handler\nUninstalling either of them will do the same for the other, as they're basically one app with two \"shortcuts\"."
     isMandatory: true
     destinationType: 'groups'
     distributionGroupId: 'dd3c18b6-8f5a-4b66-8a9b-83575b32c9ce'
-
-- task: AppCenterDistribute@3
-  displayName: Upload packed K2CrashHandler artifact
-  inputs:
-    serverEndpoint: K2VR
-    appSlug: K2VR/Amethyst-CrashHandler
-    appFile: '$(Build.ArtifactStagingDirectory)/K2CrashHandler_$(packageVersion)_$(buildPlatform).msix'
-    buildVersion: $(packageVersion)
-    releaseNotesOption: 'input'
-    releaseNotesInput: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, the [Crash Handler](https://install.appcenter.ms/orgs/k2vr/apps/amethyst-crashhandler/distribution_groups/public/releases/latest) and [Amethyst itself](https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest)  \n(Note: The cert import is one-time, no need to redo it each time)  \n(Note: You'll get protocol run errors if the crash handler is missing)  \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
-    isMandatory: true
-    destinationType: 'groups'
-    distributionGroupId: '7d5625f2-908d-49c7-899a-498c86d37396'

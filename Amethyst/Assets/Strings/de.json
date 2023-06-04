@@ -1475,7 +1475,7 @@
     },
     {
       "id": "/CrashHandler/Content/Crash/NoDevices",
-      "translation": "There were no appropriate device plugins available to load and use for body tracking.\n\nPlease check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices."
+      "translation": "There were no appropriate devices (plugins) available to load and use for body tracking.\n\nPlease check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices."
     },
     {
       "id": "/CrashHandler/Content/Crash/NoServices",
@@ -1491,7 +1491,7 @@
     },
     {
       "id": "/CrashHandler/Content/Crash/Panic",
-      "translation": "The main program loop has crashed consequently more than 7 times so Amethyst was shut down.\n\nPlease check if all your plugins are working and check the log files. Optionally, you can reset the (outer) app config and try running it again."
+      "translation": "The main program loop has crashed consequently more than 7 times so Amethyst was shut down.\n\nPlease check if all your devices / plugins are working and check logs. Optionally, you can erase the app configuration and then try running it again."
     },
     {
       "id": "/CrashHandler/Content/Crash/Unknown",
@@ -1507,7 +1507,7 @@
     },
     {
       "id": "/CrashHandler/Content/Recovery",
-      "translation": "Sieht so aus, als hättest du den Crash Handler manuell ausgeführt. Was würdest du gern tun?\n\nSollte der Amethyst-Treiber für SteamVR nicht richtig erkannt werden, kannst du den SteamVR-Treiber erneut registrieren und es dann erneut versuchen."
+      "translation": "Looks like you've manually ran the Crash Handler. What did you want to do?\n\nWhile you're still here, please consider donating to our OpenCollective, so we can keep all this stuff up and running. Oh, and thanks for using Amethyst!"
     },
     {
       "id": "/CrashHandler/PrimaryButton/AlreadyRunning",
@@ -1527,7 +1527,7 @@
     },
     {
       "id": "/CrashHandler/PrimaryButton/Recovery",
-      "translation": "Neu registrieren"
+      "translation": "OpenCollective"
     },
     {
       "id": "/CrashHandler/ReRegister/DriverNotFound",

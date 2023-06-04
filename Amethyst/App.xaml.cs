@@ -16,6 +16,7 @@ using Windows.Globalization;
 using Windows.Storage;
 using Windows.System.UserProfile;
 using Windows.UI.ViewManagement;
+using Windows.Web.Http;
 using Amethyst.Classes;
 using Amethyst.Popups;
 using Amethyst.Schedulers;
@@ -25,6 +26,7 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
+using Newtonsoft.Json.Linq;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -37,9 +39,10 @@ namespace Amethyst;
 /// </summary>
 public partial class App : Application
 {
-    private bool _canCloseViews;
-    private MainWindow _mWindow;
     private readonly List<Host> _views = new();
+    private bool _canCloseViews;
+    private CrashWindow _crashWindow;
+    private MainWindow _mWindow;
 
     /// <summary>
     ///     Initializes the singleton application object.  This is the first line of authored code
@@ -54,6 +57,7 @@ public partial class App : Application
         {
             var ex = e.Exception;
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
+            if (Interfacing.SuppressAllDomainExceptions) return; // Don't do anything
 
             var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
             var msg = string.Format(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack"), stc);
@@ -75,6 +79,7 @@ public partial class App : Application
         {
             var ex = (Exception)e.ExceptionObject;
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
+            if (Interfacing.SuppressAllDomainExceptions) return; // Don't do anything
 
             var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
             var msg = string.Format(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack"), stc);
@@ -103,7 +108,9 @@ public partial class App : Application
         try
         {
             Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.TemporaryFolder.Path, ".crash"));
-            Interfacing.CrashFile.Create(); // Create the file
+            if (Environment.GetCommandLineArgs().ElementAtOrDefault(1) is "Crash" ||
+                (Environment.GetCommandLineArgs().ElementAtOrDefault(1)?.StartsWith("amethyst-crash") ?? false))
+                Interfacing.CrashFile.Create(); // Create the file if not running as crash handler
         }
         catch (Exception e)
         {
@@ -215,35 +222,75 @@ public partial class App : Application
     ///     Invoked when the application is launched normally by the end user.  Other entry points
     ///     will be used such as when the application is launched to open a specific file.
     /// </summary>
-    /// <param name="_">Details about the launch request and process.</param>
-    protected override async void OnLaunched(LaunchActivatedEventArgs _)
+    /// <param name="eventArgs">Details about the launch request and process.</param>
+    protected override async void OnLaunched(LaunchActivatedEventArgs eventArgs)
     {
         // Check if there's any argv[1]
         var args = Environment.GetCommandLineArgs();
         Logger.Info($"Received launch arguments: {string.Join(", ", args)}");
 
         // Check if this startup isn't a request
-        if (args.Length > 2 && args[1] == "Kill")
-        {
-            try
+        if (args.Length > 1)
+            if (args[1] == "Kill" && args.Length > 2)
             {
-                Logger.Info($"Amethyst running in process kill slave mode! ID: {args[2]}");
-                var processToKill = Process.GetProcessById(int.Parse(args[2]));
+                try
+                {
+                    Logger.Info($"Amethyst running in process kill slave mode! ID: {args[2]}");
+                    var processToKill = Process.GetProcessById(int.Parse(args[2]));
 
-                // If we want to kill server, shut down monitor first
-                if (processToKill.ProcessName == "vrserver")
-                    Process.GetProcessesByName("vrmonitor").ToList().ForEach(x => x.Kill());
+                    // If we want to kill server, shut down monitor first
+                    if (processToKill.ProcessName == "vrserver")
+                        Process.GetProcessesByName("vrmonitor").ToList().ForEach(x => x.Kill());
 
-                processToKill.Kill(); // Now kill the actual process
+                    processToKill.Kill(); // Now kill the actual process
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                }
+
+                Logger.Info("That's all! Shutting down now...");
+                Environment.Exit(0); // Cancel further application startup
             }
-            catch (Exception e)
+            else if (args[1] is "Crash" || args[1].StartsWith("amethyst-crash"))
             {
-                Logger.Error(e);
-            }
+                Logger.Info("Amethyst running in crash handler mode!");
+                Interfacing.SuppressAllDomainExceptions = true;
 
-            Logger.Info("That's all! Shutting down now...");
-            Environment.Exit(0); // Cancel further application startup
-        }
+                // Disable internal sounds
+                ElementSoundPlayer.State = ElementSoundPlayerState.Off;
+
+                Logger.Info("Creating a new CrashWindow view...");
+                _crashWindow = new CrashWindow(); // Create a new window
+
+                Logger.Info($"Activating {_crashWindow.GetType()}...");
+                _crashWindow.Activate(); // Activate the main window
+
+                // Do this in the meantime
+                _ = Task.Factory.StartNew(async () =>
+                {
+                    try
+                    {
+                        var client = new HttpClient();
+
+                        using var response =
+                            await client.GetAsync(new Uri("https://docs.k2vr.tech/shared/locales.json"));
+                        using var content = response.Content;
+                        var json = await content.ReadAsStringAsync();
+
+                        // Optionally fall back to English
+                        if (JObject.Parse(json)[Interfacing.DocsLanguageCode] == null)
+                            Interfacing.DocsLanguageCode = "en";
+                    }
+                    catch (Exception)
+                    {
+                        Interfacing.DocsLanguageCode = "en";
+                    }
+                });
+
+                // That's all!
+                return;
+            }
 
         // Check if activated via uri
         var activationUri = (AppInstance.GetCurrent().GetActivatedEventArgs().Data as
@@ -259,7 +306,8 @@ public partial class App : Application
                 {
                     SystemShell.OpenFolderAndSelectItem(
                         new DirectoryInfo(Interfacing.GetAppDataLogFilePath(""))
-                            .GetFiles().MaxBy(x => x.LastWriteTime)?.FullName
+                            .GetFiles().OrderByDescending(x => x.LastWriteTime)
+                            .ToList().ElementAtOrDefault(1)?.FullName
                         ?? Interfacing.GetAppDataLogFilePath(""));
 
                     Logger.Info("That's all! Shutting down now...");

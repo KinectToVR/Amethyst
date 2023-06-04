@@ -1507,7 +1507,7 @@
     },
     {
       "id": "/CrashHandler/Content/Recovery",
-      "translation": "Похоже вы вручную запустили Crash Handler (обработчик ошибок). Что вы хотите сделать?\n\nЕсли драйвер Amethyst для SteamVR не обнаруживается должным образом, вы можете перерегистрировать драйвер SteamVR (кнопка ниже) и попробовать снова."
+      "translation": "Похоже, что вы вручную запустили обработчик аварий. Что вы хотели сделать?\n\nПока вы еще здесь, пожалуйста, подумайте о пожертвовании в наш OpenCollective, чтобы мы могли поддерживать все эти вещи в рабочем состоянии. О, и спасибо за использование Amethyst!"
     },
     {
       "id": "/CrashHandler/PrimaryButton/AlreadyRunning",
@@ -1527,7 +1527,7 @@
     },
     {
       "id": "/CrashHandler/PrimaryButton/Recovery",
-      "translation": "Перерегистрировать драйвер"
+      "translation": "OpenCollective"
     },
     {
       "id": "/CrashHandler/ReRegister/DriverNotFound",

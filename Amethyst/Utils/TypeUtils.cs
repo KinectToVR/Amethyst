@@ -9,16 +9,15 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.Management.Deployment;
+using Windows.System;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using AmethystSupport;
-using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using Windows.Storage;
-using Windows.System;
-using Windows.Management.Deployment;
 
 namespace Amethyst.Utils;
 
@@ -368,9 +367,7 @@ public static class UriExtensions
         try
         {
             if (await Launcher.QueryAppUriSupportAsync(uri) is LaunchQuerySupportStatus.Available ||
-                (uri.Scheme is "amethyst-crash" && new PackageManager().FindPackagesForUser("")
-                    .Any(x => x.Id.Name is "K2VRTeam.Amethyst.CrashHandler")))
-                await Launcher.LaunchUriAsync(uri); // Launch only if everything is all fine...
+                uri.Scheme is "amethyst-crash" or "amethyst-app") await Launcher.LaunchUriAsync(uri);
             else
                 Logger.Warn($"No application registered to handle uri of \"{uri.Scheme}:\"," +
                             $" query result: {await Launcher.QueryAppUriSupportAsync(uri)}");
@@ -392,5 +389,36 @@ public static class VersionExtensions
     public static string AsString(this PackageVersion version)
     {
         return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+    }
+}
+
+public class VisibilityTrigger : StateTriggerBase
+{
+    private FrameworkElement _element;
+    private Visibility _trigger;
+
+    public FrameworkElement Target
+    {
+        get => _element;
+        set
+        {
+            _element = value;
+            RefreshState();
+        }
+    }
+
+    public Visibility ActiveOn
+    {
+        get => _trigger;
+        set
+        {
+            _trigger = value;
+            RefreshState();
+        }
+    }
+
+    private void RefreshState()
+    {
+        SetActive(Target?.Visibility == ActiveOn);
     }
 }
