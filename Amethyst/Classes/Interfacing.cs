@@ -16,6 +16,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppNotifications;
 using Newtonsoft.Json;
+using System.Web;
 
 namespace Amethyst.Classes;
 
@@ -164,7 +165,7 @@ public static class Interfacing
         Task.Run(async Task() =>
         {
             Logger.Info($"Activating the crash handler with #message: {message}");
-            await $"amethyst-crash:message#{message}".ToUri().LaunchAsync();
+            await $"amethyst-crash:message#{HttpUtility.UrlEncode(message)}".ToUri().LaunchAsync();
 
             Logger.Info("Waiting...");
             await Task.Delay(1000); // Wait for the crash handler to be activated

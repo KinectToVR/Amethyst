@@ -25,6 +25,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using RestSharp;
 using static Amethyst.Classes.Interfacing;
+using System.Web;
 
 namespace Amethyst.MVVM;
 
@@ -246,7 +247,7 @@ public class PluginHost : IAmethystHost
         Shared.Main.DispatcherQueue.TryEnqueue(async () =>
         {
             // Launch the crash handler if fatal
-            if (fatal) await $"amethyst-crash:message#{message}".ToUri().LaunchAsync();
+            if (fatal) await $"amethyst-crash:message#{HttpUtility.UrlEncode(message)}".ToUri().LaunchAsync();
 
             // Handle all the exit actions (if needed)
             if (!IsExitHandled) await HandleAppExit(1000);
