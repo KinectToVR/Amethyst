@@ -210,6 +210,7 @@ public sealed partial class CrashWindow : Window
         var activationUri = (AppInstance.GetCurrent().GetActivatedEventArgs().Data as
             ProtocolActivatedEventArgs)?.Uri;
 
+        Logger.Info($"Activated via uri of: {activationUri}");
         if (activationUri is not null && activationUri.Segments.Length > 0)
             CrashHandlerMode = activationUri.Segments.First() switch
             {

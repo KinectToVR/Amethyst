@@ -243,7 +243,8 @@ public static class Shared
             ServerStatusLabel,
             ServerErrorLabel,
             ServerErrorWhatText,
-            ForceRenderText;
+            ForceRenderText,
+            ToggleTrackersButtonText;
 
         public static Grid
             ErrorButtonsGrid,

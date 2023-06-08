@@ -724,10 +724,10 @@
                         <StackPanel Orientation="Vertical" Margin="0,0,0,20">
 
                             <controls:LoadAttemptedPluginsView
-                                DisplayedPlugins="{x:Bind classes:AppPlugins.LoadedPluginsList, Mode=OneWay}" />
+                                DisplayedPlugins="{x:Bind classes:AppPlugins.LoadedPluginsList}" />
 
                             <controls:LoadAttemptedPluginsView
-                                DisplayedPlugins="{x:Bind classes:AppPlugins.ErrorPluginsList, Mode=OneWay}" />
+                                DisplayedPlugins="{x:Bind classes:AppPlugins.ErrorPluginsList}" />
                         </StackPanel>
 
                         <ScrollViewer.Transitions>

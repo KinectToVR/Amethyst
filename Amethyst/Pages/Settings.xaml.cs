@@ -843,7 +843,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         // Set up the co/re/disconnect button
         Shared.General.ToggleTrackersButton.IsChecked = false;
-        Shared.General.ToggleTrackersButton.Content =
+        Shared.General.ToggleTrackersButtonText.Text =
             Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
@@ -893,7 +893,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         // Set up the co/re/disconnect button
         Shared.General.ToggleTrackersButton.IsChecked = false;
-        Shared.General.ToggleTrackersButton.Content =
+        Shared.General.ToggleTrackersButtonText.Text =
             Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
@@ -981,7 +981,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         // Set up the co/re/disconnect button
         Shared.General.ToggleTrackersButton.IsChecked = false;
-        Shared.General.ToggleTrackersButton.Content =
+        Shared.General.ToggleTrackersButtonText.Text =
             Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");

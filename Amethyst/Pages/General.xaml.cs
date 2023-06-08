@@ -37,12 +37,13 @@ namespace Amethyst.Pages;
 public sealed partial class General : Page, INotifyPropertyChanged
 {
     private static string _calibratingDeviceGuid = "";
-    private bool _autoCalibration_StillPending;
+    private bool _autoCalibrationStillPending;
 
     private bool _calibrationPending;
     private bool _generalPageLoadedOnce;
     private bool _isCurrentWindowActiveBackup;
     private bool _offsetsPageNavigated;
+    private bool _isSpawningBlocked;
 
     private int _previousOffsetPageIndex;
     private bool _showSkeletonPrevious = true;
@@ -69,6 +70,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         Shared.General.ServerErrorLabel = ServerErrorLabel;
         Shared.General.ServerErrorWhatText = ServerErrorWhatText;
         Shared.General.ForceRenderText = ForceRenderText;
+        Shared.General.ToggleTrackersButtonText = ToggleTrackersButtonText;
         Shared.General.ErrorButtonsGrid = ErrorButtonsGrid;
         Shared.General.ErrorWhatGrid = ErrorWhatGrid;
         Shared.General.ServerErrorWhatGrid = ServerErrorWhatGrid;
@@ -101,8 +103,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
                 // Reload & restart the waiting loop
                 if (_generalPageLoadedOnce && Interfacing.CurrentPageTag == "general")
-                    Shared.Main.DispatcherQueue.TryEnqueue(
-                        async () => { await Page_LoadedHandler(); });
+                    Shared.Main.DispatcherQueue.TryEnqueue(Page_LoadedHandler);
 
                 // Reset the event
                 Shared.Events.ReloadGeneralPageEvent.Reset();
@@ -147,19 +148,19 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    private async void Page_Loaded(object sender, RoutedEventArgs e)
+    private void Page_Loaded(object sender, RoutedEventArgs e)
     {
         Logger.Info($"Re/Loading page: '{GetType().FullName}'...");
         Interfacing.CurrentAppState = "general";
 
         // Execute the handler
-        await Page_LoadedHandler();
+        Page_LoadedHandler();
 
         // Mark as loaded
         _generalPageLoadedOnce = true;
     }
 
-    private async Task Page_LoadedHandler()
+    private void Page_LoadedHandler()
     {
         // Start the main loop since we're done with basic setup
         if (!_generalPageLoadedOnce)
@@ -167,30 +168,61 @@ public sealed partial class General : Page, INotifyPropertyChanged
             Logger.Info("Basic setup done! Starting the main loop now...");
             Shared.Events.StartMainLoopEvent.Set();
 
-            // Try auto-spawning trackers if stated so
             if (Interfacing.IsServiceEndpointPresent && // If the driver's ok
                 AppData.Settings.AutoSpawnEnabledJoints) // If autospawn
-            {
-                if (await Interfacing.SpawnEnabledTrackers())
+                Shared.Main.DispatcherQueue.TryEnqueue(async () =>
                 {
-                    ToggleTrackersButton.IsChecked = true; // Mark as spawned
-                }
+                    // Disable manual spawn controls (NOT console)
+                    ToggleTrackersButton.Opacity = 0.5;
+                    ToggleTrackersButtonBlocked.Opacity = 1.0;
+                    _isSpawningBlocked = true;
 
-                // Cry about it
-                else
-                {
-                    Interfacing.ServiceEndpointFailure = true; // WAAAAAAA
-                    Interfacing.ServiceEndpointSetup(); // Refresh
-                    Interfacing.ShowToast(
-                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
-                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"),
-                        true); // High priority - it's probably a server failure
+                    // Wait a bit not to interfere with other stuff
+                    await Task.Delay(2000); // 2s should be fine...
 
-                    Interfacing.ShowServiceToast(
-                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
-                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"));
-                }
-            }
+                    // Try auto-spawning trackers if stated so
+                    try
+                    {
+                        if (await Interfacing.SpawnEnabledTrackers())
+                        {
+                            // Make sure to revert our changes
+                            ToggleTrackersButton.Opacity = 1.0;
+                            ToggleTrackersButtonBlocked.Opacity = 0.0;
+                            _isSpawningBlocked = false;
+
+                            // Reflect our changes on the control
+                            ToggleTrackersButton.IsChecked = true;
+                        }
+                        else
+                        {
+                            // Make sure to revert our changes
+                            ToggleTrackersButton.Opacity = 1.0;
+                            ToggleTrackersButtonBlocked.Opacity = 0.0;
+                            _isSpawningBlocked = false;
+
+                            // The absolute, overwhelming misery
+                            Interfacing.ServiceEndpointFailure = true;
+                            Interfacing.ServiceEndpointSetup(); // Refresh
+                            Interfacing.ShowToast(
+                                Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+                                Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"),
+                                true); // High priority - it's probably a server failure
+
+                            Interfacing.ShowServiceToast(
+                                Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+                                Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"));
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e); // Wah
+                    }
+
+                    // Make sure to revert our changes
+                    ToggleTrackersButton.Opacity = 1.0;
+                    ToggleTrackersButtonBlocked.Opacity = 0.0;
+                    _isSpawningBlocked = false;
+                });
         }
 
         // Update the internal version
@@ -365,7 +397,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Set the [calibration pending] bool
         _calibrationPending = true;
-        _autoCalibration_StillPending = true;
+        _autoCalibrationStillPending = true;
 
         // Play a nice sound - starting
         AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationStart);
@@ -514,7 +546,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         NoSkeletonTextNotice.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoSkeletonText");
 
         _calibrationPending = false; // We're finished
-        _autoCalibration_StillPending = false;
+        _autoCalibrationStillPending = false;
 
         AppData.Settings.SkeletonPreviewEnabled = _showSkeletonPrevious; // Change to whatever
         SetSkeletonVisibility(_showSkeletonPrevious); // Change to whatever
@@ -539,7 +571,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private void DiscardCalibrationButton_Click(object sender, RoutedEventArgs e)
     {
         // Just exit
-        if (!_calibrationPending && !_autoCalibration_StillPending)
+        if (!_calibrationPending && !_autoCalibrationStillPending)
         {
             CalibrationDeviceSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
             CalibrationDeviceSelectView.IsPaneOpen = false;
@@ -781,9 +813,15 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private async void ToggleTrackersButton_Checked(object sender, RoutedEventArgs e)
     {
         Logger.Info("Trackers initialization requested!");
+        if (_isSpawningBlocked)
+        {
+            Logger.Warn("Aborting! Temporary halt requested by other thread...");
+            ToggleTrackersButton.IsChecked = false; // Set to the opposite
+            return; // Don't do anything else or trigger any other signals
+        }
 
         // Don't check if setup's finished since we're gonna emulate a click rather than change the state only
-        ToggleTrackersButton.Content = Interfacing.LocalizedJsonString(
+        ToggleTrackersButtonText.Text = Interfacing.LocalizedJsonString(
             "/GeneralPage/Buttons/TrackersToggle/Disconnect");
 
         // Optionally spawn trackers
@@ -825,9 +863,14 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private void ToggleTrackersButton_Unchecked(object sender, RoutedEventArgs e)
     {
         Logger.Info("Trackers removal requested!");
+        if (_isSpawningBlocked)
+        {
+            Logger.Warn("Aborting! Temporary halt requested by other thread...");
+            return; // Don't do anything else or trigger any other signals
+        }
 
         // Don't check if setup's finished since we're gonna emulate a click rather than change the state only
-        ToggleTrackersButton.Content = Interfacing.LocalizedJsonString(
+        ToggleTrackersButtonText.Text = Interfacing.LocalizedJsonString(
             "/GeneralPage/Buttons/TrackersToggle/Reconnect");
 
         Logger.Info("Trying to shut app trackers within the selected service...");
@@ -1036,7 +1079,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             // Okay to do this here => the preview is forced on calibration
             StartAutoCalibrationButton.IsEnabled =
                 trackingDevice.IsSkeletonTracked
-                && !_calibrationPending && !_autoCalibration_StillPending;
+                && !_calibrationPending && !_autoCalibrationStillPending;
 
             if (!trackingDevice.IsSkeletonTracked)
             {
@@ -1736,13 +1779,13 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (!Interfacing.AppTrackersSpawned)
         {
             ToggleTrackersButton.IsChecked = false;
-            ToggleTrackersButton.Content =
+            ToggleTrackersButtonText.Text =
                 Interfacing.LocalizedJsonString("/GeneralPage/Buttons/TrackersToggle/Connect");
         }
         else
         {
             ToggleTrackersButton.IsChecked = Interfacing.AppTrackersInitialized;
-            ToggleTrackersButton.Content = Interfacing.LocalizedJsonString(
+            ToggleTrackersButtonText.Text = Interfacing.LocalizedJsonString(
                 Interfacing.AppTrackersInitialized
                     ? "/GeneralPage/Buttons/TrackersToggle/Disconnect"
                     : "/GeneralPage/Buttons/TrackersToggle/Reconnect");

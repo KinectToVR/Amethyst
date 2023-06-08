@@ -1277,11 +1277,29 @@
                                 VerticalAlignment="Stretch" Visibility="Collapsed" />-->
                     </Grid>
 
-                    <ToggleButton FontSize="15" x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked"
-                                  IsEnabled="{x:Bind ServiceStatusOk, Mode=OneWay}"
-                                  Unchecked="ToggleTrackersButton_Unchecked" VerticalContentAlignment="Center"
+                    <ToggleButton x:Name="ToggleTrackersButton" Checked="ToggleTrackersButton_Checked"
+                                  IsEnabled="{x:Bind ServiceStatusOk, Mode=OneWay}" Opacity="1.0"
+                                  Unchecked="ToggleTrackersButton_Unchecked"
+                                  VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                   FontWeight="SemiBold" Margin="40,10" CornerRadius="4"
                                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0">
+                        <ToggleButton.OpacityTransition>
+                            <ScalarTransition />
+                        </ToggleButton.OpacityTransition>
+
+                        <ToggleButton.Content>
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <TextBlock x:Name="ToggleTrackersButtonText" FontSize="15"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <ProgressBar x:Name="ToggleTrackersButtonBlocked" IsIndeterminate="True"
+                                             Margin="-11,0,-11,-6" Opacity="0.0" 
+                                             HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+                                    <ProgressBar.OpacityTransition>
+                                        <ScalarTransition />
+                                    </ProgressBar.OpacityTransition>
+                                </ProgressBar>
+                            </Grid>
+                        </ToggleButton.Content>
 
                         <ToggleButton.Resources>
                             <TeachingTip x:Name="ToggleTrackersTeachingTip"

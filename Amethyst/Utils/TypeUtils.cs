@@ -18,6 +18,8 @@ using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using Microsoft.UI.Xaml.Data;
+using System.Globalization;
 
 namespace Amethyst.Utils;
 
