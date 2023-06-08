@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Globalization;
@@ -25,8 +26,8 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
-using Microsoft.Windows.AppLifecycle;
 using Newtonsoft.Json.Linq;
+using AppInstance = Microsoft.Windows.AppLifecycle.AppInstance;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -314,6 +315,36 @@ public partial class App : Application
                     Environment.Exit(0); // Cancel further application startup
                     break;
                 }
+                case "data-folder":
+                {
+                    SystemShell.OpenFolderAndSelectItem(
+                        Directory.GetParent(Interfacing.LocalFolder.Path)?.FullName);
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
+                case "mutable-folder":
+                {
+                    const string mutablePath = @"C:\Program Files\ModifiableWindowsApps\K2VRTeam.Amethyst.App";
+                    SystemShell.OpenFolderAndSelectItem(Directory.Exists(mutablePath)
+                        ? mutablePath // Check whether the global mutable folder is accessible
+                        : Path.Join(Directory.GetParent( // Otherwise open the virtual fs one
+                            Interfacing.LocalFolder.Path)?.FullName, "AC", "MutablePackageRoot"));
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
+                case "vfs-folder":
+                {
+                    SystemShell.OpenFolderAndSelectItem(Path.Join(
+                        Directory.GetParent(Interfacing.LocalFolder.Path)?.FullName, "AC"));
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
                 case "make-local":
                 {
                     try
@@ -389,7 +420,7 @@ public partial class App : Application
 
         // Create the plugin directory (if not existent)
         Directory.CreateDirectory(Path.Combine(
-            Interfacing.ProgramLocation.DirectoryName, "Plugins"));
+            Interfacing.ProgramLocation.DirectoryName!, "Plugins"));
 
         // Try reading the startup task config
         try
