@@ -169,6 +169,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             Shared.Events.StartMainLoopEvent.Set();
 
             if (Interfacing.IsServiceEndpointPresent && // If the driver's ok
+                AppPlugins.CurrentServiceEndpoint.StatusOk && // Service ok?
                 AppData.Settings.AutoSpawnEnabledJoints) // If autospawn
                 Shared.Main.DispatcherQueue.TryEnqueue(async () =>
                 {
@@ -178,7 +179,20 @@ public sealed partial class General : Page, INotifyPropertyChanged
                     _isSpawningBlocked = true;
 
                     // Wait a bit not to interfere with other stuff
-                    await Task.Delay(2000); // 2s should be fine...
+                    await Task.Delay(500); // Just a moment...
+
+                    // Check for the service endpoint again
+                    if (!Interfacing.IsServiceEndpointPresent ||
+                        AppPlugins.CurrentServiceEndpoint.StatusError)
+                    {
+                        // Make sure to revert our changes
+                        ToggleTrackersButton.Opacity = 1.0;
+                        ToggleTrackersButtonBlocked.Opacity = 0.0;
+                        _isSpawningBlocked = false;
+                    }
+
+                    // Wait a bit not to interfere with other stuff
+                    await Task.Delay(1500); // 2s should be fine...
 
                     // Try auto-spawning trackers if stated so
                     try
