@@ -191,10 +191,9 @@ public sealed partial class Info : Page, INotifyPropertyChanged
 
                 try
                 {
-                    SetCommandText(CSharpScript.EvaluateAsync(((TextBox)sender).Text["eval ".Length..].Trim(),
-                            ScriptOptions.Default.WithImports("Amethyst.Classes")
-                                .WithReferences(typeof(Interfacing).Assembly).AddImports("System.Linq"))
-                        .Result.ToString());
+                    SetCommandText((await CSharpScript.EvaluateAsync(((TextBox)sender).Text["eval ".Length..].Trim(),
+                        ScriptOptions.Default.WithImports("Amethyst.Classes")
+                            .WithReferences(typeof(Interfacing).Assembly).AddImports("System.Linq"))).ToString());
                 }
                 catch (Exception ex)
                 {
