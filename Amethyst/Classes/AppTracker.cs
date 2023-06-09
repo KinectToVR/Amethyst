@@ -96,8 +96,7 @@ public class AppTracker : INotifyPropertyChanged
         set => _isOrientationOverridden = value;
     }
 
-    [JsonIgnore]
-    public bool NoPositionFilteringRequested { get; set; }
+    [JsonIgnore] public bool NoPositionFilteringRequested { get; set; }
 
     // Override device's GUID
     public string OverrideGuid { get; set; } = string.Empty;

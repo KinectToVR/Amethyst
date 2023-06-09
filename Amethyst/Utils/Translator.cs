@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using Amethyst.Classes;
 using Newtonsoft.Json;
@@ -31,7 +30,7 @@ public class LocalisationFileJson
 
 public class LocalizedMessage
 {
+    [JsonProperty("translatorComment")] public string Comment = string.Empty;
     [JsonProperty("id")] public string Id = string.Empty;
     [JsonProperty("translation")] public string Translation = string.Empty;
-    [JsonProperty("translatorComment")] public string Comment = string.Empty;
 }

@@ -92,7 +92,7 @@
                                         </StackPanel>
                                     </Button>
 
-                                    <icons:FluentSymbolIcon 
+                                    <icons:FluentSymbolIcon
                                         Grid.Column="4" Visibility="{x:Bind IsElevated, Mode=OneWay}" Symbol="Info20"
                                         Margin="8,0,3,0" Tapped="FluentSymbolIcon_Tapped" />
                                 </Grid>
@@ -155,8 +155,10 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Button Click="ElevatedKillButton_Click" FontSize="15" Content="Proceed" Style="{ThemeResource AccentButtonStyle}" HorizontalAlignment="Stretch" />
-                        <Button Click="CancelElevationButton_Click" FontSize="15" Grid.Column="1" Content="Cancel" HorizontalAlignment="Stretch" />
+                        <Button Click="ElevatedKillButton_Click" FontSize="15" Content="Proceed"
+                                Style="{ThemeResource AccentButtonStyle}" HorizontalAlignment="Stretch" />
+                        <Button Click="CancelElevationButton_Click" FontSize="15" Grid.Column="1" Content="Cancel"
+                                HorizontalAlignment="Stretch" />
                     </Grid>
                 </StackPanel>
             </Flyout>

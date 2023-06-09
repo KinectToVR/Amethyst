@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Windows.Graphics;
 using Amethyst.Classes;
@@ -132,7 +131,7 @@ public sealed partial class Host : Window
     {
         _configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
     }
-    
+
     private void SetConfigurationSourceTheme()
     {
         _configurationSource.Theme = Application.Current.RequestedTheme switch

@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Amethyst.Classes;
-using Amethyst.MVVM;
 using Amethyst.Pages;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;

@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Amethyst.Classes;
+using Amethyst.Pages;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -118,13 +118,13 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
 
     private void OverrideTrackerCombo_OnDropDownOpened(object sender, object e)
     {
-        if (!Pages.Devices.DisableJointExpanderSounds)
+        if (!Devices.DisableJointExpanderSounds)
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
     }
 
     private void OverrideTrackerCombo_OnDropDownClosed(object sender, object e)
     {
-        if (!Pages.Devices.DisableJointExpanderSounds)
+        if (!Devices.DisableJointExpanderSounds)
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
@@ -159,7 +159,7 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
         // Don't even care if we're not set up yet
         if (!IsAnyTrackerEnabled) return;
 
-        if (!Pages.Devices.DisableJointExpanderSounds)
+        if (!Devices.DisableJointExpanderSounds)
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
 
         Trackers.ForEach(x => x.OnPropertyChanged());

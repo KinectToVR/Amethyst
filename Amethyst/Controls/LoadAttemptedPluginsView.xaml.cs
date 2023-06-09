@@ -10,12 +10,12 @@ namespace Amethyst.Controls;
 
 public sealed partial class LoadAttemptedPluginsView : UserControl
 {
-    public IEnumerable<LoadAttemptedPlugin> DisplayedPlugins { get; set; }
-
     public LoadAttemptedPluginsView()
     {
         InitializeComponent();
     }
+
+    public IEnumerable<LoadAttemptedPlugin> DisplayedPlugins { get; set; }
 
     private void Expander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
     {

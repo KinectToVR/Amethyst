@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.System;
 using Amethyst.Classes;
 using Amethyst.Schedulers;
 using Amethyst.Utils;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using Microsoft.UI.Xaml.Controls;
-using System.IO;
-using Windows.Storage;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Collections.Specialized.BitVector32;
-using System.IO.Compression;
 
 namespace Amethyst.MVVM;
 

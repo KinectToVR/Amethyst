@@ -94,7 +94,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
         });
     }
 
-    public bool LoadingData { get; set; } = false;
+    public bool LoadingData { get; set; }
     public bool FinishedLoadingData { get; set; } = true;
 
     private RestClient ApiClient { get; } = new("https://api.github.com");
@@ -957,7 +957,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                     archive.Dispose(); // Close the archive file, dispose
                     Logger.Info("Deleting the plugin installation package...");
                     File.Delete(pluginArchive.Path); // Cleanup after the install
-                    
+
                     // Move the plugin folder if everything's fine
                     Logger.Info($"Moving temp {downloadFolder.Path} to {installFolder.Path}...");
                     Directory.Move(downloadFolder.Path, installFolder.Path);

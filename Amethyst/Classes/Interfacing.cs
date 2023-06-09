@@ -8,15 +8,14 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Web;
 using Windows.Data.Json;
 using Windows.Storage;
-using Windows.System;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppNotifications;
 using Newtonsoft.Json;
-using System.Web;
 
 namespace Amethyst.Classes;
 

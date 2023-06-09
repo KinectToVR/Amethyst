@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -13,6 +12,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Windows.Storage;
 using Windows.System;
 using Amethyst.Classes;
@@ -22,10 +22,8 @@ using Amethyst.Utils;
 using AmethystSupport;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using RestSharp;
 using static Amethyst.Classes.Interfacing;
-using System.Web;
 
 namespace Amethyst.MVVM;
 

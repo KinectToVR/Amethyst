@@ -8,7 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Visibility="{x:Bind IsAnyTrackerEnabled, Mode=OneWay}"
-    xmlns:local="using:Amethyst.Controls" xmlns:classes="using:Amethyst.Classes"
+    xmlns:classes="using:Amethyst.Classes"
     xmlns:util="using:Amethyst.Utils" mc:Ignorable="d">
 
     <Expander Margin="40,17,30,0"

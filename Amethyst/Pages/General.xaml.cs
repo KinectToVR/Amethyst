@@ -42,8 +42,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private bool _calibrationPending;
     private bool _generalPageLoadedOnce;
     private bool _isCurrentWindowActiveBackup;
-    private bool _offsetsPageNavigated;
     private bool _isSpawningBlocked;
+    private bool _offsetsPageNavigated;
 
     private int _previousOffsetPageIndex;
     private bool _showSkeletonPrevious = true;

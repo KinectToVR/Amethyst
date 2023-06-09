@@ -21,6 +21,10 @@ public static class Shared
 {
     public static class Events
     {
+        public delegate void RaisedEvent(object sender, EventArgs e);
+
+        public delegate Task RequestEvent(object sender, EventArgs e);
+
         public static ManualResetEvent
             ReloadMainWindowEvent,
             RefreshMainWindowEvent,
@@ -33,6 +37,10 @@ public static class Shared
 
         public static readonly ManualResetEvent
             StartMainLoopEvent = new(false);
+
+        public static RequestEvent RequestJointSelectorExpandersCollapseEvent;
+        public static RequestEvent RequestOverrideExpandersCollapseEvent;
+        public static RaisedEvent RequestJointSettingsRefreshEvent;
 
         public static void RequestInterfaceReload(bool all = true)
         {
@@ -55,13 +63,6 @@ public static class Shared
                 AppPlugins.HandleDeviceRefresh(false);
             });
         }
-
-        public delegate Task RequestEvent(object sender, EventArgs e);
-        public delegate void RaisedEvent(object sender, EventArgs e);
-
-        public static RequestEvent RequestJointSelectorExpandersCollapseEvent;
-        public static RequestEvent RequestOverrideExpandersCollapseEvent;
-        public static RaisedEvent RequestJointSettingsRefreshEvent;
     }
 
     public static class Main

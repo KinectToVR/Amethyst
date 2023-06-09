@@ -7,9 +7,7 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -17,12 +15,11 @@ using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
 using Windows.Data.Json;
 using Windows.Graphics;
+using Windows.Management.Deployment;
 using Windows.Storage;
 using Windows.System;
-using Windows.Web.Http;
 using Amethyst.Classes;
 using Amethyst.MVVM;
 using Amethyst.Pages;
@@ -48,7 +45,6 @@ using RestSharp;
 using WinRT;
 using WinRT.Interop;
 using WinUI.Fluent.Icons;
-using Windows.Management.Deployment;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -63,15 +59,15 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     public delegate Task RequestApplicationUpdate(object sender, EventArgs e);
 
     public static RequestApplicationUpdate RequestUpdateEvent;
+    private DesktopAcrylicController _acrylicController;
+
+    private SystemBackdropConfiguration _configurationSource;
 
     private bool _mainPageInitFinished;
 
-    private SystemBackdropConfiguration _configurationSource;
-    private MicaController _micaController;
-    private DesktopAcrylicController _acrylicController;
-
     private bool _mainPageLoadedOnce;
-    private string _remoteVersionString = AppData.VersionString.Display;
+    private MicaController _micaController;
+    private readonly string _remoteVersionString = AppData.VersionString.Display;
     private Shared.Events.RequestEvent _updateBrushesEvent;
 
     private WindowsSystemDispatcherQueueHelper _wsdqHelper; // See separate sample below for implementation
@@ -122,6 +118,32 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Setting up the main window asynchronously...");
         AsyncUtils.RunSync(SetupMainWindow); // Run via our extra utils
     }
+
+    [Export(typeof(IAmethystHost))] private IAmethystHost AmethystPluginHost { get; set; }
+
+    private bool CanShowPluginsUpdatePendingBar => !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowUpdateBar =>
+        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowUpdateDownloadingBar =>
+        !UpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowPluginsInstallBar =>
+        !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
+        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowPluginsUninstallBar =>
+        !PluginsInstallInfoBar.IsOpen && !UpdateDownloadingInfoBar.IsOpen &&
+        !UpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowReloadBar =>
+        !PluginsUninstallInfoBar.IsOpen && !PluginsInstallInfoBar.IsOpen &&
+        !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
+        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    // MVVM stuff
+    public event PropertyChangedEventHandler PropertyChanged;
 
     private async Task SetupMainWindow()
     {
@@ -1038,32 +1060,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         _mainPageInitFinished = true;
         Shared.Main.MainWindowLoaded = true;
     }
-
-    [Export(typeof(IAmethystHost))] private IAmethystHost AmethystPluginHost { get; set; }
-
-    private bool CanShowPluginsUpdatePendingBar => !PluginsUpdateInfoBar.IsOpen;
-
-    private bool CanShowUpdateBar =>
-        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
-
-    private bool CanShowUpdateDownloadingBar =>
-        !UpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
-
-    private bool CanShowPluginsInstallBar =>
-        !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
-        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
-
-    private bool CanShowPluginsUninstallBar =>
-        !PluginsInstallInfoBar.IsOpen && !UpdateDownloadingInfoBar.IsOpen &&
-        !UpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
-
-    private bool CanShowReloadBar =>
-        !PluginsUninstallInfoBar.IsOpen && !PluginsInstallInfoBar.IsOpen &&
-        !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
-        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
-
-    // MVVM stuff
-    public event PropertyChangedEventHandler PropertyChanged;
 
     public double BoolToOpacity(bool v)
     {

@@ -177,6 +177,8 @@ public class AppSettings : INotifyPropertyChanged
 
     [JsonIgnore] public static bool DoNotSaveSettings { get; set; }
 
+    private bool BlockRaisedEvents { get; set; }
+
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -513,7 +515,6 @@ public class AppSettings : INotifyPropertyChanged
         }
     }
 
-    private bool BlockRaisedEvents { get; set; } = false;
     public void OnPropertyChanged(string propName = null)
     {
         if (BlockRaisedEvents) return; // Don't notify if blocked

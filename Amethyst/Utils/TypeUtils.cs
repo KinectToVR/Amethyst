@@ -9,7 +9,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.Management.Deployment;
 using Windows.System;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
@@ -18,8 +17,6 @@ using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using Microsoft.UI.Xaml.Data;
-using System.Globalization;
 
 namespace Amethyst.Utils;
 

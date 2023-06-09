@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Globalization;
@@ -26,8 +25,8 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppLifecycle;
 using Newtonsoft.Json.Linq;
-using AppInstance = Microsoft.Windows.AppLifecycle.AppInstance;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 // To learn more about WinUI, the WinUI project structure,
