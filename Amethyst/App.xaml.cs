@@ -108,8 +108,7 @@ public partial class App : Application
         try
         {
             Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.TemporaryFolder.Path, ".crash"));
-            if (Environment.GetCommandLineArgs().ElementAtOrDefault(1) is "Crash" ||
-                (Environment.GetCommandLineArgs().ElementAtOrDefault(1)?.StartsWith("amethyst-crash") ?? false))
+            if (Environment.GetCommandLineArgs().ElementAtOrDefault(1)?.StartsWith("amethyst-app:crash") ?? false)
                 Interfacing.CrashFile.Create(); // Create the file if not running as crash handler
         }
         catch (Exception e)
@@ -252,7 +251,7 @@ public partial class App : Application
                 Logger.Info("That's all! Shutting down now...");
                 Environment.Exit(0); // Cancel further application startup
             }
-            else if (args[1] is "Crash" || args[1].StartsWith("amethyst-crash"))
+            else if (args[1].StartsWith("amethyst-app:crash"))
             {
                 Logger.Info("Amethyst running in crash handler mode!");
                 Interfacing.SuppressAllDomainExceptions = true;
@@ -395,7 +394,7 @@ public partial class App : Application
             if (!needToCreateNew)
             {
                 Logger.Fatal(new AbandonedMutexException("Startup failed! The app is already running."));
-                await "amethyst-crash:already_running".ToUri().LaunchAsync();
+                await "amethyst-app:crash-already-running".ToUri().LaunchAsync();
 
                 await Task.Delay(3000);
                 Environment.Exit(0); // Exit peacefully
@@ -404,14 +403,14 @@ public partial class App : Application
         catch (Exception e)
         {
             Logger.Fatal(new AbandonedMutexException($"Startup failed! Mutex creation error: {e.Message}"));
-            await "amethyst-crash:already_running".ToUri().LaunchAsync();
+            await "amethyst-app:crash-already-running".ToUri().LaunchAsync();
 
             await Task.Delay(3000);
             Environment.Exit(0); // Exit peacefully
         }
 
         Logger.Info("Starting the crash handler passing the app PID...");
-        await ($"amethyst-crash:watchdog?pid={Environment.ProcessId}&log={Logger.LogFilePath}" +
+        await ($"amethyst-app:crash-watchdog?pid={Environment.ProcessId}&log={Logger.LogFilePath}" +
                $"&crash={Path.Join(Interfacing.TemporaryFolder.Path, ".crash")}").ToUri().LaunchAsync();
 
         // Disable internal sounds

@@ -245,7 +245,7 @@ public class PluginHost : IAmethystHost
         Shared.Main.DispatcherQueue.TryEnqueue(async () =>
         {
             // Launch the crash handler if fatal
-            if (fatal) await $"amethyst-crash:message#{HttpUtility.UrlEncode(message)}".ToUri().LaunchAsync();
+            if (fatal) await $"amethyst-app:crash-message#{HttpUtility.UrlEncode(message)}".ToUri().LaunchAsync();
 
             // Handle all the exit actions (if needed)
             if (!IsExitHandled) await HandleAppExit(1000);

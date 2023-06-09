@@ -214,10 +214,10 @@ public sealed partial class CrashWindow : Window
         if (activationUri is not null && activationUri.Segments.Length > 0)
             CrashHandlerMode = activationUri.Segments.First() switch
             {
-                "already_running" => HandlerMode.AlreadyRunning,
-                "vr_elevated" => HandlerMode.RunningElevated,
-                "message" => HandlerMode.CrashMessage,
-                "watchdog" => HandlerMode.CrashWatchdog,
+                "crash-already-running" => HandlerMode.AlreadyRunning,
+                "crash-vr-elevated" => HandlerMode.RunningElevated,
+                "crash-message" => HandlerMode.CrashMessage,
+                "crash-watchdog" => HandlerMode.CrashWatchdog,
                 _ => CrashHandlerMode // In any other case
             };
 

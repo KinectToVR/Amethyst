@@ -366,7 +366,7 @@ public static class UriExtensions
         try
         {
             if (await Launcher.QueryAppUriSupportAsync(uri) is LaunchQuerySupportStatus.Available ||
-                uri.Scheme is "amethyst-crash" or "amethyst-app") await Launcher.LaunchUriAsync(uri);
+                uri.Scheme is "amethyst-app") await Launcher.LaunchUriAsync(uri);
             else
                 Logger.Warn($"No application registered to handle uri of \"{uri.Scheme}:\"," +
                             $" query result: {await Launcher.QueryAppUriSupportAsync(uri)}");

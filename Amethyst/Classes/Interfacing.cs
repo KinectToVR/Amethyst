@@ -164,7 +164,7 @@ public static class Interfacing
         Task.Run(async Task() =>
         {
             Logger.Info($"Activating the crash handler with #message: {message}");
-            await $"amethyst-crash:message#{HttpUtility.UrlEncode(message)}".ToUri().LaunchAsync();
+            await $"amethyst-app:crash-message#{HttpUtility.UrlEncode(message)}".ToUri().LaunchAsync();
 
             Logger.Info("Waiting...");
             await Task.Delay(1000); // Wait for the crash handler to be activated
