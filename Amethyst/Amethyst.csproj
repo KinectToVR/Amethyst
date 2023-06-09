@@ -50,6 +50,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
+        <PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.6.0" />

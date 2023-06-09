@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -20,12 +21,14 @@ using Windows.Graphics;
 using Windows.Management.Deployment;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI.Notifications;
 using Amethyst.Classes;
 using Amethyst.MVVM;
 using Amethyst.Pages;
 using Amethyst.Plugins.Contract;
 using Amethyst.Schedulers;
 using Amethyst.Utils;
+using CommunityToolkit.WinUI.Notifications;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI;
@@ -45,6 +48,7 @@ using RestSharp;
 using WinRT;
 using WinRT.Interop;
 using WinUI.Fluent.Icons;
+using Microsoft.WindowsAppSDK;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -59,6 +63,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     public delegate Task RequestApplicationUpdate(object sender, EventArgs e);
 
     public static RequestApplicationUpdate RequestUpdateEvent;
+    private readonly string _remoteVersionString = AppData.VersionString.Display;
     private DesktopAcrylicController _acrylicController;
 
     private SystemBackdropConfiguration _configurationSource;
@@ -67,7 +72,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     private bool _mainPageLoadedOnce;
     private MicaController _micaController;
-    private readonly string _remoteVersionString = AppData.VersionString.Display;
     private Shared.Events.RequestEvent _updateBrushesEvent;
 
     private WindowsSystemDispatcherQueueHelper _wsdqHelper; // See separate sample below for implementation
@@ -1238,6 +1242,18 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Mark exit actions as handled
             Interfacing.IsExitHandled = true;
 
+            UpdateInfoBar.IsOpen = false;
+            UpdateInfoBar.Opacity = 0.0;
+            OnPropertyChanged(); // Visibility
+
+            UpdateDownloadingProgress.IsIndeterminate = true;
+            UpdateDownloadingInfoBar.Message =
+                Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Preparing");
+
+            UpdateDownloadingInfoBar.IsOpen = true;
+            UpdateDownloadingInfoBar.Opacity = 1.0;
+            OnPropertyChanged(); // Visibility
+
             // Update the package via the package manager now
             await new PackageManager().UpdatePackageAsync(
                 new Uri((await Interfacing.TemporaryFolder.GetFileAsync(Interfacing.UpdateFileName)).Path,
@@ -1392,19 +1408,56 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             if (release.download_url != null)
                 try
                 {
-                    // Show a toast with the update status
-                    Interfacing.ShowToast(string.Format(
-                            Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading"),
-                            release.version.ToString()),
-                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Preparing"),
-                        true); // Also mark as a high-priority notification
+                    // Placeholder toast notification
+                    ToastNotification toast = null;
+
+                    try
+                    {
+                        // Show a toast with the update status
+                        toast = new ToastNotification(new ToastContentBuilder()
+                            .AddText(string.Format(
+                                Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading"),
+                                release.version.ToString()))
+                            .AddAppLogoOverride(new Uri(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
+                                "Assets", "ktvr.png")))
+                            .AddVisualChild(new AdaptiveProgressBar
+                            {
+                                Value = new BindableProgressBarValue("progressValue"),
+                                Status = Interfacing.LocalizedJsonString(
+                                    "/SharedStrings/Updates/Statuses/DownloadingNoProgress")
+                            }).GetToastContent().GetXml())
+                        {
+                            Tag = "Tag_AmethystDownloadNotifications",
+                            Group = "Group_AmethystDownloadNotifications",
+                            Data = new NotificationData
+                            {
+                                Values =
+                                {
+                                    // Add placeholder data
+                                    ["progressValue"] = "0.0"
+                                },
+                                // Show the toast notification to the user
+                                SequenceNumber = 1
+                            }
+                        };
+
+                        // Show the toast now
+                        ToastNotificationManager.CreateToastNotifier().Show(toast);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Warn(e);
+                    }
 
                     UpdateDownloadingInfoBar.Title = string.Format(
                         Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading"),
                         release.version.ToString());
 
                     UpdateDownloadingInfoBar.Message =
-                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Preparing");
+                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Downloading");
+
+                    UpdateDownloadingProgress.IsIndeterminate = false;
+                    UpdateDownloadingProgress.Value = 0;
 
                     UpdateDownloadingInfoBar.IsOpen = true;
                     UpdateDownloadingInfoBar.Opacity = 1.0;
@@ -1423,7 +1476,32 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                     // Create an output stream and push all the available data to it
                     await using var fsInstallerFile = await installerFile.OpenStreamForWriteAsync();
-                    await stream.CopyToAsync(fsInstallerFile); // The runtime will do the rest for us
+                    await stream.CopyToWithProgressAsync(fsInstallerFile, progress =>
+                        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+                        {
+                            UpdateDownloadingProgress.Value = (int)(100 * progress / release.size);
+                            UpdateDownloadingInfoBar.Message = Interfacing.LocalizedJsonString(
+                                    "/SharedStrings/Updates/Statuses/Downloading")
+                                .Replace("0", ((int)(100 * progress / release.size)).ToString());
+
+                            try
+                            {
+                                // Update the existing notification's data by using tag/group
+                                ToastNotificationManager.CreateToastNotifier().Update(new NotificationData
+                                {
+                                    SequenceNumber = toast?.Data.SequenceNumber ?? 0,
+                                    Values =
+                                    {
+                                        ["progressValue"] =
+                                            ((float)progress / release.size).ToString(CultureInfo.InvariantCulture)
+                                    }
+                                }, "Tag_AmethystDownloadNotifications", "Group_AmethystDownloadNotifications");
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        })); // The runtime will do the rest for us
                 }
                 catch (Exception e)
                 {

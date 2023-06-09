@@ -209,14 +209,15 @@
                 <InfoBar x:Name="UpdateDownloadingInfoBar" Opacity="0.0"
                          IsOpen="False" IsClosable="False" Margin="3,0,3,3" Severity="Informational"
                          Title="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/Headers/Downloading'), Mode=OneWay}"
-                         Message="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/Headers/Preparing'), Mode=OneWay}">
+                         Message="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/Statuses/Downloading'), Mode=OneWay}">
 
                     <InfoBar.OpacityTransition>
                         <ScalarTransition />
                     </InfoBar.OpacityTransition>
 
                     <InfoBar.Content>
-                        <ProgressBar IsIndeterminate="True" HorizontalAlignment="Stretch" Margin="-45,0,1,0" />
+                        <ProgressBar x:Name="UpdateDownloadingProgress" IsIndeterminate="False"
+                                     HorizontalAlignment="Stretch" Margin="-45,0,1,0" />
                     </InfoBar.Content>
                 </InfoBar>
                 <Grid.OpacityTransition>

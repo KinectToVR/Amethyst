@@ -1582,6 +1582,11 @@
       "translatorComment": ""
     },
     {
+      "id": "/SharedStrings/Updates/Statuses/DownloadingNoProgress",
+      "translation": "Download...",
+      "translatorComment": ""
+    },
+    {
       "id": "/SharedStrings/Updates/Statuses/Error",
       "translation": "Errore nel download!",
       "translatorComment": ""

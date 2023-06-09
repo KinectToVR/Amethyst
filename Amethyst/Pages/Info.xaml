@@ -140,14 +140,6 @@
 
                         <TextBlock FontWeight="SemiBold">
                             <Run
-                                Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Ollie'), Mode=OneWay}" />
-                            <Run />
-                            <Hyperlink NavigateUri="https://github.com/i386sh" UnderlineStyle="None">i386sh</Hyperlink>
-                            <Run xml:space="preserve">/ notzer0</Run>
-                        </TextBlock>
-
-                        <TextBlock FontWeight="SemiBold">
-                            <Run
                                 Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Aria'), Mode=OneWay}" />
                             <Run />
                             <Hyperlink NavigateUri="https://github.com/conatsera" UnderlineStyle="None">conatsera</Hyperlink>
@@ -213,7 +205,6 @@
                     <Run xml:space="preserve">Aze    </Run>
                     <Run xml:space="preserve">Fiery (fierybattlehawk)    </Run>
                     <Run xml:space="preserve">illyriarose    </Run>
-                    <Run xml:space="preserve">Luka (woomie)    </Run>
                     <Run xml:space="preserve">Sky (P. S.)    </Run>
                     <Run xml:space="preserve">Sylva    </Run>
                     <Run xml:space="preserve">TeH_Venom    </Run>

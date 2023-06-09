@@ -1254,6 +1254,10 @@
       "translation": "Herunterladen - 0%"
     },
     {
+      "id": "/SharedStrings/Updates/Statuses/DownloadingNoProgress",
+      "translation": "Herunterladen..."
+    },
+    {
       "id": "/SharedStrings/Updates/Statuses/Error",
       "translation": "Fehler beim Herunterladen!"
     },

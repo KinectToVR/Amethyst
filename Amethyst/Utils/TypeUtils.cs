@@ -391,6 +391,33 @@ public static class VersionExtensions
     }
 }
 
+public static class StreamExtensions
+{
+    public static async Task CopyToWithProgressAsync(this Stream source,
+        Stream destination, Action<long> progress = null, int bufferSize = 10240)
+    {
+        var buffer = new byte[bufferSize];
+        var total = 0L;
+        int amtRead;
+
+        do
+        {
+            amtRead = 0;
+            while (amtRead < bufferSize)
+            {
+                var numBytes = await source.ReadAsync(
+                    buffer, amtRead, bufferSize - amtRead);
+                if (numBytes == 0) break;
+                amtRead += numBytes;
+            }
+
+            total += amtRead;
+            await destination.WriteAsync(buffer, 0, amtRead);
+            progress?.Invoke(total);
+        } while (amtRead == bufferSize);
+    }
+}
+
 public class VisibilityTrigger : StateTriggerBase
 {
     private FrameworkElement _element;

@@ -1254,6 +1254,10 @@
       "translation": "Скачивание - 0%"
     },
     {
+      "id": "/SharedStrings/Updates/Statuses/DownloadingNoProgress",
+      "translation": "Скачивание..."
+    },
+    {
       "id": "/SharedStrings/Updates/Statuses/Error",
       "translation": "Ошибка при скачивании!"
     },

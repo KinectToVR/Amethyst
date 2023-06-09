@@ -1254,6 +1254,10 @@
       "translation": "Downloading - 0%"
     },
     {
+      "id": "/SharedStrings/Updates/Statuses/DownloadingNoProgress",
+      "translation": "Downloading..."
+    },
+    {
       "id": "/SharedStrings/Updates/Statuses/Error",
       "translation": "Error updating Amethyst!"
     },
