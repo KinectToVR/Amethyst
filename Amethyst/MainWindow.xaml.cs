@@ -63,14 +63,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     public delegate Task RequestApplicationUpdate(object sender, EventArgs e);
 
     public static RequestApplicationUpdate RequestUpdateEvent;
-    private readonly string _remoteVersionString = AppData.VersionString.Display;
     private DesktopAcrylicController _acrylicController;
-
     private SystemBackdropConfiguration _configurationSource;
 
     private bool _mainPageInitFinished;
-
     private bool _mainPageLoadedOnce;
+
     private MicaController _micaController;
     private Shared.Events.RequestEvent _updateBrushesEvent;
 
@@ -1525,7 +1523,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // If found and downloaded properly
         UpdateInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
-            "/SharedStrings/Updates/NewUpdateMessage"), _remoteVersionString);
+            "/SharedStrings/Updates/NewUpdateMessage"), release.version.ToString());
 
         UpdateInfoBar.IsOpen = true;
         UpdateInfoBar.Opacity = 1.0;
