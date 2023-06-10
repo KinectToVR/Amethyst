@@ -28,6 +28,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Newtonsoft.Json.Linq;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+using Amethyst.MVVM;
+using Newtonsoft.Json;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -372,6 +374,40 @@ public partial class App : Application
                                     (await targetFolder.CreateFolderAsync(new DirectoryInfo(sourcePath).Name,
                                         CreationCollisionOption.OpenIfExists)).Path);
                         }
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e);
+                    }
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
+                case "set-defaults":
+                {
+                    try
+                    {
+                        // Read the query string
+                        var queryDictionary = HttpUtility
+                            .ParseQueryString(activationUri!.Query.TrimStart('?'));
+
+                        // Read all needed query parameters
+                        var trackingDevice = queryDictionary["TrackingDevice"];
+                        var serviceEndpoint = queryDictionary["ServiceEndpoint"];
+                        var extraTrackersValid = bool.TryParse(queryDictionary["ExtraTrackers"], out var extraTrackers);
+
+                        Logger.Info($"Received defaults: TrackingDevice{{{trackingDevice}}}, " +
+                                    $"ServiceEndpoint{{{serviceEndpoint}}}, ExtraTrackers{{{extraTrackers}}}");
+
+                        // Create a new default config
+                        await File.WriteAllTextAsync(Interfacing.GetAppDataFilePath("PluginDefaults.json"),
+                            JsonConvert.SerializeObject(new DefaultSettings
+                            {
+                                TrackingDevice = trackingDevice,
+                                ServiceEndpoint = serviceEndpoint,
+                                ExtraTrackers = extraTrackersValid ? extraTrackers : null
+                            }, Formatting.Indented));
                     }
                     catch (Exception e)
                     {

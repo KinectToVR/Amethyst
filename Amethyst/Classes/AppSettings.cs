@@ -271,24 +271,24 @@ public class AppSettings : INotifyPropertyChanged
             Logger.Info("Checking out the default configuration settings...");
             (bool ExtraTrackers, bool Valid) defaultSettings = (false, false); // Invalid for now!
 
-            if (File.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")))
+            if (File.Exists(Interfacing.GetAppDataFilePath("PluginDefaults.json")))
                 try
                 {
                     // Parse the loaded json
-                    var jsonHead = JsonObject.Parse(File.ReadAllText(
-                        Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")));
+                    var defaults = JsonConvert.DeserializeObject<DefaultSettings>(
+                        File.ReadAllText(Interfacing.GetAppDataFilePath("PluginDefaults.json"))) ?? new DefaultSettings();
 
-                    if (!jsonHead.ContainsKey("ExtraTrackers"))
+                    if (defaults.ExtraTrackers is null)
                         // Invalid configuration file, don't proceed further!
                         Logger.Error("The default configuration json file was invalid!");
                     else // Read from JSON and mark as valid
-                        defaultSettings = (jsonHead.GetNamedBoolean("ExtraTrackers"), true);
+                        defaultSettings = (defaults.ExtraTrackers ?? false, true);
                 }
                 catch (Exception e)
                 {
                     Logger.Info($"Default settings checkout failed! Message: {e.Message}");
                 }
-            else Logger.Info("No default configuration found! [defaults.json]");
+            else Logger.Info("No default configuration found! [PluginDefaults.json]");
 
             // Enable more trackers if valid and requested
             if (defaultSettings.Valid && defaultSettings.ExtraTrackers)
@@ -520,4 +520,11 @@ public class AppSettings : INotifyPropertyChanged
         if (BlockRaisedEvents) return; // Don't notify if blocked
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
+}
+
+public class DefaultSettings
+{
+    public string TrackingDevice { get; set; }
+    public string ServiceEndpoint { get; set; }
+    public bool? ExtraTrackers { get; set; }
 }

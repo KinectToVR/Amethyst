@@ -767,36 +767,37 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Checking out the default configuration settings...");
         (string DeviceGuid, string ServiceGuid) defaultSettings = (null, null); // Invalid!
 
-        if (File.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")))
+        if (File.Exists(Interfacing.GetAppDataFilePath("PluginDefaults.json")))
             try
             {
                 // Parse the loaded json
-                var jsonHead = JsonObject.Parse(File.ReadAllText(
-                    Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")));
+                var defaults = JsonConvert.DeserializeObject<DefaultSettings>(
+                    await File.ReadAllTextAsync(
+                        Interfacing.GetAppDataFilePath("PluginDefaults.json"))) ?? new DefaultSettings();
 
                 // Check the device guid
-                if (!jsonHead.ContainsKey("TrackingDevice"))
+                if (string.IsNullOrEmpty(defaults.TrackingDevice))
                     // Invalid configuration file, don't proceed further!
                     Logger.Error("The default configuration json file was (partially) invalid!");
                 else
                     defaultSettings = (
-                        jsonHead.GetNamedString("TrackingDevice"),
+                        defaults.TrackingDevice,
                         defaultSettings.ServiceGuid); // Keep the last one
 
                 // Check the service guid
-                if (!jsonHead.ContainsKey("ServiceEndpoint"))
+                if (string.IsNullOrEmpty(defaults.ServiceEndpoint))
                     // Invalid configuration file, don't proceed further!
                     Logger.Error("The default configuration json file was (partially) invalid!");
                 else
                     defaultSettings = (
                         defaultSettings.DeviceGuid, // Keep the last one
-                        jsonHead.GetNamedString("ServiceEndpoint"));
+                        defaults.ServiceEndpoint);
             }
             catch (Exception e)
             {
                 Logger.Info($"Default settings checkout failed! Message: {e.Message}");
             }
-        else Logger.Info("No default configuration found! [defaults.json]");
+        else Logger.Info("No default configuration found! [PluginDefaults.json]");
 
         // Validate the saved service plugin guid
         Logger.Info("Checking if the saved service endpoint exists in loaded plugins...");
