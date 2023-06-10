@@ -64,6 +64,8 @@ public class AppTracker : INotifyPropertyChanged
     // OnPropertyChanged listener for containers
     [JsonIgnore] public EventHandler PropertyChangedEvent;
 
+    [JsonIgnore] public Vector3 PositionOffsetRound => PositionOffset * 100;
+
     [JsonIgnore] public Vector3 PoseVelocity { get; set; } = new(0, 0, 0);
     [JsonIgnore] public Vector3 PoseAcceleration { get; set; } = new(0, 0, 0);
     [JsonIgnore] public Vector3 PoseAngularAcceleration { get; set; } = new(0, 0, 0);

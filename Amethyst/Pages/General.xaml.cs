@@ -1313,7 +1313,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         sender.Value = sender.GetValue(AttachedString
                 .AttachedStringProperty).ToString()![0] switch
             {
-                'P' => Math.Round(sender.Value, 2),
+                'P' => Math.Round(sender.Value, 0),
                 'O' or _ => Math.Round(sender.Value, 0)
             };
 
@@ -1324,22 +1324,22 @@ public sealed partial class General : Page, INotifyPropertyChanged
         switch (sender.GetValue(AttachedString.AttachedStringProperty))
         {
             case "OZ":
-                tracker.OrientationOffset.Z = (float)sender.Value;
+                tracker.OrientationOffset.Z = (float)(sender.Value / 100.0);
                 break;
             case "OY":
-                tracker.OrientationOffset.Y = (float)sender.Value;
+                tracker.OrientationOffset.Y = (float)(sender.Value / 100.0);
                 break;
             case "OX":
-                tracker.OrientationOffset.X = (float)sender.Value;
+                tracker.OrientationOffset.X = (float)(sender.Value / 100.0);
                 break;
             case "PX":
-                tracker.PositionOffset.X = (float)sender.Value;
+                tracker.PositionOffset.X = (float)(sender.Value / 100.0);
                 break;
             case "PY":
-                tracker.PositionOffset.Y = (float)sender.Value;
+                tracker.PositionOffset.Y = (float)(sender.Value / 100.0);
                 break;
             case "PZ":
-                tracker.PositionOffset.Z = (float)sender.Value;
+                tracker.PositionOffset.Z = (float)(sender.Value / 100.0);
                 break;
         }
     }

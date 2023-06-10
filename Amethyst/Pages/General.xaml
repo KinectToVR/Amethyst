@@ -13,6 +13,7 @@
     mc:Ignorable="d" Background="Transparent">
 
     <Page.Resources>
+        <util:OffsetDigitsFormatter x:Key="DecimalFormatter" />
         <TeachingTip x:Name="NoCalibrationTeachingTip"
                      Closed="NoCalibrationTeachingTip_Closed"
                      PreferredPlacement="Top"
@@ -159,11 +160,12 @@
                                         <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
                                                    FontSize="26" FontWeight="Normal"
                                                    Maximum="1000" Minimum="-1000"
-                                                   Value="{x:Bind PositionOffset.X, Mode=TwoWay}"
+                                                   Value="{x:Bind PositionOffsetRound.X, Mode=OneWay}"
+                                                   NumberFormatter="{StaticResource DecimalFormatter}"
                                                    local:AttachedString.AttachedString="PX"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
-                                                   SmallChange="0.01" LargeChange="0.1"
+                                                   SmallChange="1" LargeChange="10"
                                                    Margin="10,0,0,0" />
                                     </Grid>
                                     <Grid Grid.Column="0" Grid.Row="11">
@@ -181,11 +183,12 @@
                                         <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
                                                    FontSize="26" FontWeight="Normal"
                                                    Maximum="1000" Minimum="-1000"
-                                                   Value="{x:Bind PositionOffset.Y, Mode=TwoWay}"
+                                                   Value="{x:Bind PositionOffsetRound.Y, Mode=OneWay}"
+                                                   NumberFormatter="{StaticResource DecimalFormatter}"
                                                    local:AttachedString.AttachedString="PY"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
-                                                   SmallChange="0.01" LargeChange="0.1"
+                                                   SmallChange="1" LargeChange="10"
                                                    Margin="10,0,0,0" />
                                     </Grid>
                                     <Grid Grid.Column="0" Grid.Row="13">
@@ -203,11 +206,12 @@
                                         <NumberBox ValueChanged="OffsetsValueChanged" Grid.Column="1"
                                                    FontSize="26" FontWeight="Normal"
                                                    Maximum="1000" Minimum="-1000"
-                                                   Value="{x:Bind PositionOffset.Z, Mode=TwoWay}"
+                                                   Value="{x:Bind PositionOffsetRound.Z, Mode=OneWay}"
+                                                   NumberFormatter="{StaticResource DecimalFormatter}"
                                                    local:AttachedString.AttachedString="PZ"
                                                    HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
                                                    SpinButtonPlacementMode="Inline"
-                                                   SmallChange="0.01" LargeChange="0.1"
+                                                   SmallChange="1" LargeChange="10"
                                                    Margin="10,0,0,0" />
                                     </Grid>
                                 </Grid>

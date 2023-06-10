@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Primitives;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -17,6 +18,7 @@ using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using Windows.Globalization.NumberFormatting;
 
 namespace Amethyst.Utils;
 
@@ -446,5 +448,38 @@ public class VisibilityTrigger : StateTriggerBase
     private void RefreshState()
     {
         SetActive(Target?.Visibility == ActiveOn);
+    }
+}
+
+public class OffsetDigitsFormatter : INumberFormatter2, INumberParser
+{
+    public string FormatInt(long value)
+    {
+        return double.Round(value / 100.0, 2).ToString(CultureInfo.InvariantCulture);
+    }
+
+    public string FormatUInt(ulong value)
+    {
+        return double.Round(value / 100.0, 2).ToString(CultureInfo.InvariantCulture);
+    }
+
+    public string FormatDouble(double value)
+    {
+        return double.Round(value / 100.0, 2).ToString(CultureInfo.InvariantCulture);
+    }
+
+    public long? ParseInt(string text)
+    {
+        return long.TryParse(text, out var result) ? (long)double.Round(result * 100.0, 0) : null;
+    }
+
+    public ulong? ParseUInt(string text)
+    {
+        return ulong.TryParse(text, out var result) ? (ulong)double.Round(result * 100.0, 0) : null;
+    }
+
+    public double? ParseDouble(string text)
+    {
+        return double.TryParse(text, out var result) ? double.Round(result * 100.0, 0) : null;
     }
 }
