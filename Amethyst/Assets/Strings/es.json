@@ -95,7 +95,7 @@
     },
     {
       "id": "/GeneralPage/Calibration/Captions/Move",
-      "translation": "Posición {1} de {2}\nMuevete a otro lugar."
+      "translation": "Posición {0} de {1}\nMuevete a otro lugar."
     },
     {
       "id": "/GeneralPage/Calibration/Captions/Points",
@@ -107,7 +107,7 @@
     },
     {
       "id": "/GeneralPage/Calibration/Captions/Stand",
-      "translation": "Posición {1} de {2}\nMantente quieto!"
+      "translation": "Posición {0} de {1}\nMantente quieto!"
     },
     {
       "id": "/GeneralPage/Calibration/Captions/Start",
