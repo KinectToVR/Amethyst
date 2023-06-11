@@ -28,7 +28,7 @@
     },
     {
       "id": "/GeneralPage/Buttons/Discard",
-      "translation": "Scarta",
+      "translation": "Annulla",
       "translatorComment": ""
     },
     {
@@ -43,7 +43,7 @@
     },
     {
       "id": "/GeneralPage/Buttons/Offsets",
-      "translation": "Modifica la posizione",
+      "translation": "Affina le posizioni",
       "translatorComment": ""
     },
     {
@@ -328,7 +328,7 @@
     },
     {
       "id": "/GeneralPage/Captions/Preview/NoDashboardText",
-      "translation": "L'anteprima è inattiva per risparmiare risorse\ne si riattiverà quando sarai tornato.",
+      "translation": "L'anteprima è inattiva per risparmiare risorse\ne si riattiverà quando tornerai.",
       "translatorComment": ""
     },
     {
@@ -338,7 +338,7 @@
     },
     {
       "id": "/GeneralPage/Captions/Preview/NoFocusText",
-      "translation": "L'anteprima è inattiva per risparmiare risorse\ne si riattiverà quando sarai tornato.",
+      "translation": "L'anteprima è inattiva per risparmiare risorse\ne si riattiverà quando tornerai.",
       "translatorComment": ""
     },
     {
@@ -348,7 +348,7 @@
     },
     {
       "id": "/GeneralPage/Captions/Preview/NoSkeletonText",
-      "translation": "Assicurarsi che il dispositivo funzioni correttamente \ne che possa vedere il tuo corpo.",
+      "translation": "Assicurarsi che il dispositivo funzioni correttamente\ne che possa vedere il tuo corpo.",
       "translatorComment": ""
     },
     {
@@ -438,7 +438,7 @@
     },
     {
       "id": "/GeneralPage/Tips/NoCalibration/Footer",
-      "translation": "Il dispositivo che stai provando a calibrare sta riportando un errore di stato.\nAssicurati sia connesso e correttamente funzionante.",
+      "translation": "Il dispositivo che si sta provando a calibrare sta riportando un errore di stato.\nAssicurarsi che sia connesso e correttamente funzionante.",
       "translatorComment": ""
     },
     {
@@ -568,7 +568,7 @@
     },
     {
       "id": "/SettingsPage/Captions/TrackerPairs",
-      "translation": "Usa le coppie di tracker",
+      "translation": "Accoppia tracker",
       "translatorComment": ""
     },
     {
@@ -578,7 +578,7 @@
     },
     {
       "id": "/SettingsPage/Captions/TrackersAutoSpawn",
-      "translation": "Connetti automaticamente tracker abilitati al lancio",
+      "translation": "Connetti automaticamente i tracker al lancio",
       "translatorComment": ""
     },
     {
@@ -833,12 +833,12 @@
     },
     {
       "id": "/SettingsLearn/Captions/Orientation/Explanations/MathBased",
-      "translation": "Quest'opzione è disponibile solo per i tracker dei piedi.\nLa direzione dei tuoi piedi è calcolata dall'angolo tra l'anca e la punta del piede.\nE il margine è ridotto al 50% per evitare tremolii. Ciò permette la rotazione dei piedi sul Kinect per Xbox 360.",
+      "translation": "Quest'opzione è disponibile solo per i tracker dei piedi.\nL'orientamento dei tuoi piedi è calcolato dall'angolo tra l'anca e la punta del piede;\ninoltre il margine è ridotto al 50% per evitare tremolii. Ciò permette la rotazione dei piedi sul Kinect per Xbox 360.",
       "translatorComment": ""
     },
     {
       "id": "/SettingsLearn/Captions/Orientation/Explanations/MathBasedV2",
-      "translation": "Questa opzione è disponibile solo per i tracker dei piedi.\nL'orientamento dei tuoi piedi è calcolato dalle pose dei giunti di tutta la tua gamba e bacino.\nCi soni alcune aggiunte che lo rendono più responsivo. Ciò permette la rotazione dei piedi sul Kinect per Xbox One.",
+      "translation": "Quest'opzione è disponibile solo per i tracker dei piedi.\nL'orientamento dei tuoi piedi è calcolato dalle pose dei giunti di tutta la tua gamba e bacino.\nCi soni alcune aggiunte che lo rendono più responsivo. Ciò permette la rotazione dei piedi sul Kinect per Xbox One.",
       "translatorComment": ""
     },
     {
@@ -1548,7 +1548,7 @@
     },
     {
       "id": "/SharedStrings/Plugins/Store/Headers/SearchTip/Drag",
-      "translation": "Puoi anche tracinare un link/cartella/zip di un plugin qui per installarlo.",
+      "translation": "Puoi anche trascinare un link/cartella/zip di un plugin qui per installarlo.",
       "translatorComment": ""
     },
     {
@@ -1588,7 +1588,7 @@
     },
     {
       "id": "/ServerStatuses/WTF",
-      "translation": "NON È STATO POSSIBILE RILEVARE LO STATO (ᗜˬᗜ)\nE_WTF\nFra ma che cazzo è successo?!",
+      "translation": "NON È STATO POSSIBILE RILEVARE LO STATO (ᗜˬᗜ)\nE_WTF\nNon so che cazzo sia successo!",
       "translatorComment": ""
     },
     {
@@ -1623,7 +1623,7 @@
     },
     {
       "id": "/CrashHandler/Content/AlreadyRunning",
-      "translation": "Sembra che l'app sia già in esecuzione\ne hai provato ad aprire una seconda istanza,\nquesta azione non è attualmente supportata.\n\nControllare se l'app non sia già aperta.\nSe il problema persiste, premere il pulsante 'Forza Uscita'.",
+      "translation": "Sembra che l'app sia già in esecuzione\ne si è tentato di aprire una seconda istanza,\nquesta azione non è attualmente supportata.\n\nControllare se l'app non sia già aperta.\nSe il problema persiste, premere il pulsante 'Forza Uscita'.",
       "translatorComment": ""
     },
     {
@@ -1633,27 +1633,27 @@
     },
     {
       "id": "/CrashHandler/Content/Crash/OpenVR",
-      "translation": "L'app non ha potuto inizializzare con successo OpenVR (SteamVR) e si è arresa.\n\nControllare se SteamVR è in esecuzione, e il tuo visore VR è connesso correttamente ad esso. Ulteriormente, puoi riavviare SteamVR e controllare i suoi log.",
+      "translation": "L'app non ha potuto inizializzare con successo OpenVR (SteamVR) e si è arresa.\n\nControllare se SteamVR sia in esecuzione, e se il visore VR sia connesso correttamente ad esso. Ulteriormente si può riavviare SteamVR e controllare i suoi log.",
       "translatorComment": ""
     },
     {
       "id": "/CrashHandler/Content/Crash/Panic",
-      "translation": "Il ciclo principale del programma è andato in crash consecutivamente più di 7 volte quindi Amethyst è stato arrestato.\n\nControllare se tutti i tuoi dispositivi / plugins funzionano e leggi i log. Opzionalmente, puoi cancellare la configurazione dell'app e provare ad eseguirla di nuovo.",
+      "translation": "Il ciclo principale del programma è andato in crash consecutivamente più di 7 volte quindi Amethyst è stato arrestato.\n\nControllare se tutti i tuoi dispositivi / plugins funzionino e leggere i log. Opzionalmente si può cancellare la configurazione dell'app e provare ad eseguirla di nuovo.",
       "translatorComment": ""
     },
     {
       "id": "/CrashHandler/Content/Crash/Unknown",
-      "translation": "Sembra che sia successo qualcosa di strano all'app.\n\nNiente panico, (probabilmente) non è nemmeno colpa tua.\n\nProva a riavviare l'app.\nSe il problema persiste, prendi i log e contattaci su\nDiscord.",
+      "translation": "Sembra che sia successo qualcosa di strano all'app.\n\nNiente panico, (probabilmente) non è nemmeno colpa tua.\n\nProvare a riavviare l'app.\nSe il problema persiste, prendere i log e contattarci su\nDiscord.",
       "translatorComment": ""
     },
     {
       "id": "/CrashHandler/Content/Crash/Elevated",
-      "translation": "Il processo di SteamVR è attualmente elevato e Amethyst non può comunicarci.\n\nO Steam o SteamVR sono stati manomessi per causare ciò. Ripristina questi cambiamenti e riprova.",
+      "translation": "Il processo di SteamVR è attualmente elevato e Amethyst non può comunicarci.\n\nO Steam o SteamVR sono stati manomessi per causare ciò. Ripristinare questi cambiamenti e riprovare.",
       "translatorComment": ""
     },
     {
       "id": "/CrashHandler/Content/Recovery",
-      "translation": "Sembra che hai eseguito manualmente il Gestore dei Crash. Cosa vorresti fare?\n\nSe il driver di Amethyst per SteamVR non viene rilevato correttamente, puoi ri-registrare il driver di SteamVR (bottone sotto) e riprovare.",
+      "translation": "Sembra che il Gestore dei Crash sia stato eseguito manualmente. Cosa vorresti fare?\n\nSe il driver di Amethyst per SteamVR non viene rilevato correttamente, si può ri-registrare il driver di SteamVR (bottone sotto) e riprovare.",
       "translatorComment": ""
     },
     {
