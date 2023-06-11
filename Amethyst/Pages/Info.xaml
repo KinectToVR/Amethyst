@@ -171,10 +171,6 @@
                         </TextBlock>
 
                         <TextBlock FontWeight="SemiBold">
-                            <Run xml:space="preserve">"Ollie"</Run>
-                        </TextBlock>
-
-                        <TextBlock FontWeight="SemiBold">
                             <Run xml:space="preserve">"Ene"</Run>
                         </TextBlock>
                     </StackPanel>
