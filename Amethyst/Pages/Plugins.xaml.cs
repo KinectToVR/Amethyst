@@ -388,9 +388,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                             DropInstallerErrorIcon.Opacity = 0.0;
 
                             DropInstallerHeaderTextBlock.Text =
-                                string.Format(LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installing"),
-                                    files.Count + " " +
-                                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installing")
+                                    .Format(files.First(x => x.Name.StartsWith("plugin") && x.Name.EndsWith(".dll"))
+                                        .Name.Replace(".dll", string.Empty));
 
                             // Show the progress indicator
                             DropInstallerGrid.Opacity = 1.0;
@@ -448,12 +448,15 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                             DropInstallerProgressRing.IsIndeterminate = false;
                             DropInstallerProgressRing.Value = 100;
 
-                            DropInstallerHeaderTextBlock.Text = string.Format(
-                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installed"),
-                                files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
-                            DropInstallerMessageTextBlock.Text = string.Format(
-                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Installed"),
-                                files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+                            DropInstallerHeaderTextBlock.Text =
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installed")
+                                    .Format(files.First(x => x.Name.StartsWith("plugin") && x.Name.EndsWith(".dll"))
+                                        .Name.Replace(".dll", string.Empty));
+
+                            DropInstallerMessageTextBlock.Text =
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Installed")
+                                    .Format(files.First(x => x.Name.StartsWith("plugin") && x.Name.EndsWith(".dll"))
+                                        .Name.Replace(".dll", string.Empty));
 
                             DropInstallerMessageTextBlock.Opacity = 1.0;
                             AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
@@ -478,12 +481,14 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                             DropInstallerProgressRing.Opacity = 0.0;
                             DropInstallerErrorIcon.Opacity = 1.0;
 
-                            DropInstallerHeaderTextBlock.Text = string.Format(
-                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating"),
-                                files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
-                            DropInstallerMessageTextBlock.Text = string.Format(
-                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/NotFound/Plural"),
-                                files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+                            DropInstallerHeaderTextBlock.Text =
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating")
+                                    .Format(files.Count + " " +
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+                            DropInstallerMessageTextBlock.Text =
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/NotFound/Plural")
+                                    .Format(files.Count + " " +
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
 
                             DropInstallerMessageTextBlock.Opacity = 1.0;
                             AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -539,8 +544,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                     DropInstallerProgressRing.Opacity = 1.0;
                                     DropInstallerErrorIcon.Opacity = 0.0;
 
-                                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Headers/Installing"), files[0].Name);
+                                    DropInstallerHeaderTextBlock.Text = LocalizedJsonString(
+                                        "/SharedStrings/Plugins/Drop/Headers/Installing").Format(files[0].Name);
 
                                     // Show the progress indicator
                                     DropInstallerGrid.Opacity = 1.0;
@@ -598,10 +603,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                     DropInstallerProgressRing.IsIndeterminate = false;
                                     DropInstallerProgressRing.Value = 100;
 
-                                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Headers/Installed"), files[0].Name);
-                                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Statuses/Installed"), files[0].Name);
+                                    DropInstallerHeaderTextBlock.Text =
+                                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installed")
+                                            .Format(files[0].Name);
+                                    DropInstallerMessageTextBlock.Text =
+                                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Installed")
+                                            .Format(files[0].Name);
 
                                     DropInstallerMessageTextBlock.Opacity = 1.0;
                                     AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
@@ -626,10 +633,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                     DropInstallerProgressRing.Opacity = 0.0;
                                     DropInstallerErrorIcon.Opacity = 1.0;
 
-                                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), files[0].Name);
-                                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound"), files[0].Name);
+                                    DropInstallerHeaderTextBlock.Text =
+                                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating")
+                                            .Format(files[0].Name);
+                                    DropInstallerMessageTextBlock.Text =
+                                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/NotFound")
+                                            .Format(files[0].Name);
 
                                     DropInstallerMessageTextBlock.Opacity = 1.0;
                                     AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -684,8 +693,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         DropInstallerProgressRing.Opacity = 1.0;
                                         DropInstallerErrorIcon.Opacity = 0.0;
 
-                                        DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                            "/SharedStrings/Plugins/Drop/Headers/Installing"), files[0].Name);
+                                        DropInstallerHeaderTextBlock.Text =
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installing")
+                                                .Format(files[0].Name);
 
                                         // Show the progress indicator
                                         DropInstallerGrid.Opacity = 1.0;
@@ -731,10 +741,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         DropInstallerProgressRing.IsIndeterminate = false;
                                         DropInstallerProgressRing.Value = 100;
 
-                                        DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                            "/SharedStrings/Plugins/Drop/Headers/Installed"), files[0].Name);
-                                        DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                                            "/SharedStrings/Plugins/Drop/Statuses/Installed"), files[0].Name);
+                                        DropInstallerHeaderTextBlock.Text =
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installed")
+                                                .Format(files[0].Name);
+                                        DropInstallerMessageTextBlock.Text =
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Installed")
+                                                .Format(files[0].Name);
 
                                         DropInstallerMessageTextBlock.Opacity = 1.0;
                                         AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
@@ -759,10 +771,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         DropInstallerProgressRing.Opacity = 0.0;
                                         DropInstallerErrorIcon.Opacity = 1.0;
 
-                                        DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                            "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), files[0].Name);
-                                        DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                                            "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound"), files[0].Name);
+                                        DropInstallerHeaderTextBlock.Text =
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating")
+                                                .Format(files[0].Name);
+                                        DropInstallerMessageTextBlock.Text =
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/NotFound")
+                                                .Format(files[0].Name);
 
                                         DropInstallerMessageTextBlock.Opacity = 1.0;
                                         AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -791,10 +805,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                     DropInstallerProgressRing.Opacity = 0.0;
                                     DropInstallerErrorIcon.Opacity = 1.0;
 
-                                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), files[0].Name);
-                                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid"), files[0].Name);
+                                    DropInstallerHeaderTextBlock.Text =
+                                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating")
+                                            .Format(files[0].Name);
+                                    DropInstallerMessageTextBlock.Text =
+                                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/Invalid")
+                                            .Format(files[0].Name);
 
                                     DropInstallerMessageTextBlock.Opacity = 1.0;
                                     AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -831,8 +847,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
                 DropInstallerHeaderTextBlock.Text = LocalizedJsonString(
                     "/SharedStrings/Plugins/Drop/Headers/Error/Exception");
-                DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                    "/SharedStrings/Plugins/Drop/Statuses/Error/Exception"), ex.Message);
+                DropInstallerMessageTextBlock.Text =
+                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/Exception").Format(ex.Message);
 
                 DropInstallerMessageTextBlock.Opacity = 1.0;
                 AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -889,9 +905,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                 DropInstallerProgressRing.Opacity = 1.0;
                 DropInstallerErrorIcon.Opacity = 0.0;
 
-                DropInstallerHeaderTextBlock.Text = string.Format(
-                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Downloading"),
-                    link.Segments.LastOrDefault("package.zip"));
+                DropInstallerHeaderTextBlock.Text =
+                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Downloading")
+                        .Format(link.Segments.LastOrDefault("package.zip"));
 
                 // Show the progress indicator
                 DropInstallerGrid.Opacity = 1.0;
@@ -944,8 +960,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                         x.Name.StartsWith("plugin") && x.Name.EndsWith(".dll")))
                 {
                     // Prepare our resources
-                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                        "/SharedStrings/Plugins/Drop/Headers/Installing"), pluginArchive.Name);
+                    DropInstallerHeaderTextBlock.Text =
+                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installing")
+                            .Format(pluginArchive.Name);
 
                     Logger.Info($"Unpacking the archive at {pluginArchive.Path}...");
                     AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
@@ -969,10 +986,10 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                     DropInstallerProgressRing.IsIndeterminate = false;
                     DropInstallerProgressRing.Value = 100;
 
-                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                        "/SharedStrings/Plugins/Drop/Headers/Installed"), pluginArchive.Name);
-                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                        "/SharedStrings/Plugins/Drop/Statuses/Installed"), pluginArchive.Name);
+                    DropInstallerHeaderTextBlock.Text = LocalizedJsonString(
+                        "/SharedStrings/Plugins/Drop/Headers/Installed").Format(pluginArchive.Name);
+                    DropInstallerMessageTextBlock.Text = LocalizedJsonString(
+                        "/SharedStrings/Plugins/Drop/Statuses/Installed").Format(pluginArchive.Name);
 
                     DropInstallerMessageTextBlock.Opacity = 1.0;
                     AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
@@ -997,10 +1014,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                     DropInstallerProgressRing.Opacity = 0.0;
                     DropInstallerErrorIcon.Opacity = 1.0;
 
-                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                        "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), pluginArchive.Name);
-                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                        "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound"), pluginArchive.Name);
+                    DropInstallerHeaderTextBlock.Text =
+                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating")
+                            .Format(pluginArchive.Name);
+                    DropInstallerMessageTextBlock.Text =
+                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/NotFound")
+                            .Format(pluginArchive.Name);
 
                     DropInstallerMessageTextBlock.Opacity = 1.0;
                     AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -1031,12 +1050,13 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                 DropInstallerProgressRing.Opacity = 0.0;
                 DropInstallerErrorIcon.Opacity = 1.0;
 
-                DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                        "/SharedStrings/Plugins/Drop/Headers/Error/Installing"),
-                    link.Segments.LastOrDefault("package.zip"));
+                DropInstallerHeaderTextBlock.Text =
+                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Installing")
+                        .Format(link.Segments.LastOrDefault("package.zip"));
 
-                DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                    "/SharedStrings/Plugins/Drop/Statuses/Error/Exception"), e.Message.TrimEnd('.'));
+                DropInstallerMessageTextBlock.Text =
+                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/Exception")
+                        .Format(e.Message.TrimEnd('.'));
 
                 DropInstallerMessageTextBlock.Opacity = 1.0;
                 AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -1065,10 +1085,10 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
             DropInstallerProgressRing.Opacity = 0.0;
             DropInstallerErrorIcon.Opacity = 1.0;
 
-            DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), link);
-            DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid"), link);
+            DropInstallerHeaderTextBlock.Text =
+                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating").Format(link);
+            DropInstallerMessageTextBlock.Text =
+                LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/Invalid").Format(link);
 
             DropInstallerMessageTextBlock.Opacity = 1.0;
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);

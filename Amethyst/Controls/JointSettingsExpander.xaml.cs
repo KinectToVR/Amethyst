@@ -122,8 +122,9 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
         }
     }
 
-    private string NotSupportedText => string.Format(Interfacing.LocalizedJsonString(
-        "/SharedStrings/Joints/NotSupported/Tooltip"), AppPlugins.CurrentServiceEndpoint.Name);
+    private string NotSupportedText =>
+        Interfacing.LocalizedJsonString("/SharedStrings/Joints/NotSupported/Tooltip")
+            .Format(AppPlugins.CurrentServiceEndpoint.Name);
 
     private int TrackersCount =>
         Trackers.All(x => x.IsSupported) ||

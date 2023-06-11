@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.Globalization.NumberFormatting;
 using Windows.System;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
@@ -18,7 +19,6 @@ using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using Windows.Globalization.NumberFormatting;
 
 namespace Amethyst.Utils;
 
@@ -333,6 +333,19 @@ public static class StringExtensions
         var plain = ProtectedData.Unprotect(secret, null, DataProtectionScope.CurrentUser);
         var encoding = new UTF8Encoding();
         return encoding.GetString(plain);
+    }
+
+    public static string Format(this string s, params object[] arguments)
+    {
+        var result = s; // Create a backup
+        var formats = arguments.ToList();
+
+        foreach (var format in formats)
+            if (result.Contains($"{{{formats.IndexOf(format)}}}")) // Check whether the replace index is valid
+                result = result.Replace($"{{{formats.IndexOf(format)}}}", format.ToString());
+            else Logger.Info($"{s} doesn't contain a placeholder for index {{{formats.IndexOf(format)}}}!");
+
+        return result; // Return the outer result
     }
 }
 

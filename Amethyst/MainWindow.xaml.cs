@@ -1414,9 +1414,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     {
                         // Show a toast with the update status
                         toast = new ToastNotification(new ToastContentBuilder()
-                            .AddText(string.Format(
-                                Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading"),
-                                release.version.ToString()))
+                            .AddText(Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading")
+                                .Format(release.version.ToString()))
                             .AddAppLogoOverride(new Uri(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
                                 "Assets", "ktvr.png")))
                             .AddVisualChild(new AdaptiveProgressBar
@@ -1448,9 +1447,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         Logger.Warn(e);
                     }
 
-                    UpdateDownloadingInfoBar.Title = string.Format(
-                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading"),
-                        release.version.ToString());
+                    UpdateDownloadingInfoBar.Title = Interfacing
+                        .LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading")
+                        .Format(release.version.ToString());
 
                     UpdateDownloadingInfoBar.Message =
                         Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Downloading");
@@ -1522,8 +1521,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         if (updateError) return;
 
         // If found and downloaded properly
-        UpdateInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
-            "/SharedStrings/Updates/NewUpdateMessage"), release.version.ToString());
+        UpdateInfoBar.Message = Interfacing.LocalizedJsonString("/SharedStrings/Updates/NewUpdateMessage")
+            .Format(release.version.ToString());
 
         UpdateInfoBar.IsOpen = true;
         UpdateInfoBar.Opacity = 1.0;

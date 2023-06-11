@@ -117,17 +117,17 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private List<Line> BoneLines { get; } = new(24);
     private List<Ellipse> JointPoints { get; } = new(60);
 
-    private string ServiceSettingsText => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Buttons/ServiceSettings"), AppPlugins.CurrentServiceEndpoint.Name);
+    private string ServiceSettingsText => Interfacing.LocalizedJsonString(
+        "/SettingsPage/Buttons/ServiceSettings").Format(AppPlugins.CurrentServiceEndpoint.Name);
 
-    private string DeviceSettingsText => string.Format(Interfacing.LocalizedJsonString(
-        "/GeneralPage/Buttons/DeviceSettings"), AppPlugins.BaseTrackingDevice.Name);
+    private string DeviceSettingsText => Interfacing.LocalizedJsonString(
+        "/GeneralPage/Buttons/DeviceSettings").Format(AppPlugins.BaseTrackingDevice.Name);
 
-    private string AutoStartTipText => string.Format(Interfacing.LocalizedJsonString(
-        "/NUX/Tip2/Content"), AppPlugins.CurrentServiceEndpoint.Name);
+    private string AutoStartTipText => Interfacing.LocalizedJsonString(
+        "/NUX/Tip2/Content").Format(AppPlugins.CurrentServiceEndpoint.Name);
 
-    private string ServiceStatusLabel => string.Format(Interfacing.LocalizedJsonString(
-        "/GeneralPage/Captions/DriverStatus/Label"), AppPlugins.CurrentServiceEndpoint.Name);
+    private string ServiceStatusLabel => Interfacing.LocalizedJsonString(
+        "/GeneralPage/Captions/DriverStatus/Label").Format(AppPlugins.CurrentServiceEndpoint.Name);
 
     private bool AllowCalibration => Interfacing.AppTrackersInitialized && ServiceStatusOk;
 
@@ -434,9 +434,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
         for (var point = 0; point < AppData.Settings.CalibrationPointsNumber; point++)
         {
             // Wait for the user to move
-            CalibrationInstructionsLabel.Text = string.Format(
-                Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Move"),
-                point + 1, AppData.Settings.CalibrationPointsNumber);
+            CalibrationInstructionsLabel.Text =
+                Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Move")
+                    .Format(point + 1, AppData.Settings.CalibrationPointsNumber);
 
             for (var i = 3; i >= 0; i--)
             {
@@ -456,9 +456,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 if (!_calibrationPending) break; // Check for exiting
             }
 
-            CalibrationInstructionsLabel.Text = string.Format(
-                Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Stand"),
-                point + 1, AppData.Settings.CalibrationPointsNumber);
+            CalibrationInstructionsLabel.Text =
+                Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Stand")
+                    .Format(point + 1, AppData.Settings.CalibrationPointsNumber);
 
             for (var i = 3; i >= 0; i--)
             {

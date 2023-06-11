@@ -385,9 +385,9 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public string ErrorText => LocalizedJsonString($"/DevicesPage/Devices/Manager/Labels/{Status}");
 
-    public string UpdateMessage => string.Format(
-        LocalizedJsonString("/DevicesPage/Devices/Manager/Labels/UpdateMessage"),
-        Name, (UpdateData.Version ?? Version).ToString());
+    public string UpdateMessage =>
+        LocalizedJsonString("/DevicesPage/Devices/Manager/Labels/UpdateMessage")
+            .Format(Name, (UpdateData.Version ?? Version).ToString());
 
     public bool PublisherValid => !string.IsNullOrEmpty(Publisher);
     public bool WebsiteValid => !string.IsNullOrEmpty(Website);
@@ -624,7 +624,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public string FormatResourceString(string resourceName)
     {
-        return string.Format(LocalizedJsonString(resourceName), Name);
+        return LocalizedJsonString(resourceName).Format(Name);
     }
 
     public void OnPropertyChanged(string propName = null)

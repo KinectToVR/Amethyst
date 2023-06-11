@@ -71,13 +71,13 @@ public class StorePlugin : INotifyPropertyChanged
 
     public string FormatResourceString(string resourceName)
     {
-        return string.Format(Interfacing.LocalizedJsonString(resourceName), Name);
+        return Interfacing.LocalizedJsonString(resourceName).Format(Name);
     }
 
     public string FormatReleaseString(string resourceName)
     {
-        return string.Format(Interfacing.LocalizedJsonString(resourceName),
-            LatestRelease?.DisplayName, LatestRelease?.Version);
+        return Interfacing.LocalizedJsonString(resourceName)
+            .Format(LatestRelease?.DisplayName, LatestRelease?.Version);
     }
 
     public async void OpenPluginWebsite()
@@ -171,8 +171,9 @@ public class StorePlugin : INotifyPropertyChanged
         try
         {
             // Mark the update footer as active
-            Shared.Main.PluginsUpdatePendingInfoBar.Title = string.Format(Interfacing.LocalizedJsonString(
-                "/SharedStrings/Plugins/Store/Headers/Downloading"), LatestRelease.DisplayName, LatestRelease.Version);
+            Shared.Main.PluginsUpdatePendingInfoBar.Title = Interfacing.LocalizedJsonString(
+                    "/SharedStrings/Plugins/Store/Headers/Downloading")
+                .Format(LatestRelease.DisplayName, LatestRelease.Version);
 
             Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
                 "/SharedStrings/Plugins/Store/Headers/Preparing");
@@ -187,9 +188,8 @@ public class StorePlugin : INotifyPropertyChanged
             if (string.IsNullOrEmpty(LatestRelease.Download))
             {
                 // No files to download, switch to update error
-                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(
-                    Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Store/Statuses/Error"),
-                    LatestRelease.DisplayName);
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
+                    "/SharedStrings/Plugins/Store/Statuses/Error").Format(LatestRelease.DisplayName);
 
                 Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
                 Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
@@ -209,9 +209,9 @@ public class StorePlugin : INotifyPropertyChanged
             try
             {
                 // Update the progress message
-                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
-                        "/SharedStrings/Plugins/Store/Statuses/Downloading"), LatestRelease.DisplayName,
-                    LatestRelease.Version);
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
+                        "/SharedStrings/Plugins/Store/Statuses/Downloading")
+                    .Format(LatestRelease.DisplayName, LatestRelease.Version);
 
                 // Create a stream reader using the received Installer Uri
                 await using var stream =
@@ -265,9 +265,8 @@ public class StorePlugin : INotifyPropertyChanged
                 Logger.Error(e); // Print everything
 
                 // No files to download, switch to update error
-                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(
-                    Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Store/Statuses/Error"),
-                    LatestRelease.DisplayName);
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
+                    "/SharedStrings/Plugins/Store/Statuses/Error").Format(LatestRelease.DisplayName);
 
                 Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
                 Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
@@ -282,8 +281,8 @@ public class StorePlugin : INotifyPropertyChanged
             }
 
             // Everything's fine, show the restart notice
-            Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
-                "/SharedStrings/Plugins/Store/Headers/Restart"), LatestRelease.DisplayName);
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
+                "/SharedStrings/Plugins/Store/Headers/Restart").Format(LatestRelease.DisplayName);
 
             Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = false;
             Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
@@ -303,8 +302,8 @@ public class StorePlugin : INotifyPropertyChanged
             Logger.Info(e);
 
             // No files to download, switch to update error
-            Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
-                "/SharedStrings/Plugins/Store/Statuses/Error"), LatestRelease.DisplayName);
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
+                "/SharedStrings/Plugins/Store/Statuses/Error").Format(LatestRelease.DisplayName);
 
             Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
             Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
