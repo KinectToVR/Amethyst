@@ -24,8 +24,8 @@ parameters:
   - name: 'plugins'
     type: object
     default: 
-      - "plugin_KinectV1"
-      - "plugin_KinectV2"
+      - "plugin_Kinect360"
+      - "plugin_KinectOne"
       - "plugin_PSMoveService"
       - "plugin_owoTrackVR"
       - "plugin_OpenVR"
