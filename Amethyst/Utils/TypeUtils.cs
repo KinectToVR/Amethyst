@@ -342,7 +342,7 @@ public static class StringExtensions
 
         foreach (var format in formats)
             if (result.Contains($"{{{formats.IndexOf(format)}}}")) // Check whether the replace index is valid
-                result = result.Replace($"{{{formats.IndexOf(format)}}}", format.ToString());
+                result = result.Replace($"{{{formats.IndexOf(format)}}}", format?.ToString() ?? string.Empty);
             else Logger.Info($"{s} doesn't contain a placeholder for index {{{formats.IndexOf(format)}}}!");
 
         return result; // Return the outer result
@@ -351,12 +351,15 @@ public static class StringExtensions
 
 public static class StorageExtensions
 {
-    public static void CopyToFolder(this DirectoryInfo source, string destination, bool log = false)
+    public static void CopyToFolder(this DirectoryInfo source, string destination, bool inside = false)
     {
+        // Create the base directory (if needed)
+        if (inside) destination = Path.Join(destination, source.Name);
+
         // Now Create all of the directories
         foreach (var dirPath in source.GetDirectories("*", SearchOption.AllDirectories))
         {
-            Logger.Info($"Copying file {source} to {destination}\\");
+            Logger.Info($"Creating folder {source} in {destination}\\");
             Directory.CreateDirectory(dirPath.FullName.Replace(source.FullName, destination));
         }
 

@@ -433,7 +433,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         break;
                                     case StorageFolder folder:
                                         Logger.Info($"Copying folder {folder.Name} to {downloadFolder}\\");
-                                        new DirectoryInfo(folder.Path).CopyToFolder(downloadFolder.Path);
+                                        new DirectoryInfo(folder.Path).CopyToFolder(downloadFolder.Path, inside: true);
                                         break;
                                 }
 
@@ -588,7 +588,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                                 break;
                                             case StorageFolder folder:
                                                 Logger.Info($"Copying folder {folder.Name} to {downloadFolder}\\");
-                                                new DirectoryInfo(folder.Path).CopyToFolder(downloadFolder.Path);
+                                                new DirectoryInfo(folder.Path).CopyToFolder(downloadFolder.Path, inside: true);
                                                 break;
                                         }
 

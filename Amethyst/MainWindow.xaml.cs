@@ -43,6 +43,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Windows.AppNotifications;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using Newtonsoft.Json;
 using RestSharp;
 using WinRT;
@@ -1253,6 +1254,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             UpdateDownloadingInfoBar.Opacity = 1.0;
             OnPropertyChanged(); // Visibility
 
+            // Mark as working
+            SystemShell.SetTaskBarState(TaskbarProgressBarState.Indeterminate);
+
             // Update the package via the package manager now
             await new PackageManager().UpdatePackageAsync(
                 new Uri((await Interfacing.TemporaryFolder.GetFileAsync(Interfacing.UpdateFileName)).Path,
@@ -1264,6 +1268,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         catch (Exception ex)
         {
             Logger.Error(new Exception($"Update failed, an exception occurred. Message: {ex.Message}"));
+            Interfacing.ShowToast(
+                Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Error"), ex.Message);
 
             UpdateInfoBar.IsOpen = false;
             UpdateInfoBar.Opacity = 1.0;
@@ -1271,6 +1277,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         }
 
         // Failed - go back to normal
+        SystemShell.FlashTaskBarState(TaskbarProgressBarState.Error);
+
         Interfacing.IsExitHandled = false;
         return false; // Should exit before
     }
@@ -1477,6 +1485,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     await stream.CopyToWithProgressAsync(fsInstallerFile, progress =>
                         Shared.Main.DispatcherQueue.TryEnqueue(() =>
                         {
+                            SystemShell.SetTaskBarProgress((int)(100 * progress / release.size));
                             UpdateDownloadingProgress.Value = (int)(100 * progress / release.size);
                             UpdateDownloadingInfoBar.Message = Interfacing.LocalizedJsonString(
                                     "/SharedStrings/Updates/Statuses/Downloading")
@@ -1504,12 +1513,20 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 catch (Exception e)
                 {
                     Logger.Error(new Exception($"Error downloading the updater! Message: {e.Message}"));
+                    SystemShell.FlashTaskBarState(TaskbarProgressBarState.Error); // One-second error "flash"
+
+                    Interfacing.ShowToast(
+                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Error"), e.Message);
                     updateError = true;
                 }
         }
         catch (Exception e)
         {
             Logger.Error(new Exception($"Update failed, an exception occurred. Message: {e.Message}"));
+            SystemShell.FlashTaskBarState(TaskbarProgressBarState.Error); // One-second error "flash"
+
+            Interfacing.ShowToast(
+                Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Error"), e.Message);
             updateError = true;
         }
 
