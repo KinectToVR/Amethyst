@@ -1283,7 +1283,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         return false; // Should exit before
     }
 
-    private async Task<AppRelease> CheckUpdates(uint delay = 0, bool result = false)
+    private async Task<AppRelease> CheckUpdates(TimeSpan? delay = null, bool result = false)
     {
         // Attempt only after init
         if (!_mainPageInitFinished) return null;
@@ -1292,7 +1292,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         if (Interfacing.UpdatingNow)
             return null; // Don't proceed further
 
-        await Task.Delay((int)delay);
+        await Task.Delay(delay ?? TimeSpan.Zero);
 
         // Don't check if found
         if (!Interfacing.UpdateFound)
@@ -1669,7 +1669,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         }
 
         // Check for updates (and show)
-        await CheckUpdates(2000);
+        await CheckUpdates(TimeSpan.FromSeconds(2));
     }
 
     private void NavView_ItemInvoked(NavigationView sender,
