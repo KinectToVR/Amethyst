@@ -418,6 +418,40 @@ public partial class App : Application
                     Environment.Exit(0); // Cancel further application startup
                     break;
                 }
+                case "report":
+                {
+                    try
+                    {
+                        Logger.Info("Creating a data file list base...");
+                        var fileList = new List<AppDataFile>
+                            { new(await Interfacing.GetAppDataFile("AmethystSettings.json")) };
+
+                        Logger.Info("Searching for recent log files...");
+                        fileList.AddRange(await new DirectoryInfo(Interfacing.GetAppDataLogFilePath(""))
+                            .GetFiles().OrderByDescending(x => x.LastWriteTime).ToList().Take(3)
+                            .Select(async x => new AppDataFile(await StorageFile.GetFileFromPathAsync(x.FullName)))
+                            .WhenAll()); // Collect the last 3 log files and wait for them
+
+                        Logger.Info("Creating a new Host:Report view...");
+                        var window = new Host
+                        {
+                            Content = new Report(fileList)
+                        };
+
+                        Logger.Info($"Activating {window.GetType()}...");
+                        window.Activate(); // Activate the main window
+
+                        return; // That's all for now!
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e);
+                    }
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
             }
         }
 

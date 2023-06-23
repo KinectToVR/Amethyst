@@ -8,6 +8,7 @@ using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Globalization.NumberFormatting;
@@ -210,6 +211,11 @@ public static class TypeUtils
     public static JToken TryGetValue(this JObject json, string propertyName)
     {
         return json.TryGetValue(propertyName, out var value) ? value : null;
+    }
+
+    public static async Task<IEnumerable<T>> WhenAll<T>(this IEnumerable<Task<T>> tasks)
+    {
+        return await Task.WhenAll(tasks);
     }
 }
 

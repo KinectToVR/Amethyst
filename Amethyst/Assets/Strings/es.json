@@ -994,6 +994,30 @@
       "translation": "Este proceso se está ejecutando con privilegios de administrador, \nAmethyst solicitará permisos adicionales para finalizarlo."
     },
     {
+      "id": "/ReportPage/Titles/Captured",
+      "translation": "Files captured for bug report"
+    },
+    {
+      "id": "/ReportPage/Contents/Captured",
+      "translation": "It is possible that support asked you for Amethyst log files and its config. Amethyst has already prepared these files for you. Simply drag-and-drop the outlined element below to share these files, or copy them manually."
+    },
+    {
+      "id": "/ReportPage/Contents/Clipboard",
+      "translation": "Copy to clipboard"
+    },
+    {
+      "id": "/ReportPage/Captions/Clipboard",
+      "translation": "You can also manually copy everything to your clipboard using the button below, and paste like any other copied file, text, or image."
+    },
+    {
+      "id": "/ReportPage/Captions/Drop",
+      "translation": "Drag and drop the outlined field to share last Amethyst log files and settings. This is the same as dragging a file from a folder."
+    },
+    {
+      "id": "/ReportPage/Captions/Elevated",
+      "translation": "Drag and drop functionality is disabled for applications running with elevated privileges. Please copy all needed files manually."
+    },
+    {
       "id": "/SharedStrings/Buttons/Devices",
       "translation": "Dispositivos"
     },

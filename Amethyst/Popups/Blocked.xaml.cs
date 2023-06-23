@@ -48,17 +48,14 @@ public sealed partial class Blocked : Page, INotifyPropertyChanged
 
         Task.Run(() =>
         {
-            Shared.Events.ReloadPluginsPageEvent =
-                new ManualResetEvent(false);
-
             while (true)
             {
                 // Wait for a reload signal (blocking)
-                Shared.Events.ReloadPluginsPageEvent.WaitOne();
+                Shared.Events.ReloadVendorPagesEvent.WaitOne();
 
                 // Reload & restart the waiting loop
                 if (_blockedPageLoadedOnce && Interfacing.CurrentAppState == "blocked")
-                    Shared.Main.DispatcherQueue.TryEnqueue(Page_LoadedHandler);
+                    DispatcherQueue.TryEnqueue(Page_LoadedHandler);
 
                 // Reset the event
                 Shared.Events.ReloadPluginsPageEvent.Reset();

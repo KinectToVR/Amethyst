@@ -84,6 +84,12 @@
     <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
         <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      <LangVersion>preview</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <LangVersion>preview</LangVersion>
+    </PropertyGroup>
     <ItemGroup>
         <None Remove="Assets\Visuals\StoreLogo.scale-100.png" />
         <None Remove="Assets\Visuals\StoreLogo.scale-125.png" />
@@ -103,6 +109,7 @@
         <None Remove="Popups\CrashDialog.xaml" />
         <None Remove="Popups\CrashWindow.xaml" />
         <None Remove="Popups\Host.xaml" />
+        <None Remove="Popups\Report.xaml" />
         <None Remove="Popups\Splash.xaml" />
     </ItemGroup>
     <ItemGroup>
@@ -125,6 +132,10 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
+      <Page Update="Popups\Report.xaml">
+        <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
       <Page Update="Popups\CrashDialog.xaml">
         <Generator>MSBuild:Compile</Generator>
       </Page>
