@@ -204,6 +204,27 @@
                 </Grid.OpacityTransition>
             </Grid>
 
+            <Grid Grid.Row="0" Opacity="{x:Bind BoolToOpacity(CanShowUpdateDownloadingBar), Mode=OneWay}"
+                  Visibility="{x:Bind CanShowUpdateBar, Mode=OneWay}">
+                <InfoBar x:Name="UpdateDownloadingInfoBar" Opacity="0.0"
+                         IsOpen="False" IsClosable="False" Margin="3,0,3,3" Severity="Informational"
+                         Title="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/Headers/Downloading'), Mode=OneWay}"
+                         Message="{x:Bind util:Translator.Get.String('/SharedStrings/Updates/Statuses/Downloading'), Mode=OneWay}">
+
+                    <InfoBar.OpacityTransition>
+                        <ScalarTransition />
+                    </InfoBar.OpacityTransition>
+
+                    <InfoBar.Content>
+                        <ProgressBar x:Name="UpdateDownloadingProgress" IsIndeterminate="False"
+                                     HorizontalAlignment="Stretch" Margin="-45,0,1,0" />
+                    </InfoBar.Content>
+                </InfoBar>
+                <Grid.OpacityTransition>
+                    <ScalarTransition />
+                </Grid.OpacityTransition>
+            </Grid>
+
             <Grid Grid.Row="0" Opacity="{x:Bind BoolToOpacity(CanShowPluginsInstallBar), Mode=OneWay}"
                   Visibility="{x:Bind CanShowPluginsInstallBar, Mode=OneWay}">
                 <InfoBar x:Name="PluginsInstallInfoBar" Grid.Row="0" Opacity="0.0"

@@ -64,6 +64,8 @@ public class AppTracker : INotifyPropertyChanged
     // OnPropertyChanged listener for containers
     [JsonIgnore] public EventHandler PropertyChangedEvent;
 
+    [JsonIgnore] public Vector3 PositionOffsetRound => PositionOffset * 100;
+
     [JsonIgnore] public Vector3 PoseVelocity { get; set; } = new(0, 0, 0);
     [JsonIgnore] public Vector3 PoseAcceleration { get; set; } = new(0, 0, 0);
     [JsonIgnore] public Vector3 PoseAngularAcceleration { get; set; } = new(0, 0, 0);
@@ -96,8 +98,7 @@ public class AppTracker : INotifyPropertyChanged
         set => _isOrientationOverridden = value;
     }
 
-    [JsonIgnore]
-    public bool NoPositionFilteringRequested { get; set; }
+    [JsonIgnore] public bool NoPositionFilteringRequested { get; set; }
 
     // Override device's GUID
     public string OverrideGuid { get; set; } = string.Empty;
@@ -259,9 +260,9 @@ public class AppTracker : INotifyPropertyChanged
         IsPositionOverridden ? OverrideGuid : AppData.Settings.TrackingDeviceGuid;
 
     [JsonIgnore]
-    public string ManagingDevicePlaceholder => string.Format(
-        Interfacing.LocalizedJsonString("/SettingsPage/Filters/Managed"),
-        AppPlugins.GetDevice(ManagingDeviceGuid).Device?.Name ?? "INVALID");
+    public string ManagingDevicePlaceholder =>
+        Interfacing.LocalizedJsonString("/SettingsPage/Filters/Managed")
+            .Format(AppPlugins.GetDevice(ManagingDeviceGuid).Device?.Name ?? "INVALID");
 
     [JsonIgnore]
     public bool IsTrackerExpanderOpen
@@ -447,9 +448,9 @@ public class AppTracker : INotifyPropertyChanged
         OverrideGuid != AppData.Settings.SelectedTrackingDeviceGuid;
 
     [JsonIgnore]
-    public string OverriddenByOtherDeviceString => string.Format(
-        Interfacing.LocalizedJsonString("/DevicesPage/ToolTips/Overrides/Overlapping"),
-        $"{AppPlugins.GetDevice(ManagingDeviceGuid).Device?.Name ?? "INVALID"} (GUID: {ManagingDeviceGuid})");
+    public string OverriddenByOtherDeviceString =>
+        Interfacing.LocalizedJsonString("/DevicesPage/ToolTips/Overrides/Overlapping").Format(
+            $"{AppPlugins.GetDevice(ManagingDeviceGuid).Device?.Name ?? "INVALID"} (GUID: {ManagingDeviceGuid})");
 
     // MVVM: a connection of the transitions each tracker expander should animate
     [JsonIgnore] public TransitionCollection SettingsExpanderTransitions { get; set; } = new();

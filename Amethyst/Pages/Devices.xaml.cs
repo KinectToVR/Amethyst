@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
 using Amethyst.Classes;
-using Amethyst.Controls;
 using Amethyst.MVVM;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
@@ -27,8 +26,8 @@ namespace Amethyst.Pages;
 /// </summary>
 public sealed partial class Devices : Page, INotifyPropertyChanged
 {
+    public static bool DisableJointExpanderSounds;
     private bool _devicesPageLoadedOnce;
-    public static bool DisableJointExpanderSounds = false;
 
     public Devices()
     {

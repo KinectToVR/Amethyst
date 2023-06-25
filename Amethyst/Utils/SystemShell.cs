@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.WindowsAPICodePack.Taskbar;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Threading.Tasks;
 using Windows.System;
 
 namespace Amethyst.Utils;
@@ -46,6 +48,53 @@ public static class SystemShell
 
         Marshal.FreeCoTaskMem(nativeFolder);
         if (nativeFile != IntPtr.Zero) Marshal.FreeCoTaskMem(nativeFile);
+    }
+
+    public static void SetTaskBarProgress(int value)
+    {
+        try
+        {
+            if (!TaskbarManager.IsPlatformSupported) return;
+            TaskbarManager.Instance.SetProgressState(value > 0
+                ? TaskbarProgressBarState.Normal
+                : TaskbarProgressBarState.Indeterminate);
+            TaskbarManager.Instance.SetProgressValue(value, 100);
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+    }
+
+    public static void SetTaskBarState(TaskbarProgressBarState value)
+    {
+        try
+        {
+            if (!TaskbarManager.IsPlatformSupported) return;
+            TaskbarManager.Instance.SetProgressState(value);
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+    }
+
+    public static void FlashTaskBarState(TaskbarProgressBarState value)
+    {
+        try
+        {
+            if (!TaskbarManager.IsPlatformSupported) return;
+            Task.Run(async () =>
+            {
+                TaskbarManager.Instance.SetProgressState(value);
+                await Task.Delay(1000); // Wait a second, then reset to the default state
+                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
+            });
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
     }
 
     /// <summary>TimeBeginPeriod(). See the Windows API documentation for details.</summary>

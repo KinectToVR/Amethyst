@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using Windows.Data.Json;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using static Amethyst.Classes.Interfacing;
-using System.Diagnostics;
-using Amethyst.Controls;
 
 namespace Amethyst.MVVM;
 

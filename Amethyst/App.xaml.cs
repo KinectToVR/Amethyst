@@ -9,10 +9,14 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
+using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Globalization;
+using Windows.Storage;
 using Windows.System.UserProfile;
 using Windows.UI.ViewManagement;
+using Windows.Web.Http;
 using Amethyst.Classes;
 using Amethyst.Popups;
 using Amethyst.Schedulers;
@@ -21,6 +25,11 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppLifecycle;
+using Newtonsoft.Json.Linq;
+using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+using Amethyst.MVVM;
+using Newtonsoft.Json;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -32,9 +41,10 @@ namespace Amethyst;
 /// </summary>
 public partial class App : Application
 {
+    private readonly List<Host> _views = new();
+    private bool _canCloseViews;
+    private CrashWindow _crashWindow;
     private MainWindow _mWindow;
-    private bool _canCloseViews = false;
-    private List<Host> _views = new();
 
     /// <summary>
     ///     Initializes the singleton application object.  This is the first line of authored code
@@ -49,9 +59,10 @@ public partial class App : Application
         {
             var ex = e.Exception;
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
+            if (Interfacing.SuppressAllDomainExceptions) return; // Don't do anything
 
             var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
-            var msg = string.Format(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack"), stc);
+            var msg = Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack").Format(stc);
             Interfacing.Fail(msg != "/CrashHandler/Content/Crash/UnknownStack" ? msg : stc);
 
             // Make App Center send the whole log when crashed
@@ -70,9 +81,10 @@ public partial class App : Application
         {
             var ex = (Exception)e.ExceptionObject;
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
+            if (Interfacing.SuppressAllDomainExceptions) return; // Don't do anything
 
             var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
-            var msg = string.Format(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack"), stc);
+            var msg = Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack").Format(stc);
             Interfacing.Fail(msg != "/CrashHandler/Content/Crash/UnknownStack" ? msg : stc);
 
             // Make App Center send the whole log when crashed
@@ -91,14 +103,15 @@ public partial class App : Application
         ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 
         // Initialize the logger
-        Logger.Init(Interfacing.GetAppDataLogFileDir("Amethyst",
+        Logger.Init(Interfacing.GetAppDataLogFilePath(
             $"Amethyst_{DateTime.Now:yyyyMMdd-HHmmss.ffffff}.log"));
 
         // Create an empty file for checking for crashes
         try
         {
-            Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.ProgramLocation.DirectoryName, ".crash"));
-            Interfacing.CrashFile.Create(); // Create the file
+            Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.TemporaryFolder.Path, ".crash"));
+            if (Environment.GetCommandLineArgs().ElementAtOrDefault(1)?.StartsWith("amethyst-app:crash") ?? false)
+                Interfacing.CrashFile.Create(); // Create the file if not running as crash handler
         }
         catch (Exception e)
         {
@@ -108,7 +121,7 @@ public partial class App : Application
         try
         {
             // Try deleting the "latest" log file
-            File.Delete(Interfacing.GetAppDataLogFileDir("Amethyst", "_latest.log"));
+            File.Delete(Interfacing.GetAppDataLogFilePath("_latest.log"));
         }
         catch (Exception e)
         {
@@ -121,7 +134,6 @@ public partial class App : Application
         Logger.Info($"Running on {Environment.OSVersion}");
 
         Logger.Info($"Amethyst version: {AppData.VersionString}");
-        Logger.Info($"Amethyst internal version: {AppData.InternalVersion}");
         Logger.Info($"Amethyst web API version: {AppData.ApiVersion}");
         Logger.Info("Amethyst build commit: AZ_COMMIT_SHA");
 
@@ -211,34 +223,236 @@ public partial class App : Application
     ///     Invoked when the application is launched normally by the end user.  Other entry points
     ///     will be used such as when the application is launched to open a specific file.
     /// </summary>
-    /// <param name="_">Details about the launch request and process.</param>
-    protected override async void OnLaunched(LaunchActivatedEventArgs _)
+    /// <param name="eventArgs">Details about the launch request and process.</param>
+    protected override async void OnLaunched(LaunchActivatedEventArgs eventArgs)
     {
         // Check if there's any argv[1]
         var args = Environment.GetCommandLineArgs();
         Logger.Info($"Received launch arguments: {string.Join(", ", args)}");
 
         // Check if this startup isn't a request
-        if (args.Length > 2 && args[1] == "Kill")
+        if (args.Length > 1)
+            if (args[1] == "Kill" && args.Length > 2)
+            {
+                try
+                {
+                    Logger.Info($"Amethyst running in process kill slave mode! ID: {args[2]}");
+                    var processToKill = Process.GetProcessById(int.Parse(args[2]));
+
+                    // If we want to kill server, shut down monitor first
+                    if (processToKill.ProcessName == "vrserver")
+                        Process.GetProcessesByName("vrmonitor").ToList().ForEach(x => x.Kill());
+
+                    processToKill.Kill(); // Now kill the actual process
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                }
+
+                Logger.Info("That's all! Shutting down now...");
+                Environment.Exit(0); // Cancel further application startup
+            }
+            else if (args[1].StartsWith("amethyst-app:crash"))
+            {
+                Logger.Info("Amethyst running in crash handler mode!");
+                Interfacing.SuppressAllDomainExceptions = true;
+
+                // Disable internal sounds
+                ElementSoundPlayer.State = ElementSoundPlayerState.Off;
+
+                Logger.Info("Creating a new CrashWindow view...");
+                _crashWindow = new CrashWindow(); // Create a new window
+
+                Logger.Info($"Activating {_crashWindow.GetType()}...");
+                _crashWindow.Activate(); // Activate the main window
+
+                // Do this in the meantime
+                _ = Task.Factory.StartNew(async () =>
+                {
+                    try
+                    {
+                        var client = new HttpClient();
+
+                        using var response =
+                            await client.GetAsync(new Uri("https://docs.k2vr.tech/shared/locales.json"));
+                        using var content = response.Content;
+                        var json = await content.ReadAsStringAsync();
+
+                        // Optionally fall back to English
+                        if (JObject.Parse(json)[Interfacing.DocsLanguageCode] == null)
+                            Interfacing.DocsLanguageCode = "en";
+                    }
+                    catch (Exception)
+                    {
+                        Interfacing.DocsLanguageCode = "en";
+                    }
+                });
+
+                // That's all!
+                return;
+            }
+
+        // Check if activated via uri
+        var activationUri = (AppInstance.GetCurrent().GetActivatedEventArgs().Data as
+            ProtocolActivatedEventArgs)?.Uri;
+
+        // Check if there's any launch arguments
+        if (activationUri is not null && activationUri.Segments.Length > 0)
         {
-            try
+            Logger.Info($"Activated via uri of: {activationUri}");
+            switch (activationUri.Segments.First())
             {
-                Logger.Info($"Amethyst running in process kill slave mode! ID: {args[2]}");
-                var processToKill = Process.GetProcessById(int.Parse(args[2]));
+                case "logs":
+                {
+                    SystemShell.OpenFolderAndSelectItem(
+                        new DirectoryInfo(Interfacing.GetAppDataLogFilePath(""))
+                            .GetFiles().OrderByDescending(x => x.LastWriteTime)
+                            .ToList().ElementAtOrDefault(1)?.FullName
+                        ?? Interfacing.GetAppDataLogFilePath(""));
 
-                // If we want to kill server, shut down monitor first
-                if (processToKill.ProcessName == "vrserver")
-                    Process.GetProcessesByName("vrmonitor").ToList().ForEach(x => x.Kill());
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
+                case "data-folder":
+                {
+                    SystemShell.OpenFolderAndSelectItem(
+                        Directory.GetParent(Interfacing.LocalFolder.Path)?.FullName);
 
-                processToKill.Kill(); // Now kill the actual process
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
+                case "mutable-folder":
+                {
+                    const string mutablePath = @"C:\Program Files\ModifiableWindowsApps\K2VRTeam.Amethyst.App";
+                    SystemShell.OpenFolderAndSelectItem(Directory.Exists(mutablePath)
+                        ? mutablePath // Check whether the global mutable folder is accessible
+                        : Path.Join(Directory.GetParent( // Otherwise open the virtual fs one
+                            Interfacing.LocalFolder.Path)?.FullName, "AC", "MutablePackageRoot"));
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
+                case "vfs-folder":
+                {
+                    SystemShell.OpenFolderAndSelectItem(Path.Join(
+                        Directory.GetParent(Interfacing.LocalFolder.Path)?.FullName, "AC"));
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
+                case "make-local":
+                {
+                    try
+                    {
+                        // Read the query string
+                        var queryDictionary = HttpUtility
+                            .ParseQueryString(activationUri!.Query.TrimStart('?'));
+
+                        // Read all needed query parameters
+                        var sourcePath = queryDictionary["source"];
+                        var targetFolderPath = queryDictionary["target"];
+
+                        // Validate our parameters
+                        if (sourcePath is not null)
+                        {
+                            // Modify our parameters
+                            sourcePath = Path.Join(Interfacing.ProgramLocation.DirectoryName!, sourcePath);
+                            var targetFolder = string.IsNullOrEmpty(targetFolderPath)
+                                ? Interfacing.LocalFolder // Copy to LocalState if not passed
+                                : await Interfacing.LocalFolder.CreateFolderAsync(targetFolderPath);
+
+                            if (File.Exists(sourcePath))
+                                await (await StorageFile.GetFileFromPathAsync(sourcePath)).CopyAsync(targetFolder);
+
+                            else if (Directory.Exists(sourcePath))
+                                new DirectoryInfo(sourcePath).CopyToFolder(
+                                    (await targetFolder.CreateFolderAsync(new DirectoryInfo(sourcePath).Name,
+                                        CreationCollisionOption.OpenIfExists)).Path);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e);
+                    }
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
+                case "set-defaults":
+                {
+                    try
+                    {
+                        // Read the query string
+                        var queryDictionary = HttpUtility
+                            .ParseQueryString(activationUri!.Query.TrimStart('?'));
+
+                        // Read all needed query parameters
+                        var trackingDevice = queryDictionary["TrackingDevice"];
+                        var serviceEndpoint = queryDictionary["ServiceEndpoint"];
+                        var extraTrackersValid = bool.TryParse(queryDictionary["ExtraTrackers"], out var extraTrackers);
+
+                        Logger.Info($"Received defaults: TrackingDevice{{{trackingDevice}}}, " +
+                                    $"ServiceEndpoint{{{serviceEndpoint}}}, ExtraTrackers{{{extraTrackers}}}");
+
+                        // Create a new default config
+                        await File.WriteAllTextAsync(Interfacing.GetAppDataFilePath("PluginDefaults.json"),
+                            JsonConvert.SerializeObject(new DefaultSettings
+                            {
+                                TrackingDevice = trackingDevice,
+                                ServiceEndpoint = serviceEndpoint,
+                                ExtraTrackers = extraTrackersValid ? extraTrackers : null
+                            }, Formatting.Indented));
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e);
+                    }
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
+                case "report":
+                {
+                    try
+                    {
+                        Logger.Info("Creating a data file list base...");
+                        var fileList = new List<AppDataFile>
+                            { new(await Interfacing.GetAppDataFile("AmethystSettings.json")) };
+
+                        Logger.Info("Searching for recent log files...");
+                        fileList.AddRange(await new DirectoryInfo(Interfacing.GetAppDataLogFilePath(""))
+                            .GetFiles().OrderByDescending(x => x.LastWriteTime).ToList().Take(3)
+                            .Select(async x => new AppDataFile(await StorageFile.GetFileFromPathAsync(x.FullName)))
+                            .WhenAll()); // Collect the last 3 log files and wait for them
+
+                        Logger.Info("Creating a new Host:Report view...");
+                        var window = new Host
+                        {
+                            Content = new Report(fileList)
+                        };
+
+                        Logger.Info($"Activating {window.GetType()}...");
+                        window.Activate(); // Activate the main window
+
+                        return; // That's all for now!
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e);
+                    }
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
             }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-
-            Logger.Info("That's all! Shutting down now...");
-            Environment.Exit(0); // Cancel further application startup
         }
 
         Logger.Info("Registering a named mutex for com_k2vr_amethyst...");
@@ -250,13 +464,7 @@ public partial class App : Application
             if (!needToCreateNew)
             {
                 Logger.Fatal(new AbandonedMutexException("Startup failed! The app is already running."));
-
-                if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
-                        "K2CrashHandler", "K2CrashHandler.exe")))
-                    Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
-                        "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
-                else
-                    Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
+                await "amethyst-app:crash-already-running".ToUri().LaunchAsync();
 
                 await Task.Delay(3000);
                 Environment.Exit(0); // Exit peacefully
@@ -264,37 +472,23 @@ public partial class App : Application
         }
         catch (Exception e)
         {
-            Logger.Fatal(new AbandonedMutexException(
-                $"Startup failed! Multi-instance lock mutex creation error: {e.Message}"));
-
-            if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
-                    "K2CrashHandler", "K2CrashHandler.exe")))
-                Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
-                    "K2CrashHandler", "K2CrashHandler.exe"), "already_running");
-            else
-                Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
+            Logger.Fatal(new AbandonedMutexException($"Startup failed! Mutex creation error: {e.Message}"));
+            await "amethyst-app:crash-already-running".ToUri().LaunchAsync();
 
             await Task.Delay(3000);
             Environment.Exit(0); // Exit peacefully
         }
 
-        // Priority: Launch the crash handler
         Logger.Info("Starting the crash handler passing the app PID...");
-
-        if (File.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
-                "K2CrashHandler", "K2CrashHandler.exe")))
-            Process.Start(Path.Combine(Interfacing.ProgramLocation.DirectoryName,
-                "K2CrashHandler", "K2CrashHandler.exe"), $"{Environment.ProcessId} \"{Logger.LogFilePath}\"");
-        else
-            Logger.Warn(
-                $"Crash handler exe ({Path.Combine(Interfacing.ProgramLocation.DirectoryName, "K2CrashHandler", "K2CrashHandler.exe")}) not found!");
+        await ($"amethyst-app:crash-watchdog?pid={Environment.ProcessId}&log={Logger.LogFilePath}" +
+               $"&crash={Path.Join(Interfacing.TemporaryFolder.Path, ".crash")}").ToUri().LaunchAsync();
 
         // Disable internal sounds
         ElementSoundPlayer.State = ElementSoundPlayerState.Off;
 
         // Create the plugin directory (if not existent)
         Directory.CreateDirectory(Path.Combine(
-            Interfacing.ProgramLocation.DirectoryName, "Plugins"));
+            Interfacing.ProgramLocation.DirectoryName!, "Plugins"));
 
         // Try reading the startup task config
         try

@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.System;
 using Amethyst.Classes;
 using Amethyst.Schedulers;
 using Amethyst.Utils;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using Microsoft.UI.Xaml.Controls;
-using System.IO;
-using Windows.Storage;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Collections.Specialized.BitVector32;
-using System.IO.Compression;
 
 namespace Amethyst.MVVM;
 
@@ -74,13 +71,13 @@ public class StorePlugin : INotifyPropertyChanged
 
     public string FormatResourceString(string resourceName)
     {
-        return string.Format(Interfacing.LocalizedJsonString(resourceName), Name);
+        return Interfacing.LocalizedJsonString(resourceName).Format(Name);
     }
 
     public string FormatReleaseString(string resourceName)
     {
-        return string.Format(Interfacing.LocalizedJsonString(resourceName),
-            LatestRelease?.DisplayName, LatestRelease?.Version);
+        return Interfacing.LocalizedJsonString(resourceName)
+            .Format(LatestRelease?.DisplayName, LatestRelease?.Version);
     }
 
     public async void OpenPluginWebsite()
@@ -174,8 +171,9 @@ public class StorePlugin : INotifyPropertyChanged
         try
         {
             // Mark the update footer as active
-            Shared.Main.PluginsUpdatePendingInfoBar.Title = string.Format(Interfacing.LocalizedJsonString(
-                "/SharedStrings/Plugins/Store/Headers/Downloading"), LatestRelease.DisplayName, LatestRelease.Version);
+            Shared.Main.PluginsUpdatePendingInfoBar.Title = Interfacing.LocalizedJsonString(
+                    "/SharedStrings/Plugins/Store/Headers/Downloading")
+                .Format(LatestRelease.DisplayName, LatestRelease.Version);
 
             Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
                 "/SharedStrings/Plugins/Store/Headers/Preparing");
@@ -190,9 +188,8 @@ public class StorePlugin : INotifyPropertyChanged
             if (string.IsNullOrEmpty(LatestRelease.Download))
             {
                 // No files to download, switch to update error
-                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(
-                    Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Store/Statuses/Error"),
-                    LatestRelease.DisplayName);
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
+                    "/SharedStrings/Plugins/Store/Statuses/Error").Format(LatestRelease.DisplayName);
 
                 Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
                 Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
@@ -212,48 +209,36 @@ public class StorePlugin : INotifyPropertyChanged
             try
             {
                 // Update the progress message
-                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
-                        "/SharedStrings/Plugins/Store/Statuses/Downloading"), LatestRelease.DisplayName,
-                    LatestRelease.Version);
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
+                        "/SharedStrings/Plugins/Store/Statuses/Downloading")
+                    .Format(LatestRelease.DisplayName, LatestRelease.Version);
 
                 // Create a stream reader using the received Installer Uri
                 await using var stream =
                     await GithubClient.DownloadStreamAsync(new RestRequest(LatestRelease.Download));
 
                 // Search for an empty folder in AppData
-                var installFolder = Interfacing.GetAppDataPluginFolderDir(
+                var installFolder = await Interfacing.GetAppDataPluginFolder(
                     string.Join("_", LatestRelease.Guid.Split(
                         Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                 // Create an empty folder in TempAppData
-                var downloadFolder = Interfacing.GetTempPluginFolderDir(
+                var downloadFolder = await Interfacing.GetTempPluginFolder(
                     string.Join("_", Guid.NewGuid().ToString().ToUpper()
                         .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                 // Randomize the path if already exists
                 // Delete if only a single null folder
-                if (Directory.Exists(installFolder))
-                {
-                    if (Directory.EnumerateFileSystemEntries(installFolder).Any())
-                        installFolder = Interfacing.GetAppDataPluginFolderDir(
-                            string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
-
-                    // Else delete if empty
-                    else Directory.Delete(installFolder, true);
-                }
+                if ((await installFolder.GetItemsAsync()).Any())
+                    installFolder = await Interfacing.GetAppDataPluginFolder(
+                        string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                            .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                 // Try reserving the install folder
-                if (Directory.Exists(installFolder!))
-                    Directory.Delete(installFolder!, true);
-
-                // Try creating the download folder
-                if (!Directory.Exists(downloadFolder!))
-                    Directory.CreateDirectory(downloadFolder!);
+                await installFolder.DeleteAsync();
 
                 // Replace or create our installer file
-                var pluginArchive = await (await StorageFolder
-                    .GetFolderFromPathAsync(downloadFolder)).CreateFileAsync(
+                var pluginArchive = await downloadFolder.CreateFileAsync(
                     "package.zip", CreationCollisionOption.ReplaceExisting);
 
                 // Create an output stream and push all the available data to it
@@ -266,13 +251,13 @@ public class StorePlugin : INotifyPropertyChanged
 
                 // Unpack the archive now
                 Logger.Info("Unpacking the new plugin from its archive...");
-                ZipFile.ExtractToDirectory(pluginArchive.Path, downloadFolder, true);
+                ZipFile.ExtractToDirectory(pluginArchive.Path, downloadFolder.Path, true);
 
                 Logger.Info("Deleting the plugin installation package...");
                 File.Delete(pluginArchive.Path); // Cleanup after the install
 
                 // Rename the plugin folder if everything's fine
-                Directory.Move(downloadFolder, installFolder);
+                Directory.Move(downloadFolder.Path, installFolder.Path);
             }
             catch (Exception e)
             {
@@ -280,9 +265,8 @@ public class StorePlugin : INotifyPropertyChanged
                 Logger.Error(e); // Print everything
 
                 // No files to download, switch to update error
-                Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(
-                    Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Store/Statuses/Error"),
-                    LatestRelease.DisplayName);
+                Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
+                    "/SharedStrings/Plugins/Store/Statuses/Error").Format(LatestRelease.DisplayName);
 
                 Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
                 Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;
@@ -297,8 +281,8 @@ public class StorePlugin : INotifyPropertyChanged
             }
 
             // Everything's fine, show the restart notice
-            Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
-                "/SharedStrings/Plugins/Store/Headers/Restart"), LatestRelease.DisplayName);
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
+                "/SharedStrings/Plugins/Store/Headers/Restart").Format(LatestRelease.DisplayName);
 
             Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = false;
             Shared.Main.PluginsUpdatePendingProgressBar.ShowError = false;
@@ -318,8 +302,8 @@ public class StorePlugin : INotifyPropertyChanged
             Logger.Info(e);
 
             // No files to download, switch to update error
-            Shared.Main.PluginsUpdatePendingInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
-                "/SharedStrings/Plugins/Store/Statuses/Error"), LatestRelease.DisplayName);
+            Shared.Main.PluginsUpdatePendingInfoBar.Message = Interfacing.LocalizedJsonString(
+                "/SharedStrings/Plugins/Store/Statuses/Error").Format(LatestRelease.DisplayName);
 
             Shared.Main.PluginsUpdatePendingProgressBar.IsIndeterminate = true;
             Shared.Main.PluginsUpdatePendingProgressBar.ShowError = true;

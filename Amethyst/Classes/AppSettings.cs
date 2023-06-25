@@ -177,6 +177,8 @@ public class AppSettings : INotifyPropertyChanged
 
     [JsonIgnore] public static bool DoNotSaveSettings { get; set; }
 
+    private bool BlockRaisedEvents { get; set; }
+
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -188,7 +190,7 @@ public class AppSettings : INotifyPropertyChanged
         {
             // Save application settings to $env:AppData/Amethyst/
             File.WriteAllText(
-                Interfacing.GetAppDataFileDir("AmethystSettings.json"),
+                Interfacing.GetAppDataFilePath("AmethystSettings.json"),
                 JsonConvert.SerializeObject(AppData.Settings, Formatting.Indented));
         }
         catch (Exception e)
@@ -204,7 +206,7 @@ public class AppSettings : INotifyPropertyChanged
         {
             // Read application settings from $env:AppData/Amethyst/
             AppData.Settings = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(
-                Interfacing.GetAppDataFileDir("AmethystSettings.json"))) ?? new AppSettings();
+                Interfacing.GetAppDataFilePath("AmethystSettings.json"))) ?? new AppSettings();
         }
         catch (Exception e)
         {
@@ -269,24 +271,24 @@ public class AppSettings : INotifyPropertyChanged
             Logger.Info("Checking out the default configuration settings...");
             (bool ExtraTrackers, bool Valid) defaultSettings = (false, false); // Invalid for now!
 
-            if (File.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")))
+            if (File.Exists(Interfacing.GetAppDataFilePath("PluginDefaults.json")))
                 try
                 {
                     // Parse the loaded json
-                    var jsonHead = JsonObject.Parse(File.ReadAllText(
-                        Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")));
+                    var defaults = JsonConvert.DeserializeObject<DefaultSettings>(
+                        File.ReadAllText(Interfacing.GetAppDataFilePath("PluginDefaults.json"))) ?? new DefaultSettings();
 
-                    if (!jsonHead.ContainsKey("ExtraTrackers"))
+                    if (defaults.ExtraTrackers is null)
                         // Invalid configuration file, don't proceed further!
                         Logger.Error("The default configuration json file was invalid!");
                     else // Read from JSON and mark as valid
-                        defaultSettings = (jsonHead.GetNamedBoolean("ExtraTrackers"), true);
+                        defaultSettings = (defaults.ExtraTrackers ?? false, true);
                 }
                 catch (Exception e)
                 {
                     Logger.Info($"Default settings checkout failed! Message: {e.Message}");
                 }
-            else Logger.Info("No default configuration found! [defaults.json]");
+            else Logger.Info("No default configuration found! [PluginDefaults.json]");
 
             // Enable more trackers if valid and requested
             if (defaultSettings.Valid && defaultSettings.ExtraTrackers)
@@ -513,10 +515,16 @@ public class AppSettings : INotifyPropertyChanged
         }
     }
 
-    private bool BlockRaisedEvents { get; set; } = false;
     public void OnPropertyChanged(string propName = null)
     {
         if (BlockRaisedEvents) return; // Don't notify if blocked
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
+}
+
+public class DefaultSettings
+{
+    public string TrackingDevice { get; set; }
+    public string ServiceEndpoint { get; set; }
+    public bool? ExtraTrackers { get; set; }
 }

@@ -94,7 +94,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
         });
     }
 
-    public bool LoadingData { get; set; } = false;
+    public bool LoadingData { get; set; }
     public bool FinishedLoadingData { get; set; } = true;
 
     private RestClient ApiClient { get; } = new("https://api.github.com");
@@ -388,21 +388,21 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                             DropInstallerErrorIcon.Opacity = 0.0;
 
                             DropInstallerHeaderTextBlock.Text =
-                                string.Format(LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installing"),
-                                    files.Count + " " +
-                                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installing")
+                                    .Format(files.First(x => x.Name.StartsWith("plugin") && x.Name.EndsWith(".dll"))
+                                        .Name.Replace(".dll", string.Empty));
 
                             // Show the progress indicator
                             DropInstallerGrid.Opacity = 1.0;
                             AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
                             // Search for an empty folder in AppData
-                            var installFolder = GetAppDataPluginFolderDir(
+                            var installFolder = await GetAppDataPluginFolder(
                                 string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                     .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                             // Create an empty folder in TempAppData
-                            var downloadFolder = GetTempPluginFolderDir(
+                            var downloadFolder = await GetTempPluginFolder(
                                 string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                     .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
@@ -410,24 +410,16 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
                             // Randomize the path if already exists
                             // Delete if only a single null folder
-                            if (Directory.Exists(installFolder))
-                            {
-                                if (Directory.EnumerateFileSystemEntries(installFolder).Any())
-                                    installFolder = GetAppDataPluginFolderDir(
-                                        string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                            .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
-
-                                // Else delete if empty
-                                else Directory.Delete(installFolder, true);
-                            }
+                            if ((await installFolder.GetItemsAsync()).Any())
+                                installFolder = await GetAppDataPluginFolder(
+                                    string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                        .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                             // Try reserving the install folder
-                            if (Directory.Exists(installFolder!))
-                                Directory.Delete(installFolder!, true);
+                            await installFolder.DeleteAsync();
 
                             // Try creating the download folder
-                            if (!Directory.Exists(downloadFolder!))
-                                Directory.CreateDirectory(downloadFolder!);
+                            await downloadFolder.DeleteAsync();
 
                             // Unpack the archive now
                             Logger.Info("Unpacking the new plugin from its package...");
@@ -436,18 +428,18 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                 {
                                     case StorageFile file:
                                         Logger.Info($"Copying file {file.Name} to {downloadFolder}\\");
-                                        File.Copy(file.Path, Path.Join(downloadFolder, file.Name), true);
+                                        await file.CopyAsync(downloadFolder, file.Name,
+                                            NameCollisionOption.ReplaceExisting);
                                         break;
                                     case StorageFolder folder:
                                         Logger.Info($"Copying folder {folder.Name} to {downloadFolder}\\");
-                                        new DirectoryInfo(folder.Path).CopyToFolderAsync(downloadFolder);
+                                        new DirectoryInfo(folder.Path).CopyToFolder(downloadFolder.Path, inside: true);
                                         break;
                                 }
 
-                            Logger.Info($"Moving temp {downloadFolder} to {installFolder}...");
-
-                            // Rename the plugin folder if everything's fine
-                            Directory.Move(downloadFolder, installFolder);
+                            // Move the plugin folder if everything's fine
+                            Logger.Info($"Moving temp {downloadFolder.Path} to {installFolder.Path}...");
+                            Directory.Move(downloadFolder.Path, installFolder.Path);
 
                             // Wait a bit
                             await Task.Delay(3000);
@@ -456,12 +448,15 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                             DropInstallerProgressRing.IsIndeterminate = false;
                             DropInstallerProgressRing.Value = 100;
 
-                            DropInstallerHeaderTextBlock.Text = string.Format(
-                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installed"),
-                                files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
-                            DropInstallerMessageTextBlock.Text = string.Format(
-                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Installed"),
-                                files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+                            DropInstallerHeaderTextBlock.Text =
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installed")
+                                    .Format(files.First(x => x.Name.StartsWith("plugin") && x.Name.EndsWith(".dll"))
+                                        .Name.Replace(".dll", string.Empty));
+
+                            DropInstallerMessageTextBlock.Text =
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Installed")
+                                    .Format(files.First(x => x.Name.StartsWith("plugin") && x.Name.EndsWith(".dll"))
+                                        .Name.Replace(".dll", string.Empty));
 
                             DropInstallerMessageTextBlock.Opacity = 1.0;
                             AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
@@ -486,12 +481,14 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                             DropInstallerProgressRing.Opacity = 0.0;
                             DropInstallerErrorIcon.Opacity = 1.0;
 
-                            DropInstallerHeaderTextBlock.Text = string.Format(
-                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating"),
-                                files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
-                            DropInstallerMessageTextBlock.Text = string.Format(
-                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/NotFound/Plural"),
-                                files.Count + " " + LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+                            DropInstallerHeaderTextBlock.Text =
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating")
+                                    .Format(files.Count + " " +
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
+                            DropInstallerMessageTextBlock.Text =
+                                LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/NotFound/Plural")
+                                    .Format(files.Count + " " +
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Resources/Files"));
 
                             DropInstallerMessageTextBlock.Opacity = 1.0;
                             AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -547,20 +544,20 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                     DropInstallerProgressRing.Opacity = 1.0;
                                     DropInstallerErrorIcon.Opacity = 0.0;
 
-                                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Headers/Installing"), files[0].Name);
+                                    DropInstallerHeaderTextBlock.Text = LocalizedJsonString(
+                                        "/SharedStrings/Plugins/Drop/Headers/Installing").Format(files[0].Name);
 
                                     // Show the progress indicator
                                     DropInstallerGrid.Opacity = 1.0;
                                     AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
                                     // Search for an empty folder in AppData
-                                    var installFolder = GetAppDataPluginFolderDir(
+                                    var installFolder = await GetAppDataPluginFolder(
                                         string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                             .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                                     // Create an empty folder in TempAppData
-                                    var downloadFolder = GetTempPluginFolderDir(
+                                    var downloadFolder = await GetTempPluginFolder(
                                         string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                             .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
@@ -568,24 +565,16 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
                                     // Randomize the path if already exists
                                     // Delete if only a single null folder
-                                    if (Directory.Exists(installFolder))
-                                    {
-                                        if (Directory.EnumerateFileSystemEntries(installFolder).Any())
-                                            installFolder = GetAppDataPluginFolderDir(
-                                                string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                                    .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
-
-                                        // Else delete if empty
-                                        else Directory.Delete(installFolder, true);
-                                    }
+                                    if ((await installFolder.GetItemsAsync()).Any())
+                                        installFolder = await GetAppDataPluginFolder(
+                                            string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                                .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                                     // Try reserving the install folder
-                                    if (Directory.Exists(installFolder!))
-                                        Directory.Delete(installFolder!, true);
+                                    await installFolder.DeleteAsync();
 
                                     // Try creating the download folder
-                                    if (!Directory.Exists(downloadFolder!))
-                                        Directory.CreateDirectory(downloadFolder!);
+                                    await downloadFolder.DeleteAsync();
 
                                     // Unpack the archive now
                                     Logger.Info("Unpacking the new plugin from its package...");
@@ -594,18 +583,18 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         {
                                             case StorageFile file:
                                                 Logger.Info($"Copying file {file.Name} to {downloadFolder}\\");
-                                                File.Copy(file.Path, Path.Join(downloadFolder, file.Name), true);
+                                                await file.CopyAsync(downloadFolder, file.Name,
+                                                    NameCollisionOption.ReplaceExisting);
                                                 break;
                                             case StorageFolder folder:
                                                 Logger.Info($"Copying folder {folder.Name} to {downloadFolder}\\");
-                                                new DirectoryInfo(folder.Path).CopyToFolderAsync(downloadFolder);
+                                                new DirectoryInfo(folder.Path).CopyToFolder(downloadFolder.Path, inside: true);
                                                 break;
                                         }
 
-                                    Logger.Info($"Moving temp {downloadFolder} to {installFolder}...");
-
-                                    // Rename the plugin folder if everything's fine
-                                    Directory.Move(downloadFolder, installFolder);
+                                    // Move the plugin folder if everything's fine
+                                    Logger.Info($"Moving temp {downloadFolder.Path} to {installFolder.Path}...");
+                                    Directory.Move(downloadFolder.Path, installFolder.Path);
 
                                     // Wait a bit
                                     await Task.Delay(3000);
@@ -614,10 +603,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                     DropInstallerProgressRing.IsIndeterminate = false;
                                     DropInstallerProgressRing.Value = 100;
 
-                                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Headers/Installed"), files[0].Name);
-                                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Statuses/Installed"), files[0].Name);
+                                    DropInstallerHeaderTextBlock.Text =
+                                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installed")
+                                            .Format(files[0].Name);
+                                    DropInstallerMessageTextBlock.Text =
+                                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Installed")
+                                            .Format(files[0].Name);
 
                                     DropInstallerMessageTextBlock.Opacity = 1.0;
                                     AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
@@ -642,10 +633,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                     DropInstallerProgressRing.Opacity = 0.0;
                                     DropInstallerErrorIcon.Opacity = 1.0;
 
-                                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), files[0].Name);
-                                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound"), files[0].Name);
+                                    DropInstallerHeaderTextBlock.Text =
+                                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating")
+                                            .Format(files[0].Name);
+                                    DropInstallerMessageTextBlock.Text =
+                                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/NotFound")
+                                            .Format(files[0].Name);
 
                                     DropInstallerMessageTextBlock.Opacity = 1.0;
                                     AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -700,20 +693,21 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         DropInstallerProgressRing.Opacity = 1.0;
                                         DropInstallerErrorIcon.Opacity = 0.0;
 
-                                        DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                            "/SharedStrings/Plugins/Drop/Headers/Installing"), files[0].Name);
+                                        DropInstallerHeaderTextBlock.Text =
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installing")
+                                                .Format(files[0].Name);
 
                                         // Show the progress indicator
                                         DropInstallerGrid.Opacity = 1.0;
                                         AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
                                         // Search for an empty folder in AppData
-                                        var installFolder = GetAppDataPluginFolderDir(
+                                        var installFolder = await GetAppDataPluginFolder(
                                             string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                                 .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                                         // Create an empty folder in TempAppData
-                                        var downloadFolder = GetTempPluginFolderDir(
+                                        var downloadFolder = await GetTempPluginFolder(
                                             string.Join("_", Guid.NewGuid().ToString().ToUpper()
                                                 .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
@@ -721,33 +715,24 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
                                         // Randomize the path if already exists
                                         // Delete if only a single null folder
-                                        if (Directory.Exists(installFolder))
-                                        {
-                                            if (Directory.EnumerateFileSystemEntries(installFolder).Any())
-                                                installFolder = GetAppDataPluginFolderDir(
-                                                    string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                                        .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
-
-                                            // Else delete if empty
-                                            else Directory.Delete(installFolder, true);
-                                        }
+                                        if ((await installFolder.GetItemsAsync()).Any())
+                                            installFolder = await GetAppDataPluginFolder(
+                                                string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                                                    .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                                         // Try reserving the install folder
-                                        if (Directory.Exists(installFolder!))
-                                            Directory.Delete(installFolder!, true);
+                                        await installFolder.DeleteAsync();
 
                                         // Try creating the download folder
-                                        if (!Directory.Exists(downloadFolder!))
-                                            Directory.CreateDirectory(downloadFolder!);
+                                        await downloadFolder.DeleteAsync();
 
                                         // Unpack the archive now
                                         Logger.Info("Unpacking the new plugin from its package...");
-                                        archive.ExtractToDirectory(downloadFolder, true);
+                                        archive.ExtractToDirectory(downloadFolder.Path, true);
 
-                                        Logger.Info($"Moving temp {downloadFolder} to {installFolder}...");
-
-                                        // Rename the plugin folder if everything's fine
-                                        Directory.Move(downloadFolder, installFolder);
+                                        // Move the plugin folder if everything's fine
+                                        Logger.Info($"Moving temp {downloadFolder.Path} to {installFolder.Path}...");
+                                        Directory.Move(downloadFolder.Path, installFolder.Path);
 
                                         // Wait a bit
                                         await Task.Delay(3000);
@@ -756,10 +741,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         DropInstallerProgressRing.IsIndeterminate = false;
                                         DropInstallerProgressRing.Value = 100;
 
-                                        DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                            "/SharedStrings/Plugins/Drop/Headers/Installed"), files[0].Name);
-                                        DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                                            "/SharedStrings/Plugins/Drop/Statuses/Installed"), files[0].Name);
+                                        DropInstallerHeaderTextBlock.Text =
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installed")
+                                                .Format(files[0].Name);
+                                        DropInstallerMessageTextBlock.Text =
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Installed")
+                                                .Format(files[0].Name);
 
                                         DropInstallerMessageTextBlock.Opacity = 1.0;
                                         AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
@@ -784,10 +771,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                         DropInstallerProgressRing.Opacity = 0.0;
                                         DropInstallerErrorIcon.Opacity = 1.0;
 
-                                        DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                            "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), files[0].Name);
-                                        DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                                            "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound"), files[0].Name);
+                                        DropInstallerHeaderTextBlock.Text =
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating")
+                                                .Format(files[0].Name);
+                                        DropInstallerMessageTextBlock.Text =
+                                            LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/NotFound")
+                                                .Format(files[0].Name);
 
                                         DropInstallerMessageTextBlock.Opacity = 1.0;
                                         AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -816,10 +805,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                                     DropInstallerProgressRing.Opacity = 0.0;
                                     DropInstallerErrorIcon.Opacity = 1.0;
 
-                                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), files[0].Name);
-                                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                                        "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid"), files[0].Name);
+                                    DropInstallerHeaderTextBlock.Text =
+                                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating")
+                                            .Format(files[0].Name);
+                                    DropInstallerMessageTextBlock.Text =
+                                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/Invalid")
+                                            .Format(files[0].Name);
 
                                     DropInstallerMessageTextBlock.Opacity = 1.0;
                                     AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -856,8 +847,8 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
                 DropInstallerHeaderTextBlock.Text = LocalizedJsonString(
                     "/SharedStrings/Plugins/Drop/Headers/Error/Exception");
-                DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                    "/SharedStrings/Plugins/Drop/Statuses/Error/Exception"), ex.Message);
+                DropInstallerMessageTextBlock.Text =
+                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/Exception").Format(ex.Message);
 
                 DropInstallerMessageTextBlock.Opacity = 1.0;
                 AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -914,9 +905,9 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                 DropInstallerProgressRing.Opacity = 1.0;
                 DropInstallerErrorIcon.Opacity = 0.0;
 
-                DropInstallerHeaderTextBlock.Text = string.Format(
-                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Downloading"),
-                    link.Segments.LastOrDefault("package.zip"));
+                DropInstallerHeaderTextBlock.Text =
+                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Downloading")
+                        .Format(link.Segments.LastOrDefault("package.zip"));
 
                 // Show the progress indicator
                 DropInstallerGrid.Opacity = 1.0;
@@ -927,43 +918,31 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                 await using var stream = await GithubClient.DownloadStreamAsync(new RestRequest(link));
 
                 // Search for an empty folder in AppData
-                var installFolder = new DirectoryInfo(GetAppDataPluginFolderDir(
+                var installFolder = await GetAppDataPluginFolder(
                     string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                        .Split(Path.GetInvalidFileNameChars().Append('.').ToArray()))));
+                        .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                 // Create an empty folder in TempAppData
-                var downloadFolder = new DirectoryInfo(GetTempPluginFolderDir(
+                var downloadFolder = await GetTempPluginFolder(
                     string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                        .Split(Path.GetInvalidFileNameChars().Append('.').ToArray()))));
+                        .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                 Logger.Info("Preparing the file system...");
 
                 // Randomize the path if already exists
                 // Delete if only a single null folder
-                if (installFolder.Exists)
-                {
-                    if (Directory.EnumerateFileSystemEntries(installFolder.FullName).Any())
-                        installFolder = new DirectoryInfo(GetAppDataPluginFolderDir(
-                            string.Join("_", Guid.NewGuid().ToString().ToUpper()
-                                .Split(Path.GetInvalidFileNameChars().Append('.').ToArray()))));
-
-                    // Else delete if empty
-                    else installFolder.Delete(true);
-                }
+                if ((await installFolder.GetItemsAsync()).Any())
+                    installFolder = await GetAppDataPluginFolder(
+                        string.Join("_", Guid.NewGuid().ToString().ToUpper()
+                            .Split(Path.GetInvalidFileNameChars().Append('.').ToArray())));
 
                 // Try reserving the install folder
-                if (installFolder!.Exists)
-                    installFolder!.Delete(true);
-
-                // Try creating the download folder
-                if (!downloadFolder!.Exists)
-                    Directory.CreateDirectory(downloadFolder.FullName);
+                await installFolder.DeleteAsync();
 
                 // Replace or create our installer file
-                var pluginArchive = await (await StorageFolder
-                        .GetFolderFromPathAsync(downloadFolder.FullName))
-                    .CreateFileAsync(link.Segments.LastOrDefault("package.zip"),
-                        CreationCollisionOption.ReplaceExisting);
+                var pluginArchive = await downloadFolder.CreateFileAsync(
+                    link.Segments.LastOrDefault("package.zip"),
+                    CreationCollisionOption.ReplaceExisting);
 
                 // Create an output stream and push all the available data to it
                 await using var fsPluginArchive = await pluginArchive.OpenStreamForWriteAsync();
@@ -981,24 +960,24 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                         x.Name.StartsWith("plugin") && x.Name.EndsWith(".dll")))
                 {
                     // Prepare our resources
-                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                        "/SharedStrings/Plugins/Drop/Headers/Installing"), pluginArchive.Name);
+                    DropInstallerHeaderTextBlock.Text =
+                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Installing")
+                            .Format(pluginArchive.Name);
 
                     Logger.Info($"Unpacking the archive at {pluginArchive.Path}...");
                     AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
 
                     // Unpack the archive now
                     Logger.Info("Unpacking the new plugin from its package...");
-                    archive.ExtractToDirectory(downloadFolder.FullName, true);
+                    archive.ExtractToDirectory(downloadFolder.Path, true);
 
                     archive.Dispose(); // Close the archive file, dispose
                     Logger.Info("Deleting the plugin installation package...");
                     File.Delete(pluginArchive.Path); // Cleanup after the install
 
-                    Logger.Info($"Moving temp {downloadFolder.FullName} to {installFolder.FullName}...");
-
-                    // Rename the plugin folder if everything's fine
-                    downloadFolder.MoveTo(installFolder.FullName);
+                    // Move the plugin folder if everything's fine
+                    Logger.Info($"Moving temp {downloadFolder.Path} to {installFolder.Path}...");
+                    Directory.Move(downloadFolder.Path, installFolder.Path);
 
                     // Wait a bit
                     await Task.Delay(3000);
@@ -1007,10 +986,10 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                     DropInstallerProgressRing.IsIndeterminate = false;
                     DropInstallerProgressRing.Value = 100;
 
-                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                        "/SharedStrings/Plugins/Drop/Headers/Installed"), pluginArchive.Name);
-                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                        "/SharedStrings/Plugins/Drop/Statuses/Installed"), pluginArchive.Name);
+                    DropInstallerHeaderTextBlock.Text = LocalizedJsonString(
+                        "/SharedStrings/Plugins/Drop/Headers/Installed").Format(pluginArchive.Name);
+                    DropInstallerMessageTextBlock.Text = LocalizedJsonString(
+                        "/SharedStrings/Plugins/Drop/Statuses/Installed").Format(pluginArchive.Name);
 
                     DropInstallerMessageTextBlock.Opacity = 1.0;
                     AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
@@ -1035,10 +1014,12 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                     DropInstallerProgressRing.Opacity = 0.0;
                     DropInstallerErrorIcon.Opacity = 1.0;
 
-                    DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                        "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), pluginArchive.Name);
-                    DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                        "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound"), pluginArchive.Name);
+                    DropInstallerHeaderTextBlock.Text =
+                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating")
+                            .Format(pluginArchive.Name);
+                    DropInstallerMessageTextBlock.Text =
+                        LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/NotFound")
+                            .Format(pluginArchive.Name);
 
                     DropInstallerMessageTextBlock.Opacity = 1.0;
                     AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -1069,12 +1050,13 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
                 DropInstallerProgressRing.Opacity = 0.0;
                 DropInstallerErrorIcon.Opacity = 1.0;
 
-                DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                        "/SharedStrings/Plugins/Drop/Headers/Error/Installing"),
-                    link.Segments.LastOrDefault("package.zip"));
+                DropInstallerHeaderTextBlock.Text =
+                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Installing")
+                        .Format(link.Segments.LastOrDefault("package.zip"));
 
-                DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                    "/SharedStrings/Plugins/Drop/Statuses/Error/Exception"), e.Message.TrimEnd('.'));
+                DropInstallerMessageTextBlock.Text =
+                    LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/Exception")
+                        .Format(e.Message.TrimEnd('.'));
 
                 DropInstallerMessageTextBlock.Opacity = 1.0;
                 AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -1103,10 +1085,10 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
             DropInstallerProgressRing.Opacity = 0.0;
             DropInstallerErrorIcon.Opacity = 1.0;
 
-            DropInstallerHeaderTextBlock.Text = string.Format(LocalizedJsonString(
-                "/SharedStrings/Plugins/Drop/Headers/Error/Validating"), link);
-            DropInstallerMessageTextBlock.Text = string.Format(LocalizedJsonString(
-                "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid"), link);
+            DropInstallerHeaderTextBlock.Text =
+                LocalizedJsonString("/SharedStrings/Plugins/Drop/Headers/Error/Validating").Format(link);
+            DropInstallerMessageTextBlock.Text =
+                LocalizedJsonString("/SharedStrings/Plugins/Drop/Statuses/Error/Invalid").Format(link);
 
             DropInstallerMessageTextBlock.Opacity = 1.0;
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
@@ -1263,7 +1245,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
     {
         return value ? 1.0 : 0.0;
     }
-    
+
     private async void PluginsListTeachingTip_ActionButtonClick(TeachingTip sender, object args)
     {
         // Play a sound

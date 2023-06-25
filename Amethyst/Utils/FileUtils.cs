@@ -4,10 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
-using System.Security;
 using System.Security.Principal;
 using System.Text;
 
@@ -18,6 +16,8 @@ internal static class FileUtils
     private const int RmRebootReasonNone = 0;
     private const int CCH_RM_MAX_APP_NAME = 255;
     private const int CCH_RM_MAX_SVC_NAME = 63;
+
+    private const uint TOKEN_QUERY = 0x0008;
 
     [DllImport("rstrtmgr.dll", CharSet = CharSet.Unicode)]
     private static extern int RmRegisterResources(uint pSessionHandle,
@@ -133,7 +133,7 @@ internal static class FileUtils
     }
 
     /// <summary>
-    /// Returns whether the current process is elevated or not
+    ///     Returns whether the current process is elevated or not
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsCurrentProcessElevated()
@@ -152,11 +152,11 @@ internal static class FileUtils
 
             GetTokenInformation(token, TOKEN_INFORMATION_CLASS.TokenElevation,
                 IntPtr.Zero, 0, out var length);
-            
+
             var elevation = Marshal.AllocHGlobal((int)length);
             if (!GetTokenInformation(token, TOKEN_INFORMATION_CLASS.TokenElevation,
                     elevation, length, out _)) return true;
-            
+
             return Marshal.PtrToStructure<TOKEN_ELEVATION>(elevation).TokenIsElevated != 0;
         }
         catch (Exception)
@@ -195,13 +195,6 @@ internal static class FileUtils
         bool bInheritHandle,
         int processId);
 
-    private struct TOKEN_ELEVATION
-    {
-#pragma warning disable CS0649
-        public uint TokenIsElevated;
-#pragma warning restore CS0649
-    }
-
     public static string GetProcessFilename(Process p)
     {
         try
@@ -216,6 +209,13 @@ internal static class FileUtils
             Logger.Info(e);
             return null;
         }
+    }
+
+    private struct TOKEN_ELEVATION
+    {
+#pragma warning disable CS0649
+        public uint TokenIsElevated;
+#pragma warning restore CS0649
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -268,8 +268,6 @@ internal static class FileUtils
         TokenLogonSid,
         MaxTokenInfoClass
     }
-
-    private const uint TOKEN_QUERY = 0x0008;
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     private struct RM_PROCESS_INFO

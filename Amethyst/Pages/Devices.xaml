@@ -10,7 +10,6 @@
     xmlns:mvvm="using:Amethyst.MVVM"
     xmlns:controls="using:Amethyst.Controls"
     xmlns:util="using:Amethyst.Utils"
-    xmlns:classes="using:Amethyst.Classes"
     Loaded="Page_Loaded" NavigationCacheMode="Required"
     mc:Ignorable="d" Background="Transparent">
 

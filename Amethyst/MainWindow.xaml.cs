@@ -7,26 +7,28 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Data;
-using System.Diagnostics;
+using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Data.Json;
 using Windows.Graphics;
+using Windows.Management.Deployment;
 using Windows.Storage;
 using Windows.System;
-using Windows.Web.Http;
+using Windows.UI.Notifications;
 using Amethyst.Classes;
 using Amethyst.MVVM;
 using Amethyst.Pages;
 using Amethyst.Plugins.Contract;
 using Amethyst.Schedulers;
 using Amethyst.Utils;
+using CommunityToolkit.WinUI.Notifications;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI;
@@ -41,10 +43,13 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Windows.AppNotifications;
+using Microsoft.WindowsAPICodePack.Taskbar;
+using Newtonsoft.Json;
 using RestSharp;
 using WinRT;
 using WinRT.Interop;
 using WinUI.Fluent.Icons;
+using Microsoft.WindowsAppSDK;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -59,15 +64,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     public delegate Task RequestApplicationUpdate(object sender, EventArgs e);
 
     public static RequestApplicationUpdate RequestUpdateEvent;
+    private DesktopAcrylicController _acrylicController;
+    private SystemBackdropConfiguration _configurationSource;
 
     private bool _mainPageInitFinished;
-
-    private SystemBackdropConfiguration _configurationSource;
-    private MicaController _micaController;
-    private DesktopAcrylicController _acrylicController;
-
     private bool _mainPageLoadedOnce;
-    private string _remoteVersionString = AppData.VersionString.Display;
+
+    private MicaController _micaController;
     private Shared.Events.RequestEvent _updateBrushesEvent;
 
     private WindowsSystemDispatcherQueueHelper _wsdqHelper; // See separate sample below for implementation
@@ -115,6 +118,38 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Shared.Main.NavigationItems.NavViewInfoButtonLabel = NavViewInfoButtonLabel;
         Shared.Main.NavigationItems.NavViewPluginsButtonLabel = NavViewPluginsButtonLabel;
 
+        Logger.Info("Setting up the main window asynchronously...");
+        AsyncUtils.RunSync(SetupMainWindow); // Run via our extra utils
+    }
+
+    [Export(typeof(IAmethystHost))] private IAmethystHost AmethystPluginHost { get; set; }
+
+    private bool CanShowPluginsUpdatePendingBar => !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowUpdateBar =>
+        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowUpdateDownloadingBar =>
+        !UpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowPluginsInstallBar =>
+        !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
+        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowPluginsUninstallBar =>
+        !PluginsInstallInfoBar.IsOpen && !UpdateDownloadingInfoBar.IsOpen &&
+        !UpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowReloadBar =>
+        !PluginsUninstallInfoBar.IsOpen && !PluginsInstallInfoBar.IsOpen &&
+        !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
+        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    // MVVM stuff
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private async Task SetupMainWindow()
+    {
         // Set up
         Logger.Info("Setting up the window decoration data...");
         Title = "Amethyst";
@@ -202,7 +237,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Iterate over all directories in Plugins dir and add all * dirs to catalogs
         Logger.Info("Searching for shared plugins now...");
         pluginDirectoryList.AddRange(Directory.EnumerateDirectories(
-            Interfacing.GetAppDataPluginFolderDir(""),
+            (await Interfacing.GetAppDataPluginFolder("")).Path,
             "*", SearchOption.TopDirectoryOnly));
 
         // Search for external plugins
@@ -211,7 +246,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Load the JSON source into buffer, parse
             Logger.Info("Searching for external plugins now...");
             var jsonRoot = JsonObject.Parse(
-                File.ReadAllText(Interfacing.GetAppDataFileDir("amethystpaths.k2path")));
+                await File.ReadAllTextAsync((await Interfacing.GetAppDataFile("amethystpaths.k2path")).Path));
 
             // Loop over all the external plugins and append
             if (jsonRoot.ContainsKey("external_plugins"))
@@ -246,8 +281,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         catch (FileNotFoundException e)
         {
             Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
-            Logger.Error($"Creating new {Interfacing.GetAppDataFileDir("amethystpaths.k2path")} config...");
-            File.Create(Interfacing.GetAppDataFileDir("amethystpaths.k2path")); // Create a placeholder file
+            Logger.Error($"Creating new {Interfacing.GetAppDataFile("amethystpaths.k2path")} config...");
         }
         catch (Exception e)
         {
@@ -266,7 +300,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         if (catalog.Catalogs.Count < 1)
         {
-            Logger.Fatal(new CompositionException("No plugins directories found! Shutting down..."));
+            Logger.Fatal(new CompositionException("No plugin directories found! Shutting down..."));
             Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoPlugins"));
         }
 
@@ -732,36 +766,37 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Checking out the default configuration settings...");
         (string DeviceGuid, string ServiceGuid) defaultSettings = (null, null); // Invalid!
 
-        if (File.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")))
+        if (File.Exists(Interfacing.GetAppDataFilePath("PluginDefaults.json")))
             try
             {
                 // Parse the loaded json
-                var jsonHead = JsonObject.Parse(File.ReadAllText(
-                    Path.Join(Interfacing.ProgramLocation.DirectoryName, "defaults.json")));
+                var defaults = JsonConvert.DeserializeObject<DefaultSettings>(
+                    await File.ReadAllTextAsync(
+                        Interfacing.GetAppDataFilePath("PluginDefaults.json"))) ?? new DefaultSettings();
 
                 // Check the device guid
-                if (!jsonHead.ContainsKey("TrackingDevice"))
+                if (string.IsNullOrEmpty(defaults.TrackingDevice))
                     // Invalid configuration file, don't proceed further!
                     Logger.Error("The default configuration json file was (partially) invalid!");
                 else
                     defaultSettings = (
-                        jsonHead.GetNamedString("TrackingDevice"),
+                        defaults.TrackingDevice,
                         defaultSettings.ServiceGuid); // Keep the last one
 
                 // Check the service guid
-                if (!jsonHead.ContainsKey("ServiceEndpoint"))
+                if (string.IsNullOrEmpty(defaults.ServiceEndpoint))
                     // Invalid configuration file, don't proceed further!
                     Logger.Error("The default configuration json file was (partially) invalid!");
                 else
                     defaultSettings = (
                         defaultSettings.DeviceGuid, // Keep the last one
-                        jsonHead.GetNamedString("ServiceEndpoint"));
+                        defaults.ServiceEndpoint);
             }
             catch (Exception e)
             {
                 Logger.Info($"Default settings checkout failed! Message: {e.Message}");
             }
-        else Logger.Info("No default configuration found! [defaults.json]");
+        else Logger.Info("No default configuration found! [PluginDefaults.json]");
 
         // Validate the saved service plugin guid
         Logger.Info("Checking if the saved service endpoint exists in loaded plugins...");
@@ -906,7 +941,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         };
 
         Logger.Info($"Setting up shared events for '{GetType().FullName}'...");
-        RequestUpdateEvent += (_, _) => DownloadUpdates();
+        RequestUpdateEvent += (_, _) => DownloadUpdates(force: true);
 
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
@@ -979,15 +1014,19 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         {
             Path = Path.Combine(Interfacing.ProgramLocation.DirectoryName, "Plugins"),
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
-            Filter = "*.dll", IncludeSubdirectories = true, EnableRaisingEvents = true
+            Filter = "*.dll",
+            IncludeSubdirectories = true,
+            EnableRaisingEvents = true
         };
 
         // Setup device change watchdog : external devices
         var externalWatcher = new FileSystemWatcher
         {
-            Path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Amethyst"),
+            Path = Interfacing.LocalFolder.Path,
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName | NotifyFilters.Size,
-            Filter = "amethystpaths.k2path", IncludeSubdirectories = true, EnableRaisingEvents = true
+            Filter = "amethystpaths.k2path",
+            IncludeSubdirectories = true,
+            EnableRaisingEvents = true
         };
 
         // Send a non-dismissible tip about reloading the app
@@ -1025,27 +1064,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         _mainPageInitFinished = true;
         Shared.Main.MainWindowLoaded = true;
     }
-
-    [Export(typeof(IAmethystHost))] private IAmethystHost AmethystPluginHost { get; set; }
-
-    private bool CanShowPluginsUpdatePendingBar => !PluginsUpdateInfoBar.IsOpen;
-
-    private bool CanShowUpdateBar =>
-        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
-
-    private bool CanShowPluginsInstallBar =>
-        !UpdateInfoBar.IsOpen && !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
-
-    private bool CanShowPluginsUninstallBar =>
-        !PluginsInstallInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
-        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
-
-    private bool CanShowReloadBar =>
-        !PluginsUninstallInfoBar.IsOpen && !PluginsInstallInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
-        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
-
-    // MVVM stuff
-    public event PropertyChangedEventHandler PropertyChanged;
 
     public double BoolToOpacity(bool v)
     {
@@ -1210,48 +1228,71 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         HelpIcon.Symbol = FluentSymbol.QuestionCircle24;
     }
 
-    private bool InstallUpdates(bool reopen = false)
+    private async Task<bool> InstallUpdates(bool reopen = false, bool force = false)
     {
         try
         {
-            // Optional auto-restart scenario "-o" (happens when the user clicks 'update now')
-            Process.Start(new ProcessStartInfo
+            if (reopen)
             {
-                UseShellExecute = true,
-                Verb = "runas",
-                FileName = Path.Combine(Interfacing.AppDataTempDir.FullName, "Amethyst-Installer.exe"),
-                Arguments =
-                    $"--update {(reopen ? "-o" : "")} -path \"{Interfacing.ProgramLocation.DirectoryName}\""
-            });
-        }
-        catch (Win32Exception ex)
-        {
-            if (ex.NativeErrorCode == 1223)
-                Logger.Warn($"You need to pass UAC to run the installer! Message: {ex.Message}");
-            return false; // Keep the update banner available
+                // Register the active instance of the application for restart in the update method
+                var result = RelaunchHelper.RegisterApplicationRestart(null, RelaunchHelper.RestartFlags.NONE);
+                if (result is not 0) Logger.Error($"RegisterApplicationRestart error! Result: {result}");
+            }
+
+            // Mark exit actions as handled
+            Interfacing.IsExitHandled = true;
+
+            UpdateInfoBar.IsOpen = false;
+            UpdateInfoBar.Opacity = 0.0;
+            OnPropertyChanged(); // Visibility
+
+            UpdateDownloadingProgress.IsIndeterminate = true;
+            UpdateDownloadingInfoBar.Message =
+                Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Preparing");
+
+            UpdateDownloadingInfoBar.IsOpen = true;
+            UpdateDownloadingInfoBar.Opacity = 1.0;
+            OnPropertyChanged(); // Visibility
+
+            // Mark as working
+            SystemShell.SetTaskBarState(TaskbarProgressBarState.Indeterminate);
+
+            // Update the package via the package manager now
+            await new PackageManager().UpdatePackageAsync(
+                new Uri((await Interfacing.TemporaryFolder.GetFileAsync(Interfacing.UpdateFileName)).Path,
+                    UriKind.Absolute), null,
+                force // Prepare update flags passed to the handler
+                    ? DeploymentOptions.ForceApplicationShutdown | DeploymentOptions.ForceUpdateFromAnyVersion
+                    : DeploymentOptions.ForceApplicationShutdown);
         }
         catch (Exception ex)
         {
             Logger.Error(new Exception($"Update failed, an exception occurred. Message: {ex.Message}"));
-            return false; // Keep the update banner available
+            Interfacing.ShowToast(
+                Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Error"), ex.Message);
+
+            UpdateInfoBar.IsOpen = false;
+            UpdateInfoBar.Opacity = 1.0;
+            OnPropertyChanged(); // Visibility
         }
 
-        // Exit, cleanup should be automatic
-        Interfacing.ManualUpdate = true;
-        Environment.Exit(0);
-        return true; // Will exit before
+        // Failed - go back to normal
+        SystemShell.FlashTaskBarState(TaskbarProgressBarState.Error);
+
+        Interfacing.IsExitHandled = false;
+        return false; // Should exit before
     }
 
-    private async Task CheckUpdates(uint delay = 0)
+    private async Task<AppRelease> CheckUpdates(TimeSpan? delay = null, bool result = false)
     {
         // Attempt only after init
-        if (!_mainPageInitFinished) return;
+        if (!_mainPageInitFinished) return null;
 
         // Check if we're midway updating
         if (Interfacing.UpdatingNow)
-            return; // Don't proceed further
+            return null; // Don't proceed further
 
-        await Task.Delay((int)delay);
+        await Task.Delay(delay ?? TimeSpan.Zero);
 
         // Don't check if found
         if (!Interfacing.UpdateFound)
@@ -1262,198 +1303,243 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Check for updates
             try
             {
-                using var client = new HttpClient();
-                string getReleaseVersion = "", getDocsLanguages = "en";
-
-                // Release
-                try
-                {
-                    Logger.Info("Checking for updates... [GET]");
-                    using var response =
-                        await client.GetAsync(new Uri($"https://api.k2vr.tech/v{AppData.ApiVersion}/update"));
-                    getReleaseVersion = await response.Content.ReadAsStringAsync();
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(new Exception($"Error getting the release info! Message: {e.Message}"));
-                }
+                using var client = new RestClient();
+                var getDocsLanguages = "en";
 
                 // Language
                 try
                 {
                     Logger.Info("Checking available languages... [GET]");
-                    using var response =
-                        await client.GetAsync(new Uri("https://docs.k2vr.tech/shared/locales.json"));
-                    getDocsLanguages = await response.Content.ReadAsStringAsync();
+                    var response = await client.ExecuteGetAsync("https://docs.k2vr.tech/shared/locales.json",
+                        new RestRequest());
+                    getDocsLanguages = response.Content ?? "en";
                 }
                 catch (Exception e)
                 {
                     Logger.Error(new Exception($"Error getting the language info! Message: {e.Message}"));
+                    Logger.Error(e); // Log the actual exception in the next message
                 }
 
-                // If the read string isn't empty, proceed to checking for updates
-                if (!string.IsNullOrEmpty(getReleaseVersion))
+                // Language
+                try
                 {
-                    Logger.Info($"Update-check successful, string:\n{getReleaseVersion}");
-
-                    // Parse the loaded json
-                    var jsonHead = JsonObject.Parse(getReleaseVersion);
-
-                    if (!jsonHead.ContainsKey("amethyst"))
-                        Logger.Error(new InvalidDataException("The latest release's manifest was invalid!"));
-
-                    // Parse the amethyst entry
-                    var jsonRoot = jsonHead.GetNamedObject("amethyst");
-
-                    if (!jsonRoot.ContainsKey("version") ||
-                        !jsonRoot.ContainsKey("version_string"))
+                    if (!string.IsNullOrEmpty(getDocsLanguages))
                     {
-                        Logger.Error("The latest release's manifest was invalid!");
-                    }
+                        // Parse the loaded json
+                        var jsonRoot = JsonObject.Parse(getDocsLanguages);
 
+                        // Check if the resource root is fine & the language code exists
+                        Interfacing.DocsLanguageCode = AppData.Settings.AppLanguage;
+
+                        if (jsonRoot is null || !jsonRoot.ContainsKey(Interfacing.DocsLanguageCode))
+                        {
+                            Logger.Info("Docs do not contain a language with code " +
+                                        $"\"{Interfacing.DocsLanguageCode}\", falling back to \"en\" (English)!");
+                            Interfacing.DocsLanguageCode = "en";
+                        }
+                    }
                     else
                     {
-                        // Get the version tag (uint, fallback to latest)
-                        var remoteVersion = (int)jsonRoot.GetNamedNumber("version", AppData.InternalVersion);
-
-                        // Get the remote version name
-                        _remoteVersionString = jsonRoot.GetNamedString("version_string");
-
-                        Logger.Info($"Local version: {AppData.InternalVersion}");
-                        Logger.Info($"Remote version: {remoteVersion}");
-
-                        Logger.Info($"Local version string: {AppData.VersionString.Display}");
-                        Logger.Info($"Remote version string: {_remoteVersionString}");
-
-                        // Check the version
-                        if (AppData.InternalVersion < remoteVersion)
-                            Interfacing.UpdateFound = true;
+                        Logger.Error(new NoNullAllowedException("Language-check failed, the string was empty."));
                     }
                 }
-                else
+                catch (Exception e)
                 {
-                    Logger.Error(new NoNullAllowedException("Update-check failed, the string was empty."));
+                    Logger.Error(new Exception($"Error updating the language info! Message: {e.Message}"));
+                    Logger.Error(e); // Log the actual exception in the next message
                 }
 
-                if (!string.IsNullOrEmpty(getDocsLanguages))
+                // Release
+                try
                 {
-                    // Parse the loaded json
-                    var jsonRoot = JsonObject.Parse(getDocsLanguages);
+                    Logger.Info("Checking for updates... [GET]");
+                    var response = await client.ExecuteGetAsync(
+                        $"https://api.appcenter.ms/v0.1/sdk/apps/{AppData.AppSecret}/releases/latest",
+                        new RestRequest().AddHeader("X-API-Token", AppData.UpdateToken));
 
-                    // Check if the resource root is fine & the language code exists
-                    Interfacing.DocsLanguageCode = AppData.Settings.AppLanguage;
+                    // Check the received response
+                    response.ThrowIfError();
 
-                    if (jsonRoot is null || !jsonRoot.ContainsKey(Interfacing.DocsLanguageCode))
-                    {
-                        Logger.Info("Docs do not contain a language with code " +
-                                    $"\"{Interfacing.DocsLanguageCode}\", falling back to \"en\" (English)!");
-                        Interfacing.DocsLanguageCode = "en";
-                    }
+                    // Deserialize as the prepared object class, compare
+                    var release = JsonConvert.DeserializeObject<AppRelease>(response.Content!);
+                    Interfacing.UpdateFound =
+                        (release?.version?.CompareTo(Package.Current.Id.Version.AsVersion()) ?? -1) > 0;
+
+                    // Return the version if run for results
+                    if (result) return release;
+
+                    // If there's an update, try to download and install it
+                    if (release?.status is "available" && Interfacing.UpdateFound)
+                        await DownloadUpdates(release);
+                    else
+                        Logger.Error(new NoNullAllowedException("Update-check failed, the string was empty."));
                 }
-                else
+                catch (Exception e)
                 {
-                    Logger.Error(new NoNullAllowedException("Language-check failed, the string was empty."));
+                    Logger.Error(new Exception($"Error getting the release info! Message: {e.Message}"));
+                    Logger.Error(e); // Log the actual exception in the next message
                 }
             }
             catch (Exception e)
             {
                 Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
+                Logger.Error(e); // Log the actual exception in the next message
             }
-
-            // Download the update and show the notice
-            if (Interfacing.UpdateFound)
-                await DownloadUpdates();
         }
 
         // Check for plugin updates
         await Parallel.ForEachAsync(AppPlugins.LoadAttemptedPluginsList,
             async (x, _) => await x.CheckUpdates());
+
+        return null;
     }
 
-    private async Task DownloadUpdates()
+    private async Task DownloadUpdates(AppRelease appRelease = null, bool force = false)
     {
         Interfacing.UpdatingNow = true;
         await Task.Delay(500);
+
+        var release = appRelease ?? await CheckUpdates(result: true);
+        if (release is null) return; // Validate the release
 
         // Success? ...or nah?
         var updateError = false;
 
         // Download the latest installer/updater
-        // https://github.com/KinectToVR/Amethyst-Installer-Releases/releases/latest/download/Amethyst-Installer.exe
         try
         {
             using var client = new RestClient();
-            var installerUri = "";
-
-            Logger.Info("Checking out the updater version... [GET]");
-
-            // Get the installer download Uri
-            try
-            {
-                var response = await client.ExecuteGetAsync(
-                    "https://api.k2vr.tech/v0/installer/version", new RestRequest());
-
-                if (!string.IsNullOrEmpty(response.Content))
-                {
-                    var jsonRoot = JsonObject.Parse(response.Content);
-
-                    // Parse the loaded json
-                    if (jsonRoot.ContainsKey("download"))
-                    {
-                        installerUri = jsonRoot.GetNamedString("download");
-                    }
-                    else
-                    {
-                        Logger.Error(new KeyNotFoundException(
-                            "Installer-uri-check failed, the \"download\" key wasn't found."));
-                        updateError = true; // Skill issue
-                    }
-                }
-                else
-                {
-                    Logger.Error(new NoNullAllowedException("Installer-uri-check failed, the string was empty."));
-                    updateError = true; // What happened?
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(new Exception($"Error checking the updater download Uri! Message: {e.Message}"));
-                updateError = true; // Something else
-            }
+            Logger.Info("Downloading the update package... [GET]");
 
             // Download if we're ok
-            if (!updateError)
+            if (release.download_url != null)
                 try
                 {
-                    // Create a stream reader using the received Installer Uri
-                    await using var stream = await client.ExecuteDownloadStreamAsync(installerUri, new RestRequest());
+                    // Placeholder toast notification
+                    ToastNotification toast = null;
 
-                    var installerFile = // Replace or create our installer file
-                        await (await StorageFolder.GetFolderFromPathAsync(Interfacing.AppDataTempDir.FullName))
-                            .CreateFileAsync("Amethyst-Installer.exe", CreationCollisionOption.ReplaceExisting);
+                    try
+                    {
+                        // Show a toast with the update status
+                        toast = new ToastNotification(new ToastContentBuilder()
+                            .AddText(Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading")
+                                .Format(release.version.ToString()))
+                            .AddAppLogoOverride(new Uri(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
+                                "Assets", "ktvr.png")))
+                            .AddVisualChild(new AdaptiveProgressBar
+                            {
+                                Value = new BindableProgressBarValue("progressValue"),
+                                Status = Interfacing.LocalizedJsonString(
+                                    "/SharedStrings/Updates/Statuses/DownloadingNoProgress")
+                            }).GetToastContent().GetXml())
+                        {
+                            Tag = "Tag_AmethystDownloadNotifications",
+                            Group = "Group_AmethystDownloadNotifications",
+                            Data = new NotificationData
+                            {
+                                Values =
+                                {
+                                    // Add placeholder data
+                                    ["progressValue"] = "0.0"
+                                },
+                                // Show the toast notification to the user
+                                SequenceNumber = 1
+                            }
+                        };
+
+                        // Show the toast now
+                        ToastNotificationManager.CreateToastNotifier().Show(toast);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Warn(e);
+                    }
+
+                    UpdateDownloadingInfoBar.Title = Interfacing
+                        .LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading")
+                        .Format(release.version.ToString());
+
+                    UpdateDownloadingInfoBar.Message =
+                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Downloading");
+
+                    UpdateDownloadingProgress.IsIndeterminate = false;
+                    UpdateDownloadingProgress.Value = 0;
+
+                    UpdateDownloadingInfoBar.IsOpen = true;
+                    UpdateDownloadingInfoBar.Opacity = 1.0;
+                    OnPropertyChanged(); // Visibility
+
+                    // Create a stream reader using the received Installer Uri
+                    await using var stream =
+                        await client.ExecuteDownloadStreamAsync(release.download_url, new RestRequest());
+
+                    // Compose the file name of the installation package
+                    Interfacing.UpdateFileName = $"{release.app_name}_{release.version}.{release.fileExtension}";
+
+                    // Replace or create our installer file
+                    var installerFile = await Interfacing.TemporaryFolder.CreateFileAsync(
+                        Interfacing.UpdateFileName, CreationCollisionOption.ReplaceExisting);
 
                     // Create an output stream and push all the available data to it
                     await using var fsInstallerFile = await installerFile.OpenStreamForWriteAsync();
-                    await stream.CopyToAsync(fsInstallerFile); // The runtime will do the rest for us
+                    await stream.CopyToWithProgressAsync(fsInstallerFile, progress =>
+                        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+                        {
+                            SystemShell.SetTaskBarProgress((int)(100 * progress / release.size));
+                            UpdateDownloadingProgress.Value = (int)(100 * progress / release.size);
+                            UpdateDownloadingInfoBar.Message = Interfacing.LocalizedJsonString(
+                                    "/SharedStrings/Updates/Statuses/Downloading")
+                                .Replace("0", ((int)(100 * progress / release.size)).ToString());
+
+                            try
+                            {
+                                // Update the existing notification's data by using tag/group
+                                ToastNotificationManager.CreateToastNotifier().Update(new NotificationData
+                                {
+                                    SequenceNumber = toast?.Data.SequenceNumber ?? 0,
+                                    Values =
+                                    {
+                                        ["progressValue"] =
+                                            ((float)progress / release.size).ToString(CultureInfo.InvariantCulture)
+                                    }
+                                }, "Tag_AmethystDownloadNotifications", "Group_AmethystDownloadNotifications");
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        })); // The runtime will do the rest for us
                 }
                 catch (Exception e)
                 {
                     Logger.Error(new Exception($"Error downloading the updater! Message: {e.Message}"));
+                    SystemShell.FlashTaskBarState(TaskbarProgressBarState.Error); // One-second error "flash"
+
+                    Interfacing.ShowToast(
+                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Error"), e.Message);
                     updateError = true;
                 }
         }
         catch (Exception e)
         {
             Logger.Error(new Exception($"Update failed, an exception occurred. Message: {e.Message}"));
+            SystemShell.FlashTaskBarState(TaskbarProgressBarState.Error); // One-second error "flash"
+
+            Interfacing.ShowToast(
+                Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Error"), e.Message);
             updateError = true;
         }
+
+        UpdateDownloadingInfoBar.IsOpen = false;
+        UpdateDownloadingInfoBar.Opacity = 0.0;
+        OnPropertyChanged(); // Visibility
 
         // Check the file result and the DL result
         if (updateError) return;
 
         // If found and downloaded properly
-        UpdateInfoBar.Message = string.Format(Interfacing.LocalizedJsonString(
-            "/SharedStrings/Updates/NewUpdateMessage"), _remoteVersionString);
+        UpdateInfoBar.Message = Interfacing.LocalizedJsonString("/SharedStrings/Updates/NewUpdateMessage")
+            .Format(release.version.ToString());
 
         UpdateInfoBar.IsOpen = true;
         UpdateInfoBar.Opacity = 1.0;
@@ -1464,7 +1550,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         {
             Name = "Update Amethyst using the Installer",
             Priority = false, // First download plugin updates, then everything else
-            Action = () => Task.FromResult(Interfacing.ManualUpdate || InstallUpdates())
+            Action = async () => Interfacing.ManualUpdate || await InstallUpdates(force: force)
         });
     }
 
@@ -1525,28 +1611,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Literals
         Logger.Info("Reload has been invoked: trying to restart the app...");
 
-        // If we've found who asked
-        if (File.Exists(Interfacing.ProgramLocation.ToString()))
-        {
-            // Log the caller
-            Logger.Info($"The current caller process is: {Interfacing.ProgramLocation}");
-
-            // Exit the app
-            Logger.Info("Exiting in 500ms...");
-
-            // Don't execute the exit routine
-            Interfacing.IsExitHandled = true;
-
-            // Handle a typical app exit
-            await Interfacing.HandleAppExit(500);
-
-            // Restart and exit with code 0
-            Process.Start(Interfacing.ProgramLocation
-                .FullName.Replace(".dll", ".exe"));
-
-            // Exit without re-handling everything
-            Environment.Exit(0);
-        }
+        // Restart and exit with code 0
+        await Interfacing.ExecuteAppRestart();
 
         // Still here?
         Logger.Fatal(new InvalidDataException("App will not be restarted due to caller process identification error."));
@@ -1603,7 +1669,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         }
 
         // Check for updates (and show)
-        await CheckUpdates(2000);
+        await CheckUpdates(TimeSpan.FromSeconds(2));
     }
 
     private void NavView_ItemInvoked(NavigationView sender,
@@ -1673,10 +1739,10 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
-    private void InstallNowButton_Click(object sender, RoutedEventArgs e)
+    private async void InstallNowButton_Click(object sender, RoutedEventArgs e)
     {
         // Try installing
-        InstallUpdates(true);
+        await InstallUpdates(true);
     }
 
     private async void PluginsUpdateButton_Click(object sender, RoutedEventArgs e)

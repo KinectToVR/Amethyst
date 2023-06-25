@@ -18,8 +18,8 @@ Unavailable for now, please follow the [Azure Pipelines script](https://github.c
 ## **Devices / Plugins Samples**
 Unavailable for now, please wait until a dedicated samples repo is published.  
 Each official device plugin is a (language configuration) sample at the same time:
- - [Kinect V2 Plugin](https://github.com/KinectToVR/plugin_KinectV2) (Pure C# with Kinect SDK deps)
- - [Kinect V1 Plugin](https://github.com/KinectToVR/plugin_KinectV1) (C++/CLI handler with C# proxy)
+ - [Kinect V2 Plugin](https://github.com/KinectToVR/plugin_KinectOne) (Pure C# with Kinect SDK deps)
+ - [Kinect V1 Plugin](https://github.com/KinectToVR/plugin_Kinect360) (C++/CLI handler with C# proxy)
  - [owoTrackVR Plugin](https://github.com/KinectToVR/plugin_owoTrackVR) (C++/WinRT handler with C# proxy)
  - [PSMoveService Plugin](https://github.com/KinectToVR/plugin_PSMoveService) (Pure C# with VB.NET deps)
  - [OpenVR Plugin](https://github.com/KinectToVR/plugin_OpenVR) (C# with native, marshalled deps)

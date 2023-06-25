@@ -24,7 +24,7 @@ public class AppPluginSettings : INotifyPropertyChanged
         {
             // Save plugin settings to $env:AppData/Amethyst/
             File.WriteAllText(
-                Interfacing.GetAppDataFileDir("AmethystPluginsSettings.json"),
+                Interfacing.GetAppDataFilePath("AmethystPluginsSettings.json"),
                 JsonConvert.SerializeObject(AppPlugins.PluginSettings, Formatting.Indented));
         }
         catch (Exception e)
@@ -40,7 +40,7 @@ public class AppPluginSettings : INotifyPropertyChanged
         {
             // Read plugin settings from $env:AppData/Amethyst/
             AppPlugins.PluginSettings = JsonConvert.DeserializeObject<AppPluginSettings>(File.ReadAllText(
-                Interfacing.GetAppDataFileDir("AmethystPluginsSettings.json"))) ?? new AppPluginSettings();
+                Interfacing.GetAppDataFilePath("AmethystPluginsSettings.json"))) ?? new AppPluginSettings();
         }
         catch (Exception e)
         {

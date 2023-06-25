@@ -48,17 +48,14 @@ public sealed partial class Blocked : Page, INotifyPropertyChanged
 
         Task.Run(() =>
         {
-            Shared.Events.ReloadPluginsPageEvent =
-                new ManualResetEvent(false);
-
             while (true)
             {
                 // Wait for a reload signal (blocking)
-                Shared.Events.ReloadPluginsPageEvent.WaitOne();
+                Shared.Events.ReloadVendorPagesEvent.WaitOne();
 
                 // Reload & restart the waiting loop
                 if (_blockedPageLoadedOnce && Interfacing.CurrentAppState == "blocked")
-                    Shared.Main.DispatcherQueue.TryEnqueue(Page_LoadedHandler);
+                    DispatcherQueue.TryEnqueue(Page_LoadedHandler);
 
                 // Reset the event
                 Shared.Events.ReloadPluginsPageEvent.Reset();
@@ -88,14 +85,14 @@ public sealed partial class Blocked : Page, INotifyPropertyChanged
 
     private Process IndexProcess { get; set; }
 
-    private string SkipUpdatingText => string.Format(
-        Interfacing.LocalizedJsonString("/BlockedPage/Buttons/Skip"), BlockedPluginName);
+    private string SkipUpdatingText => Interfacing.LocalizedJsonString(
+        "/BlockedPage/Buttons/Skip").Format(BlockedPluginName);
 
-    private string BlockedHeaderText => string.Format(
-        Interfacing.LocalizedJsonString("/BlockedPage/Headers/Blocked"), BlockedPluginName);
+    private string BlockedHeaderText => Interfacing.LocalizedJsonString(
+        "/BlockedPage/Headers/Blocked").Format(BlockedPluginName);
 
-    private string BlockedMessageText => string.Format(
-        Interfacing.LocalizedJsonString("/BlockedPage/Contents/Blocked"), BlockedPluginName);
+    private string BlockedMessageText => Interfacing.LocalizedJsonString(
+        "/BlockedPage/Contents/Blocked").Format(BlockedPluginName);
 
     public event PropertyChangedEventHandler PropertyChanged;
 

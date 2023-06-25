@@ -3,7 +3,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -93,7 +92,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
         // Dismiss the current tip
         HelpTeachingTip.IsOpen = false;
         await Task.Delay(400);
-        
+
         // Navigate to the devices page
         Shared.Main.MainNavigationView.SelectedItem =
             Shared.Main.MainNavigationView.MenuItems[2];
@@ -126,7 +125,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
         Shared.TeachingTips.PluginsPage.ManagerTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
         Shared.TeachingTips.PluginsPage.ManagerTeachingTip.IsOpen = true;
     }
-    
+
     private void K2DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         // Show a console-text-box popup
@@ -192,10 +191,9 @@ public sealed partial class Info : Page, INotifyPropertyChanged
 
                 try
                 {
-                    SetCommandText(CSharpScript.EvaluateAsync(((TextBox)sender).Text["eval ".Length..].Trim(),
-                            ScriptOptions.Default.WithImports("Amethyst.Classes")
-                                .WithReferences(typeof(Interfacing).Assembly).AddImports("System.Linq"))
-                        .Result.ToString());
+                    SetCommandText((await CSharpScript.EvaluateAsync(((TextBox)sender).Text["eval ".Length..].Trim(),
+                        ScriptOptions.Default.WithImports("Amethyst.Classes")
+                            .WithReferences(typeof(Interfacing).Assembly).AddImports("System.Linq"))).ToString());
                 }
                 catch (Exception ex)
                 {
@@ -254,7 +252,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
 
                     // Set up the co/re/disconnect button
                     Shared.General.ToggleTrackersButton.IsChecked = success;
-                    Shared.General.ToggleTrackersButton.Content =
+                    Shared.General.ToggleTrackersButtonText.Text =
                         Interfacing.LocalizedJsonString(success
                             ? "/GeneralPage/Buttons/TrackersToggle/Disconnect"
                             : "/GeneralPage/Buttons/TrackersToggle/Reconnect");
@@ -270,7 +268,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
 
                     // Set up the co/re/disconnect button
                     Shared.General.ToggleTrackersButton.IsChecked = false;
-                    Shared.General.ToggleTrackersButton.Content =
+                    Shared.General.ToggleTrackersButtonText.Text =
                         Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                             ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                             : "/GeneralPage/Buttons/TrackersToggle/Connect");
@@ -286,7 +284,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
 
                     // Set up the co/re/disconnect button
                     Shared.General.ToggleTrackersButton.IsChecked = false;
-                    Shared.General.ToggleTrackersButton.Content =
+                    Shared.General.ToggleTrackersButtonText.Text =
                         Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                             ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                             : "/GeneralPage/Buttons/TrackersToggle/Connect");
@@ -315,33 +313,12 @@ public sealed partial class Info : Page, INotifyPropertyChanged
 
                     Logger.Info("Reset invoked: trying to restart the app...");
 
-                    // If we've found who asked
-                    if (File.Exists(Interfacing.ProgramLocation.FullName))
-                    {
-                        // Log the caller
-                        Logger.Info($"The current caller process is: {Interfacing.ProgramLocation.FullName}");
-
-                        // Exit the app
-                        Logger.Info("Configuration has been reset, exiting in 500ms...");
-
-                        // Don't execute the exit routine
-                        Interfacing.IsExitHandled = true;
-
-                        // Handle a typical app exit
-                        await Interfacing.HandleAppExit(500);
-
-                        // Restart and exit with code 0
-                        Process.Start(Interfacing.ProgramLocation
-                            .FullName.Replace(".dll", ".exe"));
-
-                        // Exit without re-handling everything
-                        Environment.Exit(0);
-                    }
+                    // Restart and exit with code 0
+                    await Interfacing.ExecuteAppRestart();
 
                     // Still here?
-                    Logger.Fatal(
-                        new InvalidDataException(
-                            "App will not be restarted due to caller process identification error."));
+                    Logger.Fatal(new InvalidDataException(
+                        "App will not be restarted due to caller process identification error."));
 
                     Interfacing.ShowToast(
                         Interfacing.LocalizedJsonString("/SharedStrings/Toasts/RestartFailed/Title"),

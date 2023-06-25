@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -141,39 +140,39 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         ServiceSupportsSettings ? new CornerRadius(0) : new CornerRadius(0, 0, 4, 4);
 
     // MVVM stuff: bound strings with placeholders
-    private string RestartServiceText => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Buttons/RestartService"), AppPlugins.CurrentServiceEndpoint.Name);
+    private string RestartServiceText => Interfacing.LocalizedJsonString(
+        "/SettingsPage/Buttons/RestartService").Format(AppPlugins.CurrentServiceEndpoint.Name);
 
-    private string RestartServiceNoteL1 => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Captions/TrackersRestart/Line1"), AppPlugins.CurrentServiceEndpoint.Name);
+    private string RestartServiceNoteL1 => Interfacing.LocalizedJsonString(
+        "/SettingsPage/Captions/TrackersRestart/Line1").Format(AppPlugins.CurrentServiceEndpoint.Name);
 
-    private string RestartServiceNoteL2 => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Captions/TrackersRestart/Line2"), AppPlugins.CurrentServiceEndpoint.Name);
+    private string RestartServiceNoteL2 => Interfacing.LocalizedJsonString(
+        "/SettingsPage/Captions/TrackersRestart/Line2").Format(AppPlugins.CurrentServiceEndpoint.Name);
 
-    private string AutoStartLabelText => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Captions/AutoStart"), AppPlugins.CurrentServiceEndpoint.Name);
+    private string AutoStartLabelText => Interfacing.LocalizedJsonString(
+        "/SettingsPage/Captions/AutoStart").Format(AppPlugins.CurrentServiceEndpoint.Name);
 
-    private string AutoStartTipText => string.Format(Interfacing.LocalizedJsonString(
-        "/NUX/Tip7/Title"), AppPlugins.CurrentServiceEndpoint.Name);
+    private string AutoStartTipText => Interfacing.LocalizedJsonString(
+        "/NUX/Tip7/Title").Format(AppPlugins.CurrentServiceEndpoint.Name);
 
-    private string AutoStartTipContent => string.Format(Interfacing.LocalizedJsonString(
-        "/NUX/Tip7/Content"), AppPlugins.CurrentServiceEndpoint.Name);
+    private string AutoStartTipContent => Interfacing.LocalizedJsonString(
+        "/NUX/Tip7/Content").Format(AppPlugins.CurrentServiceEndpoint.Name);
 
-    private string FlipDropDownHeader => string.Format(Interfacing.LocalizedJsonString(
-        "/SettingsPage/Captions/SkeletonFlip"), AppPlugins.BaseTrackingDevice.Name);
+    private string FlipDropDownHeader => Interfacing.LocalizedJsonString(
+        "/SettingsPage/Captions/SkeletonFlip").Format(AppPlugins.BaseTrackingDevice.Name);
 
     private string ManageTrackersText
     {
         get
         {
             if (AppPlugins.CurrentServiceEndpoint.IsRestartOnChangesNeeded)
-                return string.Format(Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers"),
-                    AppPlugins.CurrentServiceEndpoint.Name).Replace("[[", "").Replace("]]", "");
+                return Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers")
+                    .Format(AppPlugins.CurrentServiceEndpoint.Name).Replace("[[", "").Replace("]]", "");
 
             // If the service doesn't need restarting
-            return StringUtils.RemoveBetween(
-                string.Format(Interfacing.LocalizedJsonString("/SettingsLearn/Captions/ManageTrackers"),
-                    AppPlugins.CurrentServiceEndpoint.Name), "[[", "]]");
+            return StringUtils.RemoveBetween(Interfacing.LocalizedJsonString(
+                    "/SettingsLearn/Captions/ManageTrackers")
+                .Format(AppPlugins.CurrentServiceEndpoint.Name), "[[", "]]");
         }
     }
 
@@ -646,9 +645,9 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
     private void RestartButton_Click(object sender, RoutedEventArgs e)
     {
-        AppPlugins.CurrentServiceEndpoint.RequestServiceRestart(string.Format(
-            Interfacing.LocalizedJsonString("/SettingsPage/Captions/ServiceRestart"),
-            AppPlugins.CurrentServiceEndpoint.Name));
+        AppPlugins.CurrentServiceEndpoint.RequestServiceRestart(
+            Interfacing.LocalizedJsonString("/SettingsPage/Captions/ServiceRestart")
+                .Format(AppPlugins.CurrentServiceEndpoint.Name));
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
@@ -843,7 +842,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         // Set up the co/re/disconnect button
         Shared.General.ToggleTrackersButton.IsChecked = false;
-        Shared.General.ToggleTrackersButton.Content =
+        Shared.General.ToggleTrackersButtonText.Text =
             Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
@@ -893,7 +892,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         // Set up the co/re/disconnect button
         Shared.General.ToggleTrackersButton.IsChecked = false;
-        Shared.General.ToggleTrackersButton.Content =
+        Shared.General.ToggleTrackersButtonText.Text =
             Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");
@@ -981,7 +980,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         // Set up the co/re/disconnect button
         Shared.General.ToggleTrackersButton.IsChecked = false;
-        Shared.General.ToggleTrackersButton.Content =
+        Shared.General.ToggleTrackersButtonText.Text =
             Interfacing.LocalizedJsonString(Interfacing.AppTrackersSpawned
                 ? "/GeneralPage/Buttons/TrackersToggle/Reconnect"
                 : "/GeneralPage/Buttons/TrackersToggle/Connect");

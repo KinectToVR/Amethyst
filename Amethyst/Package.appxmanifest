@@ -3,46 +3,83 @@
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap rescap">
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:desktop8="http://schemas.microsoft.com/appx/manifest/desktop/windows10/8"
+  IgnorableNamespaces="uap uap10 rescap com desktop desktop8">
 
   <Identity
-    Name="ceed5099-ed04-4853-a18c-3ba7bfa2405e"
-    Publisher="CN=akaya"
-    Version="1.0.0.0" />
+    Name="K2VRTeam.Amethyst.App"
+    Publisher="CN=K2VR Team"
+    Version="1.2.1.16" />
 
   <Properties>
     <DisplayName>Amethyst</DisplayName>
-    <PublisherDisplayName>akaya</PublisherDisplayName>
-    <Logo>Assets\StoreLogo.png</Logo>
+    <PublisherDisplayName>K2VR Team</PublisherDisplayName>
+    <Logo>Assets\Visuals\StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.19041.0" MaxVersionTested="10.0.22621.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.22621.0" />
   </Dependencies>
 
   <Resources>
     <Resource Language="x-generate"/>
   </Resources>
 
+  <Extensions>
+    <desktop8:Extension Category="windows.userMutablePackageDirectories">
+      <desktop8:UserMutablePackageDirectories>
+        <desktop8:UserMutablePackageDirectory Target='K2VRTeam.Amethyst.App' />
+      </desktop8:UserMutablePackageDirectories>
+    </desktop8:Extension>
+  </Extensions>
+
   <Applications>
-    <Application Id="App"
-      Executable="$targetnametoken$.exe"
-      EntryPoint="$targetentrypoint$">
+    <Application Id="Amethyst"
+                 Executable="$targetnametoken$.exe"
+                 EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="Amethyst"
-        Description="Amethyst"
+        Description="Amethyst Desktop"
         BackgroundColor="transparent"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        Square150x150Logo="Assets\Visuals\Square150x150Logo.png"
+        Square44x44Logo="Assets\Visuals\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Visuals\Wide310x150Logo.png"  Square71x71Logo="Assets\Visuals\SmallTile.png" Square310x310Logo="Assets\Visuals\LargeTile.png"/>
+        <uap:SplashScreen Image="Assets\Visuals\SplashScreen.png" />
       </uap:VisualElements>
+
+      <Extensions>
+        <desktop:Extension Category="windows.toastNotificationActivation">
+          <desktop:ToastNotificationActivation ToastActivatorCLSID="B028A9C9-896F-4ED0-9F3D-C173E6ADF0C3" />
+        </desktop:Extension>
+
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer Executable="Amethyst.exe" Arguments="----AppNotificationActivated:" DisplayName="App notification activator">
+              <com:Class Id="B028A9C9-896F-4ED0-9F3D-C173E6ADF0C3" DisplayName="App notification activator"/>
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
+
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="amethyst-app">
+            <uap:Logo>Assets\Visuals\StoreLogo.png</uap:Logo>
+            <uap:DisplayName>Amethyst Application URI Scheme</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
 
   <Capabilities>
+    <rescap:Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="packageManagement" />
+    <rescap:Capability Name="modifiableApp" />
+    <rescap:Capability Name="packageQuery" />
   </Capabilities>
 </Package>

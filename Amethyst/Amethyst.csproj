@@ -13,13 +13,13 @@
         <UseWinUI>true</UseWinUI>
         <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 
-        <WindowsPackageType>None</WindowsPackageType>
+        <!--<WindowsPackageType>None</WindowsPackageType>-->
         <BaseOutputPath></BaseOutputPath>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
         <PublishTrimmed>false</PublishTrimmed>
         <EmbedManifest>true</EmbedManifest>
-        
-        <AppxPackage>false</AppxPackage>
+
+        <!--<AppxPackage>false</AppxPackage>-->
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <StartupObject>Amethyst.Program</StartupObject>
 
@@ -37,15 +37,28 @@
     <PropertyGroup>
         <CsWinRTIncludes>AmethystSupport</CsWinRTIncludes>
         <CsWinRTGeneratedFilesDir>$(OutDir)</CsWinRTGeneratedFilesDir>
+        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+        <PackageCertificateThumbprint>2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1</PackageCertificateThumbprint>
+        <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+        <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+        <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+        <GenerateTestArtifacts>True</GenerateTestArtifacts>
+        <AppxBundle>Always</AppxBundle>
+        <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+        <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.1" />
-        <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.1" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.5.0" />
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230331000" />
+        <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
+        <PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
+        <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
+        <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
+        <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.6.0" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230602002" />
         <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25330-preview" />
-        <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.2" />
+        <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.3" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="RestSharp" Version="108.0.3" />
         <PackageReference Include="System.ComponentModel.Composition" Version="7.0.0" />
@@ -71,7 +84,18 @@
     <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
         <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      <LangVersion>preview</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <LangVersion>preview</LangVersion>
+    </PropertyGroup>
     <ItemGroup>
+        <None Remove="Assets\Visuals\StoreLogo.scale-100.png" />
+        <None Remove="Assets\Visuals\StoreLogo.scale-125.png" />
+        <None Remove="Assets\Visuals\StoreLogo.scale-150.png" />
+        <None Remove="Assets\Visuals\StoreLogo.scale-200.png" />
+        <None Remove="Assets\Visuals\StoreLogo.scale-400.png" />
         <None Remove="Controls\JointSelectorExpander.xaml" />
         <None Remove="Controls\JointSettingsExpander.xaml" />
         <None Remove="Controls\LoadAttemptedPluginsView.xaml" />
@@ -82,11 +106,11 @@
         <None Remove="Pages\Plugins.xaml" />
         <None Remove="Pages\Settings.xaml" />
         <None Remove="Popups\Blocked.xaml" />
+        <None Remove="Popups\CrashDialog.xaml" />
+        <None Remove="Popups\CrashWindow.xaml" />
         <None Remove="Popups\Host.xaml" />
+        <None Remove="Popups\Report.xaml" />
         <None Remove="Popups\Splash.xaml" />
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="MVVM\" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Amethyst.Support\Amethyst.Support.vcxproj" />
@@ -98,29 +122,53 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-      <Page Update="Controls\LoadAttemptedPluginsView.xaml">
+        <Content Include="Plugins\**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="$(SolutionDir)\Resources\**" Visible="false">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Popups\Report.xaml">
+        <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Popups\CrashDialog.xaml">
         <Generator>MSBuild:Compile</Generator>
       </Page>
     </ItemGroup>
     <ItemGroup>
-      <Page Update="Popups\Blocked.xaml">
+      <Page Update="Popups\CrashWindow.xaml">
         <Generator>MSBuild:Compile</Generator>
       </Page>
     </ItemGroup>
     <ItemGroup>
-      <Page Update="Popups\Splash.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
+        <Page Update="Controls\LoadAttemptedPluginsView.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
     </ItemGroup>
     <ItemGroup>
-      <Page Update="Popups\Host.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
+        <Page Update="Popups\Blocked.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
     </ItemGroup>
     <ItemGroup>
-      <Page Update="Pages\Plugins.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
+        <Page Update="Popups\Splash.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Popups\Host.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Pages\Plugins.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
     </ItemGroup>
     <ItemGroup>
         <Page Update="Controls\JointSettingsExpander.xaml">

@@ -946,10 +946,6 @@
       "translation": "Installer Development:"
     },
     {
-      "id": "/InfoPage/Credits/MainTeam/Roles/Ollie",
-      "translation": "Support:"
-    },
-    {
       "id": "/InfoPage/Credits/MainTeam/Title",
       "translation": "Main Team:"
     },
@@ -996,6 +992,30 @@
     {
       "id": "/BlockedPage/Flyouts/Elevated/Notice",
       "translation": "This process is currently running with administrator privileges, \nAmethyst will need to ask for additional permissions to kill it."
+    },
+    {
+      "id": "/ReportPage/Titles/Captured",
+      "translation": "Files captured for bug report"
+    },
+    {
+      "id": "/ReportPage/Contents/Captured",
+      "translation": "It is possible that support asked you for Amethyst log files and its config. Amethyst has already prepared these files for you. Simply drag-and-drop the outlined element below to share these files, or copy them manually."
+    },
+    {
+      "id": "/ReportPage/Contents/Clipboard",
+      "translation": "Copy to clipboard"
+    },
+    {
+      "id": "/ReportPage/Captions/Clipboard",
+      "translation": "You can also manually copy everything to your clipboard using the button below, and paste like any other copied file, text, or image."
+    },
+    {
+      "id": "/ReportPage/Captions/Drop",
+      "translation": "Drag and drop the outlined field to share last Amethyst log files and settings. This is the same as dragging a file from a folder."
+    },
+    {
+      "id": "/ReportPage/Captions/Elevated",
+      "translation": "Drag and drop functionality is disabled for applications running with elevated privileges. Please copy all needed files manually."
     },
     {
       "id": "/SharedStrings/Buttons/Devices",
@@ -1243,7 +1263,7 @@
     },
     {
       "id": "/SharedStrings/Updates/Headers/Preparing",
-      "translation": "Preparing for the update..."
+      "translation": "Preparing for the update, this might take a few moments..."
     },
     {
       "id": "/SharedStrings/Updates/Headers/Status",
@@ -1252,6 +1272,10 @@
     {
       "id": "/SharedStrings/Updates/Statuses/Downloading",
       "translation": "Downloading - 0%"
+    },
+    {
+      "id": "/SharedStrings/Updates/Statuses/DownloadingNoProgress",
+      "translation": "Downloading..."
     },
     {
       "id": "/SharedStrings/Updates/Statuses/Error",
@@ -1475,7 +1499,7 @@
     },
     {
       "id": "/CrashHandler/Content/Crash/NoDevices",
-      "translation": "There were no appropriate device plugins available to load and use for body tracking.\n\nPlease check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices."
+      "translation": "There were no appropriate devices (plugins) available to load and use for body tracking.\n\nPlease check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices."
     },
     {
       "id": "/CrashHandler/Content/Crash/NoServices",
@@ -1491,7 +1515,7 @@
     },
     {
       "id": "/CrashHandler/Content/Crash/Panic",
-      "translation": "The main program loop has crashed consequently more than 7 times so Amethyst was shut down.\n\nPlease check if all your plugins are working and check the log files. Optionally, you can reset the (outer) app config and try running it again."
+      "translation": "The main program loop has crashed consequently more than 7 times so Amethyst was shut down.\n\nPlease check if all your devices / plugins are working and check logs. Optionally, you can erase the app configuration and then try running it again."
     },
     {
       "id": "/CrashHandler/Content/Crash/Unknown",
@@ -1507,7 +1531,7 @@
     },
     {
       "id": "/CrashHandler/Content/Recovery",
-      "translation": "Looks like you've manually ran the Crash Handler. What would you like to do?\n\nIf the Amethyst driver for SteamVR is not being detected properly, you can re-register the SteamVR driver (button below) and then try again."
+      "translation": "Looks like you've manually ran the Crash Handler. What did you want to do?\n\nWhile you're still here, please consider donating to our OpenCollective, so we can keep all this stuff up and running. Oh, and thanks for using Amethyst!"
     },
     {
       "id": "/CrashHandler/PrimaryButton/AlreadyRunning",
@@ -1527,7 +1551,7 @@
     },
     {
       "id": "/CrashHandler/PrimaryButton/Recovery",
-      "translation": "Re-Register Driver"
+      "translation": "OpenCollective"
     },
     {
       "id": "/CrashHandler/ReRegister/DriverNotFound",

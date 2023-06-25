@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -13,6 +12,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Windows.Storage;
 using Windows.System;
 using Amethyst.Classes;
@@ -22,7 +22,6 @@ using Amethyst.Utils;
 using AmethystSupport;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using RestSharp;
 using static Amethyst.Classes.Interfacing;
 
@@ -246,16 +245,10 @@ public class PluginHost : IAmethystHost
         Shared.Main.DispatcherQueue.TryEnqueue(async () =>
         {
             // Launch the crash handler if fatal
-            if (fatal)
-            {
-                var hPath = Path.Combine(ProgramLocation.DirectoryName!, "K2CrashHandler", "K2CrashHandler.exe");
-                if (File.Exists(hPath)) Process.Start(hPath, new[] { "plugin_message", message, Guid });
-                else Logger.Warn("Crash handler exe (./K2CrashHandler/K2CrashHandler.exe) not found!");
-            }
+            if (fatal) await $"amethyst-app:crash-message#{HttpUtility.UrlEncode(message)}".ToUri().LaunchAsync();
 
             // Handle all the exit actions (if needed)
-            if (!IsExitHandled)
-                await HandleAppExit(1000);
+            if (!IsExitHandled) await HandleAppExit(1000);
 
             // Finally exit with code 0
             Environment.Exit(0);
@@ -392,9 +385,9 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public string ErrorText => LocalizedJsonString($"/DevicesPage/Devices/Manager/Labels/{Status}");
 
-    public string UpdateMessage => string.Format(
-        LocalizedJsonString("/DevicesPage/Devices/Manager/Labels/UpdateMessage"),
-        Name, (UpdateData.Version ?? Version).ToString());
+    public string UpdateMessage =>
+        LocalizedJsonString("/DevicesPage/Devices/Manager/Labels/UpdateMessage")
+            .Format(Name, (UpdateData.Version ?? Version).ToString());
 
     public bool PublisherValid => !string.IsNullOrEmpty(Publisher);
     public bool WebsiteValid => !string.IsNullOrEmpty(Website);
@@ -631,7 +624,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public string FormatResourceString(string resourceName)
     {
-        return string.Format(LocalizedJsonString(resourceName), Name);
+        return LocalizedJsonString(resourceName).Format(Name);
     }
 
     public void OnPropertyChanged(string propName = null)

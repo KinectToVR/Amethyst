@@ -328,15 +328,15 @@ public static class AppPlugins
                 Interfacing.ShowToast(
                     Interfacing.LocalizedJsonString(
                         "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
-                    string.Format(Interfacing.LocalizedJsonString(
-                        "/SharedStrings/Toasts/TrackersConfigChanged"), CurrentServiceEndpoint.Name),
+                    Interfacing.LocalizedJsonString(
+                        "/SharedStrings/Toasts/TrackersConfigChanged").Format(CurrentServiceEndpoint.Name),
                     false, "focus_restart");
 
                 Interfacing.ShowServiceToast(
                     Interfacing.LocalizedJsonString(
                         "/SharedStrings/Toasts/TrackersConfigChanged/Title"),
-                    string.Format(Interfacing.LocalizedJsonString(
-                        "/SharedStrings/Toasts/TrackersConfigChanged"), CurrentServiceEndpoint.Name));
+                    Interfacing.LocalizedJsonString(
+                        "/SharedStrings/Toasts/TrackersConfigChanged").Format(CurrentServiceEndpoint.Name));
             }
 
             // Compare with saved settings and unlock the restart

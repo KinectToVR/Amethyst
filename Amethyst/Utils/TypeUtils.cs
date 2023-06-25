@@ -2,20 +2,24 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Primitives;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.Globalization.NumberFormatting;
+using Windows.System;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using AmethystSupport;
-using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using Windows.Storage;
 
 namespace Amethyst.Utils;
 
@@ -208,6 +212,11 @@ public static class TypeUtils
     {
         return json.TryGetValue(propertyName, out var value) ? value : null;
     }
+
+    public static async Task<IEnumerable<T>> WhenAll<T>(this IEnumerable<Task<T>> tasks)
+    {
+        return await Task.WhenAll(tasks);
+    }
 }
 
 public static class SortedDictionaryExtensions
@@ -331,16 +340,32 @@ public static class StringExtensions
         var encoding = new UTF8Encoding();
         return encoding.GetString(plain);
     }
+
+    public static string Format(this string s, params object[] arguments)
+    {
+        var result = s; // Create a backup
+        var formats = arguments.ToList();
+
+        foreach (var format in formats)
+            if (result.Contains($"{{{formats.IndexOf(format)}}}")) // Check whether the replace index is valid
+                result = result.Replace($"{{{formats.IndexOf(format)}}}", format?.ToString() ?? string.Empty);
+            else Logger.Info($"{s} doesn't contain a placeholder for index {{{formats.IndexOf(format)}}}!");
+
+        return result; // Return the outer result
+    }
 }
 
 public static class StorageExtensions
 {
-    public static void CopyToFolderAsync(this DirectoryInfo source, string destination, bool log = false)
+    public static void CopyToFolder(this DirectoryInfo source, string destination, bool inside = false)
     {
+        // Create the base directory (if needed)
+        if (inside) destination = Path.Join(destination, source.Name);
+
         // Now Create all of the directories
         foreach (var dirPath in source.GetDirectories("*", SearchOption.AllDirectories))
         {
-            Logger.Info($"Copying file {source} to {destination}\\");
+            Logger.Info($"Creating folder {source} in {destination}\\");
             Directory.CreateDirectory(dirPath.FullName.Replace(source.FullName, destination));
         }
 
@@ -350,5 +375,133 @@ public static class StorageExtensions
             Logger.Info($"Copying file {source} to {destination}\\");
             newPath.CopyTo(newPath.FullName.Replace(source.FullName, destination), true);
         }
+    }
+}
+
+public static class UriExtensions
+{
+    public static Uri ToUri(this string source)
+    {
+        return new Uri(source);
+    }
+
+    public static async Task LaunchAsync(this Uri uri)
+    {
+        try
+        {
+            if (await Launcher.QueryAppUriSupportAsync(uri) is LaunchQuerySupportStatus.Available ||
+                uri.Scheme is "amethyst-app") await Launcher.LaunchUriAsync(uri);
+            else
+                Logger.Warn($"No application registered to handle uri of \"{uri.Scheme}:\"," +
+                            $" query result: {await Launcher.QueryAppUriSupportAsync(uri)}");
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+}
+
+public static class VersionExtensions
+{
+    public static Version AsVersion(this PackageVersion version)
+    {
+        return new Version(version.Major, version.Minor, version.Build, version.Revision);
+    }
+
+    public static string AsString(this PackageVersion version)
+    {
+        return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+    }
+}
+
+public static class StreamExtensions
+{
+    public static async Task CopyToWithProgressAsync(this Stream source,
+        Stream destination, Action<long> progress = null, int bufferSize = 10240)
+    {
+        var buffer = new byte[bufferSize];
+        var total = 0L;
+        int amtRead;
+
+        do
+        {
+            amtRead = 0;
+            while (amtRead < bufferSize)
+            {
+                var numBytes = await source.ReadAsync(
+                    buffer, amtRead, bufferSize - amtRead);
+                if (numBytes == 0) break;
+                amtRead += numBytes;
+            }
+
+            total += amtRead;
+            await destination.WriteAsync(buffer, 0, amtRead);
+            progress?.Invoke(total);
+        } while (amtRead == bufferSize);
+    }
+}
+
+public class VisibilityTrigger : StateTriggerBase
+{
+    private FrameworkElement _element;
+    private Visibility _trigger;
+
+    public FrameworkElement Target
+    {
+        get => _element;
+        set
+        {
+            _element = value;
+            RefreshState();
+        }
+    }
+
+    public Visibility ActiveOn
+    {
+        get => _trigger;
+        set
+        {
+            _trigger = value;
+            RefreshState();
+        }
+    }
+
+    private void RefreshState()
+    {
+        SetActive(Target?.Visibility == ActiveOn);
+    }
+}
+
+public class OffsetDigitsFormatter : INumberFormatter2, INumberParser
+{
+    public string FormatInt(long value)
+    {
+        return double.Round(value / 100.0, 2).ToString(CultureInfo.InvariantCulture);
+    }
+
+    public string FormatUInt(ulong value)
+    {
+        return double.Round(value / 100.0, 2).ToString(CultureInfo.InvariantCulture);
+    }
+
+    public string FormatDouble(double value)
+    {
+        return double.Round(value / 100.0, 2).ToString(CultureInfo.InvariantCulture);
+    }
+
+    public long? ParseInt(string text)
+    {
+        return long.TryParse(text, out var result) ? (long)double.Round(result * 100.0, 0) : null;
+    }
+
+    public ulong? ParseUInt(string text)
+    {
+        return ulong.TryParse(text, out var result) ? (ulong)double.Round(result * 100.0, 0) : null;
+    }
+
+    public double? ParseDouble(string text)
+    {
+        return double.TryParse(text, out var result) ? double.Round(result * 100.0, 0) : null;
     }
 }

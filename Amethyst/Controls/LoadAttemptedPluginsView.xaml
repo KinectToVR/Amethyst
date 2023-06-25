@@ -4,7 +4,6 @@
     x:Class="Amethyst.Controls.LoadAttemptedPluginsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:classes="using:Amethyst.Classes"
     xmlns:mvvm="using:Amethyst.MVVM"
     xmlns:icons="using:WinUI.Fluent.Icons"
     xmlns:util="using:Amethyst.Utils">

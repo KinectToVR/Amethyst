@@ -946,10 +946,6 @@
       "translation": "Développement de l'installateur:"
     },
     {
-      "id": "/InfoPage/Credits/MainTeam/Roles/Ollie",
-      "translation": "Support:"
-    },
-    {
       "id": "/InfoPage/Credits/MainTeam/Title",
       "translation": "Équipe principale:"
     },
@@ -996,6 +992,30 @@
     {
       "id": "/BlockedPage/Flyouts/Elevated/Notice",
       "translation": "This process is currently running with administrator privileges, \nAmethyst will need to ask for additional permissions to kill it."
+    },
+    {
+      "id": "/ReportPage/Titles/Captured",
+      "translation": "Files captured for bug report"
+    },
+    {
+      "id": "/ReportPage/Contents/Captured",
+      "translation": "It is possible that support asked you for Amethyst log files and its config. Amethyst has already prepared these files for you. Simply drag-and-drop the outlined element below to share these files, or copy them manually."
+    },
+    {
+      "id": "/ReportPage/Contents/Clipboard",
+      "translation": "Copy to clipboard"
+    },
+    {
+      "id": "/ReportPage/Captions/Clipboard",
+      "translation": "You can also manually copy everything to your clipboard using the button below, and paste like any other copied file, text, or image."
+    },
+    {
+      "id": "/ReportPage/Captions/Drop",
+      "translation": "Drag and drop the outlined field to share last Amethyst log files and settings. This is the same as dragging a file from a folder."
+    },
+    {
+      "id": "/ReportPage/Captions/Elevated",
+      "translation": "Drag and drop functionality is disabled for applications running with elevated privileges. Please copy all needed files manually."
     },
     {
       "id": "/SharedStrings/Buttons/Devices",
@@ -1254,6 +1274,10 @@
       "translation": "Téléchargement - 0%"
     },
     {
+      "id": "/SharedStrings/Updates/Statuses/DownloadingNoProgress",
+      "translation": "Téléchargement..."
+    },
+    {
       "id": "/SharedStrings/Updates/Statuses/Error",
       "translation": "Erreur de téléchargement !"
     },
@@ -1507,7 +1531,7 @@
     },
     {
       "id": "/CrashHandler/Content/Recovery",
-      "translation": "Vous avez lancé le Crash Handler manuellement, que voulez-vous faire?\n\nSi l'extension SteamVR pour Amethyst n'est pas détectée correctement, vous pouvez la ré-inscrire dans la liste (bouton ci-dessous) et essayer à nouveau."
+      "translation": "Il semble que vous ayez lancé manuellement le Crash Handler. Que vouliez-vous faire?\n\nPendant que vous êtes encore ici, pensez à faire un don à notre OpenCollective, pour que nous puissions continuer à faire fonctionner tout ça. Oh, et merci d'utiliser Amethyst!"
     },
     {
       "id": "/CrashHandler/PrimaryButton/AlreadyRunning",
@@ -1527,7 +1551,7 @@
     },
     {
       "id": "/CrashHandler/PrimaryButton/Recovery",
-      "translation": "Ré-inscrire l'extension"
+      "translation": "OpenCollective"
     },
     {
       "id": "/CrashHandler/ReRegister/DriverNotFound",

@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
-using Windows.Data.Json;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
