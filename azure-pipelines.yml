@@ -182,6 +182,7 @@ stages:
         changeLogType: commitBased
         isPreRelease: true
         assetUploadMode: delete
+        assets: '$(Pipeline.Workspace)/pack/Amethyst_$(packageVersion)_$(buildPlatform).msix'
         
 - stage: Stage
   dependsOn: Build
@@ -193,7 +194,7 @@ stages:
     steps:
     - checkout: self
       persistCredentials: 'true'
-      
+
     - download: current
       displayName: Download published artifacts
       artifact: pack
