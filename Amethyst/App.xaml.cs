@@ -432,6 +432,31 @@ public partial class App : Application
                             .Select(async x => new AppDataFile(await StorageFile.GetFileFromPathAsync(x.FullName)))
                             .WhenAll()); // Collect the last 3 log files and wait for them
 
+                        try
+                        {
+                            if (AppData.Settings.ServiceEndpointGuid is "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR")
+                            {
+                                Logger.Info("Trying to collect SteamVR server logs...");
+                                var vrServerLog = new FileInfo(Path.Join(
+                                    FileUtils.GetSteamInstallDirectory(), @"logs\vrserver.txt"));
+
+                                if (vrServerLog.Exists)
+                                {
+                                    if (fileList.Count > 3) fileList.RemoveAt(1); // Remove the first (current) log
+                                    fileList.Add(new AppDataFile(
+                                        await StorageFile.GetFileFromPathAsync(vrServerLog.FullName)));
+                                }
+                            }
+                            else
+                            {
+                                Logger.Info("Skipping collection of SteamVR server logs...");
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Warn(e);
+                        }
+
                         Logger.Info("Creating a new Host:Report view...");
                         var window = new Host
                         {

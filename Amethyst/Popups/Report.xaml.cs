@@ -200,7 +200,7 @@ public class AppDataFile(StorageFile file)
 {
     public StorageFile DataFile { get; } = file;
     public string Name => DataFile.Name;
-    public bool IsLog => Name.EndsWith(".log");
+    public bool IsLog => Name.EndsWith(".log") || Name.EndsWith(".txt");
 
     public FluentSymbol Icon => IsLog
         ? FluentSymbol.DocumentText24

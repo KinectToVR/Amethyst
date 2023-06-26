@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Principal;
 using System.Text;
+using Microsoft.Win32;
 
 namespace Amethyst.Utils;
 
@@ -209,6 +210,20 @@ internal static class FileUtils
             Logger.Info(e);
             return null;
         }
+    }
+
+    public static string GetSteamInstallDirectory()
+    {
+        // Get Steam Directory from Registry, starting with 64-bit and falling back to 32-bit
+        var steamInstallDirectory = (string)Registry.GetValue(
+            @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Valve\Steam", "InstallPath", string.Empty);
+
+        if (Directory.Exists(steamInstallDirectory)) return steamInstallDirectory;
+        steamInstallDirectory = (string)Registry.GetValue(
+            @"HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam", "InstallPath", string.Empty);
+
+        if (Directory.Exists(steamInstallDirectory)) return steamInstallDirectory;
+        throw new FileNotFoundException("Steam installation directory not found!");
     }
 
     private struct TOKEN_ELEVATION
