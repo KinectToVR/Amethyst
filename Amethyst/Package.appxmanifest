@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -13,7 +13,7 @@
   <Identity
     Name="K2VRTeam.Amethyst.App"
     Publisher="CN=K2VR Team"
-    Version="1.2.3.16" />
+    Version="1.2.1.17" />
 
   <Properties>
     <DisplayName>Amethyst</DisplayName>
