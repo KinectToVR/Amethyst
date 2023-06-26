@@ -1324,13 +1324,13 @@ public sealed partial class General : Page, INotifyPropertyChanged
         switch (sender.GetValue(AttachedString.AttachedStringProperty))
         {
             case "OZ":
-                tracker.OrientationOffset.Z = (float)(sender.Value / 100.0);
+                tracker.OrientationOffset.Z = (float)sender.Value;
                 break;
             case "OY":
-                tracker.OrientationOffset.Y = (float)(sender.Value / 100.0);
+                tracker.OrientationOffset.Y = (float)sender.Value;
                 break;
             case "OX":
-                tracker.OrientationOffset.X = (float)(sender.Value / 100.0);
+                tracker.OrientationOffset.X = (float)sender.Value;
                 break;
             case "PX":
                 tracker.PositionOffset.X = (float)(sender.Value / 100.0);
