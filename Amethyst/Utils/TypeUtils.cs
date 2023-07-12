@@ -217,6 +217,21 @@ public static class TypeUtils
     {
         return await Task.WhenAll(tasks);
     }
+
+    public static string GetMetadata(this Type type, string name)
+    {
+        try
+        {
+            return type?.CustomAttributes.FirstOrDefault(x =>
+                    x.ConstructorArguments.FirstOrDefault().Value?.ToString() == name)?
+                .ConstructorArguments.ElementAtOrDefault(1).Value?.ToString();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+            return null;
+        }
+    }
 }
 
 public static class SortedDictionaryExtensions
@@ -269,7 +284,7 @@ public static class ExceptionExtensions
 
             if (currentException == null) break;
 
-            if (currentException is ComposablePartException { InnerException: { } } decomposablePartException)
+            if (currentException is ComposablePartException { InnerException: not null } decomposablePartException)
             {
                 if (decomposablePartException.InnerException is not CompositionException innerCompositionException)
                     return currentException.InnerException ?? exception;

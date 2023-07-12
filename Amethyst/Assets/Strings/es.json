@@ -1470,6 +1470,26 @@
       "translation": "package"
     },
     {
+      "id": "/SharedStrings/Plugins/Dep/Contents/DependencyNotFound",
+      "translation": "Amethyst couldn't load this plugin due to missing dependencies."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/AdditionalLinks",
+      "translation": "This plugin provides additional links, so you can"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/PluginDocs",
+      "translation": "view troubleshooting docs"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/Separator",
+      "translation": "or"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/Download",
+      "translation": "download its dependencies"
+    },
+    {
       "id": "/PluginStore/Titles/Install",
       "translation": "Instalar {0} {1}"
     },

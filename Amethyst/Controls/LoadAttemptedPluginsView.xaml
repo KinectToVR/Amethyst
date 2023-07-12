@@ -19,7 +19,12 @@
                         </TransitionCollection>
                     </Grid.Transitions>
 
-                    <Grid Margin="20,15,60,0"
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="20,15,60,0"
                           VerticalAlignment="Top" Canvas.ZIndex="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -88,9 +93,11 @@
                     </Grid>
 
                     <Expander Margin="0,12,0,0" Padding="0"
+                              CornerRadius="{x:Bind ExpanderThickness}"
                               IsExpanded="{x:Bind IsLoaded}" ExpandDirection="Down"
-                              Expanding="Expander_Expanding"
+                              Expanding="Expander_Expanding" Grid.Row="0"
                               Collapsed="{x:Bind PlayCollapsingSound, Mode=OneWay}"
+                              VerticalAlignment="Top"
                               HorizontalAlignment="Stretch"
                               HorizontalContentAlignment="Stretch">
 
@@ -239,18 +246,43 @@
                                                Text="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Manager/Labels/Website'), Mode=OneWay}" />
 
                                     <TextBlock VerticalAlignment="Center" Grid.Column="1"
-                                               FontWeight="SemiBold"
                                                TextTrimming="CharacterEllipsis"
-                                               Foreground="{ThemeResource SystemFillColorAttentionBrush}"
-                                               TextDecorations="Underline"
-                                               Text="{x:Bind Website, Mode=OneWay}"
-                                               Tapped="{x:Bind OpenDeviceWebsite, Mode=OneWay}"
                                                ToolTipService.ToolTip="{x:Bind Website, Mode=OneWay}"
-                                               ToolTipService.Placement="Bottom" />
+                                               ToolTipService.Placement="Bottom">
+                                        <Hyperlink NavigateUri="{x:Bind WebsiteUri}" 
+                                                   Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                                   TextDecorations="Underline" FontWeight="SemiBold">
+                                            <Run Text="{x:Bind Website, Mode=OneWay}" />
+                                        </Hyperlink>
+                                    </TextBlock>
                                 </Grid>
                             </StackPanel>
                         </Expander.Content>
                     </Expander>
+
+                    <StackPanel Style="{ThemeResource CardBottomStyle}"
+                                Visibility="{x:Bind LoadErrorDepMissing}" Grid.Row="1"
+                                Orientation="Vertical">
+
+                        <RichTextBlock VerticalAlignment="Center" FontWeight="SemiBold" TextWrapping="WrapWholeWords">
+                            <Paragraph>
+                                <Run Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Dep/Contents/DependencyNotFound'), Mode=OneWay}" />
+
+                                <Run Text="{x:Bind DependencyAdditionalLinksText}" />
+                                <Hyperlink TextDecorations="Underline" Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                           NavigateUri="{x:Bind DependencyLinkUri}">
+                                    <Run Text="{x:Bind DependencyDocsLinkText}" />
+                                </Hyperlink>
+
+                                <Run Text="{x:Bind DependencySeparatorText}" />
+                                <Hyperlink TextDecorations="Underline" Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                           NavigateUri="{x:Bind DependencySourceUri}">
+                                    <Run Text="{x:Bind DependencyDownloadLinkText}" />
+                                </Hyperlink>
+                            </Paragraph>
+                        </RichTextBlock>
+                    </StackPanel>
+
                 </Grid>
             </DataTemplate>
         </ItemsRepeater.ItemTemplate>

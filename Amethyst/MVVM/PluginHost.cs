@@ -10,9 +10,11 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.System;
 using Amethyst.Classes;
@@ -69,7 +71,7 @@ public class PluginHost : IAmethystHost
     // Get the hook joint pose (typically Head, fallback to .First())
     public (Vector3 Position, Quaternion Orientation) GetHookJointPose(bool calibrated = false)
     {
-        (Vector3 jointPosition, Quaternion jointOrientation) = DeviceHookJointPosition
+        var (jointPosition, jointOrientation) = DeviceHookJointPosition
             .TryGetValue(AppData.Settings.TrackingDeviceGuid, out var pose)
             ? pose // Copy the position if everything's fine, return a placeholder if not
             : (Vector3.Zero, Quaternion.Identity);
@@ -99,7 +101,7 @@ public class PluginHost : IAmethystHost
     // Get the pose of the relative transform origin joint
     public (Vector3 Position, Quaternion Orientation) GetTransformJointPose(bool calibrated = false)
     {
-        (Vector3 jointPosition, Quaternion jointOrientation) = DeviceRelativeTransformOrigin
+        var (jointPosition, jointOrientation) = DeviceRelativeTransformOrigin
             .TryGetValue(AppData.Settings.TrackingDeviceGuid, out var pose)
             ? pose // Copy the position if everything's fine, return a placeholder if not
             : (Vector3.Zero, Quaternion.Identity);
@@ -273,6 +275,14 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public string UpdateEndpoint { get; init; }
     public string Folder { get; init; }
 
+    public string DependencyLink { get; init; }
+    public string DependencySource { get; init; }
+    public string DependencySourceSilent { get; init; }
+
+    public Uri DependencyLinkUri => Uri.TryCreate(DependencyLink, UriKind.RelativeOrAbsolute, out var uri) ? uri : null;
+    public Uri DependencySourceUri => Uri.TryCreate(DependencySource, UriKind.RelativeOrAbsolute, out var uri) ? uri : null;
+    public Uri WebsiteUri => Uri.TryCreate(Website, UriKind.RelativeOrAbsolute, out var uri) ? uri : null;
+
     public Version Version { get; init; } = new("0.0.0.0");
 
     public bool UpdateFound => UpdateData.Found && !Uninstalling;
@@ -392,9 +402,17 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public bool PublisherValid => !string.IsNullOrEmpty(Publisher);
     public bool WebsiteValid => !string.IsNullOrEmpty(Website);
     public bool LocationValid => !string.IsNullOrEmpty(Folder);
-    public bool GuidValid => !string.IsNullOrEmpty(Guid) && Guid is not "[INVALID]" or "INVALID";
+    public bool GuidValid => !string.IsNullOrEmpty(Guid) && Guid is not "[INVALID]" and not "INVALID";
     public bool ErrorValid => !string.IsNullOrEmpty(Error);
     public bool Uninstalling { get; set; }
+
+    public bool DependencyLinkValid => !string.IsNullOrEmpty(DependencyLink);
+    public bool DependencySourceValid => !string.IsNullOrEmpty(DependencySource);
+    public bool DependencySourceSilentValid => !string.IsNullOrEmpty(DependencySourceSilent);
+    public bool DependencyLinksValid => DependencyLinkValid && DependencySourceValid;
+
+    public bool LoadErrorDepMissing =>
+        Status is AppPlugins.PluginLoadError.NoPluginDll or AppPlugins.PluginLoadError.NoPluginDependencyDll;
 
     public bool CanUninstall =>
         !IsExitPending && !Uninstalling &&
@@ -405,6 +423,26 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             and not "K2VRTEAM-AME2-APII-DVCE-DVCEOWOTRACK"
             and not "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR"
             and not "K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC";
+
+    public CornerRadius ExpanderThickness => LoadError
+        ? new CornerRadius(4, 4, 0, 0)
+        : new CornerRadius(4);
+
+    public string DependencyAdditionalLinksText => DependencyLinkValid || DependencySourceValid
+        ? LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/AdditionalLinks")
+        : string.Empty;
+
+    public string DependencyDocsLinkText => DependencyLinkValid
+        ? LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/PluginDocs")
+        : string.Empty;
+
+    public string DependencySeparatorText => DependencyLinksValid
+        ? LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Separator")
+        : string.Empty;
+
+    public string DependencyDownloadLinkText => DependencySourceValid
+        ? LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Download")
+        : string.Empty;
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -605,18 +643,6 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         SystemShell.OpenFolderAndSelectItem(Folder);
     }
 
-    public async void OpenDeviceWebsite()
-    {
-        try
-        {
-            await Launcher.LaunchUriAsync(new Uri(Website));
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
-    }
-
     public double BoolToOpacity(bool value)
     {
         return value ? 1.0 : 0.0;
@@ -752,10 +778,50 @@ public static class CollectionExtensions
                     FileNotFoundException) Crashes.TrackError(e); // Only send unknown exceptions
 
                 if (fileInfo.Name.StartsWith("plugin"))
+                {
                     Logger.Error($"Loading {fileInfo} failed with an exception: Message: {e.Message} " +
                                  "Probably some assembly referenced by this plugin is missing.");
-                else
-                    Logger.Warn($"[Non-critical] Loading {fileInfo} failed with an exception: {e.Message}");
+
+                    try
+                    {
+                        // Prepare assembly resources
+                        var coreAssemblies = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll")
+                            .ToList();
+                        coreAssemblies.Add(Path.Join(ProgramLocation.DirectoryName, "Amethyst.Plugins.Contract.dll"));
+
+                        // Load the failed assembly for metadata retrieval
+                        var assembly =
+                            new MetadataLoadContext(new PathAssemblyResolver(coreAssemblies)).LoadFromAssemblyPath(
+                                fileInfo.FullName);
+
+                        // Find the plugin export, if exists
+                        var result = assembly.ExportedTypes.FirstOrDefault(x => x.CustomAttributes
+                            .Any(export => export.ConstructorArguments.FirstOrDefault().Value?.ToString() is "Guid"));
+
+                        // Add the plugin to the 'attempted' list
+                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
+                        {
+                            Name = result?.GetMetadata("Name") ?? $"{item.Name}/{fileInfo.Name}",
+                            Error = $"{e.Message}\n\n{e.StackTrace}",
+                            Folder = item.FullName,
+                            Status = AppPlugins.PluginLoadError.NoPluginDll,
+
+                            DependencyLink = result?.GetMetadata("DependencyLink")?.Format(DocsLanguageCode),
+                            DependencySource = result?.GetMetadata("DependencySource"),
+                            DependencySourceSilent = result?.GetMetadata("DependencySourceSilent")
+                        });
+
+                        return false; // Nah, not this time
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(e);
+                        Logger.Error(ex);
+                    }
+                }
+
+                // For any other errors
+                Logger.Warn($"[Non-critical] Loading {fileInfo} failed with an exception: {e.Message}");
 
                 // Add the plugin to the 'attempted' list
                 AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
