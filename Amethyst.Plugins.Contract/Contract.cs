@@ -12,8 +12,11 @@ namespace Amethyst.Plugins.Contract;
 ///     Sample exported plugin class decorations:
 ///     [ExportMetadata("Name", "SampleDevice")]
 ///     [ExportMetadata("Guid", "SCONTOSO-AME2-APII-DVCE-DVCESMPLDVCE")]
-///     [ExportMetadata("Publisher", "Contoso")]            // Optional
-///     [ExportMetadata("Website", "https://contoso.com")]  // Optional
+///     [ExportMetadata("Publisher", "Contoso")]                     // Optional
+///     [ExportMetadata("Website", "https://contoso.com")]           // Optional
+///     [ExportMetadata("DependencyLink", "https://contoso.com")]    // Optional
+///     [ExportMetadata("DependencySource", "https://contoso.com")]  // Optional
+///     [ExportMetadata("DependencyInstaller", typeof(Installer))]   // Optional
 /// </example>
 public interface IPluginMetadata
 {
@@ -24,6 +27,10 @@ public interface IPluginMetadata
     [DefaultValue(null)] string Website { get; }
     [DefaultValue(null)] string UpdateEndpoint { get; }
     [DefaultValue("0.0.0.0")] string Version { get; }
+
+    [DefaultValue(null)] string DependencyLink { get; }
+    [DefaultValue(null)] string DependencySource { get; }
+    [DefaultValue(null)] string DependencyInstaller { get; }
 }
 
 /// <summary>
@@ -458,4 +465,35 @@ public interface IAmethystHost
     ///     Mark fatal as true to show the crash handler with your message
     /// </summary>
     void RequestExit(string message, bool fatal = false);
+}
+
+/// <summary>
+///     Implement this interface and put its type inside your plugin metadata
+///     under "DependencyInstaller" for dependency installation functionality
+///     Note: you should only use basic/local functionality, as it is unknown
+///     whether the load context will contain any external libraries you may
+///     be relying on - like framework or device proprietary SDKs and such, etc
+/// </summary>
+public interface IDependencyInstaller
+{
+    /// <summary>
+    ///     Perform the installation action, reporting the progress
+    /// </summary>
+    /// <param name="progress">
+    ///     Report the progress using InstallationProgress
+    /// </param>
+    /// <returns>
+    ///     Success?
+    /// </returns>
+    public Task<bool> Install(IProgress<InstallationProgress> progress);
+
+    /// <summary>
+    ///     Check whether the dependency is (already) installed
+    /// </summary>
+    public bool IsInstalled { get; }
+
+    /// <summary>
+    ///     If there is a need to accept an EULA, pass its contents here
+    /// </summary>
+    public string InstallerEula { get; }
 }

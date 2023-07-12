@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.Serialization;
 
@@ -239,6 +239,26 @@ public class InputActions
     ///     Leave null or empty to skip showing anything
     /// </summary>
     public string? SkeletonFlipActionContentString { get; set; }
+}
+
+// Dependency installer progress helper class
+public class InstallationProgress
+{
+    /// <summary>
+    ///     Progress value, optional, 0.0 --- 1.0
+    /// </summary>
+    public double? OverallProgress { get; set; }
+
+    /// <summary>
+    ///     Progress indicator, set to false for OverallProgress
+    /// </summary>
+    public bool IsIndeterminate { get; set; } = false;
+
+    /// <summary>
+    ///     [Title]
+    ///     The current stage name of the installation
+    /// </summary>
+    public string StageTitle { get; set; } = string.Empty;
 }
 
 // Plugin settings helper class
