@@ -477,7 +477,7 @@ public interface IAmethystHost
 public interface IDependencyInstaller
 {
     /// <summary>
-    ///     Perform the installation action, reporting the progress
+    ///     Perform the main installation action, reporting the progress
     /// </summary>
     /// <param name="progress">
     ///     Report the progress using InstallationProgress
@@ -488,6 +488,18 @@ public interface IDependencyInstaller
     public Task<bool> Install(IProgress<InstallationProgress> progress);
 
     /// <summary>
+    ///     (Optional) Perform the tool installation action, reporting the progress
+    ///     Set ProvidesTools to true to support this specific functionality
+    /// </summary>
+    /// <param name="progress">
+    ///     Report the progress using InstallationProgress
+    /// </param>
+    /// <returns>
+    ///     Success?
+    /// </returns>
+    public Task<bool> InstallTools(IProgress<InstallationProgress> progress);
+
+    /// <summary>
     ///     Check whether the dependency is (already) installed
     /// </summary>
     public bool IsInstalled { get; }
@@ -496,4 +508,103 @@ public interface IDependencyInstaller
     ///     If there is a need to accept an EULA, pass its contents here
     /// </summary>
     public string InstallerEula { get; }
+
+    /// <summary>
+    ///     State whether the installer can provide extra functionality
+    ///     InstallTools must be implemented if set to true
+    /// </summary>
+    public bool ProvidesTools { get; }
+
+    /// <summary>
+    ///     Check whether additional tools are (already) installed
+    ///     Set ProvidesTools to true to support this check
+    /// </summary>
+    public bool ToolsInstalled { get; }
+
+    /// <summary>
+    ///     The localization host, use it to request your strings
+    ///     Note: this property will be overwritten by Amethyst
+    ///     upon the initialization of your implemented class!
+    ///     You may use it ONLY after it's done constructing
+    /// </summary>
+    public ILocalizationHost? Host { get; set; }
+
+    /// <summary>
+    ///     Use this interface to invoke AME localization methods
+    /// </summary>
+    public interface ILocalizationHost
+    {
+        /// <summary>
+        ///     Get Amethyst UI language
+        /// </summary>
+        string LanguageCode { get; }
+
+        /// <summary>
+        ///     Get Amethyst Docs (web) language
+        /// </summary>
+        string DocsLanguageCode { get; }
+
+        /// <summary>
+        ///     Log a message to Amethyst logs : handler
+        /// </summary>
+        void Log(string message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "", [CallerMemberName] string memberName = "");
+
+        /// <summary>
+        ///     Log a message to Amethyst logs : handler
+        /// </summary>
+        void Log(object message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "", [CallerMemberName] string memberName = "");
+
+        /// <summary>
+        ///     Request a string from AME resources, empty for no match
+        ///     Warning: The primarily searched resource is the device-provided one!
+        /// </summary>
+        string RequestLocalizedString(string key);
+
+        /// <summary>
+        ///     Request a folder to be set as device's AME resources,
+        ///     you can access these resources with the lower function later (after onLoad)
+        ///     Warning: Resources are containerized and can't be accessed in-between devices!
+        ///     Warning: The default root is "[plugin_folder_path]/resources/Strings"!
+        /// </summary>
+        bool SetLocalizationResourcesRoot(string path);
+    }
+
+}
+
+/// <summary>
+///     Implement this interface and put its type inside your plugin metadata
+///     under "CoreSetupData" for Amethyst to use it during on-boarding setup
+///     Note: you should only use basic/local functionality, as it is unknown
+///     whether the load context will contain any external libraries you may
+///     be relying on - like framework or device proprietary SDKs and such
+///     Note: this is reserved for plugins published by K2VR Team and there
+///     is no guarantee that vendor plugins will show up during primary setup
+/// </summary>
+public interface ICoreSetupData
+{
+    /// <summary>
+    ///     The icon that will be show during on-boarding setup
+    ///     Note: MUST BE OF Microsoft.UI.Xaml.Controls.IconElement
+    ///     Note: This icon will be auto-scaled, keep it high-res
+    /// </summary>
+    public object PluginIcon { get; }
+
+    /// <summary>
+    ///     The name of the group the plugin (device/service)
+    ///     will be put into during the setup. Think of it as
+    ///     about the RadioButton group that links them together
+    ///     Note: case-sensitive, treated the same as serials
+    /// </summary>
+    public string GroupName { get; }
+
+    /// <summary>
+    ///     States whether the plugin is an ITrackingDevice or
+    ///     an IServiceEndpoint, put one of these typeof-s here
+    ///     Note: this has to match with the plugin type,
+    ///     and is here because MEF will be unavailable at the
+    ///     point of scanning the core setup data from plugins
+    /// </summary>
+    public Type PluginType { get; }
 }

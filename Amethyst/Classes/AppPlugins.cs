@@ -41,6 +41,9 @@ public static class AppPlugins
     // Endpoint plugins / tracking receivers
     public static readonly SortedDictionary<string, ServiceEndpoint> ServiceEndpointsList = new();
 
+    // Endpoint plugins / tracking receivers
+    public static readonly SortedDictionary<string, ServiceEndpoint> InstallerList = new();
+
     // Written to at the first plugin load
     public static readonly ObservableCollection<LoadAttemptedPlugin> LoadAttemptedPluginsList = new();
 

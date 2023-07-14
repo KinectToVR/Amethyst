@@ -2385,6 +2385,34 @@
       "translation": "Amethyst couldn't load this plugin due to missing dependencies."
     },
     {
+      "id": "/SharedStrings/Plugins/Dep/Contents/DependencyInstaller",
+      "translation": "This plugin provides an integrated dependency installer, which should (hopefully) fix that."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/InstallingPlaceholder",
+      "translation": "Installing dependencies..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/ProgressPlaceholder",
+      "translation": "{0}%"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/InternalException",
+      "translation": "An exception occurred and the installation process couldn't continue. Message: {0}"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/Success",
+      "translation": "Dependencies installed successfully! Restart Amethyst to load this plugin."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/Failure",
+      "translation": "Dependency installation failure! Please try again later."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/Cancelled",
+      "translation": "Cancelled by the user."
+    },
+    {
       "id": "/SharedStrings/Plugins/Dep/Contents/AdditionalLinks",
       "translation": "This plugin provides additional links, so you can"
     },

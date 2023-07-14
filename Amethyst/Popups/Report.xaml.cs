@@ -108,6 +108,9 @@ public sealed partial class Report : Page, INotifyPropertyChanged
         LanguageComboFlyout.Hide();
         _blockHiddenSoundOnce = true;
         _reportPageSetupFinished = true;
+
+        // Reload
+        OnPropertyChanged();
     }
 
     private void LanguageOptionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

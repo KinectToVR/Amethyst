@@ -10,17 +10,8 @@ using static Amethyst.Classes.Interfacing;
 
 namespace Amethyst.MVVM;
 
-public class TrackingDevice : INotifyPropertyChanged
+public class TrackingDevice(string name, string guid, string path, Version version, ITrackingDevice device) : INotifyPropertyChanged
 {
-    public TrackingDevice(string name, string guid, string path, Version version, ITrackingDevice device)
-    {
-        Guid = guid;
-        Name = name;
-        Location = path;
-        Version = version;
-        Device = device;
-    }
-
     // Extensions: is this device set as base?
     public bool IsBase => AppPlugins.IsBase(Guid);
 
@@ -28,22 +19,22 @@ public class TrackingDevice : INotifyPropertyChanged
     public bool IsOverride => AppPlugins.IsOverride(Guid);
 
     // Get GUID
-    [DefaultValue("INVALID")] public string Guid { get; }
+    [DefaultValue("INVALID")] public string Guid { get; } = guid;
 
     // Get Name
-    [DefaultValue("UNKNOWN")] public string Name { get; }
+    [DefaultValue("UNKNOWN")] public string Name { get; } = name;
 
     // Get Path
-    [DefaultValue("UNKNOWN")] public string Location { get; }
+    [DefaultValue("UNKNOWN")] public string Location { get; } = path;
 
     // Get the plugin version using its host assembly
-    [DefaultValue("0.0.0.0")] public Version Version { get; }
+    [DefaultValue("0.0.0.0")] public Version Version { get; } = version;
 
     // Get Docs
     [DefaultValue(null)] public Uri ErrorDocsUri => Device.ErrorDocsUri;
 
     // Underlying device handler
-    private ITrackingDevice Device { get; }
+    private ITrackingDevice Device { get; } = device;
 
     // Joints' list / you need to (should) update at every update() call
     // Each must have its own role or _Manual to force user's manual set

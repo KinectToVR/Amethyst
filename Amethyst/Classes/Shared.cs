@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Amethyst.Utils;
+using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -82,7 +83,7 @@ public static class Shared
         public static AppNotificationManager NotificationManager;
 
         public static Grid
-            InterfaceBlockerGrid, NavigationBlockerGrid;
+            InterfaceBlockerGrid, NavigationBlockerGrid, MainGrid;
 
         public static NavigationView MainNavigationView;
         public static Frame MainContentFrame;
@@ -98,6 +99,14 @@ public static class Shared
             PluginsInstallInfoBar,
             PluginsUninstallInfoBar,
             PluginsUpdateInfoBar;
+
+
+        public static Flyout EulaFlyout;
+        public static TextBlock EulaHeader;
+        public static MarkdownTextBlock EulaText;
+
+        public static bool EulaFlyoutResult;
+        public static SemaphoreSlim EulaFlyoutClosed = new(0);
 
         // Navigate the main view (w/ animations)
         public static void NavigateToPage(string navItemTag,

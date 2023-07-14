@@ -160,6 +160,22 @@ public static class TypeUtils
         { TrackedJointType.JointManual, TrackedJointType.JointManual }
     };
 
+    public static SortedSet<string> ProtectedPluginGuidSet = new()
+    {
+        "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1",
+        "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1:INSTALLER",
+        "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2",
+        "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2:INSTALLER",
+        "K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX",
+        "K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX:INSTALLER",
+        "K2VRTEAM-AME2-APII-DVCE-DVCEOWOTRACK",
+        "K2VRTEAM-AME2-APII-DVCE-DVCEOWOTRACK:INSTALLER",
+        "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR",
+        "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR:INSTALLER",
+        "K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC",
+        "K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC:INSTALLER"
+    };
+
     public static TrackedJointType FlipJointType(TrackedJointType joint, bool flip)
     {
         return flip ? FlippedJointTypeDictionary[joint] : joint;
@@ -218,18 +234,49 @@ public static class TypeUtils
         return await Task.WhenAll(tasks);
     }
 
-    public static string GetMetadata(this Type type, string name)
+    public static T GetMetadata<T>(this Type type, string name, T fallback = default)
     {
         try
         {
-            return type?.CustomAttributes.FirstOrDefault(x =>
+            // Find the metadata result
+            var result = type?.CustomAttributes.FirstOrDefault(x =>
                     x.ConstructorArguments.FirstOrDefault().Value?.ToString() == name)?
-                .ConstructorArguments.ElementAtOrDefault(1).Value?.ToString();
+                .ConstructorArguments.ElementAtOrDefault(1).Value;
+
+            // Validate the returned value
+            if (result is null) return fallback;
+
+            // Check whether the retrieved value is a type
+            // which we want to be return as instantiated
+            if (!((result as Type)?.GetInterfaces().Any(x => x == typeof(IDependencyInstaller)) ?? false))
+                return (T)result ?? fallback;
+
+            // Find a constructor and instantiate the type
+            return (T)(result as Type)?.GetConstructor(Type.EmptyTypes)?
+                .Invoke(null) ?? fallback; // Invoke now
         }
         catch (Exception e)
         {
             Logger.Error(e);
-            return null;
+            return fallback ?? default;
+        }
+    }
+
+    public static T Instantiate<T>(this Type type)
+    {
+        try
+        {
+            // Validate the returned value
+            if (type is null) return default;
+
+            // Find a constructor and instantiate the type
+            return (T)type.GetConstructor(Type.EmptyTypes)?
+                .Invoke(null) ?? default; // Invoke now
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+            return default;
         }
     }
 }
@@ -367,6 +414,11 @@ public static class StringExtensions
             else Logger.Info($"{s} doesn't contain a placeholder for index {{{formats.IndexOf(format)}}}!");
 
         return result; // Return the outer result
+    }
+
+    public static bool IsProtectedGuid(this string s)
+    {
+        return TypeUtils.ProtectedPluginGuidSet.Contains(s);
     }
 }
 

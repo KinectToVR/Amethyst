@@ -11,6 +11,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -29,20 +30,15 @@ using static Amethyst.Classes.Interfacing;
 
 namespace Amethyst.MVVM;
 
-public class PluginHost : IAmethystHost
+[method: SetsRequiredMembers]
+public class PluginHost(string guid) : IAmethystHost
 {
-    [SetsRequiredMembers]
-    public PluginHost(string guid)
-    {
-        Guid = guid; // Cache the guid and rebuild
-        SettingsHelper = new PluginSettingsHelper(guid);
-    }
-
+    // Cache the guid and rebuild
     // Internal plugin guid
-    private string Guid { get; }
+    private string Guid { get; } = guid;
 
     // Settings helper : read/write plugins settings
-    private PluginSettingsHelper SettingsHelper { get; }
+    private PluginSettingsHelper SettingsHelper { get; } = new(guid);
 
     // Get the plugin settings helper
     public IPluginSettings PluginSettings => SettingsHelper;
@@ -258,6 +254,88 @@ public class PluginHost : IAmethystHost
     }
 }
 
+[method: SetsRequiredMembers]
+public class CoreHost(string guid) : IDependencyInstaller.ILocalizationHost
+{
+    // Cache the guid and rebuild
+    // Internal plugin guid
+    private string Guid { get; } = guid;
+
+    // Log a message to Amethyst logs : handler
+    public void Log(string message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0,
+        [CallerFilePath] string filePath = "", [CallerMemberName] string memberName = "")
+    {
+        switch (severity)
+        {
+            case LogSeverity.Fatal:
+                Logger.Fatal($"[{Guid}] " + message, lineNumber, filePath, memberName);
+                Logger.Fatal(new AggregateException($"[{Guid}] " + message));
+                break;
+
+            case LogSeverity.Error:
+                Logger.Error($"[{Guid}] " + message, lineNumber, filePath, memberName);
+                Logger.Fatal(new AggregateException($"[{Guid}] " + message));
+                break;
+
+            case LogSeverity.Warning:
+                Logger.Warn($"[{Guid}] " + message, lineNumber, filePath, memberName);
+                break;
+
+            case LogSeverity.Info:
+            default:
+                Logger.Info($"[{Guid}] " + message, lineNumber, filePath, memberName);
+                break;
+        }
+    }
+
+    // Log a message to Amethyst logs : handler
+    public void Log(object message, LogSeverity severity = LogSeverity.Info, [CallerLineNumber] int lineNumber = 0,
+        [CallerFilePath] string filePath = "", [CallerMemberName] string memberName = "")
+    {
+        switch (severity)
+        {
+            case LogSeverity.Fatal:
+                Logger.Fatal($"[{Guid}] " + message, lineNumber, filePath, memberName);
+                break;
+
+            case LogSeverity.Error:
+                Logger.Error($"[{Guid}] " + message, lineNumber, filePath, memberName);
+                break;
+
+            case LogSeverity.Warning:
+                Logger.Warn($"[{Guid}] " + message, lineNumber, filePath, memberName);
+                break;
+
+            case LogSeverity.Info:
+            default:
+                Logger.Info($"[{Guid}] " + message, lineNumber, filePath, memberName);
+                break;
+        }
+    }
+
+    // Get Amethyst UI language
+    public string LanguageCode => AppData.Settings.AppLanguage;
+
+    // Get Amethyst Docs (web) language
+    public string DocsLanguageCode => Interfacing.DocsLanguageCode;
+
+    // Request a string from AME resources, empty for no match
+    // Warning: The primarily searched resource is the device-provided one!
+    public string RequestLocalizedString(string key)
+    {
+        return Interfacing.Plugins.RequestLocalizedString(key, Guid);
+    }
+
+    // Request a folder to be set as device's AME resources,
+    // you can access these resources with the lower function later (after onLoad)
+    // Warning: Resources are containerized and can't be accessed in-between devices!
+    // Warning: The default root is "[device_folder_path]/resources/Strings"!
+    public bool SetLocalizationResourcesRoot(string path)
+    {
+        return Interfacing.Plugins.SetLocalizationResourcesRoot(path, Guid);
+    }
+}
+
 public class LoadAttemptedPlugin : INotifyPropertyChanged
 {
     private RestClient _githubClient;
@@ -277,10 +355,17 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public string DependencyLink { get; init; }
     public string DependencySource { get; init; }
-    public string DependencySourceSilent { get; init; }
+
+    public IDependencyInstaller DependencyInstaller { get; init; }
+    public DependencyInstallHandler InstallHandler { get; } = new();
+
+    public (LocalisationFileJson Root, string Directory) LocalizationResourcesRoot { get; set; }
 
     public Uri DependencyLinkUri => Uri.TryCreate(DependencyLink, UriKind.RelativeOrAbsolute, out var uri) ? uri : null;
-    public Uri DependencySourceUri => Uri.TryCreate(DependencySource, UriKind.RelativeOrAbsolute, out var uri) ? uri : null;
+
+    public Uri DependencySourceUri =>
+        Uri.TryCreate(DependencySource, UriKind.RelativeOrAbsolute, out var uri) ? uri : null;
+
     public Uri WebsiteUri => Uri.TryCreate(Website, UriKind.RelativeOrAbsolute, out var uri) ? uri : null;
 
     public Version Version { get; init; } = new("0.0.0.0");
@@ -408,21 +493,19 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public bool DependencyLinkValid => !string.IsNullOrEmpty(DependencyLink);
     public bool DependencySourceValid => !string.IsNullOrEmpty(DependencySource);
-    public bool DependencySourceSilentValid => !string.IsNullOrEmpty(DependencySourceSilent);
     public bool DependencyLinksValid => DependencyLinkValid && DependencySourceValid;
+
+    public bool ShowDependencyInstaller => DependencyInstaller is not null;
+
+    public bool ShowDependencyLinks =>
+        !ShowDependencyInstaller && (DependencyLinkValid || DependencySourceValid);
 
     public bool LoadErrorDepMissing =>
         Status is AppPlugins.PluginLoadError.NoPluginDll or AppPlugins.PluginLoadError.NoPluginDependencyDll;
 
     public bool CanUninstall =>
         !IsExitPending && !Uninstalling &&
-        LocationValid && GuidValid && Guid
-            is not "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1"
-            and not "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2"
-            and not "K2VRTEAM-AME2-APII-DVCE-DVCEPSMOVEEX"
-            and not "K2VRTEAM-AME2-APII-DVCE-DVCEOWOTRACK"
-            and not "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR"
-            and not "K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC";
+        LocationValid && GuidValid && !Guid.IsProtectedGuid();
 
     public CornerRadius ExpanderThickness => LoadError
         ? new CornerRadius(4, 4, 0, 0)
@@ -632,6 +715,145 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         });
     }
 
+    public async void InstallPluginDependencies(object sender, RoutedEventArgs e)
+    {
+        // Show the EULA, if provided by the installer
+        if (!string.IsNullOrEmpty(DependencyInstaller?.InstallerEula))
+        {
+            Shared.Main.EulaHeader.Text = $"{Name} EULA";
+            Shared.Main.EulaText.Text = DependencyInstaller?.InstallerEula;
+
+            Shared.Main.EulaFlyout.ShowAt(Shared.Main.MainGrid);
+            await Shared.Main.EulaFlyoutClosed.WaitAsync();
+
+            // Validate the result and continue/exit
+            if (!Shared.Main.EulaFlyoutResult) return;
+        }
+
+        // Install plugin dep using the installer
+        await PerformDependencyInstallation();
+    }
+
+    private async Task PerformDependencyInstallation()
+    {
+        /*
+         * Logic
+         * - Validate the DependencyInstaller
+         * - Show the installation grid
+         * - Disable all user input
+         *
+         * Success
+         * - Show the last message, progress 100%S
+         * - Change to 'success', wait 6s
+         *
+         * Failure
+         * - Show the last message, progress 100%F
+         * - Wait 6s, change to 'failure', wait 5s
+         */
+
+        /* Show the installer part */
+
+        // Theoretically not possible, but check anyway
+        if (DependencyInstaller is null) return;
+
+        // Block temporarily
+        InstallHandler.AllowUserInput = false;
+        InstallHandler.OnPropertyChanged();
+        await Task.Delay(500);
+
+        // Show the installer grid
+        InstallHandler.InstallationWorker = null;
+        InstallHandler.InstallingDependencies = true;
+        InstallHandler.ProgressError = false;
+        InstallHandler.ProgressIndeterminate = true;
+        InstallHandler.ProgressValue = 0.0;
+        InstallHandler.StageName = string.Empty;
+        InstallHandler.HideProgress = false;
+        InstallHandler.OnPropertyChanged();
+
+        try
+        {
+            /* Setup and start the installation */
+
+            // Prepare the progress update handler
+            var progress = new Progress<InstallationProgress>();
+            progress.ProgressChanged += (_, installationProgress) =>
+                Shared.Main.DispatcherQueue.TryEnqueue(() =>
+                {
+                    // Update our progress here
+                    InstallHandler.StageName = installationProgress.StageTitle;
+                    InstallHandler.ProgressIndeterminate = installationProgress.IsIndeterminate;
+                    InstallHandler.ProgressValue = installationProgress.OverallProgress * 100 ?? 0;
+
+                    // Trigger a partial interface reload
+                    InstallHandler.OnPropertyChanged();
+                });
+
+            // Capture the installation thread
+            InstallHandler.InstallationWorker = DependencyInstaller.Install(progress);
+
+            // Actually start the installation now
+            var result = await InstallHandler.InstallationWorker;
+
+            /* Parse the result and present it */
+
+            // Show the progress indicator [and the last message if failed]
+            InstallHandler.ProgressError = !result;
+            InstallHandler.ProgressIndeterminate = false;
+            InstallHandler.ProgressValue = 100;
+            InstallHandler.HideProgress = true;
+
+            if (result)
+                InstallHandler.StageName =
+                    LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Success");
+
+            InstallHandler.OnPropertyChanged();
+            await Task.Delay(6000);
+
+            if (!result)
+            {
+                InstallHandler.StageName =
+                    LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Failure");
+
+                InstallHandler.OnPropertyChanged();
+                await Task.Delay(5000);
+            }
+
+            // hide the installer grid
+            InstallHandler.InstallingDependencies = false;
+            InstallHandler.OnPropertyChanged();
+            await Task.Delay(500);
+
+            // Unblock user input now
+            InstallHandler.AllowUserInput = true;
+            InstallHandler.OnPropertyChanged();
+
+            /* Show the restart notice */
+            if (!result) return;
+
+            Shared.Main.DispatcherQueue.TryEnqueue(() =>
+            {
+                Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen = true;
+                Shared.TeachingTips.MainPage.ReloadInfoBar.Opacity = 1.0;
+            });
+        }
+        catch (Exception ex)
+        {
+            // Show the fail information
+            InstallHandler.StageName = LocalizedJsonString(
+                "/SharedStrings/Plugins/Dep/Contents/InternalException").Format(ex.Message);
+
+            // hide the installer grid and 'install'
+            InstallHandler.InstallingDependencies = false;
+            InstallHandler.OnPropertyChanged();
+            await Task.Delay(500);
+
+            // Unblock user input now
+            InstallHandler.AllowUserInput = true;
+            InstallHandler.OnPropertyChanged();
+        }
+    }
+
     public string TrimString(string s, int l)
     {
         return s?[..Math.Min(s.Length, l)] +
@@ -666,6 +888,44 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public void PlayCollapsingSound()
     {
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+    }
+
+    public class DependencyInstallHandler : INotifyPropertyChanged
+    {
+        private double _progressValue;
+        public Task<bool> InstallationWorker { get; set; }
+
+        public bool InstallingDependencies { get; set; }
+        public bool DependenciesReadyToInstall => !InstallingDependencies;
+        public bool AllowUserInput { get; set; } = true;
+
+        public bool ProgressError { get; set; }
+        public bool ProgressIndeterminate { get; set; }
+        public bool HideProgress { get; set; }
+
+        public double ProgressValue
+        {
+            get => Math.Clamp(_progressValue, 0, 100);
+            set => _progressValue = value;
+        }
+
+        public string StageName { get; set; }
+
+        public string MessageString => string.IsNullOrEmpty(StageName)
+            ? LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/InstallingPlaceholder")
+            : StageName;
+
+        public string ProgressString => ProgressIndeterminate || _progressValue < 0 || HideProgress
+            ? string.Empty
+            : LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/ProgressPlaceholder")
+                .Format((int)ProgressValue);
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
 
@@ -785,31 +1045,83 @@ public static class CollectionExtensions
                     try
                     {
                         // Prepare assembly resources
-                        var coreAssemblies = Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll")
-                            .ToList();
+                        var coreAssemblies =
+                            Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll").ToList();
                         coreAssemblies.Add(Path.Join(ProgramLocation.DirectoryName, "Amethyst.Plugins.Contract.dll"));
 
                         // Load the failed assembly for metadata retrieval
-                        var assembly =
-                            new MetadataLoadContext(new PathAssemblyResolver(coreAssemblies)).LoadFromAssemblyPath(
-                                fileInfo.FullName);
+                        var metadataContext = new MetadataLoadContext(new PathAssemblyResolver(coreAssemblies))
+                            .LoadFromAssemblyPath(fileInfo.FullName);
+
+                        // Prepare a null context for instantiation
+                        IDependencyInstaller installerContext = null;
 
                         // Find the plugin export, if exists
-                        var result = assembly.ExportedTypes.FirstOrDefault(x => x.CustomAttributes
+                        var placeholderGuid = Guid.NewGuid().ToString().ToUpper();
+                        var result = metadataContext.ExportedTypes.FirstOrDefault(x => x.CustomAttributes
                             .Any(export => export.ConstructorArguments.FirstOrDefault().Value?.ToString() is "Guid"));
+
+                        // Check whether the plugin defines a dependency installer
+                        if (result?.GetMetadata<Type>("DependencyInstaller") is not null)
+                            try
+                            {
+                                var contextResult = new AssemblyLoadContext(placeholderGuid)
+                                    .LoadFromAssemblyPath(fileInfo.FullName)
+                                    .GetType(result.GetMetadata<Type>(
+                                        "DependencyInstaller")?.FullName ?? string.Empty, true);
+
+                                // Instantiate the installer and capture it for the outer scope
+                                installerContext = contextResult.Instantiate<IDependencyInstaller>();
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex);
+                            }
 
                         // Add the plugin to the 'attempted' list
                         AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
                         {
-                            Name = result?.GetMetadata("Name") ?? $"{item.Name}/{fileInfo.Name}",
+                            Name = result?.GetMetadata("Name", $"{item.Name}/{fileInfo.Name}"),
+                            Guid = $"{result.GetMetadata("Guid", $"{placeholderGuid}")}:INSTALLER",
                             Error = $"{e.Message}\n\n{e.StackTrace}",
                             Folder = item.FullName,
                             Status = AppPlugins.PluginLoadError.NoPluginDll,
 
-                            DependencyLink = result?.GetMetadata("DependencyLink")?.Format(DocsLanguageCode),
-                            DependencySource = result?.GetMetadata("DependencySource"),
-                            DependencySourceSilent = result?.GetMetadata("DependencySourceSilent")
+                            DependencyLink = result?.GetMetadata("DependencyLink", string.Empty)
+                                ?.Format(DocsLanguageCode),
+                            DependencySource = result?.GetMetadata("DependencySource", string.Empty),
+                            DependencyInstaller = installerContext
                         });
+
+                        // Check whether the plugin defines a dependency installer
+                        // ReSharper disable once InvertIf | Metadata already checked
+                        if (installerContext is not null)
+                            try
+                            {
+                                // Set the device's string resources root to its provided folder
+                                // (If it wants to change it, it's gonna need to do that after OnLoad anyway)
+                                Logger.Info($"Registering (" +
+                                            $"{result.GetMetadata("Name", $"{item.Name}/{fileInfo.Name}")}, " +
+                                            $"{result.GetMetadata("Guid", $"{item.Name}/{fileInfo.Name}")}:INSTALLER) " +
+                                            "default root language resource context (AppPlugins)...");
+
+                                Interfacing.Plugins.SetLocalizationResourcesRoot(
+                                    Path.Join(fileInfo.DirectoryName, "Assets", "Strings"),
+                                    $"{result.GetMetadata("Guid", $"{placeholderGuid}")}:INSTALLER");
+
+                                Logger.Info($"Overwriting (" +
+                                            $"{result.GetMetadata("Name", $"{item.Name}/{fileInfo.Name}")}, " +
+                                            $"{result.GetMetadata("Guid", $"{item.Name}/{fileInfo.Name}")}:INSTALLER) " +
+                                            "'s localization host (IAmethystHost)...");
+
+                                // Allow the installer to use Amethyst APIs
+                                installerContext.Host = new CoreHost(
+                                    $"{result.GetMetadata("Guid", $"{placeholderGuid}")}:INSTALLER");
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex);
+                            }
 
                         return false; // Nah, not this time
                     }

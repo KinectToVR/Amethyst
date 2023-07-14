@@ -114,6 +114,7 @@
                                 </Border>
 
                                 <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                           TextTrimming="CharacterEllipsis"
                                            ToolTipService.ToolTip="{x:Bind Guid, Mode=OneWay}" />
                             </Grid>
                         </DataTemplate>

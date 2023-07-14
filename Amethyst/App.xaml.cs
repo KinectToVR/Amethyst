@@ -659,32 +659,36 @@ public partial class App : Application
             Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
             Logger.Info($"Where: {fileSystemEventArgs.FullPath} ({fileSystemEventArgs.Name})");
 
-            // Sanity check
-            if (!Shared.Main.MainWindowLoaded) return;
-
             // Reload language resources
             Interfacing.LoadJsonStringResourcesEnglish();
             Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
 
-            // Reload plugins' language resources
-            foreach (var plugin in AppPlugins.TrackingDevicesList.Values)
-                Interfacing.Plugins.SetLocalizationResourcesRoot(
-                    plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
+            // Sanity check
+            if (Shared.Main.MainWindowLoaded)
+            {
+                // Reload plugins' language resources
+                foreach (var plugin in AppPlugins.TrackingDevicesList.Values)
+                    Interfacing.Plugins.SetLocalizationResourcesRoot(
+                        plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
-            foreach (var plugin in AppPlugins.ServiceEndpointsList.Values)
-                Interfacing.Plugins.SetLocalizationResourcesRoot(
-                    plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
+                foreach (var plugin in AppPlugins.ServiceEndpointsList.Values)
+                    Interfacing.Plugins.SetLocalizationResourcesRoot(
+                        plugin.LocalizationResourcesRoot.Directory, plugin.Guid);
 
-            // Reload everything we can
-            Shared.Devices.DevicesJointsValid = false;
+                // Reload everything we can
+                Shared.Devices.DevicesJointsValid = false;
 
-            // Reload plugins' interfaces
-            AppPlugins.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
-            AppPlugins.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
+                // Reload plugins' interfaces
+                AppPlugins.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
+                AppPlugins.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
+            }
 
             // Request page reloads
             Translator.Get.OnPropertyChanged();
             Shared.Events.RequestInterfaceReload();
+
+            // Sanity check
+            if (!Shared.Main.MainWindowLoaded) return;
 
             // Request manager reloads
             AppData.Settings.OnPropertyChanged();

@@ -161,7 +161,7 @@ public static class Interfacing
     public static void Fail(string message)
     {
         IsExitHandled = true;
-        Task.Run(async Task() =>
+        Task.Run(async Task () =>
         {
             Logger.Info($"Activating the crash handler with #message: {message}");
             await $"amethyst-app:crash-message#{HttpUtility.UrlEncode(message)}".ToUri().LaunchAsync();
@@ -724,7 +724,8 @@ public static class Interfacing
             try
             {
                 if (string.IsNullOrEmpty(guid) || (!AppPlugins.TrackingDevicesList.ContainsKey(guid) &&
-                                                   !AppPlugins.ServiceEndpointsList.ContainsKey(guid)))
+                                                   !AppPlugins.ServiceEndpointsList.ContainsKey(guid) &&
+                                                   AppPlugins.LoadAttemptedPluginsList.All(x => x.Guid != guid)))
                 {
                     Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
@@ -745,6 +746,18 @@ public static class Interfacing
                 {
                     // Check if the resource root is fine
                     var resourceRootService = service?.LocalizationResourcesRoot.Root;
+                    if (resourceRootService?.Messages?.Any(x => x.Id == key) ?? false)
+                        return resourceRootService.Messages.FirstOrDefault(x => x.Id == key)?.Translation ?? key;
+                }
+
+                // ReSharper disable once InvertIf | Check if the request was from a service
+                if (AppPlugins.LoadAttemptedPluginsList.Any(x => x.Guid == guid))
+                {
+                    // Prepare the plugin object
+                    var plugin = AppPlugins.LoadAttemptedPluginsList.First(x => x.Guid == guid);
+
+                    // Check if the resource root is fine
+                    var resourceRootService = plugin.LocalizationResourcesRoot.Root;
                     if (resourceRootService?.Messages?.Any(x => x.Id == key) ?? false)
                         return resourceRootService.Messages.FirstOrDefault(x => x.Id == key)?.Translation ?? key;
                 }
@@ -771,7 +784,8 @@ public static class Interfacing
                             $"Searching for language resources with key \"{AppData.Settings.AppLanguage}\"...");
 
                 if (string.IsNullOrEmpty(guid) || (!AppPlugins.TrackingDevicesList.ContainsKey(guid) &&
-                                                   !AppPlugins.ServiceEndpointsList.ContainsKey(guid)))
+                                                   !AppPlugins.ServiceEndpointsList.ContainsKey(guid) &&
+                                                   AppPlugins.LoadAttemptedPluginsList.All(x => x.Guid != guid)))
                 {
                     Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
@@ -887,6 +901,34 @@ public static class Interfacing
                     service.AssetsWatcher.Created += service.AssetsChanged;
                     service.AssetsWatcher.Deleted += service.AssetsChanged;
                     service.AssetsWatcher.Renamed += service.AssetsChanged;
+
+                    return true; // Winning it, yay!
+                }
+
+                // ReSharper disable once InvertIf | Check if the request was from a service
+                if (AppPlugins.LoadAttemptedPluginsList.Any(x => x.Guid == guid))
+                {
+                    // Prepare the plugin object
+                    var plugin = AppPlugins.LoadAttemptedPluginsList.First(x => x.Guid == guid);
+
+                    // Parse the loaded json
+                    plugin.LocalizationResourcesRoot =
+                        (JsonConvert.DeserializeObject<LocalisationFileJson>(File.ReadAllText(resourcePath)), path);
+
+                    // Check if the resource root is fine
+                    var resourceRoot = plugin.LocalizationResourcesRoot.Root;
+                    if (!(resourceRoot?.Messages?.Any() ?? false))
+                    {
+                        Logger.Error($"[Requested by plugin with GUID {guid}] " +
+                                     $"Could not load language resources at \"{resourcePath}\"," +
+                                     $"for device {guid}! Its interface will be broken!");
+                        return false; // Just give up
+                    }
+
+                    // Still here? 
+                    Logger.Info($"[Requested by plugin with GUID {guid}] " +
+                                "Successfully loaded language resources with key " +
+                                $"\"{AppData.Settings.AppLanguage}\"!");
 
                     return true; // Winning it, yay!
                 }

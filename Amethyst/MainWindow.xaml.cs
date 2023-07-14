@@ -106,6 +106,11 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Shared.Main.PluginsUninstallInfoBar = PluginsUninstallInfoBar;
         Shared.Main.PluginsUpdateInfoBar = PluginsUpdateInfoBar;
 
+        Shared.Main.EulaHeader = EulaHeader;
+        Shared.Main.EulaText = EulaText;
+        Shared.Main.EulaFlyout = EulaFlyout;
+        Shared.Main.MainGrid = MainGrid;
+
         Shared.Main.NavigationItems.NavViewGeneralButtonIcon = NavViewGeneralButtonIcon;
         Shared.Main.NavigationItems.NavViewSettingsButtonIcon = NavViewSettingsButtonIcon;
         Shared.Main.NavigationItems.NavViewDevicesButtonIcon = NavViewDevicesButtonIcon;
@@ -1833,6 +1838,35 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Interfacing.IsNuxPending = false;
     }
 
+    private void EulaFlyout_Opening(object sender, object e)
+    {
+        Shared.Main.InterfaceBlockerGrid.Opacity = 0.35;
+        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
+
+        Interfacing.IsNuxPending = true;
+
+        // Set the result
+        Shared.Main.EulaFlyoutResult = false;
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
+
+    private void EulaFlyout_Closed(object sender, object e)
+    {
+        Shared.Main.InterfaceBlockerGrid.Opacity = 0.0;
+        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = false;
+
+        Interfacing.IsNuxPending = false;
+        Shared.Main.EulaFlyoutClosed?.Release();
+    }
+
+    private void EulaFlyout_Closing(object sender, object e)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+    }
+
     private void TrySetMicaBackdrop()
     {
         Logger.Info("Searching for supported backdrop systems...");
@@ -2083,5 +2117,14 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // We're done
         AppData.Settings.FirstTimeTourShown = true;
         AppData.Settings.SaveSettings();
+    }
+
+    private void AcceptEulaButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Set the result
+        Shared.Main.EulaFlyoutResult = true;
+
+        // Close the EULA flyout
+        EulaFlyout.Hide();
     }
 }

@@ -10,7 +10,8 @@
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:util="using:Amethyst.Utils"
-    xmlns:icons="using:WinUI.Fluent.Icons">
+    xmlns:icons="using:WinUI.Fluent.Icons" 
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls">
 
     <!--Note: Change {ThemeResource AcrylicBackgroundFillColorBaseBrush} to Transparent if Mica is supported-->
     <Grid Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"
@@ -567,6 +568,48 @@
                                            HorizontalAlignment="Center"
                                            TextWrapping="Wrap" Width="675" Margin="0,20,0,0" />
                             </StackPanel>
+
+                        </Flyout>
+
+                        <Flyout Placement="Full" x:Name="EulaFlyout"
+                                Opening="EulaFlyout_Opening"
+                                Closing="EulaFlyout_Closing"
+                                Closed="EulaFlyout_Closed">
+
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="MaxHeight" Value="615" />
+                                    <Setter Property="MaxWidth" Value="720" />
+                                    <Setter Property="MinWidth" Value="720" />
+                                    <Setter Property="Margin" Value="30,15,0,0" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="CornerRadius" Value="8" />
+                                    <Setter Property="Background"
+                                            Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                  Width="690" Height="610">
+
+                                <Button HorizontalAlignment="Right" VerticalAlignment="Top"
+                                        Style="{ThemeResource AccentButtonStyle}"
+                                        Click="AcceptEulaButton_Click" Canvas.ZIndex="1"
+                                        Content="Accept" Margin="0,22,15,0" />
+
+                                <ScrollViewer Margin="20,0,-15,20" Padding="-20,0,20,-20"
+                                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="EULA" Style="{ThemeResource TitleLargeTextBlockStyle}"
+                                               x:Name="EulaHeader" Margin="10,10,0,0"
+                                               TextWrapping="WrapWholeWords" />
+
+                                        <controls:MarkdownTextBlock x:Name="EulaText" Text="Uh-Oh! EULA doko?"
+                                               HorizontalAlignment="Center" TextWrapping="Wrap" Width="660"
+                                               Margin="10,20,0,0" Background="Transparent" />
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Grid>
 
                         </Flyout>
                     </MenuFlyoutItem.Resources>

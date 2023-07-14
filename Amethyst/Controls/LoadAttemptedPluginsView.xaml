@@ -22,6 +22,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0" Margin="20,15,60,0"
@@ -249,7 +250,7 @@
                                                TextTrimming="CharacterEllipsis"
                                                ToolTipService.ToolTip="{x:Bind Website, Mode=OneWay}"
                                                ToolTipService.Placement="Bottom">
-                                        <Hyperlink NavigateUri="{x:Bind WebsiteUri}" 
+                                        <Hyperlink NavigateUri="{x:Bind WebsiteUri}"
                                                    Foreground="{ThemeResource SystemFillColorAttentionBrush}"
                                                    TextDecorations="Underline" FontWeight="SemiBold">
                                             <Run Text="{x:Bind Website, Mode=OneWay}" />
@@ -260,29 +261,84 @@
                         </Expander.Content>
                     </Expander>
 
+                    <!--Dependency errors-->
                     <StackPanel Style="{ThemeResource CardBottomStyle}"
-                                Visibility="{x:Bind LoadErrorDepMissing}" Grid.Row="1"
-                                Orientation="Vertical">
+                                Visibility="{x:Bind LoadErrorDepMissing, Mode=OneWay}"
+                                Grid.Row="1" Orientation="Vertical">
 
-                        <RichTextBlock VerticalAlignment="Center" FontWeight="SemiBold" TextWrapping="WrapWholeWords">
+                        <!--Links-->
+                        <RichTextBlock VerticalAlignment="Center" FontWeight="SemiBold"
+                                       TextWrapping="WrapWholeWords" Visibility="{x:Bind ShowDependencyLinks, Mode=OneWay}">
                             <Paragraph>
-                                <Run Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Dep/Contents/DependencyNotFound'), Mode=OneWay}" />
+                                <Run
+                                    Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Dep/Contents/DependencyNotFound'), Mode=OneWay}" />
 
-                                <Run Text="{x:Bind DependencyAdditionalLinksText}" />
-                                <Hyperlink TextDecorations="Underline" Foreground="{ThemeResource SystemFillColorAttentionBrush}"
-                                           NavigateUri="{x:Bind DependencyLinkUri}">
-                                    <Run Text="{x:Bind DependencyDocsLinkText}" />
+                                <Run Text="{x:Bind DependencyAdditionalLinksText, Mode=OneWay}" />
+                                <Hyperlink TextDecorations="Underline"
+                                           Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                           NavigateUri="{x:Bind DependencyLinkUri, Mode=OneWay}">
+                                    <Run Text="{x:Bind DependencyDocsLinkText, Mode=OneWay}" />
                                 </Hyperlink>
 
-                                <Run Text="{x:Bind DependencySeparatorText}" />
-                                <Hyperlink TextDecorations="Underline" Foreground="{ThemeResource SystemFillColorAttentionBrush}"
-                                           NavigateUri="{x:Bind DependencySourceUri}">
-                                    <Run Text="{x:Bind DependencyDownloadLinkText}" />
+                                <Run Text="{x:Bind DependencySeparatorText, Mode=OneWay}" />
+                                <Hyperlink TextDecorations="Underline"
+                                           Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                           NavigateUri="{x:Bind DependencySourceUri, Mode=OneWay}">
+                                    <Run Text="{x:Bind DependencyDownloadLinkText, Mode=OneWay}" />
                                 </Hyperlink>
                             </Paragraph>
                         </RichTextBlock>
+
+                        <!--Installer-->
+                        <Grid Visibility="{x:Bind ShowDependencyInstaller, Mode=OneWay}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <RichTextBlock VerticalAlignment="Center" FontWeight="SemiBold"
+                                           TextWrapping="WrapWholeWords">
+                                <Paragraph>
+                                    <Run
+                                        Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Dep/Contents/DependencyNotFound'), Mode=OneWay}" />
+                                    <Run
+                                        Text="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Dep/Contents/DependencyInstaller'), Mode=OneWay}" />
+                                </Paragraph>
+                            </RichTextBlock>
+
+                            <Button Margin="10,0,0,0" VerticalAlignment="Center"
+                                    Content="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Buttons/Install'), Mode=OneWay}"
+                                    Grid.Column="1" Style="{ThemeResource AccentButtonStyle}"
+                                    IsEnabled="{x:Bind InstallHandler.AllowUserInput, Mode=OneWay}"
+                                    Click="{x:Bind InstallPluginDependencies, Mode=OneWay}" />
+                        </Grid>
                     </StackPanel>
 
+                    <!--Dependency Installer-->
+                    <StackPanel Style="{ThemeResource CardSingleStyle}"
+                                Visibility="{x:Bind InstallHandler.InstallingDependencies, Mode=OneWay}"
+                                Grid.Row="2" Orientation="Vertical">
+
+                        <Grid HorizontalAlignment="Stretch" Margin="0,0,0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" MinWidth="50" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" FontSize="15" FontWeight="SemiBold"
+                                       TextWrapping="WrapWholeWords" HorizontalAlignment="Left"
+                                       Text="{x:Bind InstallHandler.MessageString, Mode=OneWay}" />
+
+                            <TextBlock Grid.Column="1" FontSize="15" FontWeight="SemiBold"
+                                       VerticalAlignment="Bottom" HorizontalAlignment="Right" 
+                                       Text="{x:Bind InstallHandler.ProgressString, Mode=OneWay}" />
+                        </Grid>
+
+                        <ProgressBar Margin="-11,0,-11,-18"
+                                     IsIndeterminate="{x:Bind InstallHandler.ProgressIndeterminate, Mode=OneWay}" 
+                                     ShowError="{x:Bind InstallHandler.ProgressError, Mode=OneWay}"
+                                     Value="{x:Bind InstallHandler.ProgressValue, Mode=OneWay}" />
+                    </StackPanel>
                 </Grid>
             </DataTemplate>
         </ItemsRepeater.ItemTemplate>

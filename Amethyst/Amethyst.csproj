@@ -52,6 +52,7 @@
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
         <PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
+        <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Markdown" Version="7.1.2" />
         <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
@@ -200,4 +201,5 @@
             <Generator>MSBuild:Compile</Generator>
         </Page>
     </ItemGroup>
+    <ProjectExtensions><VisualStudio><UserProperties assets_4strings_4it_1json__JsonSchema="https://api.airplane.dev/v0/schemas/task.json" /></VisualStudio></ProjectExtensions>
 </Project>

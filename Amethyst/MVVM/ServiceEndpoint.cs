@@ -10,17 +10,8 @@ using Amethyst.Utils;
 
 namespace Amethyst.MVVM;
 
-public class ServiceEndpoint : INotifyPropertyChanged
+public class ServiceEndpoint(string name, string guid, string path, Version version, IServiceEndpoint service) : INotifyPropertyChanged
 {
-    public ServiceEndpoint(string name, string guid, string path, Version version, IServiceEndpoint service)
-    {
-        Guid = guid;
-        Name = name;
-        Location = path;
-        Version = version;
-        Service = service;
-    }
-
     // Extensions: is this service used atm?
     public bool IsUsed => AppData.Settings.ServiceEndpointGuid == Guid;
 
@@ -28,19 +19,19 @@ public class ServiceEndpoint : INotifyPropertyChanged
     [DefaultValue(null)] public Uri ErrorDocsUri => Service.ErrorDocsUri;
 
     // Get GUID
-    [DefaultValue("INVALID")] public string Guid { get; }
+    [DefaultValue("INVALID")] public string Guid { get; } = guid;
 
     // Get Name
-    [DefaultValue("UNKNOWN")] public string Name { get; }
+    [DefaultValue("UNKNOWN")] public string Name { get; } = name;
 
     // Get Path
-    [DefaultValue("UNKNOWN")] public string Location { get; }
+    [DefaultValue("UNKNOWN")] public string Location { get; } = path;
 
     // Get the plugin version using its host assembly
-    [DefaultValue("0.0.0.0")] public Version Version { get; }
+    [DefaultValue("0.0.0.0")] public Version Version { get; } = version;
 
     // Underlying service handler
-    private IServiceEndpoint Service { get; }
+    private IServiceEndpoint Service { get; } = service;
 
     // To support settings daemon and register the layout root,
     // the device must properly report it first

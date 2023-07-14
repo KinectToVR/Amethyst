@@ -147,6 +147,9 @@ public sealed partial class Blocked : Page, INotifyPropertyChanged
         LanguageComboFlyout.Hide();
         _blockHiddenSoundOnce = true;
         _blockedPageSetupFinished = true;
+
+        // Reload
+        OnPropertyChanged();
     }
 
     private void LanguageOptionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

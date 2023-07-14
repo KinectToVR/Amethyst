@@ -31,6 +31,9 @@ public sealed partial class Host : Window
         Logger.Info("Initializing shared XAML components...");
         InitializeComponent();
 
+        // Overwrite the dispatcher queue if null
+        Shared.Main.DispatcherQueue ??= DispatcherQueue;
+
         Logger.Info("Applying available window backdrops...");
         TrySetMicaBackdrop();
 

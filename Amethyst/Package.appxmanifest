@@ -13,7 +13,7 @@
   <Identity
     Name="K2VRTeam.Amethyst.App"
     Publisher="CN=K2VR Team"
-    Version="1.2.1.18" />
+    Version="1.2.1.20" />
 
   <Properties>
     <DisplayName>Amethyst</DisplayName>
