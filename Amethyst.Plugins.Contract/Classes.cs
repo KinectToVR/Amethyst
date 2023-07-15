@@ -247,18 +247,58 @@ public class InstallationProgress
     /// <summary>
     ///     Progress value, optional, 0.0 --- 1.0
     /// </summary>
-    public double? OverallProgress { get; set; }
+    public double? OverallProgress { get; init; }
 
     /// <summary>
     ///     Progress indicator, set to false for OverallProgress
     /// </summary>
-    public bool IsIndeterminate { get; set; } = false;
+    public bool IsIndeterminate { get; init; } = false;
 
     /// <summary>
     ///     [Title]
     ///     The current stage name of the installation
     /// </summary>
-    public string StageTitle { get; set; } = string.Empty;
+    public string StageTitle { get; init; } = string.Empty;
+}
+
+// Dependency installer worker helper class
+public interface IDependency
+{
+    /// <summary>
+    ///     [Title]
+    ///     The name of the dependency to be installed
+    /// </summary>
+    public string Name { get; }
+
+    /// <summary>
+    ///     Whether it is a must to have this dependency installed
+    ///     (IsInstalled=true) for the plugin to be working properly
+    /// </summary>
+    public bool IsMandatory { get; }
+
+    /// <summary>
+    ///     Check whether the dependency is (already) installed
+    /// </summary>
+    public bool IsInstalled { get; }
+
+    /// <summary>
+    ///     If there is a need to accept an EULA, pass its contents here
+    /// </summary>
+    public string InstallerEula { get; }
+
+    /// <summary>
+    ///     Perform the main installation action, reporting the progress
+    /// </summary>
+    /// <param name="progress">
+    ///     Report the progress using InstallationProgress
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     CancellationToken for task cancellation
+    /// </param>
+    /// <returns>
+    ///     Success?
+    /// </returns>
+    public Task<bool> Install(IProgress<InstallationProgress> progress, CancellationToken cancellationToken);
 }
 
 // Plugin settings helper class

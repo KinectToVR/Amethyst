@@ -600,8 +600,8 @@
                                 <ScrollViewer Margin="20,0,-15,20" Padding="-20,0,20,-20"
                                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
-                                        <TextBlock Text="EULA" Style="{ThemeResource TitleLargeTextBlockStyle}"
-                                               x:Name="EulaHeader" Margin="10,10,0,0"
+                                        <TextBlock Text="Uh-Oh! EULA doko?" Style="{ThemeResource TitleLargeTextBlockStyle}"
+                                               x:Name="EulaHeader" Margin="10,10,70,0"
                                                TextWrapping="WrapWholeWords" />
 
                                         <controls:MarkdownTextBlock x:Name="EulaText" Text="Uh-Oh! EULA doko?"

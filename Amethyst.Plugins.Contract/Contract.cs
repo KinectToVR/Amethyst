@@ -477,49 +477,11 @@ public interface IAmethystHost
 public interface IDependencyInstaller
 {
     /// <summary>
-    ///     Perform the main installation action, reporting the progress
+    ///     The list of dependencies that will need to be installed,
+    ///     or tools that can be optionally included, see IDependency
+    ///     This is a method so it's easier for you to access the Host
     /// </summary>
-    /// <param name="progress">
-    ///     Report the progress using InstallationProgress
-    /// </param>
-    /// <returns>
-    ///     Success?
-    /// </returns>
-    public Task<bool> Install(IProgress<InstallationProgress> progress);
-
-    /// <summary>
-    ///     (Optional) Perform the tool installation action, reporting the progress
-    ///     Set ProvidesTools to true to support this specific functionality
-    /// </summary>
-    /// <param name="progress">
-    ///     Report the progress using InstallationProgress
-    /// </param>
-    /// <returns>
-    ///     Success?
-    /// </returns>
-    public Task<bool> InstallTools(IProgress<InstallationProgress> progress);
-
-    /// <summary>
-    ///     Check whether the dependency is (already) installed
-    /// </summary>
-    public bool IsInstalled { get; }
-
-    /// <summary>
-    ///     If there is a need to accept an EULA, pass its contents here
-    /// </summary>
-    public string InstallerEula { get; }
-
-    /// <summary>
-    ///     State whether the installer can provide extra functionality
-    ///     InstallTools must be implemented if set to true
-    /// </summary>
-    public bool ProvidesTools { get; }
-
-    /// <summary>
-    ///     Check whether additional tools are (already) installed
-    ///     Set ProvidesTools to true to support this check
-    /// </summary>
-    public bool ToolsInstalled { get; }
+    public List<IDependency> ListDependencies();
 
     /// <summary>
     ///     The localization host, use it to request your strings
@@ -570,7 +532,6 @@ public interface IDependencyInstaller
         /// </summary>
         bool SetLocalizationResourcesRoot(string path);
     }
-
 }
 
 /// <summary>

@@ -310,7 +310,14 @@
                                     Content="{x:Bind util:Translator.Get.String('/SharedStrings/Plugins/Store/Buttons/Install'), Mode=OneWay}"
                                     Grid.Column="1" Style="{ThemeResource AccentButtonStyle}"
                                     IsEnabled="{x:Bind InstallHandler.AllowUserInput, Mode=OneWay}"
+                                    Visibility="{x:Bind InstallHandler.DependenciesReadyToInstall, Mode=OneWay}"
                                     Click="{x:Bind InstallPluginDependencies, Mode=OneWay}" />
+
+                            <Button Margin="10,0,0,0" VerticalAlignment="Center"
+                                    Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Cancel'), Mode=OneWay}"
+                                    Grid.Column="1" Visibility="{x:Bind InstallHandler.InstallingDependencies, Mode=OneWay}"
+                                    IsEnabled="{x:Bind InstallHandler.AllowUserInput, Mode=OneWay}"
+                                    Click="{x:Bind CancelDependencyInstallation, Mode=OneWay}" />
                         </Grid>
                     </StackPanel>
 
