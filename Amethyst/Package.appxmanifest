@@ -3,12 +3,10 @@
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
-  xmlns:desktop8="http://schemas.microsoft.com/appx/manifest/desktop/windows10/8"
-  IgnorableNamespaces="uap uap10 rescap com desktop desktop8">
+  IgnorableNamespaces="uap rescap com desktop">
 
   <Identity
     Name="K2VRTeam.Amethyst.App"
@@ -30,18 +28,8 @@
     <Resource Language="x-generate"/>
   </Resources>
 
-  <Extensions>
-    <desktop8:Extension Category="windows.userMutablePackageDirectories">
-      <desktop8:UserMutablePackageDirectories>
-        <desktop8:UserMutablePackageDirectory Target='K2VRTeam.Amethyst.App' />
-      </desktop8:UserMutablePackageDirectories>
-    </desktop8:Extension>
-  </Extensions>
-
   <Applications>
-    <Application Id="Amethyst"
-                 Executable="$targetnametoken$.exe"
-                 EntryPoint="$targetentrypoint$">
+    <Application Id="Amethyst" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="Amethyst"
         Description="Amethyst Desktop"
@@ -76,10 +64,7 @@
   </Applications>
 
   <Capabilities>
-    <rescap:Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="packageManagement" />
-    <rescap:Capability Name="modifiableApp" />
-    <rescap:Capability Name="packageQuery" />
   </Capabilities>
 </Package>

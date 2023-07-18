@@ -191,9 +191,26 @@ public partial class App : Application
             }
         });
 
-        // Create the strings directory in case it doesn't exist yet
-        Directory.CreateDirectory(Path.Join(
-            Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings"));
+        var stringsFolder = Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings");
+        if (File.Exists(Interfacing.GetAppDataFilePath("Localization.json")))
+            try
+            {
+                // Parse the loaded json
+                var defaults = JsonConvert.DeserializeObject<LocalizationSettings>(
+                                   File.ReadAllText(Interfacing.GetAppDataFilePath("Localization.json"))) ??
+                               new LocalizationSettings();
+
+                if (defaults.AmethystStringsFolder is not null &&
+                    Directory.Exists(defaults.AmethystStringsFolder))
+                    stringsFolder = defaults.AmethystStringsFolder;
+            }
+            catch (Exception e)
+            {
+                Logger.Info($"Localization settings checkout failed! Message: {e.Message}");
+            }
+        else Logger.Info("No default localization settings found! [Localization.json]");
+
+        if (!Directory.Exists(stringsFolder)) return;
 
         // Load language resources
         Interfacing.LoadJsonStringResourcesEnglish();
@@ -202,7 +219,7 @@ public partial class App : Application
         // Setup string hot reload watchdog
         ResourceWatcher = new FileSystemWatcher
         {
-            Path = Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings"),
+            Path = stringsFolder,
             NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName |
                            NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
             IncludeSubdirectories = true,
@@ -319,27 +336,6 @@ public partial class App : Application
                 {
                     SystemShell.OpenFolderAndSelectItem(
                         Directory.GetParent(Interfacing.LocalFolder.Path)?.FullName);
-
-                    Logger.Info("That's all! Shutting down now...");
-                    Environment.Exit(0); // Cancel further application startup
-                    break;
-                }
-                case "mutable-folder":
-                {
-                    const string mutablePath = @"C:\Program Files\ModifiableWindowsApps\K2VRTeam.Amethyst.App";
-                    SystemShell.OpenFolderAndSelectItem(Directory.Exists(mutablePath)
-                        ? mutablePath // Check whether the global mutable folder is accessible
-                        : Path.Join(Directory.GetParent( // Otherwise open the virtual fs one
-                            Interfacing.LocalFolder.Path)?.FullName, "AC", "MutablePackageRoot"));
-
-                    Logger.Info("That's all! Shutting down now...");
-                    Environment.Exit(0); // Cancel further application startup
-                    break;
-                }
-                case "vfs-folder":
-                {
-                    SystemShell.OpenFolderAndSelectItem(Path.Join(
-                        Directory.GetParent(Interfacing.LocalFolder.Path)?.FullName, "AC"));
 
                     Logger.Info("That's all! Shutting down now...");
                     Environment.Exit(0); // Cancel further application startup
@@ -477,6 +473,58 @@ public partial class App : Application
                     Environment.Exit(0); // Cancel further application startup
                     break;
                 }
+                case "localize":
+                {
+                    try
+                    {
+                        var stringsFolder = await Interfacing.LocalFolder
+                            .CreateFolderAsync("Strings", CreationCollisionOption.OpenIfExists);
+
+                        var appStringsFolder = await stringsFolder.CreateFolderAsync(
+                            "Amethyst", CreationCollisionOption.OpenIfExists);
+
+                        var pluginStringsFolders = new SortedDictionary<string, string>();
+
+                        // Copy all app and plugin strings to a shared folder
+                        new DirectoryInfo(Path.Join(Interfacing.ProgramLocation.DirectoryName!, "Assets", "Strings"))
+                            .CopyToFolder(appStringsFolder.Path);
+
+                        var localPluginsFolder = Path.Combine(Interfacing.ProgramLocation.DirectoryName!, "Plugins");
+                        if (Directory.Exists(localPluginsFolder))
+                            foreach (var pluginFolder in Directory.EnumerateDirectories(
+                                             localPluginsFolder, "*", SearchOption.TopDirectoryOnly)
+                                         .Where(x => Directory.Exists(Path.Join(x, "Strings"))).ToList())
+                            {
+                                // Copy to the shared folder, creating a random name
+                                var outputFolder = await stringsFolder.CreateFolderAsync(
+                                    Path.GetDirectoryName(pluginFolder),
+                                    CreationCollisionOption.OpenIfExists);
+
+                                new DirectoryInfo(Path.Join(pluginFolder, "Strings"))
+                                    .CopyToFolder(outputFolder.Path);
+
+                                pluginStringsFolders.Add(Path.Join(pluginFolder, "Strings"), outputFolder.Path);
+                            }
+
+                        // Create a new localization config
+                        await File.WriteAllTextAsync(Interfacing.GetAppDataFilePath("Localization.json"),
+                            JsonConvert.SerializeObject(new LocalizationSettings
+                            {
+                                AmethystStringsFolder = appStringsFolder.Path,
+                                PluginStringFolders = pluginStringsFolders
+                            }, Formatting.Indented));
+
+                        SystemShell.OpenFolderAndSelectItem(stringsFolder.Path);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e);
+                    }
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
             }
         }
 
@@ -510,10 +558,6 @@ public partial class App : Application
 
         // Disable internal sounds
         ElementSoundPlayer.State = ElementSoundPlayerState.Off;
-
-        // Create the plugin directory (if not existent)
-        Directory.CreateDirectory(Path.Combine(
-            Interfacing.ProgramLocation.DirectoryName!, "Plugins"));
 
         // Try reading the startup task config
         try

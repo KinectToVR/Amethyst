@@ -234,9 +234,11 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Search the "Plugins" sub-directory for assemblies that match the imports.
         // Iterate over all directories in .\Plugins dir and add all * dirs to catalogs
         Logger.Info("Searching for local plugins now...");
-        var pluginDirectoryList = Directory.EnumerateDirectories(
-            Path.Combine(Interfacing.ProgramLocation.DirectoryName!, "Plugins"),
-            "*", SearchOption.TopDirectoryOnly).ToList();
+        var localPluginsFolder = Path.Combine(Interfacing.ProgramLocation.DirectoryName!, "Plugins");
+
+        var pluginDirectoryList = Directory.Exists(localPluginsFolder)
+            ? Directory.EnumerateDirectories(localPluginsFolder, "*", SearchOption.TopDirectoryOnly).ToList()
+            : new List<string>(); // In case the folder doesn't exists, create an empty directory list
 
         // Search the "Plugins" AppData directory for assemblies that match the imports.
         // Iterate over all directories in Plugins dir and add all * dirs to catalogs
@@ -244,54 +246,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         pluginDirectoryList.AddRange(Directory.EnumerateDirectories(
             (await Interfacing.GetAppDataPluginFolder("")).Path,
             "*", SearchOption.TopDirectoryOnly));
-
-        // Search for external plugins
-        try
-        {
-            // Load the JSON source into buffer, parse
-            Logger.Info("Searching for external plugins now...");
-            var jsonRoot = JsonObject.Parse(
-                await File.ReadAllTextAsync((await Interfacing.GetAppDataFile("amethystpaths.k2path")).Path));
-
-            // Loop over all the external plugins and append
-            if (jsonRoot.ContainsKey("external_plugins"))
-            {
-                // Try loading all path-valid plugin entries
-                jsonRoot.GetNamedArray("external_plugins").ToList()
-                    .Where(pluginEntry => Directory.Exists(pluginEntry.GetString())).ToList()
-                    .ForEach(pluginPath => pluginDirectoryList.Add(pluginPath.GetString()));
-
-                // Write out all invalid ones
-                jsonRoot.GetNamedArray("external_plugins").ToList()
-                    .Where(pluginEntry => !Directory.Exists(pluginEntry.GetString())).ToList()
-                    .ForEach(pluginPath =>
-                    {
-                        // Add the plugin to the 'attempted' list
-                        AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
-                        {
-                            Name = pluginPath.GetString(),
-                            Status = AppPlugins.PluginLoadError.NoPluginFolder
-                        });
-
-                        Logger.Error(new DirectoryNotFoundException(
-                            $"Plugin hint directory \"{pluginPath.GetString()}\" doesn't exist!"));
-                    });
-            }
-
-            else
-            {
-                Logger.Info("No external plugins found! Loading the local ones now...");
-            }
-        }
-        catch (FileNotFoundException e)
-        {
-            Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
-            Logger.Error($"Creating new {Interfacing.GetAppDataFile("amethystpaths.k2path")} config...");
-        }
-        catch (Exception e)
-        {
-            Logger.Error($"Checking for external plugins has failed, an exception occurred. Message: {e.Message}");
-        }
 
         // Add the current assembly to support invoke method exports
         AssemblyLoadContext.Default.LoadFromAssemblyPath(
@@ -1014,26 +968,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 .Select(x => new KeyValuePair<string, string>(
                     $"Guid{AppData.Settings.OverrideDevicesGuidMap.ToList().IndexOf(x)}", x))));
 
-        // Setup device change watchdog : local devices
-        var localWatcher = new FileSystemWatcher
-        {
-            Path = Path.Combine(Interfacing.ProgramLocation.DirectoryName, "Plugins"),
-            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
-            Filter = "*.dll",
-            IncludeSubdirectories = true,
-            EnableRaisingEvents = true
-        };
-
-        // Setup device change watchdog : external devices
-        var externalWatcher = new FileSystemWatcher
-        {
-            Path = Interfacing.LocalFolder.Path,
-            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName | NotifyFilters.Size,
-            Filter = "amethystpaths.k2path",
-            IncludeSubdirectories = true,
-            EnableRaisingEvents = true
-        };
-
         // Send a non-dismissible tip about reloading the app
         static void OnWatcherOnChanged(object o, FileSystemEventArgs fileSystemEventArgs)
         {
@@ -1048,17 +982,24 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             });
         }
 
-        // Add event handlers : local
-        localWatcher.Changed += OnWatcherOnChanged;
-        localWatcher.Created += OnWatcherOnChanged;
-        localWatcher.Deleted += OnWatcherOnChanged;
-        localWatcher.Renamed += OnWatcherOnChanged;
+        if (Directory.Exists(Path.Combine(Interfacing.ProgramLocation.DirectoryName, "Plugins")))
+        {
+            // Setup device change watchdog : local devices
+            var localWatcher = new FileSystemWatcher
+            {
+                Path = Path.Combine(Interfacing.ProgramLocation.DirectoryName, "Plugins"),
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
+                Filter = "*.dll",
+                IncludeSubdirectories = true,
+                EnableRaisingEvents = true
+            };
 
-        // Add event handlers : external
-        externalWatcher.Changed += OnWatcherOnChanged;
-        externalWatcher.Created += OnWatcherOnChanged;
-        externalWatcher.Deleted += OnWatcherOnChanged;
-        externalWatcher.Renamed += OnWatcherOnChanged;
+            // Add event handlers : local
+            localWatcher.Changed += OnWatcherOnChanged;
+            localWatcher.Created += OnWatcherOnChanged;
+            localWatcher.Deleted += OnWatcherOnChanged;
+            localWatcher.Renamed += OnWatcherOnChanged;
+        }
 
         // Check settings once again and save
         AppSettings.DoNotSaveSettings = false;

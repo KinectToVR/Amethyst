@@ -499,6 +499,27 @@ public static class Interfacing
                 ProgramLocation.DirectoryName,
                 "Assets", "Strings", "locales.json");
 
+            if (File.Exists(GetAppDataFilePath("Localization.json")))
+                try
+                {
+                    // Parse the loaded json
+                    var defaults = JsonConvert.DeserializeObject<LocalizationSettings>(
+                                       File.ReadAllText(GetAppDataFilePath("Localization.json"))) ??
+                                   new LocalizationSettings();
+
+                    if (defaults.AmethystStringsFolder is not null &&
+                        Directory.Exists(defaults.AmethystStringsFolder))
+                    {
+                        Logger.Info($"Overwriting the app strings path with {defaults.AmethystStringsFolder}!");
+                        resourcePath = Path.Join(defaults.AmethystStringsFolder, "locales.json");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Info($"Localization settings checkout failed! Message: {e.Message}");
+                }
+            else Logger.Info("No default localization settings found! [Localization.json]");
+
             // If the specified language doesn't exist somehow, fallback to 'en'
             if (!File.Exists(resourcePath))
             {
@@ -547,6 +568,27 @@ public static class Interfacing
                 ProgramLocation.DirectoryName,
                 "Assets", "Strings", languageKey + ".json");
 
+            if (File.Exists(GetAppDataFilePath("Localization.json")))
+                try
+                {
+                    // Parse the loaded json
+                    var defaults = JsonConvert.DeserializeObject<LocalizationSettings>(
+                                       File.ReadAllText(GetAppDataFilePath("Localization.json"))) ??
+                                   new LocalizationSettings();
+
+                    if (defaults.AmethystStringsFolder is not null &&
+                        Directory.Exists(defaults.AmethystStringsFolder))
+                    {
+                        Logger.Info($"Overwriting the app strings path with {defaults.AmethystStringsFolder}!");
+                        resourcePath = Path.Join(defaults.AmethystStringsFolder, languageKey + ".json");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Info($"Localization settings checkout failed! Message: {e.Message}");
+                }
+            else Logger.Info("No default localization settings found! [Localization.json]");
+
             // If the specified language doesn't exist somehow, fallback to 'en'
             if (!File.Exists(resourcePath))
             {
@@ -593,6 +635,27 @@ public static class Interfacing
             var resourcePath = Path.Join(
                 ProgramLocation.DirectoryName,
                 "Assets", "Strings", "en.json");
+
+            if (File.Exists(GetAppDataFilePath("Localization.json")))
+                try
+                {
+                    // Parse the loaded json
+                    var defaults = JsonConvert.DeserializeObject<LocalizationSettings>(
+                                       File.ReadAllText(GetAppDataFilePath("Localization.json"))) ??
+                                   new LocalizationSettings();
+
+                    if (defaults.AmethystStringsFolder is not null &&
+                        Directory.Exists(defaults.AmethystStringsFolder))
+                    {
+                        Logger.Info($"Overwriting the app strings path with {defaults.AmethystStringsFolder}!");
+                        resourcePath = Path.Join(defaults.AmethystStringsFolder, "en.json");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Info($"Localization settings checkout failed! Message: {e.Message}");
+                }
+            else Logger.Info("No default localization settings found! [Localization.json]");
 
             // If failed again, just give up
             if (!File.Exists(resourcePath))
@@ -776,10 +839,11 @@ public static class Interfacing
             }
         }
 
-        public static bool SetLocalizationResourcesRoot(string path, string guid)
+        public static bool SetLocalizationResourcesRoot(string rootPath, string guid)
         {
             try
             {
+                var path = rootPath; // Make a local copy of the strings loc path
                 Logger.Info($"[Requested by plugin with GUID {guid}] " +
                             $"Searching for language resources with key \"{AppData.Settings.AppLanguage}\"...");
 
@@ -791,6 +855,27 @@ public static class Interfacing
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
                     return false; // Just give up
                 }
+
+                if (File.Exists(GetAppDataFilePath("Localization.json")))
+                    try
+                    {
+                        // Parse the loaded json
+                        var defaults = JsonConvert.DeserializeObject<LocalizationSettings>(
+                                           File.ReadAllText(GetAppDataFilePath("Localization.json"))) ??
+                                       new LocalizationSettings();
+
+                        if ((defaults.PluginStringFolders?.TryGetValue(path, out var result) ?? false) &&
+                            Directory.Exists(result))
+                        {
+                            Logger.Info($"Overwriting {guid}'s strings path with {result}!");
+                            path = result;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Info($"Localization settings checkout failed! Message: {e.Message}");
+                    }
+                else Logger.Info("No default localization settings found! [Localization.json]");
 
                 if (!Directory.Exists(path))
                 {

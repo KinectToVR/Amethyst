@@ -276,7 +276,8 @@ public class AppSettings : INotifyPropertyChanged
                 {
                     // Parse the loaded json
                     var defaults = JsonConvert.DeserializeObject<DefaultSettings>(
-                        File.ReadAllText(Interfacing.GetAppDataFilePath("PluginDefaults.json"))) ?? new DefaultSettings();
+                                       File.ReadAllText(Interfacing.GetAppDataFilePath("PluginDefaults.json"))) ??
+                                   new DefaultSettings();
 
                     if (defaults.ExtraTrackers is null)
                         // Invalid configuration file, don't proceed further!
@@ -527,4 +528,10 @@ public class DefaultSettings
     public string TrackingDevice { get; set; }
     public string ServiceEndpoint { get; set; }
     public bool? ExtraTrackers { get; set; }
+}
+
+public class LocalizationSettings
+{
+    public string AmethystStringsFolder { get; set; }
+    public SortedDictionary<string, string> PluginStringFolders { get; set; }
 }
