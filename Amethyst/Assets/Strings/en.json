@@ -1828,6 +1828,10 @@
     {
       "id": "/NUX/Tip14/Content",
       "translation": "Amethyst took a while to make and get it to where it's at now.\nSo, you better go have fun.\n\n14 of 14"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Continue",
+      "translation": "Continue with limited setup"
     }
   ]
 }

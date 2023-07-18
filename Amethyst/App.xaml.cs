@@ -18,6 +18,8 @@ using Windows.System.UserProfile;
 using Windows.UI.ViewManagement;
 using Windows.Web.Http;
 using Amethyst.Classes;
+using Amethyst.Installer.ViewModels;
+using Amethyst.Installer.Views;
 using Amethyst.Popups;
 using Amethyst.Schedulers;
 using Amethyst.Utils;
@@ -30,6 +32,7 @@ using Newtonsoft.Json.Linq;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using Amethyst.MVVM;
 using Newtonsoft.Json;
+using WinUI.Fluent.Icons;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -676,6 +679,23 @@ public partial class App : Application
             {
                 Logger.Warn(e);
             }
+
+
+
+        // TEMP
+        {
+            new Host(height: 700, width: 1200)
+            {
+                Content = new SetupDevices
+                {
+
+                }
+            }.Activate();
+            return;
+        }
+        // TEMP
+
+
 
         Logger.Info("Creating a new MainWindow view...");
         _mWindow = new MainWindow(); // Create a new window

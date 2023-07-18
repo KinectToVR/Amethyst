@@ -2482,6 +2482,10 @@
       "id": "/NUX/Tip14/Content",
       "translation": "Amethyst ci ha messo un bel po' ad arrivare al punto in cui è ora.\nQuindi vatti a divertire!\n\n14 di 14",
       "translatorComment": ""
+    },
+    {
+      "id": "/Installer/Views/SetupError/Continue",
+      "translation": "Continue with limited setup"
     }
   ]
 }

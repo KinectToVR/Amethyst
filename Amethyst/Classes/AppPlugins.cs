@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Amethyst.Installer.ViewModels;
 using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
@@ -46,6 +47,9 @@ public static class AppPlugins
 
     // Written to at the first plugin load
     public static readonly ObservableCollection<LoadAttemptedPlugin> LoadAttemptedPluginsList = new();
+
+    // Used by the installer module - device plugins
+    public static readonly ObservableCollection<SetupPlugin> InstallerPluginsList = new();
 
     public static IEnumerable<LoadAttemptedPlugin> LoadedPluginsList => LoadAttemptedPluginsList.Where(x => x.IsLoaded);
     public static IEnumerable<LoadAttemptedPlugin> ErrorPluginsList => LoadAttemptedPluginsList.Where(x => !x.IsLoaded);

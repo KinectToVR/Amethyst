@@ -1828,6 +1828,10 @@
     {
       "id": "/NUX/Tip14/Content",
       "translation": "Nos ha llevado mucho trabajo y esfuerzo crear Amethyst.\nAsi que recuerda divertirte.\n\n14 de 14"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Continue",
+      "translation": "Continue with limited setup"
     }
   ]
 }

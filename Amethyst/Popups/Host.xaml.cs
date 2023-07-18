@@ -25,7 +25,7 @@ public sealed partial class Host : Window
 
     private WindowsSystemDispatcherQueueHelper _wsdqHelper; // See separate sample below for implementation
 
-    public Host()
+    public Host(int width = 500, int height = 500)
     {
         Logger.Info($"Constructing a new {GetType()}...");
         Logger.Info("Initializing shared XAML components...");
@@ -69,7 +69,7 @@ public sealed partial class Host : Window
 
         // Resize the window
         Logger.Info("Resizing the application window...");
-        AppWindow.Resize(new SizeInt32(500, 500));
+        AppWindow.Resize(new SizeInt32(width, height));
         AppWindow.Show(true); // Activate
     }
 
