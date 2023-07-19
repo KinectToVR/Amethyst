@@ -13,31 +13,38 @@
 
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="3*" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="2*" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="7*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="5*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" FontSize="47"
-                       Text="{x:Bind Error.Title}" TextTrimming="CharacterEllipsis"
+            <TextBlock Grid.Row="1" FontSize="47" MaxWidth="700" TextWrapping="WrapWholeWords"
+                       Text="{x:Bind Error.Title}" HorizontalTextAlignment="Center"
                        Style="{ThemeResource TitleLargeTextBlockStyle}"
-                       HorizontalAlignment="Center" Margin="0,100,0,20" />
+                       HorizontalAlignment="Center" Margin="0,0,0,20" />
 
-            <Viewbox Grid.Row="2" Visibility="{x:Bind Error.HasIcon}"
-                     Height="150" Width="150" Margin="-40,0,0,0" Stretch="Uniform">
+            <Viewbox Grid.Row="3" Visibility="{x:Bind Error.HasIcon}" 
+                     Height="150" Width="150" Margin="-28,0,0,0" Stretch="Uniform">
                 <icons:FluentIconElement HorizontalAlignment="Center"
                                          Symbol="{x:Bind Error.Icon.Symbol}" />
             </Viewbox>
 
-            <TextBlock Grid.Row="4" FontSize="15"
+            <TextBlock Grid.Row="5" FontSize="15"
                        Text="{x:Bind Error.Message}" TextWrapping="WrapWholeWords"
                        HorizontalAlignment="Center" MaxWidth="700" />
 
-            <TextBlock Grid.Row="6"
+            <Button Grid.Row="7" Style="{ThemeResource AccentButtonStyle}"
+                    HorizontalAlignment="Center" Content="{x:Bind Error.ActionMessage}"
+                    Visibility="{x:Bind Error.HasAction}" Click="ActionButton_Click" />
+
+            <TextBlock Grid.Row="9"
                        Text="{x:Bind util:Translator.Get.String('/Installer/Views/SetupError/Continue'), Mode=OneWay}"
                        Visibility="{x:Bind Error.CanContinue}"
                        TextTrimming="CharacterEllipsis" Opacity="0.5"

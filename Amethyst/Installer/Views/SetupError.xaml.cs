@@ -147,10 +147,19 @@ public sealed partial class SetupError : Page, INotifyPropertyChanged
 
     private async void ContinueTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
     {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
         MainGrid.Opacity = 0.0;
         await Task.Delay(500);
 
         ContinueEvent?.Invoke(this, EventArgs.Empty);
+    }
+
+    private async void ActionButton_Click(object sender, RoutedEventArgs e)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        await Error.Action();
     }
 
     private void OnPropertyChanged(string propName = null)

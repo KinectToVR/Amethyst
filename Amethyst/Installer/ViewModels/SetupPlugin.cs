@@ -17,16 +17,16 @@ namespace Amethyst.Installer.ViewModels;
 public class SetupPlugin
 {
     public Type PluginType => CoreSetupData.PluginType;
-    public string Name { get; init; } = "[UNKNOWN]";
-    public string Guid { get; init; } = "[INVALID]";
-    public string Publisher { get; init; }
-    public string Website { get; init; }
+    public string Name { get; set; } = "[UNKNOWN]";
+    public string Guid { get; set; } = "[INVALID]";
+    public string Publisher { get; set; }
+    public string Website { get; set; }
 
-    public string DependencyLink { get; init; }
-    public string DependencySource { get; init; }
+    public string DependencyLink { get; set; }
+    public string DependencySource { get; set; }
 
-    public IDependencyInstaller DependencyInstaller { get; init; }
-    public ICoreSetupData CoreSetupData { get; init; }
+    public IDependencyInstaller DependencyInstaller { get; set; }
+    public ICoreSetupData CoreSetupData { get; set; }
 
     public LoadAttemptedPlugin.DependencyInstallHandler InstallHandler { get; } = new();
 
