@@ -1139,7 +1139,7 @@ public static class CollectionExtensions
                             .Any(export => export.ConstructorArguments.FirstOrDefault().Value?.ToString() is "Guid"));
 
                         // Check whether the plugin defines a dependency installer
-                        if (result?.GetMetadata<Type>("DependencyInstaller") is not null)
+                        if (false) // (result?.GetMetadata<Type>("DependencyInstaller") is not null)
                             try
                             {
                                 var contextResult = new AssemblyLoadContext(placeholderGuid)
