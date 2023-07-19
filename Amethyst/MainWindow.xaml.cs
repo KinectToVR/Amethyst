@@ -1231,6 +1231,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     private async Task<AppRelease> CheckUpdates(TimeSpan? delay = null, bool result = false)
     {
+        return null; // TODO REMOVE THIS
+
         // Attempt only after init
         if (!_mainPageInitFinished) return null;
 
@@ -1342,6 +1344,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     private async Task DownloadUpdates(AppRelease appRelease = null, bool force = false)
     {
+        return; // TODO REMOVE THIS
+
         Interfacing.UpdatingNow = true;
         await Task.Delay(500);
 
