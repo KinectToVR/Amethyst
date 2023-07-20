@@ -15,9 +15,7 @@ using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using Windows.ApplicationModel;
 using Windows.Storage;
-using Windows.System;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Schedulers;
@@ -967,9 +965,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public class DependencyInstallHandler : INotifyPropertyChanged
     {
-        public CancellationTokenSource TokenSource { get; set; } = new();
-
         private double _progressValue;
+        public CancellationTokenSource TokenSource { get; set; } = new();
         public Task<bool> InstallationWorker { get; set; }
 
         public bool InstallingDependencies { get; set; }
@@ -979,6 +976,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         public bool ProgressError { get; set; }
         public bool ProgressIndeterminate { get; set; }
         public bool HideProgress { get; set; }
+        public bool NoProgress { get; set; }
 
         public double ProgressValue
         {
@@ -996,6 +994,13 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             ? string.Empty
             : LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/ProgressPlaceholder")
                 .Format((int)ProgressValue);
+
+        public bool ShowProgressString => !string.IsNullOrEmpty(ProgressString);
+        public bool CirclePending { get; set; } = true;
+
+        public HorizontalAlignment MessageAlignment => NoProgress
+            ? HorizontalAlignment.Center
+            : HorizontalAlignment.Left;
 
         public event PropertyChangedEventHandler PropertyChanged;
 

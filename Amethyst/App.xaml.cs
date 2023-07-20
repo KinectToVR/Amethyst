@@ -31,6 +31,7 @@ using Microsoft.Windows.AppLifecycle;
 using Newtonsoft.Json.Linq;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using Amethyst.MVVM;
+using Amethyst.Plugins.Contract;
 using Newtonsoft.Json;
 using WinUI.Fluent.Icons;
 
@@ -684,11 +685,23 @@ public partial class App : Application
 
         // TEMP
         {
+            // Scan for all default plugins
+
+            var pluginDirectoryList = Directory.EnumerateDirectories(
+                (await Interfacing.GetAppDataPluginFolder("")).Path,
+                "*", SearchOption.TopDirectoryOnly).ToList();
+
+            var corePlugins = pluginDirectoryList
+                .Select(folder => Directory.GetFiles(folder, "plugin*.dll"))
+                .Select(assembly => SetupPlugin.CreateFrom(assembly.First()))
+                .Where(plugin => plugin?.PluginType == typeof(ITrackingDevice))
+                .Where(device => device.CoreSetupData is not null).ToList();
+
             new Host(height: 700, width: 1200)
             {
                 Content = new SetupDevices
                 {
-
+                    Devices = corePlugins
                 }
             }.Activate();
             return;

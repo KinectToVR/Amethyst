@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
 using System.Threading;
@@ -11,10 +15,24 @@ using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Amethyst.Installer.ViewModels;
 
-public class SetupPlugin
+public class SetupPluginGroup
+{
+    public string Name { get; set; }
+    public bool NameValid => !string.IsNullOrEmpty(Name);
+    public bool NameInvalid => string.IsNullOrEmpty(Name);
+
+    public ListViewSelectionMode GroupSelectionMode => NameValid
+        ? ListViewSelectionMode.Single // One in a group
+        : ListViewSelectionMode.Multiple; // Many
+
+    public List<SetupPlugin> Plugins { get; set; }
+}
+
+public class SetupPlugin : INotifyPropertyChanged
 {
     public Type PluginType => CoreSetupData.PluginType;
     public string Name { get; set; } = "[UNKNOWN]";
@@ -24,9 +42,11 @@ public class SetupPlugin
 
     public string DependencyLink { get; set; }
     public string DependencySource { get; set; }
+    public bool DependencySetupPending { get; set; }
 
     public IDependencyInstaller DependencyInstaller { get; set; }
     public ICoreSetupData CoreSetupData { get; set; }
+    public UIElement Icon => CoreSetupData?.PluginIcon as UIElement;
 
     public LoadAttemptedPlugin.DependencyInstallHandler InstallHandler { get; } = new();
 
@@ -42,6 +62,7 @@ public class SetupPlugin
     public bool PublisherValid => !string.IsNullOrEmpty(Publisher);
     public bool WebsiteValid => !string.IsNullOrEmpty(Website);
     public bool GuidValid => !string.IsNullOrEmpty(Guid) && Guid is not "[INVALID]" and not "INVALID";
+    public bool IsEnabled => Name is not "Xbox One Kinect"; // TODO
 
     public bool DependencyLinkValid => !string.IsNullOrEmpty(DependencyLink);
     public bool DependencySourceValid => !string.IsNullOrEmpty(DependencySource);
@@ -52,47 +73,7 @@ public class SetupPlugin
     public bool ShowDependencyLinks =>
         !ShowDependencyInstaller && (DependencyLinkValid || DependencySourceValid);
 
-    public async void InstallPluginDependencies(object sender, RoutedEventArgs e)
-    {
-        // Show the EULA, if provided by the installer
-        foreach (var dependency in DependencyInstaller?.ListDependencies()?
-                     .Where(x => !x.IsInstalled && x.IsMandatory &&
-                                 !string.IsNullOrEmpty(x.InstallerEula)))
-        {
-            Shared.Main.EulaHeader.Text = $"{dependency.Name} EULA";
-            Shared.Main.EulaText.Text = dependency.InstallerEula;
-
-            Shared.Main.EulaFlyout.ShowAt(Shared.Main.MainGrid);
-            await Shared.Main.EulaFlyoutClosed.WaitAsync();
-
-            // Validate the result and continue/exit
-            if (!Shared.Main.EulaFlyoutResult) return;
-        }
-
-        try
-        {
-            // Install plugin dep using the installer
-            await PerformDependencyInstallation();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
-    }
-
-    public void CancelDependencyInstallation()
-    {
-        try
-        {
-            InstallHandler?.TokenSource?.Cancel();
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e);
-        }
-    }
-
-    private async Task PerformDependencyInstallation()
+    public async Task PerformDependencyInstallation(IDependency dependency)
     {
         /*
          * Logic
@@ -111,12 +92,8 @@ public class SetupPlugin
 
         /* Show the installer part */
 
-        // Prepare a list of our dependencies
-        var dependenciesToInstall = DependencyInstaller?.ListDependencies()
-            .Where(x => !x.IsInstalled && x.IsMandatory).ToList();
-
         // Theoretically not possible, but check anyway
-        if (dependenciesToInstall is null || !dependenciesToInstall.Any()) return;
+        if (dependency is null) return;
         InstallHandler.TokenSource = new CancellationTokenSource();
 
         // Block temporarily
@@ -140,127 +117,115 @@ public class SetupPlugin
         InstallHandler.OnPropertyChanged();
 
         // Loop over all dependencies and install them, give up on failures
-        foreach (var dependency in dependenciesToInstall)
-            try
-            {
-                /* Setup and start the installation */
+        try
+        {
+            /* Setup and start the installation */
 
-                // Prepare the progress update handler
-                var progress = new Progress<InstallationProgress>();
-                progress.ProgressChanged += (_, installationProgress) =>
-                    Shared.Main.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        // Update our progress here
-                        InstallHandler.StageName = installationProgress.StageTitle;
-                        InstallHandler.ProgressIndeterminate = installationProgress.IsIndeterminate;
-                        InstallHandler.ProgressValue = installationProgress.OverallProgress * 100 ?? 0;
-
-                        // Trigger a partial interface reload
-                        InstallHandler.OnPropertyChanged();
-                    });
-
-                // Capture the installation thread
-                InstallHandler.InstallationWorker = dependency.Install(progress, InstallHandler.TokenSource.Token);
-
-                // Actually start the installation now
-                var result = await InstallHandler.InstallationWorker;
-
-                /* Parse the result and present it */
-
-                // Show the progress indicator [and the last message if failed]
-                InstallHandler.ProgressError = !result;
-                InstallHandler.ProgressIndeterminate = false;
-                InstallHandler.ProgressValue = 100;
-                InstallHandler.HideProgress = true;
-
-                if (result)
-                    InstallHandler.StageName =
-                        Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Success");
-
-                InstallHandler.OnPropertyChanged();
-                await Task.Delay(6000, InstallHandler.TokenSource.Token);
-
-                if (!result)
+            // Prepare the progress update handler
+            var progress = new Progress<InstallationProgress>();
+            progress.ProgressChanged += (_, installationProgress) =>
+                Shared.Main.DispatcherQueue.TryEnqueue(() =>
                 {
-                    InstallHandler.StageName =
-                        Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Failure");
+                    // Update our progress here
+                    InstallHandler.StageName = installationProgress.StageTitle;
+                    InstallHandler.ProgressIndeterminate = installationProgress.IsIndeterminate;
+                    InstallHandler.ProgressValue = installationProgress.OverallProgress * 100 ?? 0;
 
+                    // Trigger a partial interface reload
                     InstallHandler.OnPropertyChanged();
-                    await Task.Delay(5000, InstallHandler.TokenSource.Token);
-                }
+                });
 
-                // Block temporarily
-                InstallHandler.AllowUserInput = false;
-                InstallHandler.OnPropertyChanged();
-                await Task.Delay(500, InstallHandler.TokenSource.Token);
+            // Capture the installation thread
+            InstallHandler.InstallationWorker = dependency.Install(progress, InstallHandler.TokenSource.Token);
 
-                // Hide the installer grid
-                InstallHandler.InstallingDependencies = false;
-                InstallHandler.OnPropertyChanged();
-                await Task.Delay(500, InstallHandler.TokenSource.Token);
+            // Actually start the installation now
+            var result = await InstallHandler.InstallationWorker;
 
-                // Unblock user input now
-                InstallHandler.AllowUserInput = true;
-                InstallHandler.OnPropertyChanged();
+            /* Parse the result and present it */
 
-                /* Show the restart notice */
-                if (!result)
-                {
-                    InstallHandler.TokenSource.Dispose();
-                    return; // Exit the whole handler
-                }
+            // Show the progress indicator [and the last message if failed]
+            InstallHandler.ProgressError = !result;
+            InstallHandler.ProgressIndeterminate = false;
+            InstallHandler.ProgressValue = 100;
+            InstallHandler.HideProgress = true;
 
-                if (dependenciesToInstall.Last() == dependency)
-                    Shared.Main.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen = true;
-                        Shared.TeachingTips.MainPage.ReloadInfoBar.Opacity = 1.0;
-                    });
-            }
-            catch (OperationCanceledException e)
+            if (result)
+                InstallHandler.StageName =
+                    Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Success"); // TODO W/O "RESTART"
+
+            InstallHandler.OnPropertyChanged();
+            await Task.Delay(6000, InstallHandler.TokenSource.Token);
+
+            if (!result)
             {
-                // Show the fail information
-                InstallHandler.StageName = Interfacing.LocalizedJsonString(
-                    "/SharedStrings/Plugins/Dep/Contents/Cancelled").Format(e.Message);
-
-                InstallHandler.ProgressError = true;
-                InstallHandler.HideProgress = true;
-                InstallHandler.ProgressValue = 100;
+                InstallHandler.StageName =
+                    Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Failure");
 
                 InstallHandler.OnPropertyChanged();
-                await Task.Delay(5000);
-
-                // Hide the installer grid and 'install'
-                InstallHandler.InstallingDependencies = false;
-                InstallHandler.OnPropertyChanged();
-                await Task.Delay(500);
-
-                // Unblock user input now
-                InstallHandler.AllowUserInput = true;
-                InstallHandler.OnPropertyChanged();
+                await Task.Delay(5000, InstallHandler.TokenSource.Token);
             }
-            catch (Exception ex)
-            {
-                // Show the fail information
-                InstallHandler.StageName = Interfacing.LocalizedJsonString(
-                    "/SharedStrings/Plugins/Dep/Contents/InternalException").Format(ex.Message);
 
-                InstallHandler.ProgressError = true;
-                InstallHandler.HideProgress = true;
-                InstallHandler.ProgressValue = 100;
+            // Block temporarily
+            InstallHandler.AllowUserInput = false;
+            InstallHandler.OnPropertyChanged();
+            await Task.Delay(500, InstallHandler.TokenSource.Token);
 
-                InstallHandler.OnPropertyChanged();
-                await Task.Delay(5000);
+            // Hide the installer grid
+            InstallHandler.InstallingDependencies = false;
+            InstallHandler.OnPropertyChanged();
+            await Task.Delay(500, InstallHandler.TokenSource.Token);
 
-                // Hide the installer grid and 'install'
-                InstallHandler.InstallingDependencies = false;
-                InstallHandler.OnPropertyChanged();
-                await Task.Delay(500);
+            // Unblock user input now
+            InstallHandler.AllowUserInput = true;
+            InstallHandler.OnPropertyChanged();
 
-                // Unblock user input now
-                InstallHandler.AllowUserInput = true;
-                InstallHandler.OnPropertyChanged();
-            }
+            InstallHandler.TokenSource.Dispose();
+            return; // Exit the whole handler
+        }
+        catch (OperationCanceledException e)
+        {
+            // Show the fail information
+            InstallHandler.StageName = Interfacing.LocalizedJsonString(
+                "/SharedStrings/Plugins/Dep/Contents/Cancelled").Format(e.Message);
+
+            InstallHandler.ProgressError = true;
+            InstallHandler.HideProgress = true;
+            InstallHandler.ProgressValue = 100;
+
+            InstallHandler.OnPropertyChanged();
+            await Task.Delay(5000);
+
+            // Hide the installer grid and 'install'
+            InstallHandler.InstallingDependencies = false;
+            InstallHandler.OnPropertyChanged();
+            await Task.Delay(500);
+
+            // Unblock user input now
+            InstallHandler.AllowUserInput = true;
+            InstallHandler.OnPropertyChanged();
+        }
+        catch (Exception ex)
+        {
+            // Show the fail information
+            InstallHandler.StageName = Interfacing.LocalizedJsonString(
+                "/SharedStrings/Plugins/Dep/Contents/InternalException").Format(ex.Message);
+
+            InstallHandler.ProgressError = true;
+            InstallHandler.HideProgress = true;
+            InstallHandler.ProgressValue = 100;
+
+            InstallHandler.OnPropertyChanged();
+            await Task.Delay(5000);
+
+            // Hide the installer grid and 'install'
+            InstallHandler.InstallingDependencies = false;
+            InstallHandler.OnPropertyChanged();
+            await Task.Delay(500);
+
+            // Unblock user input now
+            InstallHandler.AllowUserInput = true;
+            InstallHandler.OnPropertyChanged();
+        }
 
         // Clean up after installation
         InstallHandler.TokenSource.Dispose();
@@ -383,5 +348,22 @@ public class SetupPlugin
             Logger.Error(ex);
             return null;
         }
+    }
+
+    public double BoolToOpacity(bool v)
+    {
+        return v ? 1.0 : 0.5;
+    }
+
+    public Visibility InvertVisibility(bool v)
+    {
+        return v ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public void OnPropertyChanged(string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
