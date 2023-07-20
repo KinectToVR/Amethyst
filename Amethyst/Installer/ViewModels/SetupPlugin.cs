@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
 using System.Threading;
@@ -72,6 +70,8 @@ public class SetupPlugin : INotifyPropertyChanged
 
     public bool ShowDependencyLinks =>
         !ShowDependencyInstaller && (DependencyLinkValid || DependencySourceValid);
+
+    public event PropertyChangedEventHandler PropertyChanged;
 
     public async Task PerformDependencyInstallation(IDependency dependency)
     {
@@ -151,7 +151,7 @@ public class SetupPlugin : INotifyPropertyChanged
 
             if (result)
                 InstallHandler.StageName =
-                    Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Success"); // TODO W/O "RESTART"
+                    Interfacing.LocalizedJsonString("/Installer/Dep/Contents/Success");
 
             InstallHandler.OnPropertyChanged();
             await Task.Delay(6000, InstallHandler.TokenSource.Token);
@@ -359,8 +359,6 @@ public class SetupPlugin : INotifyPropertyChanged
     {
         return v ? Visibility.Collapsed : Visibility.Visible;
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
 
     public void OnPropertyChanged(string propertyName = null)
     {

@@ -1,26 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Foundation;
 using Amethyst.Classes;
 using Amethyst.Installer.ViewModels;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
-using CommunityToolkit.WinUI.UI.Converters;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using Newtonsoft.Json;
 using WinRT;
 using static Amethyst.Classes.Shared.Events;
-using Newtonsoft.Json;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -74,13 +69,13 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
         });
     }
 
-    private Button NextButton { get; set; }
+    private Button NextButton { get; }
     public RaisedEvent ContinueEvent { get; set; }
     public List<SetupPlugin> Devices { get; set; }
 
     private List<(GridViewItem Container, SetupPlugin Item)> SelectedDevices { get; set; }
     private List<IDependency> DependenciesToInstall { get; set; }
-    private SemaphoreSlim NextButtonClickedSemaphore { get; set; } = new(0);
+    private SemaphoreSlim NextButtonClickedSemaphore { get; } = new(0);
 
     public List<SetupPluginGroup> GroupedDevices =>
         Devices.GroupBy(
@@ -257,7 +252,7 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
             device.Item.InstallHandler.NoProgress = true;
             device.Item.InstallHandler.ProgressIndeterminate = false;
             device.Item.InstallHandler.CirclePending = true;
-            device.Item.InstallHandler.StageName = "Choose what to install and click 'Next'";
+            device.Item.InstallHandler.StageName = Interfacing.LocalizedJsonString("/Installer/Views/Setup/Dep/Select");
             device.Item.InstallHandler.OnPropertyChanged();
 
             animation.Configuration = new BasicConnectedAnimationConfiguration();
@@ -298,7 +293,8 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
                     device.Item.InstallHandler.HideProgress = true;
                     device.Item.InstallHandler.ProgressIndeterminate = true;
 
-                    device.Item.InstallHandler.StageName = "Please accept the EULA agreement to continue.";
+                    device.Item.InstallHandler.StageName =
+                        Interfacing.LocalizedJsonString("/Installer/Views/Setup/Dep/Eula");
                     device.Item.InstallHandler.OnPropertyChanged();
                     await Task.Delay(2500);
 
@@ -329,7 +325,8 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
             device.Item.InstallHandler.ProgressIndeterminate = false;
             device.Item.InstallHandler.CirclePending = false;
 
-            device.Item.InstallHandler.StageName = "{0} set up successfully!".Format(device.Item.Name);
+            device.Item.InstallHandler.StageName = Interfacing.LocalizedJsonString("/Installer/Views/Setup/Dep/Success")
+                .Format(device.Item.Name);
             device.Item.InstallHandler.OnPropertyChanged();
             await Task.Delay(2500);
 

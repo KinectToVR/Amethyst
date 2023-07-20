@@ -3,9 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewModels="using:Amethyst.Installer.ViewModels"
-    xmlns:local="using:Amethyst.Installer.Views"
     xmlns:contract="using:Amethyst.Plugins.Contract"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:util="using:Amethyst.Utils"
     IsTabStop="True" Loaded="Page_Loaded">
 
     <Page.Resources>
@@ -170,7 +170,8 @@
 
                                     <TextBlock Grid.Row="1" HorizontalAlignment="Left" FontWeight="SemiBold"
                                                Opacity="{x:Bind DependencySetupPending, Mode=OneWay, Converter={StaticResource InversionOpacityConverter}, ConverterParameter='0'}"
-                                               Margin="25,20,0,-5" Text="Dependencies and tools to install:">
+                                               Margin="25,20,0,-5"
+                                               Text="{x:Bind util:Translator.Get.String('/Installer/Views/Setup/Captions/Select'), Mode=OneWay}">
                                         <TextBlock.OpacityTransition>
                                             <ScalarTransition />
                                         </TextBlock.OpacityTransition>
@@ -259,7 +260,8 @@
                                                                VerticalAlignment="Center"
                                                                Opacity="{x:Bind IsMandatory, Converter={StaticResource InversionOpacityConverter}}"
                                                                Visibility="{x:Bind IsInstalled}" FontSize="13"
-                                                               HorizontalAlignment="Right" Text="Already installed" />
+                                                               HorizontalAlignment="Right" 
+                                                               Text="{x:Bind util:Translator.Get.String('/Installer/Views/Setup/Captions/AlreadyInstalled'), Mode=OneWay}" />
 
                                                     <TextBlock Grid.Column="0" HorizontalTextAlignment="Left"
                                                                Margin="0,0,0,2"
@@ -288,7 +290,8 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="1" FontSize="47" MaxWidth="700" TextWrapping="WrapWholeWords"
-                               Text="Choose your fighter." HorizontalTextAlignment="Center"
+                               Text="{x:Bind util:Translator.Get.String('/Installer/Views/Setup/Titles/Device'), Mode=OneWay}"
+                               HorizontalTextAlignment="Center"
                                Style="{ThemeResource TitleLargeTextBlockStyle}"
                                HorizontalAlignment="Center" Margin="0,0,0,20" />
 
@@ -303,14 +306,14 @@
                     </ScrollViewer>
 
                     <TextBlock Grid.Row="5"
-                               Text="Which one should I choose?"
+                               Text="{x:Bind util:Translator.Get.String('/Installer/Views/Setup/Captions/Selection'), Mode=OneWay}"
                                TextTrimming="CharacterEllipsis" Opacity="0.5"
                                TextDecorations="Underline" Tapped="ContextTextBlock_Tapped"
                                HorizontalAlignment="Center" Margin="0,12">
                         <TextBlock.Resources>
                             <TeachingTip x:Name="ContextTeachingTip"
-                                         Title="Choosing the right service endpoint"
-                                         Subtitle="The service you choose here will be set up by Amethyst and then used for body tracking, as the receiver of the data from Amethyst. These settings can be changed later at any time."
+                                         Title="{x:Bind util:Translator.Get.String('/Installer/Views/Setup/TeachingTips/Service/Title'), Mode=OneWay}"
+                                         Subtitle="{x:Bind util:Translator.Get.String('/Installer/Views/Setup/TeachingTips/Service/Text'), Mode=OneWay}"
                                          Closing="ContextTeachingTip_Closing"
                                          PreferredPlacement="Bottom"
                                          PlacementMargin="20"

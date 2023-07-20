@@ -2486,6 +2486,58 @@
     {
       "id": "/Installer/Views/SetupError/Continue",
       "translation": "Continue with limited setup"
+    },
+    {
+      "id": "/Installer/Dep/Contents/Success",
+      "translation": "Dependencies installed successfully!"
+    },
+    {
+      "id": "/Installer/Views/Setup/Dep/Select",
+      "translation": "Choose what to install and click 'Next'"
+    },
+    {
+      "id": "/Installer/Views/Setup/Dep/Eula",
+      "translation": "Please accept the EULA agreement to continue."
+    },
+    {
+      "id": "/Installer/Views/Setup/Dep/Success",
+      "translation": "{0} set up successfully!"
+    },
+    {
+      "id": "/Installer/Views/Setup/Captions/Select",
+      "translation": "Dependencies and tools to install:"
+    },
+    {
+      "id": "/Installer/Views/Setup/Captions/Selection",
+      "translation": "Which one should I choose?"
+    },
+    {
+      "id": "/Installer/Views/Setup/Captions/AlreadyInstalled",
+      "translation": "Already installed"
+    },
+    {
+      "id": "/Installer/Views/Setup/Titles/Device",
+      "translation": "What will you use for tracking?"
+    },
+    {
+      "id": "/Installer/Views/Setup/Titles/Service",
+      "translation": "Where will be trackers sent to?"
+    },
+    {
+      "id": "/Installer/Views/Setup/TeachingTips/Device/Title",
+      "translation": "Choosing the right tracking device"
+    },
+    {
+      "id": "/Installer/Views/Setup/TeachingTips/Device/Text",
+      "translation": "The device you choose here will be set up by Amethyst and then used for body tracking, or as a secondary (override) device you will need to set up manually. These settings can be changed later at any time."
+    },
+    {
+      "id": "/Installer/Views/Setup/TeachingTips/Service/Title",
+      "translation": "Choosing the right service endpoint"
+    },
+    {
+      "id": "/Installer/Views/Setup/TeachingTips/Service/Text",
+      "translation": "The service you choose here will be set up by Amethyst and then used for body tracking, as the receiver of the data from Amethyst. These settings can be changed later at any time."
     }
   ]
 }

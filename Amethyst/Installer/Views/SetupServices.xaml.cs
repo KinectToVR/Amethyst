@@ -1,27 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Foundation;
 using Amethyst.Classes;
 using Amethyst.Installer.ViewModels;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
-using CommunityToolkit.WinUI.UI.Converters;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using Newtonsoft.Json;
 using WinRT;
 using static Amethyst.Classes.Shared.Events;
-using Newtonsoft.Json;
-using System.Web;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -75,13 +69,13 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
         });
     }
 
-    private Button NextButton { get; set; }
+    private Button NextButton { get; }
     public RaisedEvent ContinueEvent { get; set; }
     public List<SetupPlugin> Services { get; set; }
 
     private (GridViewItem Container, SetupPlugin Item)? SelectedService { get; set; }
     private List<IDependency> DependenciesToInstall { get; set; }
-    private SemaphoreSlim NextButtonClickedSemaphore { get; set; } = new(0);
+    private SemaphoreSlim NextButtonClickedSemaphore { get; } = new(0);
 
     public List<SetupPluginGroup> GroupedServices =>
         Services.GroupBy(
@@ -256,7 +250,7 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
         service.Item.InstallHandler.NoProgress = true;
         service.Item.InstallHandler.ProgressIndeterminate = false;
         service.Item.InstallHandler.CirclePending = true;
-        service.Item.InstallHandler.StageName = "Choose what to install and click 'Next'";
+        service.Item.InstallHandler.StageName = Interfacing.LocalizedJsonString("/Installer/Views/Setup/Dep/Select");
         service.Item.InstallHandler.OnPropertyChanged();
 
         animation.Configuration = new BasicConnectedAnimationConfiguration();
@@ -297,7 +291,8 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
                 service.Item.InstallHandler.HideProgress = true;
                 service.Item.InstallHandler.ProgressIndeterminate = true;
 
-                service.Item.InstallHandler.StageName = "Please accept the EULA agreement to continue.";
+                service.Item.InstallHandler.StageName =
+                    Interfacing.LocalizedJsonString("/Installer/Views/Setup/Dep/Eula");
                 service.Item.InstallHandler.OnPropertyChanged();
                 await Task.Delay(2500);
 
@@ -328,7 +323,8 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
         service.Item.InstallHandler.ProgressIndeterminate = false;
         service.Item.InstallHandler.CirclePending = false;
 
-        service.Item.InstallHandler.StageName = "{0} set up successfully!".Format(service.Item.Name);
+        service.Item.InstallHandler.StageName = Interfacing.LocalizedJsonString("/Installer/Views/Setup/Dep/Success")
+            .Format(service.Item.Name);
         service.Item.InstallHandler.OnPropertyChanged();
         await Task.Delay(2500);
 
