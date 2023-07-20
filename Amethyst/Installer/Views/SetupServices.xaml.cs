@@ -21,6 +21,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using WinRT;
 using static Amethyst.Classes.Shared.Events;
 using Newtonsoft.Json;
+using System.Web;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,14 +31,14 @@ namespace Amethyst.Installer.Views;
 /// <summary>
 ///     An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class SetupDevices : Page, INotifyPropertyChanged
+public sealed partial class SetupServices : Page, INotifyPropertyChanged
 {
     private readonly List<string> _languageList = new();
 
     private bool _blockHiddenSoundOnce, _blockSelectionOnce;
     private bool _pageSetupFinished, _pageLoadedOnce;
 
-    public SetupDevices()
+    public SetupServices()
     {
         InitializeComponent();
 
@@ -76,16 +77,16 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
 
     private Button NextButton { get; set; }
     public RaisedEvent ContinueEvent { get; set; }
-    public List<SetupPlugin> Devices { get; set; }
+    public List<SetupPlugin> Services { get; set; }
 
-    private List<(GridViewItem Container, SetupPlugin Item)> SelectedDevices { get; set; }
+    private (GridViewItem Container, SetupPlugin Item)? SelectedService { get; set; }
     private List<IDependency> DependenciesToInstall { get; set; }
     private SemaphoreSlim NextButtonClickedSemaphore { get; set; } = new(0);
 
-    public List<SetupPluginGroup> GroupedDevices =>
-        Devices.GroupBy(
-            device => device.CoreSetupData.GroupName ?? string.Empty,
-            device => device,
+    public List<SetupPluginGroup> GroupedServices =>
+        Services.GroupBy(
+            service => service.CoreSetupData.GroupName ?? string.Empty,
+            service => service,
             (groupName, plugins) =>
                 new SetupPluginGroup
                 {
@@ -206,13 +207,13 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
             return; // Nothing else to do right now
         }
 
-        // Process the change - update the list of selected devices
-        SelectedDevices = (sender as GridView)?.SelectedItems
+        // Process the change - update the list of selected services
+        SelectedService = (sender as GridView)?.SelectedItems
             .Select(x => ((sender as GridView)?.ContainerFromItem(x)
-                as GridViewItem, x as SetupPlugin)).ToList();
+                as GridViewItem, x as SetupPlugin)).First();
 
         // Process the change - hide/show the 'next' button
-        if (SelectedDevices?.Any() ?? false)
+        if (SelectedService is not null)
         {
             NextButtonContainer.Children.Add(NextButton);
             NextButton.Opacity = 1.0;
@@ -228,7 +229,7 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
     private async void NextButton_Click(object sender, RoutedEventArgs e)
     {
         // Omit this handler during setup
-        if (InterfaceBlockerGrid.IsHitTestVisible) return;
+        if (InterfaceBlockerGrid.IsHitTestVisible || SelectedService is null) return;
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         InterfaceBlockerGrid.Opacity = 0.35;
@@ -236,117 +237,114 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
         NextButton.IsEnabled = false; // Disable
         await Task.Delay(200); // Wait a bit
 
-        // Loop over all the selected devices that are applicable to any changes
-        foreach (var device in SelectedDevices
-                     .Where(x => x.Item.DependencyInstaller?.ListDependencies()
-                         .Any(y => !y.IsInstalled) ?? false))
+        // De-nullify the selected service
+        var service = SelectedService.Value;
+
+        /* Forward animation */
+
+        var animationGuid = Guid.NewGuid().ToString();
+        var backAnimationGuid = Guid.NewGuid().ToString();
+
+        MainPluginScrollViewer.ScrollToElement(service.Container, false);
+        await Task.Delay(500); // Wait a bit here
+
+        // Prepare for the animation
+        var animation = ConnectedAnimationService.GetForCurrentView()
+            .PrepareToAnimate(animationGuid, service.Container);
+
+        service.Item.InstallHandler.HideProgress = true;
+        service.Item.InstallHandler.NoProgress = true;
+        service.Item.InstallHandler.ProgressIndeterminate = false;
+        service.Item.InstallHandler.CirclePending = true;
+        service.Item.InstallHandler.StageName = "Choose what to install and click 'Next'";
+        service.Item.InstallHandler.OnPropertyChanged();
+
+        animation.Configuration = new BasicConnectedAnimationConfiguration();
+
+        service.Container.Opacity = 0.0;
+        ConnectedAnimationService.GetForCurrentView()
+            .GetAnimation(animationGuid)?.TryStart(ServiceSetupGrid);
+
+        ServiceSetupGrid.Visibility = Visibility.Visible;
+        ServiceSetupGrid.Opacity = 1.0;
+        SetupItems.ItemsSource = new List<SetupPlugin> { service.Item };
+
+        /* Service setup */
+
+        DependenciesToInstall = service.Item.DependencyInstaller?.ListDependencies()
+            .Where(x => x.IsMandatory && !x.IsInstalled).ToList();
+
+        // Enable the 'next button and wait
+        NextButton.Click += NextButtonOnClick;
+        NextButton.IsEnabled = true;
+
+        await NextButtonClickedSemaphore.WaitAsync();
+        NextButton.Click -= NextButtonOnClick;
+        NextButton.IsEnabled = false;
+
+        // Block user input
+        service.Item.DependencySetupPending = true;
+        service.Item.OnPropertyChanged();
+
+        // Loop over all dependencies and install them
+        foreach (var dependency in DependenciesToInstall ?? new List<IDependency>())
         {
-            /* Forward animation */
-
-            var animationGuid = Guid.NewGuid().ToString();
-            var backAnimationGuid = Guid.NewGuid().ToString();
-
-            MainPluginScrollViewer.ScrollToElement(device.Container, false);
-            await Task.Delay(500); // Wait a bit here
-
-            // Prepare for the animation
-            var animation = ConnectedAnimationService.GetForCurrentView()
-                .PrepareToAnimate(animationGuid, device.Container);
-
-            device.Item.InstallHandler.HideProgress = true;
-            device.Item.InstallHandler.NoProgress = true;
-            device.Item.InstallHandler.ProgressIndeterminate = false;
-            device.Item.InstallHandler.CirclePending = true;
-            device.Item.InstallHandler.StageName = "Choose what to install and click 'Next'";
-            device.Item.InstallHandler.OnPropertyChanged();
-
-            animation.Configuration = new BasicConnectedAnimationConfiguration();
-
-            device.Container.Opacity = 0.0;
-            ConnectedAnimationService.GetForCurrentView()
-                .GetAnimation(animationGuid)?.TryStart(DeviceSetupGrid);
-
-            DeviceSetupGrid.Visibility = Visibility.Visible;
-            DeviceSetupGrid.Opacity = 1.0;
-            SetupItems.ItemsSource = new List<SetupPlugin> { device.Item };
-
-            /* Device setup */
-
-            DependenciesToInstall = device.Item.DependencyInstaller?.ListDependencies()
-                .Where(x => x.IsMandatory && !x.IsInstalled).ToList();
-
-            // Enable the 'next button and wait
-            NextButton.Click += NextButtonOnClick;
-            NextButton.IsEnabled = true;
-
-            await NextButtonClickedSemaphore.WaitAsync();
-            NextButton.Click -= NextButtonOnClick;
-            NextButton.IsEnabled = false;
-
-            // Block user input
-            device.Item.DependencySetupPending = true;
-            device.Item.OnPropertyChanged();
-
-            // Loop over all dependencies and install them
-            foreach (var dependency in DependenciesToInstall ?? new List<IDependency>())
+            eula:
+            if (!string.IsNullOrEmpty(dependency.InstallerEula))
             {
-                eula:
-                if (!string.IsNullOrEmpty(dependency.InstallerEula))
-                {
-                    // Set the progress indicator and title
-                    device.Item.InstallHandler.NoProgress = true;
-                    device.Item.InstallHandler.HideProgress = true;
-                    device.Item.InstallHandler.ProgressIndeterminate = true;
+                // Set the progress indicator and title
+                service.Item.InstallHandler.NoProgress = true;
+                service.Item.InstallHandler.HideProgress = true;
+                service.Item.InstallHandler.ProgressIndeterminate = true;
 
-                    device.Item.InstallHandler.StageName = "Please accept the EULA agreement to continue.";
-                    device.Item.InstallHandler.OnPropertyChanged();
-                    await Task.Delay(2500);
+                service.Item.InstallHandler.StageName = "Please accept the EULA agreement to continue.";
+                service.Item.InstallHandler.OnPropertyChanged();
+                await Task.Delay(2500);
 
-                    // Set up EULA values and open the flyout
-                    EulaHeader.Text = "{0} EULA".Format(dependency.Name);
-                    EulaText.Text = dependency.InstallerEula;
-                    EulaFlyout.ShowAt(MainGrid);
+                // Set up EULA values and open the flyout
+                EulaHeader.Text = "{0} EULA".Format(dependency.Name);
+                EulaText.Text = dependency.InstallerEula;
+                EulaFlyout.ShowAt(MainGrid);
 
-                    // Wait for the eula flyout to be closed
-                    await Shared.Main.EulaFlyoutClosed.WaitAsync();
+                // Wait for the eula flyout to be closed
+                await Shared.Main.EulaFlyoutClosed.WaitAsync();
 
-                    // Validate the result and try again
-                    if (!Shared.Main.EulaFlyoutResult) goto eula;
-                }
-
-                // The EULA must have already been accepted, install now
-                device.Item.InstallHandler.NoProgress = false;
-                device.Item.InstallHandler.StageName = " ";
-                await device.Item.PerformDependencyInstallation(dependency);
-                device.Item.InstallHandler.NoProgress = true;
+                // Validate the result and try again
+                if (!Shared.Main.EulaFlyoutResult) goto eula;
             }
 
-            /* Back animation */
-
-            // Mark as done, wait a bit and go back
-            device.Item.InstallHandler.HideProgress = true;
-            device.Item.InstallHandler.NoProgress = true;
-            device.Item.InstallHandler.ProgressIndeterminate = false;
-            device.Item.InstallHandler.CirclePending = false;
-
-            device.Item.InstallHandler.StageName = "{0} set up successfully!".Format(device.Item.Name);
-            device.Item.InstallHandler.OnPropertyChanged();
-            await Task.Delay(2500);
-
-            // Prepare for the animation
-            var backAnimation = ConnectedAnimationService.GetForCurrentView()
-                .PrepareToAnimate(backAnimationGuid, DeviceSetupGrid);
-
-            backAnimation.Configuration = new BasicConnectedAnimationConfiguration();
-
-            DeviceSetupGrid.Visibility = Visibility.Collapsed;
-            DeviceSetupGrid.Opacity = 0.0;
-            ConnectedAnimationService.GetForCurrentView()
-                .GetAnimation(backAnimationGuid)?.TryStart(device.Container);
-
-            device.Container.Opacity = 1.0;
-            await Task.Delay(500); // Wait a bit here
+            // The EULA must have already been accepted, install now
+            service.Item.InstallHandler.NoProgress = false;
+            service.Item.InstallHandler.StageName = " ";
+            await service.Item.PerformDependencyInstallation(dependency);
+            service.Item.InstallHandler.NoProgress = true;
         }
+
+        /* Back animation */
+
+        // Mark as done, wait a bit and go back
+        service.Item.InstallHandler.HideProgress = true;
+        service.Item.InstallHandler.NoProgress = true;
+        service.Item.InstallHandler.ProgressIndeterminate = false;
+        service.Item.InstallHandler.CirclePending = false;
+
+        service.Item.InstallHandler.StageName = "{0} set up successfully!".Format(service.Item.Name);
+        service.Item.InstallHandler.OnPropertyChanged();
+        await Task.Delay(2500);
+
+        // Prepare for the animation
+        var backAnimation = ConnectedAnimationService.GetForCurrentView()
+            .PrepareToAnimate(backAnimationGuid, ServiceSetupGrid);
+
+        backAnimation.Configuration = new BasicConnectedAnimationConfiguration();
+
+        ServiceSetupGrid.Visibility = Visibility.Collapsed;
+        ServiceSetupGrid.Opacity = 0.0;
+        ConnectedAnimationService.GetForCurrentView()
+            .GetAnimation(backAnimationGuid)?.TryStart(service.Container);
+
+        service.Container.Opacity = 1.0;
+        await Task.Delay(500); // Wait a bit here
 
         NextButton.Click -= NextButton_Click;
         NextButton.Click += NextButtonNextPageOnClick;
@@ -354,14 +352,11 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
         InterfaceBlockerGrid.Opacity = 0.0;
         NextButton.IsEnabled = true;
 
-        // Save selected devices to the default configuration
+        // Save the selected service to the default configuration
         try
         {
-            // Overwrite the data - make Kinect devices a priority, then PSMS
-            SetupData.Defaults.TrackingDevice = SelectedDevices
-                .FirstOrDefault(x => x.Item.Guid.Contains("KINECT"), SelectedDevices
-                    .FirstOrDefault(x => x.Item.Guid.Contains("PSMOVE"), SelectedDevices.First())).Item
-                .Guid.Replace(":SETUP", string.Empty);
+            // Overwrite the data
+            SetupData.Defaults.ServiceEndpoint = SelectedService?.Item.Guid;
 
             // Create a new default config
             await File.WriteAllTextAsync(Interfacing.GetAppDataFilePath("PluginDefaults.json"),

@@ -6,73 +6,90 @@
     xmlns:util="using:Amethyst.Utils"
     Loaded="Page_Loaded">
 
-    <Grid x:Name="MainGrid" Opacity="0.0">
-        <Grid.OpacityTransition>
-            <ScalarTransition />
-        </Grid.OpacityTransition>
+    <Grid>
+        <Grid Margin="0,0,0,3" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Image Source="ms-appx:///Assets/ktvr.png"
+                   HorizontalAlignment="Left"
+                   Width="18" Height="18"
+                   Margin="16,12,0,0" />
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="3*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="2*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="2*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="5*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Row="1" FontSize="47" MaxWidth="700" TextWrapping="WrapWholeWords"
-                       Text="{x:Bind Error.Title}" HorizontalTextAlignment="Center"
-                       Style="{ThemeResource TitleLargeTextBlockStyle}"
-                       HorizontalAlignment="Center" Margin="0,0,0,20" />
-
-            <Viewbox Grid.Row="3" Visibility="{x:Bind Error.HasIcon}" 
-                     Height="150" Width="150" Margin="-28,0,0,0" Stretch="Uniform">
-                <icons:FluentIconElement HorizontalAlignment="Center"
-                                         Symbol="{x:Bind Error.Icon.Symbol}" />
-            </Viewbox>
-
-            <TextBlock Grid.Row="5" FontSize="15"
-                       Text="{x:Bind Error.Message}" TextWrapping="WrapWholeWords"
-                       HorizontalAlignment="Center" MaxWidth="700" />
-
-            <Button Grid.Row="7" Style="{ThemeResource AccentButtonStyle}"
-                    HorizontalAlignment="Center" Content="{x:Bind Error.ActionMessage}"
-                    Visibility="{x:Bind Error.HasAction}" Click="ActionButton_Click" />
-
-            <TextBlock Grid.Row="9"
-                       Text="{x:Bind util:Translator.Get.String('/Installer/Views/SetupError/Continue'), Mode=OneWay}"
-                       Visibility="{x:Bind Error.CanContinue}"
-                       TextTrimming="CharacterEllipsis" Opacity="0.5"
-                       TextDecorations="Underline" Tapped="ContinueTextBlock_Tapped"
-                       HorizontalAlignment="Center" Margin="0,12" />
+            <TextBlock Text="Amethyst" TextWrapping="NoWrap" Opacity="1.0"
+                       Margin="50,12,0,0" x:Name="AppTitleLabel"
+                       FontSize="12" FontWeight="SemiBold">
+                <TextBlock.OpacityTransition>
+                    <ScalarTransition />
+                </TextBlock.OpacityTransition>
+            </TextBlock>
         </Grid>
 
-        <Button Margin="10"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom">
-            <FontIcon Glyph="&#xF2B7;" />
+        <Grid x:Name="MainGrid" Opacity="0.0">
+            <Grid.OpacityTransition>
+                <ScalarTransition />
+            </Grid.OpacityTransition>
 
-            <Button.Flyout>
-                <Flyout x:Name="LanguageComboFlyout"
-                        Placement="TopEdgeAlignedRight"
-                        Opened="OptionBox_DropDownOpened"
-                        Closed="OptionBox_DropDownClosed">
-                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                              Height="35" MinWidth="150" FontSize="15" FontWeight="SemiBold"
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="5*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                              x:Name="LanguageOptionBox"
-                              SelectionChanged="LanguageOptionBox_SelectionChanged"
-                              DropDownOpened="OptionBox_DropDownOpened"
-                              DropDownClosed="OptionBox_DropDownClosed">
-                        <ComboBoxItem Content="INVALID" />
-                    </ComboBox>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
+                <TextBlock Grid.Row="1" FontSize="47" MaxWidth="700" TextWrapping="WrapWholeWords"
+                           Text="{x:Bind Error.Title}" HorizontalTextAlignment="Center"
+                           Style="{ThemeResource TitleLargeTextBlockStyle}"
+                           HorizontalAlignment="Center" Margin="0,0,0,20" />
+
+                <Viewbox Grid.Row="3" Visibility="{x:Bind Error.HasIcon}"
+                         Height="150" Width="150" Margin="-28,0,0,0" Stretch="Uniform">
+                    <icons:FluentIconElement HorizontalAlignment="Center"
+                                             Symbol="{x:Bind Error.Icon.Symbol}" />
+                </Viewbox>
+
+                <TextBlock Grid.Row="5" FontSize="15"
+                           Text="{x:Bind Error.Message}" TextWrapping="WrapWholeWords"
+                           HorizontalAlignment="Center" MaxWidth="700" />
+
+                <Button Grid.Row="7" Style="{ThemeResource AccentButtonStyle}"
+                        HorizontalAlignment="Center" Content="{x:Bind Error.ActionMessage}"
+                        Visibility="{x:Bind Error.HasAction}" Click="ActionButton_Click" />
+
+                <TextBlock Grid.Row="9"
+                           Text="{x:Bind util:Translator.Get.String('/Installer/Views/SetupError/Continue'), Mode=OneWay}"
+                           Visibility="{x:Bind Error.CanContinue}"
+                           TextTrimming="CharacterEllipsis" Opacity="0.5"
+                           TextDecorations="Underline" Tapped="ContinueTextBlock_Tapped"
+                           HorizontalAlignment="Center" Margin="0,12" />
+            </Grid>
+
+            <Button Margin="10"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom">
+                <FontIcon Glyph="&#xF2B7;" />
+
+                <Button.Flyout>
+                    <Flyout x:Name="LanguageComboFlyout"
+                            Placement="TopEdgeAlignedRight"
+                            Opened="OptionBox_DropDownOpened"
+                            Closed="OptionBox_DropDownClosed">
+                        <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+                                  Height="35" MinWidth="150" FontSize="15" FontWeight="SemiBold"
+
+                                  x:Name="LanguageOptionBox"
+                                  SelectionChanged="LanguageOptionBox_SelectionChanged"
+                                  DropDownOpened="OptionBox_DropDownOpened"
+                                  DropDownClosed="OptionBox_DropDownClosed">
+                            <ComboBoxItem Content="INVALID" />
+                        </ComboBox>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </Grid>
     </Grid>
 </Page>

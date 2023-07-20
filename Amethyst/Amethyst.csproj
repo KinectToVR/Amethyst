@@ -104,6 +104,7 @@
         <None Remove="Controls\OverrideExpander.xaml" />
         <None Remove="Installer\Views\SetupDevices.xaml" />
         <None Remove="Installer\Views\SetupError.xaml" />
+        <None Remove="Installer\Views\SetupServices.xaml" />
         <None Remove="Pages\Devices.xaml" />
         <None Remove="Pages\General.xaml" />
         <None Remove="Pages\Info.xaml" />
@@ -134,6 +135,11 @@
         <Content Include="$(SolutionDir)\Resources\**" Visible="false">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Installer\Views\SetupServices.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
     <ItemGroup>
       <Page Update="Installer\Views\SetupDevices.xaml">

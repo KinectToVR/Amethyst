@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Amethyst.Installer.Views.SetupDevices"
+    x:Class="Amethyst.Installer.Views.SetupServices"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewModels="using:Amethyst.Installer.ViewModels"
@@ -22,7 +22,7 @@
             </ItemsPanelTemplate>
             <StackLayout x:Name="GroupStackLayout" Orientation="Horizontal" Spacing="10" />
 
-            <!--The device view-->
+            <!--The service view-->
             <viewModels:EnabledTemplateSelector x:Key="PluginTemplateSelector">
                 <viewModels:EnabledTemplateSelector.ItemTemplate>
                     <DataTemplate x:Key="PluginTemplate" x:DataType="viewModels:SetupPlugin">
@@ -48,24 +48,10 @@
             <!--The group view-->
             <DataTemplate x:Key="PluginGroupTemplate" x:DataType="viewModels:SetupPluginGroup">
                 <Grid>
-                    <!--The group is a valid group-->
-                    <Grid Style="{ThemeResource GridCardSingleStyle}"
-                          CornerRadius="12" Visibility="{x:Bind NameValid}">
-                        <GridView ItemsSource="{x:Bind Plugins, Mode=OneWay}" Padding="3,3,3,0"
-                                  SelectionMode="{x:Bind GroupSelectionMode}"
-                                  IsMultiSelectCheckBoxEnabled="False"
-                                  ItemsPanel="{StaticResource PluginStackLayout}"
-                                  ItemTemplateSelector="{StaticResource PluginTemplateSelector}"
-                                  SelectionChanged="PluginGridView_SelectionChanged"
-                                  IsItemClickEnabled="True" CanDragItems="False"
-                                  ItemClick="PluginGridView_ItemClick" />
-                    </Grid>
-
                     <!--The group is a sparse group-->
-                    <Grid Style="{ThemeResource GridCardSingleStyle}"
-                          CornerRadius="12" Visibility="{x:Bind NameInvalid}">
+                    <Grid Style="{ThemeResource GridCardSingleStyle}" CornerRadius="12">
                         <GridView ItemsSource="{x:Bind Plugins, Mode=OneWay}" Padding="3,3,3,0"
-                                  SelectionMode="{x:Bind GroupSelectionMode}"
+                                  SelectionMode="Single"
                                   IsMultiSelectCheckBoxEnabled="False"
                                   ItemsPanel="{StaticResource PluginStackLayout}"
                                   ItemTemplateSelector="{StaticResource PluginTemplateSelector}"
@@ -157,7 +143,7 @@
 
                 <Grid Style="{StaticResource GridCardSingleStyle}" Opacity="0.0"
                       HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"
-                      x:Name="DeviceSetupGrid" Canvas.ZIndex="2"
+                      x:Name="ServiceSetupGrid" Canvas.ZIndex="2"
                       Width="450" Height="500" CornerRadius="15"
                       Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}">
 
@@ -310,7 +296,7 @@
                                   HorizontalAlignment="Center" HorizontalScrollBarVisibility="Auto"
                                   Padding="-20,20" Margin="20,-20,20,-20"
                                   x:Name="MainPluginScrollViewer">
-                        <ItemsRepeater ItemsSource="{x:Bind GroupedDevices, Mode=OneWay}"
+                        <ItemsRepeater ItemsSource="{x:Bind GroupedServices, Mode=OneWay}"
                                        Layout="{StaticResource GroupStackLayout}"
                                        ItemTemplate="{StaticResource PluginGroupTemplate}"
                                        HorizontalAlignment="Center" />
@@ -323,8 +309,8 @@
                                HorizontalAlignment="Center" Margin="0,12">
                         <TextBlock.Resources>
                             <TeachingTip x:Name="ContextTeachingTip"
-                                         Title="Choosing the right tracking device"
-                                         Subtitle="The device you choose here will be set up by Amethyst and then used for body tracking, or as a secondary (override) device you will need to set up manually. These settings can be changed later at any time."
+                                         Title="Choosing the right service endpoint"
+                                         Subtitle="The service you choose here will be set up by Amethyst and then used for body tracking, as the receiver of the data from Amethyst. These settings can be changed later at any time."
                                          Closing="ContextTeachingTip_Closing"
                                          PreferredPlacement="Bottom"
                                          PlacementMargin="20"
