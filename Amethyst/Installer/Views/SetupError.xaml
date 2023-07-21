@@ -20,6 +20,16 @@
                     <ScalarTransition />
                 </TextBlock.OpacityTransition>
             </TextBlock>
+
+            <TextBlock Text="{x:Bind util:Translator.Get.String('/Installer/Top/Setup'), Mode=OneWay}"
+                       TextWrapping="NoWrap" Margin="110,14,0,0"
+                       Opacity="{Binding ElementName=AppTitleLabel, Path=Opacity, TargetNullValue=1.0}"
+                       FontSize="10" FontWeight="SemiLight" Visibility="Visible"
+                       Foreground="{ThemeResource SystemFillColorNeutralBrush}">
+                <TextBlock.OpacityTransition>
+                    <ScalarTransition />
+                </TextBlock.OpacityTransition>
+            </TextBlock>
         </Grid>
 
         <Grid x:Name="MainGrid" Opacity="0.0">

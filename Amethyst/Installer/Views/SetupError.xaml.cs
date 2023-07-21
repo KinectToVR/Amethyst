@@ -60,6 +60,19 @@ public sealed partial class SetupError : Page, INotifyPropertyChanged
     {
         Logger.Info($"Re/Loading page: '{GetType().FullName}'...");
 
+        if (!_pageLoadedOnce)
+            Shared.Main.Window.Activated += (_, args) =>
+            {
+                if (_pageLoadedOnce)
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        AppTitleLabel.Opacity = args.WindowActivationState is not
+                            WindowActivationState.Deactivated
+                            ? 1.0
+                            : 0.5;
+                    });
+            };
+
         // Execute the handler
         Page_LoadedHandler();
 

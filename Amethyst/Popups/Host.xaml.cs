@@ -31,6 +31,9 @@ public sealed partial class Host : Window
         Logger.Info("Initializing shared XAML components...");
         InitializeComponent();
 
+        Logger.Info("Making the app window available for children views... (XAML UI Window)");
+        Shared.Main.Window = this.As<Window>();
+
         // Overwrite the dispatcher queue if null
         Shared.Main.DispatcherQueue ??= DispatcherQueue;
 

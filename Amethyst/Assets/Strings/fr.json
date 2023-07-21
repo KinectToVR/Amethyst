@@ -1884,6 +1884,10 @@
     {
       "id": "/Installer/Views/Setup/TeachingTips/Service/Text",
       "translation": "The service you choose here will be set up by Amethyst and then used for body tracking, as the receiver of the data from Amethyst. These settings can be changed later at any time."
+    },
+    {
+      "id": "/Installer/Top/Setup",
+      "translation": "SETUP"
     }
   ]
 }

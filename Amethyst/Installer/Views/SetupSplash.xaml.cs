@@ -8,7 +8,6 @@ using Amethyst.Installer.ViewModels;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using static Amethyst.Classes.Shared.Events;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -58,6 +57,19 @@ public sealed partial class SetupSplash : Page, INotifyPropertyChanged
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
         Logger.Info($"Re/Loading page: '{GetType().FullName}'...");
+
+        if (!_pageLoadedOnce)
+            Shared.Main.Window.Activated += (_, args) =>
+            {
+                if (_pageLoadedOnce)
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        AppTitleLabel.Opacity = args.WindowActivationState is not
+                            WindowActivationState.Deactivated
+                            ? 1.0
+                            : 0.5;
+                    });
+            };
 
         if (!_pageLoadedOnce && (Splash?.ShowVideo ?? false))
         {

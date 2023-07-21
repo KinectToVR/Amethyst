@@ -703,9 +703,9 @@ public partial class App : Application
             {
                 Content = new SetupSplash
                 {
-                    Splash = new EndingSplash
+                    Splash = new WelcomeSplash
                     {
-                        Action = async () => { }
+                        Action = async()=>{}
                     }
                 }
             }.Activate();
