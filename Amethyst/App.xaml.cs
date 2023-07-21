@@ -18,6 +18,7 @@ using Windows.System.UserProfile;
 using Windows.UI.ViewManagement;
 using Windows.Web.Http;
 using Amethyst.Classes;
+using Amethyst.Installer.Controls;
 using Amethyst.Installer.ViewModels;
 using Amethyst.Installer.Views;
 using Amethyst.Popups;
@@ -32,6 +33,8 @@ using Newtonsoft.Json.Linq;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Newtonsoft.Json;
 using WinUI.Fluent.Icons;
 
@@ -682,32 +685,33 @@ public partial class App : Application
             }
 
 
-
         // TEMP
         {
             // Scan for all default plugins
 
-            var pluginDirectoryList = Directory.EnumerateDirectories(
-                (await Interfacing.GetAppDataPluginFolder("")).Path,
-                "*", SearchOption.TopDirectoryOnly).ToList();
+            //var pluginDirectoryList = Directory.EnumerateDirectories(
+            //    (await Interfacing.GetAppDataPluginFolder("")).Path,
+            //    "*", SearchOption.TopDirectoryOnly).ToList();
 
-            var corePlugins = pluginDirectoryList
-                .Select(folder => Directory.GetFiles(folder, "plugin*.dll"))
-                .Select(assembly => SetupPlugin.CreateFrom(assembly.First()))
-                .Where(plugin => plugin?.PluginType == typeof(ITrackingDevice))
-                .Where(device => device.CoreSetupData is not null).ToList();
+            //var corePlugins = pluginDirectoryList
+            //    .Select(folder => Directory.GetFiles(folder, "plugin*.dll"))
+            //    .Select(assembly => SetupPlugin.CreateFrom(assembly.First()))
+            //    .Where(plugin => plugin?.PluginType == typeof(ITrackingDevice))
+            //    .Where(device => device.CoreSetupData is not null).ToList();
 
             new Host(height: 700, width: 1200)
             {
-                Content = new SetupDevices
+                Content = new SetupSplash
                 {
-                    Devices = corePlugins
+                    Splash = new EndingSplash
+                    {
+                        Action = async () => { }
+                    }
                 }
             }.Activate();
             return;
         }
         // TEMP
-
 
 
         Logger.Info("Creating a new MainWindow view...");

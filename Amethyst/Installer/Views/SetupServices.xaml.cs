@@ -150,6 +150,10 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
         Interfacing.LoadJsonStringResourcesEnglish();
         Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
 
+        // Request page reloads
+        Translator.Get.OnPropertyChanged();
+        RequestInterfaceReload();
+
         // Reload this page
         Page_LoadedHandler();
         OnPropertyChanged();

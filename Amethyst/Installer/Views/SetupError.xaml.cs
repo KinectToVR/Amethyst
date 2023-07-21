@@ -51,7 +51,7 @@ public sealed partial class SetupError : Page, INotifyPropertyChanged
         });
     }
 
-    public CustomError Error { get; set; }
+    public ICustomError Error { get; set; }
     public RaisedEvent ContinueEvent { get; set; }
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -114,6 +114,10 @@ public sealed partial class SetupError : Page, INotifyPropertyChanged
         // Reload language resources
         Interfacing.LoadJsonStringResourcesEnglish();
         Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
+
+        // Request page reloads
+        Translator.Get.OnPropertyChanged();
+        RequestInterfaceReload();
 
         // Reload this page
         Page_LoadedHandler();
