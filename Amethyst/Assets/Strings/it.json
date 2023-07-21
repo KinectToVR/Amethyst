@@ -2542,6 +2542,26 @@
     {
       "id": "/Installer/Top/Setup",
       "translation": "SETUP"
+    },
+    {
+      "id": "/Installer/Splashes/Welcome/Header",
+      "translation": "Welcome to"
+    },
+    {
+      "id": "/Installer/Splashes/Welcome/ActionMessage",
+      "translation": "Continue"
+    },
+    {
+      "id": "/Installer/Splashes/Ending/Header",
+      "translation": "Amethyst is now set up."
+    },
+    {
+      "id": "/Installer/Splashes/Ending/Message",
+      "translation": "Have fun!"
+    },
+    {
+      "id": "/Installer/Splashes/Ending/ActionMessage",
+      "translation": "Start Amethyst"
     }
   ]
 }

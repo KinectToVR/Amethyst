@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Amethyst.Classes;
 using Amethyst.Installer.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -25,19 +26,19 @@ public interface ICustomSplash
 public class WelcomeSplash : ICustomSplash
 {
     public bool ShowVideo => false;
-    public string Header => "Welcome to";
+    public string Header => Interfacing.LocalizedJsonString("/Installer/Splashes/Welcome/Header");
     public string Message => null;
     public UserControl Control => new TitleControl();
-    public object ActionMessage => "Continue";
+    public object ActionMessage => Interfacing.LocalizedJsonString("/Installer/Splashes/Welcome/ActionMessage");
     public Func<Task> Action { get; set; }
 }
 
 public class EndingSplash : ICustomSplash
 {
     public bool ShowVideo => true;
-    public string Header => "Amethyst is now set up.";
-    public string Message => "Have fun!";
+    public string Header => Interfacing.LocalizedJsonString("/Installer/Splashes/Ending/Header");
+    public string Message => Interfacing.LocalizedJsonString("/Installer/Splashes/Ending/Message");
     public UserControl Control => null;
-    public object ActionMessage => "Start Amethyst";
+    public object ActionMessage => Interfacing.LocalizedJsonString("/Installer/Splashes/Ending/ActionMessage");
     public Func<Task> Action { get; set; }
 }
