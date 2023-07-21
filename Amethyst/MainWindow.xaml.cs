@@ -61,9 +61,6 @@ namespace Amethyst;
 /// </summary>
 public sealed partial class MainWindow : Window, INotifyPropertyChanged
 {
-    public delegate Task RequestApplicationUpdate(object sender, EventArgs e);
-
-    public static RequestApplicationUpdate RequestUpdateEvent;
     private DesktopAcrylicController _acrylicController;
     private SystemBackdropConfiguration _configurationSource;
 
@@ -899,9 +896,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             ("plugins", typeof(Pages.Plugins))
         };
 
-        Logger.Info($"Setting up shared events for '{GetType().FullName}'...");
-        RequestUpdateEvent += (_, _) => DownloadUpdates(force: true);
-
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
 
@@ -1229,16 +1223,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         return false; // Should exit before
     }
 
-    private async Task<AppRelease> CheckUpdates(TimeSpan? delay = null, bool result = false)
+    private async Task CheckUpdates(TimeSpan? delay = null)
     {
-        return null; // TODO REMOVE THIS
-
         // Attempt only after init
-        if (!_mainPageInitFinished) return null;
+        if (!_mainPageInitFinished) return;
 
         // Check if we're midway updating
-        if (Interfacing.UpdatingNow)
-            return null; // Don't proceed further
+        if (Interfacing.UpdatingNow) return;
 
         await Task.Delay(delay ?? TimeSpan.Zero);
 
@@ -1296,37 +1287,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     Logger.Error(new Exception($"Error updating the language info! Message: {e.Message}"));
                     Logger.Error(e); // Log the actual exception in the next message
                 }
-
-                // Release
-                try
-                {
-                    Logger.Info("Checking for updates... [GET]");
-                    var response = await client.ExecuteGetAsync(
-                        $"https://api.appcenter.ms/v0.1/sdk/apps/{AppData.AppSecret}/releases/latest",
-                        new RestRequest().AddHeader("X-API-Token", AppData.UpdateToken));
-
-                    // Check the received response
-                    response.ThrowIfError();
-
-                    // Deserialize as the prepared object class, compare
-                    var release = JsonConvert.DeserializeObject<AppRelease>(response.Content!);
-                    Interfacing.UpdateFound =
-                        (release?.version?.CompareTo(Package.Current.Id.Version.AsVersion()) ?? -1) > 0;
-
-                    // Return the version if run for results
-                    if (result) return release;
-
-                    // If there's an update, try to download and install it
-                    if (release?.status is "available" && Interfacing.UpdateFound)
-                        await DownloadUpdates(release);
-                    else
-                        Logger.Error(new NoNullAllowedException("Update-check failed, the string was empty."));
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(new Exception($"Error getting the release info! Message: {e.Message}"));
-                    Logger.Error(e); // Log the actual exception in the next message
-                }
             }
             catch (Exception e)
             {
@@ -1338,170 +1298,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Check for plugin updates
         await Parallel.ForEachAsync(AppPlugins.LoadAttemptedPluginsList,
             async (x, _) => await x.CheckUpdates());
-
-        return null;
-    }
-
-    private async Task DownloadUpdates(AppRelease appRelease = null, bool force = false)
-    {
-        return; // TODO REMOVE THIS
-
-        Interfacing.UpdatingNow = true;
-        await Task.Delay(500);
-
-        var release = appRelease ?? await CheckUpdates(result: true);
-        if (release is null) return; // Validate the release
-
-        // Success? ...or nah?
-        var updateError = false;
-
-        // Download the latest installer/updater
-        try
-        {
-            using var client = new RestClient();
-            Logger.Info("Downloading the update package... [GET]");
-
-            // Download if we're ok
-            if (release.download_url != null)
-                try
-                {
-                    // Placeholder toast notification
-                    ToastNotification toast = null;
-
-                    try
-                    {
-                        // Show a toast with the update status
-                        toast = new ToastNotification(new ToastContentBuilder()
-                            .AddText(Interfacing.LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading")
-                                .Format(release.version.ToString()))
-                            .AddAppLogoOverride(new Uri(Path.Combine(Interfacing.ProgramLocation.DirectoryName!,
-                                "Assets", "ktvr.png")))
-                            .AddVisualChild(new AdaptiveProgressBar
-                            {
-                                Value = new BindableProgressBarValue("progressValue"),
-                                Status = Interfacing.LocalizedJsonString(
-                                    "/SharedStrings/Updates/Statuses/DownloadingNoProgress")
-                            }).GetToastContent().GetXml())
-                        {
-                            Tag = "Tag_AmethystDownloadNotifications",
-                            Group = "Group_AmethystDownloadNotifications",
-                            Data = new NotificationData
-                            {
-                                Values =
-                                {
-                                    // Add placeholder data
-                                    ["progressValue"] = "0.0"
-                                },
-                                // Show the toast notification to the user
-                                SequenceNumber = 1
-                            }
-                        };
-
-                        // Show the toast now
-                        ToastNotificationManager.CreateToastNotifier().Show(toast);
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Warn(e);
-                    }
-
-                    UpdateDownloadingInfoBar.Title = Interfacing
-                        .LocalizedJsonString("/SharedStrings/Updates/Headers/Downloading")
-                        .Format(release.version.ToString());
-
-                    UpdateDownloadingInfoBar.Message =
-                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Downloading");
-
-                    UpdateDownloadingProgress.IsIndeterminate = false;
-                    UpdateDownloadingProgress.Value = 0;
-
-                    UpdateDownloadingInfoBar.IsOpen = true;
-                    UpdateDownloadingInfoBar.Opacity = 1.0;
-                    OnPropertyChanged(); // Visibility
-
-                    // Create a stream reader using the received Installer Uri
-                    await using var stream =
-                        await client.ExecuteDownloadStreamAsync(release.download_url, new RestRequest());
-
-                    // Compose the file name of the installation package
-                    Interfacing.UpdateFileName = $"{release.app_name}_{release.version}.{release.fileExtension}";
-
-                    // Replace or create our installer file
-                    var installerFile = await Interfacing.TemporaryFolder.CreateFileAsync(
-                        Interfacing.UpdateFileName, CreationCollisionOption.ReplaceExisting);
-
-                    // Create an output stream and push all the available data to it
-                    await using var fsInstallerFile = await installerFile.OpenStreamForWriteAsync();
-                    await stream.CopyToWithProgressAsync(fsInstallerFile, progress =>
-                        Shared.Main.DispatcherQueue.TryEnqueue(() =>
-                        {
-                            SystemShell.SetTaskBarProgress((int)(100 * progress / release.size));
-                            UpdateDownloadingProgress.Value = (int)(100 * progress / release.size);
-                            UpdateDownloadingInfoBar.Message = Interfacing.LocalizedJsonString(
-                                    "/SharedStrings/Updates/Statuses/Downloading")
-                                .Replace("0", ((int)(100 * progress / release.size)).ToString());
-
-                            try
-                            {
-                                // Update the existing notification's data by using tag/group
-                                ToastNotificationManager.CreateToastNotifier().Update(new NotificationData
-                                {
-                                    SequenceNumber = toast?.Data.SequenceNumber ?? 0,
-                                    Values =
-                                    {
-                                        ["progressValue"] =
-                                            ((float)progress / release.size).ToString(CultureInfo.InvariantCulture)
-                                    }
-                                }, "Tag_AmethystDownloadNotifications", "Group_AmethystDownloadNotifications");
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
-                        })); // The runtime will do the rest for us
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(new Exception($"Error downloading the updater! Message: {e.Message}"));
-                    SystemShell.FlashTaskBarState(TaskbarProgressBarState.Error); // One-second error "flash"
-
-                    Interfacing.ShowToast(
-                        Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Error"), e.Message);
-                    updateError = true;
-                }
-        }
-        catch (Exception e)
-        {
-            Logger.Error(new Exception($"Update failed, an exception occurred. Message: {e.Message}"));
-            SystemShell.FlashTaskBarState(TaskbarProgressBarState.Error); // One-second error "flash"
-
-            Interfacing.ShowToast(
-                Interfacing.LocalizedJsonString("/SharedStrings/Updates/Statuses/Error"), e.Message);
-            updateError = true;
-        }
-
-        UpdateDownloadingInfoBar.IsOpen = false;
-        UpdateDownloadingInfoBar.Opacity = 0.0;
-        OnPropertyChanged(); // Visibility
-
-        // Check the file result and the DL result
-        if (updateError) return;
-
-        // If found and downloaded properly
-        UpdateInfoBar.Message = Interfacing.LocalizedJsonString("/SharedStrings/Updates/NewUpdateMessage")
-            .Format(release.version.ToString());
-
-        UpdateInfoBar.IsOpen = true;
-        UpdateInfoBar.Opacity = 1.0;
-        OnPropertyChanged(); // Visibility
-
-        // Enqueue an update task to be run at shutdown
-        ShutdownController.ShutdownTasks.Add(new ShutdownTask
-        {
-            Name = "Update Amethyst using the Installer",
-            Priority = false, // First download plugin updates, then everything else
-            Action = async () => Interfacing.ManualUpdate || await InstallUpdates(force: force)
-        });
     }
 
     private void InitializerTeachingTip_ActionButtonClick(TeachingTip sender, object args)
