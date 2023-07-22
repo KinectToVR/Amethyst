@@ -720,50 +720,17 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Try reading the default config
         Logger.Info("Checking out the default configuration settings...");
-        (string DeviceGuid, string ServiceGuid) defaultSettings = (null, null); // Invalid!
-
-        if (File.Exists(Interfacing.GetAppDataFilePath("PluginDefaults.json")))
-            try
-            {
-                // Parse the loaded json
-                var defaults = JsonConvert.DeserializeObject<DefaultSettings>(
-                    await File.ReadAllTextAsync(
-                        Interfacing.GetAppDataFilePath("PluginDefaults.json"))) ?? new DefaultSettings();
-
-                // Check the device guid
-                if (string.IsNullOrEmpty(defaults.TrackingDevice))
-                    // Invalid configuration file, don't proceed further!
-                    Logger.Error("The default configuration json file was (partially) invalid!");
-                else
-                    defaultSettings = (
-                        defaults.TrackingDevice,
-                        defaultSettings.ServiceGuid); // Keep the last one
-
-                // Check the service guid
-                if (string.IsNullOrEmpty(defaults.ServiceEndpoint))
-                    // Invalid configuration file, don't proceed further!
-                    Logger.Error("The default configuration json file was (partially) invalid!");
-                else
-                    defaultSettings = (
-                        defaultSettings.DeviceGuid, // Keep the last one
-                        defaults.ServiceEndpoint);
-            }
-            catch (Exception e)
-            {
-                Logger.Info($"Default settings checkout failed! Message: {e.Message}");
-            }
-        else Logger.Info("No default configuration found! [PluginDefaults.json]");
 
         // Validate the saved service plugin guid
         Logger.Info("Checking if the saved service endpoint exists in loaded plugins...");
         if (!AppPlugins.ServiceEndpointsList.ContainsKey(AppData.Settings.ServiceEndpointGuid))
         {
-            if (!string.IsNullOrEmpty(defaultSettings.ServiceGuid) && // Check the guid first
-                AppPlugins.ServiceEndpointsList.ContainsKey(defaultSettings.ServiceGuid))
+            if (!string.IsNullOrEmpty(DefaultSettings.ServiceEndpoint) && // Check the guid first
+                AppPlugins.ServiceEndpointsList.ContainsKey(DefaultSettings.ServiceEndpoint))
             {
                 Logger.Info($"The selected service endpoint ({AppData.Settings.ServiceEndpointGuid}) is invalid! " +
-                            $"Resetting it to the default one selected in defaults: ({defaultSettings.ServiceGuid})!");
-                AppData.Settings.ServiceEndpointGuid = defaultSettings.ServiceGuid;
+                            $"Resetting it to the default one selected in defaults: ({DefaultSettings.ServiceEndpoint})!");
+                AppData.Settings.ServiceEndpointGuid = DefaultSettings.ServiceEndpoint;
             }
             else
             {
@@ -785,14 +752,14 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         if (!AppPlugins.TrackingDevicesList.ContainsKey(AppData.Settings.TrackingDeviceGuid))
         {
             // Check against the defaults
-            var firstValidDevice = string.IsNullOrEmpty(defaultSettings.DeviceGuid)
+            var firstValidDevice = string.IsNullOrEmpty(DefaultSettings.TrackingDevice)
                 ? null // Default to null for an empty default guid passed
-                : AppPlugins.GetDevice(defaultSettings.DeviceGuid).Device;
+                : AppPlugins.GetDevice(DefaultSettings.TrackingDevice).Device;
 
             // Check the device now
             if (firstValidDevice is null || firstValidDevice.TrackedJoints.Count <= 0)
             {
-                Logger.Warn($"The requested default tracking device ({defaultSettings.DeviceGuid}) " +
+                Logger.Warn($"The requested default tracking device ({DefaultSettings.TrackingDevice}) " +
                             "was invalid! Searching for any non-disabled suitable device now...");
 
                 // Find the first device that provides any joints

@@ -50,31 +50,39 @@
                     <RowDefinition Height="0" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="10*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="1" FontSize="47" MaxWidth="700" TextWrapping="WrapWholeWords"
-                           Text="{x:Bind Splash.Header}" HorizontalTextAlignment="Center"
+                           Text="{x:Bind Splash.Header, Mode=OneWay}" HorizontalTextAlignment="Center"
                            Style="{ThemeResource TitleLargeTextBlockStyle}"
                            HorizontalAlignment="Center" Opacity="0.8" />
 
-                <TextBlock Grid.Row="3" FontSize="150" Margin="0,-25,0,0" MaxWidth="700" TextWrapping="WrapWholeWords"
-                           Visibility="{x:Bind Splash.HasMessageText}"
-                           Text="{x:Bind Splash.Message}" HorizontalTextAlignment="Center"
-                           Style="{ThemeResource TitleLargeTextBlockStyle}"
-                           FontWeight="Bold" HorizontalAlignment="Center" />
+                <Viewbox Grid.Row="3" Margin="0,-25,0,0" MaxWidth="700" HorizontalAlignment="Center">
+                    <TextBlock FontSize="150" Visibility="{x:Bind Splash.HasMessageText, Mode=OneWay}"
+                               Text="{x:Bind Splash.Message, Mode=OneWay}"
+                               Style="{ThemeResource TitleLargeTextBlockStyle}"
+                               FontWeight="Bold" HorizontalTextAlignment="Center" />
+                </Viewbox>
 
-                <Viewbox Grid.Row="3" Child="{x:Bind Splash.Control}"
+                <Viewbox Grid.Row="3" Child="{x:Bind Splash.Control, Mode=OneWay}"
                          Height="200"
-                         Visibility="{x:Bind Splash.HasMessageObject}"
+                         Visibility="{x:Bind Splash.HasMessageObject, Mode=OneWay}"
                          HorizontalAlignment="Center" />
+
+                <TextBlock Grid.Row="5" Visibility="{x:Bind Splash.HasBottomTextAction, Mode=OneWay}"
+                           Text="{x:Bind Splash.BottomText, Mode=OneWay}"
+                           TextTrimming="CharacterEllipsis" Opacity="0.5"
+                           TextDecorations="Underline" Tapped="BottomTextBlock_Tapped"
+                           HorizontalAlignment="Center" Margin="0,12" />
             </Grid>
 
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom"
                         Orientation="Horizontal" Margin="10">
 
                 <Button Style="{ThemeResource AccentButtonStyle}" Margin="0,0,10,0"
-                        HorizontalAlignment="Center" Content="{x:Bind Splash.ActionMessage}"
-                        Visibility="{x:Bind Splash.HasAction}" Click="ActionButton_Click" />
+                        HorizontalAlignment="Center" Content="{x:Bind Splash.ActionMessage, Mode=OneWay}"
+                        Visibility="{x:Bind Splash.HasAction, Mode=OneWay}" Click="ActionButton_Click" />
 
                 <Button HorizontalAlignment="Left" VerticalAlignment="Bottom">
                     <FontIcon Glyph="&#xF2B7;" />

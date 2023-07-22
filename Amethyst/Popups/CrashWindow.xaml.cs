@@ -265,6 +265,8 @@ public sealed partial class CrashWindow : Window
                         Logger.Error(e);
                     }
 
+                    Logger.Info($"Exit with code: {ProcessExitCode}!");
+
                     // Handle normal exit
                     if (ProcessExitCode == 0)
                     {
@@ -326,10 +328,9 @@ public sealed partial class CrashWindow : Window
                         //    Close();
                         //}
                         //    break;
-                        case -532265403:
+                        case -532265403 or -1073741819:
                         {
-                            // MS no package identity something,
-                            // just don't give a shit
+                            // Just don't give a shit
                             Environment.Exit(0); // Exit
                             return; // Don't care anymore
                         }

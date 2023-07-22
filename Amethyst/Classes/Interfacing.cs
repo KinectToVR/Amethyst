@@ -737,7 +737,7 @@ public static class Interfacing
     }
 
     // Restart Amethyst
-    public static async Task ExecuteAppRestart(bool handleExit = true, string parameters = "")
+    public static async Task ExecuteAppRestart(bool handleExit = true, string parameters = "", bool admin = false)
     {
         Logger.Info("Restart requested: trying to restart the app...");
 
@@ -756,12 +756,20 @@ public static class Interfacing
             if (handleExit) // Handle a typical exit
                 await HandleAppExit(500);
 
-            // Restart and exit with code 0
-            Process.Start(new ProcessStartInfo
+            var info = new ProcessStartInfo
             {
                 FileName = ProgramLocation.FullName.Replace(".dll", ".exe"),
                 Arguments = parameters // Pass same args
-            });
+            };
+
+            if (admin)
+            {
+                info.UseShellExecute = true;
+                info.Verb = "runas";
+            }
+
+            // Restart and exit with code 0
+            Process.Start(info);
 
             // Exit without re-handling everything
             Environment.Exit(0);

@@ -37,6 +37,9 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Newtonsoft.Json;
 using WinUI.Fluent.Icons;
+using System.Reflection;
+using System.Runtime.Loader;
+using System.Net.NetworkInformation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -52,6 +55,7 @@ public partial class App : Application
     private bool _canCloseViews;
     private CrashWindow _crashWindow;
     private MainWindow _mWindow;
+    private Host _mHostWindow;
 
     /// <summary>
     ///     Initializes the singleton application object.  This is the first line of authored code
@@ -404,13 +408,9 @@ public partial class App : Application
                                     $"ServiceEndpoint{{{serviceEndpoint}}}, ExtraTrackers{{{extraTrackers}}}");
 
                         // Create a new default config
-                        await File.WriteAllTextAsync(Interfacing.GetAppDataFilePath("PluginDefaults.json"),
-                            JsonConvert.SerializeObject(new DefaultSettings
-                            {
-                                TrackingDevice = trackingDevice,
-                                ServiceEndpoint = serviceEndpoint,
-                                ExtraTrackers = extraTrackersValid ? extraTrackers : null
-                            }, Formatting.Indented));
+                        DefaultSettings.TrackingDevice = trackingDevice;
+                        DefaultSettings.ServiceEndpoint = serviceEndpoint;
+                        DefaultSettings.ExtraTrackers = extraTrackersValid ? extraTrackers : null;
                     }
                     catch (Exception e)
                     {
@@ -684,35 +684,186 @@ public partial class App : Application
                 Logger.Warn(e);
             }
 
-
-        // TEMP
+        // Check whether the first-time setup is complete
+        if (!DefaultSettings.SetupFinished)
         {
             // Scan for all default plugins
 
-            //var pluginDirectoryList = Directory.EnumerateDirectories(
-            //    (await Interfacing.GetAppDataPluginFolder("")).Path,
-            //    "*", SearchOption.TopDirectoryOnly).ToList();
+            // Search the "Plugins" sub-directory for assemblies that match the imports.
+            // Iterate over all directories in .\Plugins dir and add all * dirs to catalogs
+            Logger.Info("Searching for local plugins now...");
+            var localPluginsFolder = Path.Combine(Interfacing.ProgramLocation.DirectoryName!, "Plugins");
 
-            //var corePlugins = pluginDirectoryList
-            //    .Select(folder => Directory.GetFiles(folder, "plugin*.dll"))
-            //    .Select(assembly => SetupPlugin.CreateFrom(assembly.First()))
-            //    .Where(plugin => plugin?.PluginType == typeof(ITrackingDevice))
-            //    .Where(device => device.CoreSetupData is not null).ToList();
+            var pluginDirectoryList = Directory.Exists(localPluginsFolder)
+                ? Directory.EnumerateDirectories(localPluginsFolder, "*", SearchOption.TopDirectoryOnly).ToList()
+                : new List<string>(); // In case the folder doesn't exists, create an empty directory list
 
-            new Host(height: 700, width: 1200)
+            // Search the "Plugins" AppData directory for assemblies that match the imports.
+            // Iterate over all directories in Plugins dir and add all * dirs to catalogs
+            Logger.Info("Searching for shared plugins now...");
+            pluginDirectoryList.AddRange(Directory.EnumerateDirectories(
+                (await Interfacing.GetAppDataPluginFolder("")).Path,
+                "*", SearchOption.TopDirectoryOnly));
+
+            // Add the current assembly to support invoke method exports
+            AssemblyLoadContext.Default.LoadFromAssemblyPath(
+                Assembly.GetAssembly(typeof(ITrackingDevice))!.Location);
+
+            // Compose a list of tracking provider (device) plugins
+            Logger.Info("Searching for setup-able device plugins...");
+            var coreDevicePlugins = pluginDirectoryList
+                .Select(folder => Directory.GetFiles(folder, "plugin*.dll"))
+                .Select(assembly => SetupPlugin.CreateFrom(assembly.First()))
+                .Where(plugin => plugin?.PluginType == typeof(ITrackingDevice))
+                .Where(device => device.CoreSetupData is not null).ToList();
+
+            // Compose a list of service endpoint (service) plugins
+            Logger.Info("Searching for setup-able service plugins...");
+            var coreServicePlugins = pluginDirectoryList
+                .Select(folder => Directory.GetFiles(folder, "plugin*.dll"))
+                .Select(assembly => SetupPlugin.CreateFrom(assembly.First()))
+                .Where(plugin => plugin?.PluginType == typeof(IServiceEndpoint))
+                .Where(device => device.CoreSetupData is not null).ToList();
+
+            // Validate there are enough plugins
+            Logger.Info($"Found: {coreDevicePlugins.Count} of {nameof(ITrackingDevice)}");
+            Logger.Info($"Found: {coreServicePlugins.Count} of {nameof(IServiceEndpoint)}");
+            if (!coreDevicePlugins.Any() || !coreServicePlugins.Any())
             {
-                Content = new SetupSplash
+                Logger.Info("Not enough plugins to complete set-up!");
+
+                // PLUGINS:
+                new Host(height: 700, width: 1200)
                 {
-                    Splash = new WelcomeSplash
+                    Single = true,
+                    Content = new SetupError
                     {
-                        Action = async()=>{}
+                        Error = new PluginsError()
+                    }
+                }.Activate();
+                return; // That's all
+            }
+
+            // Create a new host windows for the rest of the setup
+            Logger.Info($"Creating a new {typeof(Host)}...");
+            _mHostWindow = new Host(height: 700, width: 1200) { Single = true };
+
+            // Verify we're running as admin
+            Logger.Info("Verifying the elevation status...");
+
+            var continueEvent = new SemaphoreSlim(0);
+            if (!FileUtils.IsCurrentProcessElevated())
+            {
+                _mHostWindow.Content = new SetupError
+                {
+                    Error = new PermissionsError
+                    {
+                        Action = async () =>
+                        {
+                            await Interfacing.ExecuteAppRestart(admin: true); // Try restarting ame
+                        }
+                    }
+                };
+                _mHostWindow.Activate();
+
+                (_mHostWindow.Content as SetupError).ContinueEvent += (_, _) =>
+                {
+                    Logger.Info("The user has decided to continue with limited setup!");
+                    SetupData.LimitedSetup = true; // Mark our further setup as limited
+                    continueEvent.Release(); // Unlock further program execution
+                };
+                await continueEvent.WaitAsync(); // Wait for the 'continue' event
+            }
+
+            // Verify the internet connection
+            Logger.Info("Verifying the internet connection...");
+            if (!NetworkInterface.GetIsNetworkAvailable())
+            {
+                _mHostWindow.Content = new SetupError
+                {
+                    Error = new InternetError()
+                };
+                _mHostWindow.Activate();
+
+                (_mHostWindow.Content as SetupError).ContinueEvent += (_, _) =>
+                {
+                    Logger.Info("The user has decided to continue with limited setup!");
+                    SetupData.LimitedSetup = true; // Mark our further setup as limited
+                    continueEvent.Release(); // Unlock further program execution
+                };
+                await continueEvent.WaitAsync(); // Wait for the 'continue' event
+            }
+
+            // Still here? Let's begin the setup
+            Logger.Info("Starting the main setup now...");
+            _mHostWindow.Content = new SetupSplash
+            {
+                Splash = new WelcomeSplash
+                {
+                    Action = () =>
+                    {
+                        // Unlock further program execution
+                        continueEvent.Release();
+                        return Task.CompletedTask;
                     }
                 }
-            }.Activate();
-            return;
-        }
-        // TEMP
+            };
+            _mHostWindow.Activate();
 
+            Logger.Info("Waiting for user input...");
+            await continueEvent.WaitAsync(); // Wait for the 'continue' event
+
+            // Set up device plugins
+            Logger.Info($"Switching the view to {typeof(SetupDevices)}...");
+            _mHostWindow.Content = new SetupDevices
+            {
+                Devices = coreDevicePlugins
+            };
+            _mHostWindow.Activate();
+
+            (_mHostWindow.Content as SetupDevices).ContinueEvent += (_, _) =>
+            {
+                Logger.Info("Devices should have been set up by now!");
+                continueEvent.Release(); // Unlock further program execution
+            };
+
+            Logger.Info("Waiting for user input...");
+            await continueEvent.WaitAsync(); // Wait for the 'continue' event
+
+            // Set up service plugins
+            Logger.Info($"Switching the view to {typeof(SetupServices)}...");
+            _mHostWindow.Content = new SetupServices
+            {
+                Services = coreServicePlugins
+            };
+            _mHostWindow.Activate();
+
+            (_mHostWindow.Content as SetupServices).ContinueEvent += (_, _) =>
+            {
+                Logger.Info("Services should have been set up by now!");
+                continueEvent.Release(); // Unlock further program execution
+            };
+
+            Logger.Info("Waiting for user input...");
+            await continueEvent.WaitAsync(); // Wait for the 'continue' event
+            DefaultSettings.SetupFinished = true; // That's all for the setup
+
+            // Show the ending splash
+            Logger.Info($"Switching the view to {typeof(SetupServices)}...");
+            _mHostWindow.Content = new SetupSplash
+            {
+                AnimateEnding = false,
+                Splash = new EndingSplash
+                {
+                    Action = async () =>
+                    {
+                        await Interfacing.ExecuteAppRestart(); // Try restarting ame
+                    }
+                }
+            };
+            _mHostWindow.Activate();
+            return; // That's all!
+        }
 
         Logger.Info("Creating a new MainWindow view...");
         _mWindow = new MainWindow(); // Create a new window

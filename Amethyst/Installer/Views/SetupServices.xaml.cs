@@ -50,7 +50,7 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
             Style = Application.Current.Resources["AccentButtonStyle"].As<Style>()
         };
 
-        NextButton.Click += NextButton_Click;
+        NextButton.Click += SetupData.LimitedSetup ? NextButtonNextPageOnClick : NextButton_Click;
 
         Task.Run(() =>
         {
@@ -364,25 +364,21 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
 
         InterfaceBlockerGrid.Opacity = 0.0;
         NextButton.IsEnabled = true;
+    }
 
+    private void NextButtonOnClick(object sender, RoutedEventArgs e)
+    {
         // Save the selected service to the default configuration
         try
         {
             // Overwrite the data
-            SetupData.Defaults.ServiceEndpoint = SelectedService?.Item.Guid;
-
-            // Create a new default config
-            await File.WriteAllTextAsync(Interfacing.GetAppDataFilePath("PluginDefaults.json"),
-                JsonConvert.SerializeObject(SetupData.Defaults, Formatting.Indented));
+            DefaultSettings.ServiceEndpoint = SelectedService?.Item.Guid;
         }
         catch (Exception ex)
         {
             Logger.Error(ex);
         }
-    }
 
-    private void NextButtonOnClick(object sender, RoutedEventArgs e)
-    {
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         NextButtonClickedSemaphore.Release();
     }

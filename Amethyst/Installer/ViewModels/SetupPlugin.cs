@@ -60,7 +60,10 @@ public class SetupPlugin : INotifyPropertyChanged
     public bool PublisherValid => !string.IsNullOrEmpty(Publisher);
     public bool WebsiteValid => !string.IsNullOrEmpty(Website);
     public bool GuidValid => !string.IsNullOrEmpty(Guid) && Guid is not "[INVALID]" and not "INVALID";
-    public bool IsEnabled => Name is not "Xbox One Kinect"; // TODO
+    public bool IsEnabled => true;
+
+    public bool IsLimited => SetupData.LimitedSetup && (DependencyInstaller?
+        .ListDependencies().Any(x => !x.IsInstalled && x.IsMandatory) ?? false);
 
     public bool DependencyLinkValid => !string.IsNullOrEmpty(DependencyLink);
     public bool DependencySourceValid => !string.IsNullOrEmpty(DependencySource);

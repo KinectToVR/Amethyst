@@ -4,7 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:icons="using:WinUI.Fluent.Icons"
     xmlns:util="using:Amethyst.Utils"
+    xmlns:viewModels="using:Amethyst.Installer.ViewModels"
     Loaded="Page_Loaded">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <!--Converters-->
+            <viewModels:InversionVisibilityConverter x:Key="InversionVisibilityConverter" />
+        </ResourceDictionary>
+    </Page.Resources>
 
     <Grid>
         <Grid Margin="0,0,0,3" VerticalAlignment="Top" HorizontalAlignment="Left">
@@ -45,6 +53,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="2*" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="5*" />
@@ -52,30 +61,45 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="1" FontSize="47" MaxWidth="700" TextWrapping="WrapWholeWords"
-                           Text="{x:Bind Error.Title}" HorizontalTextAlignment="Center"
+                           Text="{x:Bind Error.Title, Mode=OneWay}" HorizontalTextAlignment="Center"
                            Style="{ThemeResource TitleLargeTextBlockStyle}"
                            HorizontalAlignment="Center" Margin="0,0,0,20" />
 
-                <Viewbox Grid.Row="3" Visibility="{x:Bind Error.HasIcon}"
+                <Viewbox Grid.Row="3" Visibility="{x:Bind Error.HasIcon, Mode=OneWay}"
                          Height="150" Width="150" Margin="-28,0,0,0" Stretch="Uniform">
                     <icons:FluentIconElement HorizontalAlignment="Center"
-                                             Symbol="{x:Bind Error.Icon.Symbol}" />
+                                             Symbol="{x:Bind Error.Icon.Symbol, Mode=OneWay}" />
                 </Viewbox>
 
-                <TextBlock Grid.Row="5" FontSize="15"
-                           Text="{x:Bind Error.Message}" TextWrapping="WrapWholeWords"
+                <Grid Grid.Row="5" Height="30"
+                      Visibility="{x:Bind Error.HasAction, Mode=OneWay, Converter={StaticResource InversionVisibilityConverter}}" />
+
+                <TextBlock Grid.Row="6" FontSize="15"
+                           Text="{x:Bind Error.Message, Mode=OneWay}" TextWrapping="WrapWholeWords"
                            HorizontalAlignment="Center" MaxWidth="700" />
 
-                <Button Grid.Row="7" Style="{ThemeResource AccentButtonStyle}"
-                        HorizontalAlignment="Center" Content="{x:Bind Error.ActionMessage}"
-                        Visibility="{x:Bind Error.HasAction}" Click="ActionButton_Click" />
+                <Button Grid.Row="8" Style="{ThemeResource AccentButtonStyle}"
+                        HorizontalAlignment="Center" Content="{x:Bind Error.ActionMessage, Mode=OneWay}"
+                        Visibility="{x:Bind Error.HasAction, Mode=OneWay}" Click="ActionButton_Click" />
 
-                <TextBlock Grid.Row="9"
+                <TextBlock Grid.Row="10"
                            Text="{x:Bind util:Translator.Get.String('/Installer/Views/SetupError/Continue'), Mode=OneWay}"
-                           Visibility="{x:Bind Error.CanContinue}"
+                           Visibility="{x:Bind Error.CanContinue, Mode=OneWay}"
                            TextTrimming="CharacterEllipsis" Opacity="0.5"
                            TextDecorations="Underline" Tapped="ContinueTextBlock_Tapped"
-                           HorizontalAlignment="Center" Margin="0,12" />
+                           HorizontalAlignment="Center" Margin="0,12">
+                    <TextBlock.Resources>
+                        <TeachingTip x:Name="ContextTeachingTip"
+                                     Title="{x:Bind Error.TipTitle, Mode=OneWay}"
+                                     Subtitle="{x:Bind Error.TipMessage, Mode=OneWay}"
+                                     ActionButtonContent="{x:Bind util:Translator.Get.String('/Installer/Views/SetupError/Continue'), Mode=OneWay}"
+                                     ActionButtonClick="ContextTeachingTip_ActionButtonClick"
+                                     Closing="ContextTeachingTip_Closing"
+                                     PreferredPlacement="Bottom"
+                                     PlacementMargin="20"
+                                     IsLightDismissEnabled="True" />
+                    </TextBlock.Resources>
+                </TextBlock>
             </Grid>
 
             <Button Margin="10"

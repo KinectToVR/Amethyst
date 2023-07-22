@@ -10,7 +10,7 @@ namespace Amethyst.Installer.ViewModels;
 
 public static class SetupData
 {
-    public static DefaultSettings Defaults { get; set; } = new();
+    public static bool LimitedSetup { get; set; }
 }
 
 public class EnabledTemplateSelector : DataTemplateSelector

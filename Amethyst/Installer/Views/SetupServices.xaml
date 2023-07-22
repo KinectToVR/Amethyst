@@ -6,6 +6,7 @@
     xmlns:contract="using:Amethyst.Plugins.Contract"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:util="using:Amethyst.Utils"
+    xmlns:icons="using:WinUI.Fluent.Icons"
     IsTabStop="True" Loaded="Page_Loaded">
 
     <Page.Resources>
@@ -35,11 +36,21 @@
                             <Viewbox Child="{x:Bind Icon}"
                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-                            <Grid Visibility="{x:Bind InvertVisibility(IsEnabled)}"
-                                  HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                                <TextBlock Text="Unavailable right now"
-                                           TextTrimming="CharacterEllipsis" Opacity="0.8" />
-                            </Grid>
+                            <Viewbox Visibility="{x:Bind IsLimited}" MaxWidth="220"
+                                     HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <icons:FluentIconElement Symbol="Info28" VerticalAlignment="Center"
+                                                             Margin="0,0,10,0" />
+                                    <TextBlock Grid.Column="1" MaxWidth="220"
+                                               Text="{x:Bind util:Translator.Get.String('/Installer/Views/SetupError/MissingDeps'), Mode=OneWay}"
+                                               VerticalAlignment="Center" TextWrapping="WrapWholeWords" Opacity="0.8" />
+                                </Grid>
+                            </Viewbox>
                         </Grid>
                     </DataTemplate>
                 </viewModels:EnabledTemplateSelector.ItemTemplate>
@@ -270,7 +281,7 @@
                                                                VerticalAlignment="Center"
                                                                Opacity="{x:Bind IsMandatory, Converter={StaticResource InversionOpacityConverter}}"
                                                                Visibility="{x:Bind IsInstalled}" FontSize="13"
-                                                               HorizontalAlignment="Right" 
+                                                               HorizontalAlignment="Right"
                                                                Text="{x:Bind util:Translator.Get.String('/Installer/Views/Setup/Captions/AlreadyInstalled'), Mode=OneWay}" />
 
                                                     <TextBlock Grid.Column="0" HorizontalTextAlignment="Left"

@@ -23,7 +23,7 @@ public sealed partial class SetupError : Page, INotifyPropertyChanged
 {
     private readonly List<string> _languageList = new();
 
-    private bool _blockHiddenSoundOnce;
+    private bool _blockHiddenSoundOnce, _blockTipSoundOnce;
     private bool _pageSetupFinished, _pageLoadedOnce;
 
     public SetupError()
@@ -162,14 +162,10 @@ public sealed partial class SetupError : Page, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
-    private async void ContinueTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
+    private void ContinueTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
     {
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-
-        MainGrid.Opacity = 0.0;
-        await Task.Delay(500);
-
-        ContinueEvent?.Invoke(this, EventArgs.Empty);
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+        ContextTeachingTip.IsOpen = true;
     }
 
     private async void ActionButton_Click(object sender, RoutedEventArgs e)
@@ -182,5 +178,30 @@ public sealed partial class SetupError : Page, INotifyPropertyChanged
     private void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+
+    private async void ContextTeachingTip_ActionButtonClick(TeachingTip sender, object args)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        _blockTipSoundOnce = true;
+        ContextTeachingTip.IsOpen = false;
+
+        MainGrid.Opacity = 0.0;
+        await Task.Delay(500);
+
+        ContinueEvent?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void ContextTeachingTip_Closing(TeachingTip sender, TeachingTipClosingEventArgs args)
+    {
+        // If playing is not allowed yet
+        if (_blockTipSoundOnce)
+        {
+            _blockTipSoundOnce = false;
+            return; // Don't play the sound
+        }
+
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 }

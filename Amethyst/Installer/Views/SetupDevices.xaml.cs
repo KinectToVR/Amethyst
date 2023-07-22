@@ -50,7 +50,7 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
             Style = Application.Current.Resources["AccentButtonStyle"].As<Style>()
         };
 
-        NextButton.Click += NextButton_Click;
+        NextButton.Click += SetupData.LimitedSetup ? NextButtonNextPageOnClick : NextButton_Click;
 
         Task.Run(() =>
         {
@@ -269,7 +269,8 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
             device.Item.InstallHandler.NoProgress = true;
             device.Item.InstallHandler.ProgressIndeterminate = false;
             device.Item.InstallHandler.CirclePending = true;
-            device.Item.InstallHandler.StageName = Interfacing.LocalizedJsonString("/Installer/Views/Setup/Dep/Select");
+            device.Item.InstallHandler.StageName =
+                Interfacing.LocalizedJsonString("/Installer/Views/Setup/Dep/Select");
             device.Item.InstallHandler.OnPropertyChanged();
 
             animation.Configuration = new BasicConnectedAnimationConfiguration();
@@ -342,7 +343,8 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
             device.Item.InstallHandler.ProgressIndeterminate = false;
             device.Item.InstallHandler.CirclePending = false;
 
-            device.Item.InstallHandler.StageName = Interfacing.LocalizedJsonString("/Installer/Views/Setup/Dep/Success")
+            device.Item.InstallHandler.StageName = Interfacing
+                .LocalizedJsonString("/Installer/Views/Setup/Dep/Success")
                 .Format(device.Item.Name);
             device.Item.InstallHandler.OnPropertyChanged();
             await Task.Delay(2500);
@@ -367,28 +369,24 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
 
         InterfaceBlockerGrid.Opacity = 0.0;
         NextButton.IsEnabled = true;
+    }
 
+    private void NextButtonOnClick(object sender, RoutedEventArgs e)
+    {
         // Save selected devices to the default configuration
         try
         {
             // Overwrite the data - make Kinect devices a priority, then PSMS
-            SetupData.Defaults.TrackingDevice = SelectedDevices
+            DefaultSettings.TrackingDevice = SelectedDevices
                 .FirstOrDefault(x => x.Item.Guid.Contains("KINECT"), SelectedDevices
                     .FirstOrDefault(x => x.Item.Guid.Contains("PSMOVE"), SelectedDevices.First())).Item
                 .Guid.Replace(":SETUP", string.Empty);
-
-            // Create a new default config
-            await File.WriteAllTextAsync(Interfacing.GetAppDataFilePath("PluginDefaults.json"),
-                JsonConvert.SerializeObject(SetupData.Defaults, Formatting.Indented));
         }
         catch (Exception ex)
         {
             Logger.Error(ex);
         }
-    }
 
-    private void NextButtonOnClick(object sender, RoutedEventArgs e)
-    {
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         NextButtonClickedSemaphore.Release();
     }

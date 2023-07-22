@@ -25,6 +25,8 @@ public sealed partial class SetupSplash : Page, INotifyPropertyChanged
     private bool _blockHiddenSoundOnce;
     private bool _pageSetupFinished, _pageLoadedOnce;
 
+    public bool AnimateEnding { get; set; } = true;
+
     public SetupSplash()
     {
         InitializeComponent();
@@ -174,10 +176,19 @@ public sealed partial class SetupSplash : Page, INotifyPropertyChanged
     {
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
-        MainGrid.Opacity = 0.0;
-        await Task.Delay(500);
+        if (AnimateEnding)
+        {
+            MainGrid.Opacity = 0.0;
+            await Task.Delay(500);
+        }
 
         await Splash.Action();
+    }
+
+    private async void BottomTextBlock_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+        await Splash.BottomTextAction();
     }
 
     private void OnPropertyChanged(string propName = null)
