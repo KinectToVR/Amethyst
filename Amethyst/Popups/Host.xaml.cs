@@ -51,7 +51,7 @@ public sealed partial class Host : Window
         // Set titlebar/taskview icon
         Logger.Info("Setting the App Window icon...");
         AppWindow.SetIcon(Path.Combine(
-            Interfacing.ProgramLocation.DirectoryName, "Assets", "ktvr.ico"));
+            Interfacing.ProgramLocation.DirectoryName!, "Assets", "ktvr.ico"));
 
         Logger.Info("Extending the window titlebar...");
         if (AppWindowTitleBar.IsCustomizationSupported())
@@ -190,6 +190,11 @@ public sealed partial class Host : Window
         _configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
     }
 
+    private void Window_ThemeChanged(FrameworkElement sender, object args)
+    {
+        if (_configurationSource is not null) SetConfigurationSourceTheme();
+    }
+
     private void SetConfigurationSourceTheme()
     {
         _configurationSource.Theme = Application.Current.RequestedTheme switch
@@ -198,5 +203,11 @@ public sealed partial class Host : Window
             ApplicationTheme.Light => SystemBackdropTheme.Light,
             _ => _configurationSource.Theme
         };
+    }
+
+    public new void Activate()
+    {
+        if (Content is FrameworkElement element) element.ActualThemeChanged += Window_ThemeChanged;
+        base.Activate(); // Activate the base window object
     }
 }

@@ -221,11 +221,12 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
         // Process the change - update the list of selected services
         SelectedService = (sender as GridView)?.SelectedItems
             .Select(x => ((sender as GridView)?.ContainerFromItem(x)
-                as GridViewItem, x as SetupPlugin)).First();
+                as GridViewItem, x as SetupPlugin)).FirstOrDefault();
 
         // Process the change - hide/show the 'next' button
         if (SelectedService is not null)
         {
+            if (NextButtonContainer.Children.Any()) return;
             NextButtonContainer.Children.Add(NextButton);
             NextButton.Opacity = 1.0;
         }
@@ -241,15 +242,22 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
     {
         // Omit this handler during setup
         if (InterfaceBlockerGrid.IsHitTestVisible || SelectedService is null) return;
+
+        // De-nullify the selected service
+        var service = SelectedService.Value;
+        if (service.Item.DependencyInstaller?.ListDependencies()
+                .All(x => x.IsInstalled) ?? true)
+        {
+            NextButtonNextPageOnClick(sender, e);
+            return; // Don't care anymore
+        }
+
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         InterfaceBlockerGrid.Opacity = 0.35;
         InterfaceBlockerGrid.IsHitTestVisible = true;
         NextButton.IsEnabled = false; // Disable
         await Task.Delay(200); // Wait a bit
-
-        // De-nullify the selected service
-        var service = SelectedService.Value;
 
         /* Forward animation */
 

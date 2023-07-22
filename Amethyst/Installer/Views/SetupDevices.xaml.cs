@@ -226,6 +226,7 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
         // Process the change - hide/show the 'next' button
         if (SelectedDevices?.Any() ?? false)
         {
+            if (NextButtonContainer.Children.Any()) return;
             NextButtonContainer.Children.Add(NextButton);
             NextButton.Opacity = 1.0;
         }
@@ -241,6 +242,18 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
     {
         // Omit this handler during setup
         if (InterfaceBlockerGrid.IsHitTestVisible) return;
+
+        // List all setup-able devices
+        var devicesWithAvailableDependencies =
+            SelectedDevices.Where(x => x.Item.DependencyInstaller?.ListDependencies()
+                .Any(y => !y.IsInstalled) ?? false).ToList();
+
+        if (!devicesWithAvailableDependencies.Any())
+        {
+            NextButtonNextPageOnClick(sender, e);
+            return; // Don't care anymore
+        }
+
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         InterfaceBlockerGrid.Opacity = 0.35;
@@ -249,9 +262,7 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
         await Task.Delay(200); // Wait a bit
 
         // Loop over all the selected devices that are applicable to any changes
-        foreach (var device in SelectedDevices
-                     .Where(x => x.Item.DependencyInstaller?.ListDependencies()
-                         .Any(y => !y.IsInstalled) ?? false))
+        foreach (var device in devicesWithAvailableDependencies)
         {
             /* Forward animation */
 

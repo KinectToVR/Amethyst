@@ -40,6 +40,7 @@ using WinUI.Fluent.Icons;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -70,7 +71,7 @@ public partial class App : Application
         {
             var ex = e.Exception;
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
-            if (Interfacing.SuppressAllDomainExceptions) return; // Don't do anything
+            if (Interfacing.SuppressAllDomainExceptions || e.Exception is COMException) return; // Don't do anything
 
             var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
             var msg = Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack").Format(stc);
@@ -92,7 +93,7 @@ public partial class App : Application
         {
             var ex = (Exception)e.ExceptionObject;
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
-            if (Interfacing.SuppressAllDomainExceptions) return; // Don't do anything
+            if (Interfacing.SuppressAllDomainExceptions || e.ExceptionObject is COMException) return; // Don't do anything
 
             var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
             var msg = Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack").Format(stc);
@@ -748,10 +749,28 @@ public partial class App : Application
             Logger.Info($"Creating a new {typeof(Host)}...");
             _mHostWindow = new Host(height: 700, width: 1200) { Single = true };
 
+            // Still here? Let's begin the setup
+            Logger.Info("Starting the main setup now...");
+            var continueEvent = new SemaphoreSlim(0);
+            _mHostWindow.Content = new SetupSplash
+            {
+                Splash = new WelcomeSplash
+                {
+                    Action = () =>
+                    {
+                        // Unlock further program execution
+                        continueEvent.Release();
+                        return Task.CompletedTask;
+                    }
+                }
+            };
+            _mHostWindow.Activate();
+
+            Logger.Info("Waiting for user input...");
+            await continueEvent.WaitAsync(); // Wait for the 'continue' event
+
             // Verify we're running as admin
             Logger.Info("Verifying the elevation status...");
-
-            var continueEvent = new SemaphoreSlim(0);
             if (!FileUtils.IsCurrentProcessElevated())
             {
                 _mHostWindow.Content = new SetupError
@@ -793,25 +812,6 @@ public partial class App : Application
                 };
                 await continueEvent.WaitAsync(); // Wait for the 'continue' event
             }
-
-            // Still here? Let's begin the setup
-            Logger.Info("Starting the main setup now...");
-            _mHostWindow.Content = new SetupSplash
-            {
-                Splash = new WelcomeSplash
-                {
-                    Action = () =>
-                    {
-                        // Unlock further program execution
-                        continueEvent.Release();
-                        return Task.CompletedTask;
-                    }
-                }
-            };
-            _mHostWindow.Activate();
-
-            Logger.Info("Waiting for user input...");
-            await continueEvent.WaitAsync(); // Wait for the 'continue' event
 
             // Set up device plugins
             Logger.Info($"Switching the view to {typeof(SetupDevices)}...");

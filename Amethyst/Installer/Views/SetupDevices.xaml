@@ -62,7 +62,7 @@
                     <!--The group is a valid group-->
                     <Grid Style="{ThemeResource GridCardSingleStyle}"
                           CornerRadius="12" Visibility="{x:Bind NameValid}">
-                        <GridView ItemsSource="{x:Bind Plugins, Mode=OneWay}" Padding="3,3,3,0"
+                        <GridView ItemsSource="{x:Bind Plugins}" Padding="3,3,3,0"
                                   SelectionMode="{x:Bind GroupSelectionMode}"
                                   IsMultiSelectCheckBoxEnabled="False"
                                   ItemsPanel="{StaticResource PluginStackLayout}"
@@ -73,9 +73,8 @@
                     </Grid>
 
                     <!--The group is a sparse group-->
-                    <Grid Style="{ThemeResource GridCardSingleStyle}"
-                          CornerRadius="12" Visibility="{x:Bind NameInvalid}">
-                        <GridView ItemsSource="{x:Bind Plugins, Mode=OneWay}" Padding="3,3,3,0"
+                    <Grid Padding="12" Visibility="{x:Bind NameInvalid}">
+                        <GridView ItemsSource="{x:Bind Plugins}" Padding="3,3,3,0"
                                   SelectionMode="{x:Bind GroupSelectionMode}"
                                   IsMultiSelectCheckBoxEnabled="False"
                                   ItemsPanel="{StaticResource PluginStackLayout}"
@@ -325,7 +324,7 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="1" FontSize="47" MaxWidth="700" TextWrapping="WrapWholeWords"
-                               Text="{x:Bind util:Translator.Get.String('/Installer/Views/Setup/Titles/Service'), Mode=OneWay}"
+                               Text="{x:Bind util:Translator.Get.String('/Installer/Views/Setup/Titles/Device'), Mode=OneWay}"
                                HorizontalTextAlignment="Center"
                                Style="{ThemeResource TitleLargeTextBlockStyle}"
                                HorizontalAlignment="Center" Margin="0,0,0,20" />
