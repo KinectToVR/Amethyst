@@ -26,6 +26,7 @@ public sealed partial class SetupSplash : Page, INotifyPropertyChanged
     private bool _pageSetupFinished, _pageLoadedOnce;
 
     public bool AnimateEnding { get; set; } = true;
+    public TimeSpan? ShowWait { get; set; } = null;
 
     public SetupSplash()
     {
@@ -56,7 +57,7 @@ public sealed partial class SetupSplash : Page, INotifyPropertyChanged
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    private void Page_Loaded(object sender, RoutedEventArgs e)
+    private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
         Logger.Info($"Re/Loading page: '{GetType().FullName}'...");
 
@@ -84,7 +85,9 @@ public sealed partial class SetupSplash : Page, INotifyPropertyChanged
 
         // Mark as loaded
         _pageLoadedOnce = true;
-        MainGrid.Opacity = 1.0;
+
+        if (ShowWait.HasValue) await Task.Delay(ShowWait.Value);
+        MainGrid.Opacity = 1.0; // Show the splash now
     }
 
     private void Page_LoadedHandler()

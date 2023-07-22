@@ -754,6 +754,7 @@ public partial class App : Application
             var continueEvent = new SemaphoreSlim(0);
             _mHostWindow.Content = new SetupSplash
             {
+                ShowWait = TimeSpan.FromMilliseconds(300),
                 Splash = new WelcomeSplash
                 {
                     Action = () =>
@@ -853,6 +854,7 @@ public partial class App : Application
             _mHostWindow.Content = new SetupSplash
             {
                 AnimateEnding = false,
+                ShowWait = TimeSpan.FromMilliseconds(250),
                 Splash = new EndingSplash
                 {
                     Action = async () =>
