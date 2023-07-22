@@ -14,6 +14,7 @@ using Windows.Storage;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using Newtonsoft.Json;
 
@@ -769,9 +770,14 @@ public static class Interfacing
             }
 
             // Restart and exit with code 0
-            Process.Start(info);
+            if (FileUtils.IsCurrentProcessElevated() && !admin)
+            {
+                info.Arguments = "amethyst-app:";
+                info.FileName = "explorer.exe";
+            }
 
             // Exit without re-handling everything
+            Process.Start(info);
             Environment.Exit(0);
         }
 

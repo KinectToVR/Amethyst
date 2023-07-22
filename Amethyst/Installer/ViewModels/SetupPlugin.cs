@@ -112,6 +112,7 @@ public class SetupPlugin : INotifyPropertyChanged
         InstallHandler.ProgressValue = 0.0;
         InstallHandler.StageName = string.Empty;
         InstallHandler.HideProgress = false;
+        InstallHandler.NoProgress = false;
         InstallHandler.OnPropertyChanged();
 
         // Unblock user input now
@@ -151,6 +152,7 @@ public class SetupPlugin : INotifyPropertyChanged
             InstallHandler.ProgressIndeterminate = false;
             InstallHandler.ProgressValue = 100;
             InstallHandler.HideProgress = true;
+            InstallHandler.NoProgress = true;
 
             if (result)
                 InstallHandler.StageName =
@@ -193,6 +195,7 @@ public class SetupPlugin : INotifyPropertyChanged
 
             InstallHandler.ProgressError = true;
             InstallHandler.HideProgress = true;
+            InstallHandler.NoProgress = true;
             InstallHandler.ProgressValue = 100;
 
             InstallHandler.OnPropertyChanged();
@@ -215,6 +218,7 @@ public class SetupPlugin : INotifyPropertyChanged
 
             InstallHandler.ProgressError = true;
             InstallHandler.HideProgress = true;
+            InstallHandler.NoProgress = true;
             InstallHandler.ProgressValue = 100;
 
             InstallHandler.OnPropertyChanged();

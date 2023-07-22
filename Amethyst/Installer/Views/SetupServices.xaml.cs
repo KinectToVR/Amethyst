@@ -301,6 +301,9 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
         NextButton.Click -= NextButtonOnClick;
         NextButton.IsEnabled = false;
 
+        // Skip the animation if there's nothing to install
+        if (!(DependenciesToInstall?.Any() ?? true)) goto backAnim;
+
         // Block user input
         service.Item.DependencySetupPending = true;
         service.Item.OnPropertyChanged();
@@ -354,6 +357,7 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
         await Task.Delay(2500);
 
         // Prepare for the animation
+        backAnim:
         var backAnimation = ConnectedAnimationService.GetForCurrentView()
             .PrepareToAnimate(backAnimationGuid, ServiceSetupGrid);
 

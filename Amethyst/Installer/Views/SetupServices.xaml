@@ -33,7 +33,7 @@
                             <TextBlock HorizontalAlignment="Center" Text="{x:Bind Name}"
                                        Style="{ThemeResource SubtitleTextBlockStyle}" />
 
-                            <Viewbox Child="{x:Bind Icon}"
+                            <Viewbox Child="{x:Bind Icon}" Margin="40,70"
                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
                             <Viewbox Visibility="{x:Bind IsLimited}" MaxWidth="220"
@@ -61,7 +61,7 @@
                 <Grid>
                     <!--The group is a sparse group-->
                     <Grid Padding="12">
-                        <GridView ItemsSource="{x:Bind Plugins, Mode=OneWay}" Padding="3,3,3,0"
+                        <GridView ItemsSource="{x:Bind Plugins}" Padding="3,3,3,0"
                                   SelectionMode="Single"
                                   IsMultiSelectCheckBoxEnabled="False"
                                   ItemsPanel="{StaticResource PluginStackLayout}"
@@ -211,7 +211,7 @@
                                                 Value="100" />
                                         </Viewbox>
 
-                                        <Viewbox Child="{x:Bind Icon}" Margin="20,0"
+                                        <Viewbox Child="{x:Bind Icon}" Margin="50,0"
                                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                                     </Grid>
 

@@ -33,7 +33,7 @@
                             <TextBlock HorizontalAlignment="Center" Text="{x:Bind Name}"
                                        Style="{ThemeResource SubtitleTextBlockStyle}" />
 
-                            <Viewbox Child="{x:Bind Icon}"
+                            <Viewbox Child="{x:Bind Icon}" Margin="40,70"
                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
                             <Viewbox Visibility="{x:Bind IsLimited}" MaxWidth="220"
@@ -224,7 +224,7 @@
                                                 Value="100" />
                                         </Viewbox>
 
-                                        <Viewbox Child="{x:Bind Icon}" Margin="20,0"
+                                        <Viewbox Child="{x:Bind Icon}" Margin="50,0"
                                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                                     </Grid>
 
