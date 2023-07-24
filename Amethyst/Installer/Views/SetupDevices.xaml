@@ -33,7 +33,7 @@
                             <TextBlock HorizontalAlignment="Center" Text="{x:Bind Name}"
                                        Style="{ThemeResource SubtitleTextBlockStyle}" />
 
-                            <Viewbox Child="{x:Bind Icon}" Margin="40,70"
+                            <Viewbox Child="{x:Bind Icon}" Margin="40,90"
                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
                             <Viewbox Visibility="{x:Bind IsLimited}" MaxWidth="220"
