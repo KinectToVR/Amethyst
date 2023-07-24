@@ -1,5 +1,6 @@
 trigger:
 - main
+- store
 
 pr:
 - main
@@ -104,6 +105,7 @@ stages:
 
     - task: VSBuild@1
       displayName: Build (publish) Amethyst
+      condition: eq(variables['Build.SourceBranchName'], 'main')
       inputs:
         platform: '$(buildPlatform)'
         solution: '$(solution)'
@@ -113,6 +115,18 @@ stages:
                       /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\" 
                       /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)" 
                       /p:PackageCertificateThumbprint="2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1" /p:PackageCertificatePassword="$(PackageCertificatePassword)"'
+
+    - task: VSBuild@1
+      displayName: Build (publish) Amethyst
+      condition: ne(variables['Build.SourceBranchName'], 'main')
+      inputs:
+        platform: '$(buildPlatform)'
+        solution: '$(solution)'
+        configuration: '$(buildConfiguration)'
+        msbuildArgs: '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true 
+                      /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml 
+                      /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\" 
+                      /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=false'
 
     - task: CopyFiles@2
       displayName: Pack Amethyst
@@ -128,7 +142,7 @@ stages:
 
 - stage: Distribute
   dependsOn: Build
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranchName'], 'main'))
   jobs:
   - job: Distribute
     variables:
