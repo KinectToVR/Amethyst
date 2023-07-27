@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Windows.Storage;
 using Amethyst.Classes;
+using Amethyst.Installer.ViewModels;
 using Amethyst.Plugins.Contract;
 using Amethyst.Schedulers;
 using Amethyst.Utils;
@@ -493,7 +494,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public bool DependencySourceValid => !string.IsNullOrEmpty(DependencySource);
     public bool DependencyLinksValid => DependencyLinkValid && DependencySourceValid;
 
-    public bool ShowDependencyInstaller => DependencyInstaller is not null;
+    public bool ShowDependencyInstaller => DependencyInstaller is not null && !SetupData.LimitedHide;
 
     public bool ShowDependencyLinks =>
         !ShowDependencyInstaller && (DependencyLinkValid || DependencySourceValid);

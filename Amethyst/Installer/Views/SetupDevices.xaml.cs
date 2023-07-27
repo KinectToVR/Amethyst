@@ -388,6 +388,12 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
 
     private void NextButtonOnClick(object sender, RoutedEventArgs e)
     {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+        NextButtonClickedSemaphore.Release();
+    }
+
+    private async void NextButtonNextPageOnClick(object sender, RoutedEventArgs e)
+    {
         // Save selected devices to the default configuration
         try
         {
@@ -402,12 +408,6 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
             Logger.Error(ex);
         }
 
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
-        NextButtonClickedSemaphore.Release();
-    }
-
-    private async void NextButtonNextPageOnClick(object sender, RoutedEventArgs e)
-    {
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         MainGrid.Opacity = 0.0;

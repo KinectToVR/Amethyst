@@ -41,6 +41,9 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
+using RestSharp;
+using System.Data;
+using Windows.Data.Json;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -93,7 +96,8 @@ public partial class App : Application
         {
             var ex = (Exception)e.ExceptionObject;
             Logger.Fatal($"Unhandled Exception: {ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}");
-            if (Interfacing.SuppressAllDomainExceptions || e.ExceptionObject is COMException) return; // Don't do anything
+            if (Interfacing.SuppressAllDomainExceptions || e.ExceptionObject is COMException)
+                return; // Don't do anything
 
             var stc = $"{ex.GetType().Name} in {ex.Source}: {ex.Message}\n{ex.StackTrace}";
             var msg = Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/UnknownStack").Format(stc);
@@ -685,6 +689,61 @@ public partial class App : Application
                 Logger.Warn(e);
             }
 
+
+        // Check for updates : Installer
+        try
+        {
+            using var client = new RestClient();
+            var endpointData = string.Empty;
+
+            // Data
+            try
+            {
+                Logger.Info("Checking available configuration... [GET]");
+                var response = await client.ExecuteGetAsync(
+                    "https://github.com/KinectToVR/Amethyst/releases/download/latest/EndpointData.json",
+                    new RestRequest());
+
+                endpointData = response.Content;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(new Exception($"Error getting the configuration info! Message: {e.Message}"));
+                Logger.Error(e); // Log the actual exception in the next message
+            }
+
+            // Parse
+            try
+            {
+                if (!string.IsNullOrEmpty(endpointData))
+                {
+                    // Parse the loaded json
+                    var jsonRoot = JsonObject.Parse(endpointData);
+
+                    // Check if the resource root is fine
+                    if (jsonRoot?.ContainsKey("C291EA26-9A68-4FA7-8571-477D4F7CB168") ?? false)
+                    {
+                        SetupData.LimitedHide = jsonRoot.GetNamedBoolean("C291EA26-9A68-4FA7-8571-477D4F7CB168");
+                        SetupData.LimitedSetup = jsonRoot.GetNamedBoolean("C291EA26-9A68-4FA7-8571-477D4F7CB168");
+                    }
+                }
+                else
+                {
+                    Logger.Error(new NoNullAllowedException("Configuration-check failed, the string was empty."));
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(new Exception($"Error updating the configuration info! Message: {e.Message}"));
+                Logger.Error(e); // Log the actual exception in the next message
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
+            Logger.Error(e); // Log the actual exception in the next message
+        }
+
         // Check whether the first-time setup is complete
         if (!DefaultSettings.SetupFinished)
         {
@@ -772,7 +831,7 @@ public partial class App : Application
 
             // Verify we're running as admin
             Logger.Info("Verifying the elevation status...");
-            if (!FileUtils.IsCurrentProcessElevated())
+            if (!FileUtils.IsCurrentProcessElevated() && !SetupData.LimitedSetup)
             {
                 _mHostWindow.Content = new SetupError
                 {
@@ -797,7 +856,7 @@ public partial class App : Application
 
             // Verify the internet connection
             Logger.Info("Verifying the internet connection...");
-            if (!NetworkInterface.GetIsNetworkAvailable())
+            if (!NetworkInterface.GetIsNetworkAvailable() && !SetupData.LimitedSetup)
             {
                 _mHostWindow.Content = new SetupError
                 {

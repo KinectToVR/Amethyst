@@ -36,7 +36,7 @@
                             <Viewbox Child="{x:Bind Icon}" Margin="40,90"
                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-                            <Viewbox Visibility="{x:Bind IsLimited}" MaxWidth="220"
+                            <Viewbox Visibility="{x:Bind IsLimitedDisplay}" MaxWidth="220"
                                      HorizontalAlignment="Center" VerticalAlignment="Bottom">
                                 <Grid>
                                     <Grid.ColumnDefinitions>

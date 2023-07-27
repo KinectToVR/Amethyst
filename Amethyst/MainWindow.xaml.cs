@@ -23,6 +23,7 @@ using Windows.Storage;
 using Windows.System;
 using Windows.UI.Notifications;
 using Amethyst.Classes;
+using Amethyst.Installer.ViewModels;
 using Amethyst.MVVM;
 using Amethyst.Pages;
 using Amethyst.Plugins.Contract;
@@ -50,6 +51,7 @@ using WinRT;
 using WinRT.Interop;
 using WinUI.Fluent.Icons;
 using Microsoft.WindowsAppSDK;
+using Newtonsoft.Json.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -1206,7 +1208,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Check now
             Interfacing.UpdateFound = false;
 
-            // Check for updates
+            // Check for updates : Lang
             try
             {
                 using var client = new RestClient();
@@ -1252,6 +1254,60 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 catch (Exception e)
                 {
                     Logger.Error(new Exception($"Error updating the language info! Message: {e.Message}"));
+                    Logger.Error(e); // Log the actual exception in the next message
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
+                Logger.Error(e); // Log the actual exception in the next message
+            }
+
+            // Check for updates : Installer
+            try
+            {
+                using var client = new RestClient();
+                var endpointData = string.Empty;
+
+                // Data
+                try
+                {
+                    Logger.Info("Checking available configuration... [GET]");
+                    var response = await client.ExecuteGetAsync(
+                        "https://github.com/KinectToVR/Amethyst/releases/download/latest/EndpointData.json",
+                        new RestRequest());
+
+                    endpointData = response.Content;
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(new Exception($"Error getting the configuration info! Message: {e.Message}"));
+                    Logger.Error(e); // Log the actual exception in the next message
+                }
+
+                // Parse
+                try
+                {
+                    if (!string.IsNullOrEmpty(endpointData))
+                    {
+                        // Parse the loaded json
+                        var jsonRoot = JsonObject.Parse(endpointData);
+
+                        // Check if the resource root is fine
+                        if (jsonRoot?.ContainsKey("C291EA26-9A68-4FA7-8571-477D4F7CB168") ?? false)
+                        {
+                            SetupData.LimitedHide = jsonRoot.GetNamedBoolean("C291EA26-9A68-4FA7-8571-477D4F7CB168");
+                            SetupData.LimitedSetup = jsonRoot.GetNamedBoolean("C291EA26-9A68-4FA7-8571-477D4F7CB168");
+                        }
+                    }
+                    else
+                    {
+                        Logger.Error(new NoNullAllowedException("Configuration-check failed, the string was empty."));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(new Exception($"Error updating the configuration info! Message: {e.Message}"));
                     Logger.Error(e); // Log the actual exception in the next message
                 }
             }

@@ -65,6 +65,8 @@ public class SetupPlugin : INotifyPropertyChanged
     public bool IsLimited => SetupData.LimitedSetup && (DependencyInstaller?
         .ListDependencies().Any(x => !x.IsInstalled && x.IsMandatory) ?? false);
 
+    public bool IsLimitedDisplay => IsLimited && !SetupData.LimitedHide;
+
     public bool DependencyLinkValid => !string.IsNullOrEmpty(DependencyLink);
     public bool DependencySourceValid => !string.IsNullOrEmpty(DependencySource);
     public bool DependencyLinksValid => DependencyLinkValid && DependencySourceValid;

@@ -380,23 +380,24 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
 
     private void NextButtonOnClick(object sender, RoutedEventArgs e)
     {
-        // Save the selected service to the default configuration
-        try
-        {
-            // Overwrite the data
-            DefaultSettings.ServiceEndpoint = SelectedService?.Item.Guid;
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
-
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         NextButtonClickedSemaphore.Release();
     }
 
     private async void NextButtonNextPageOnClick(object sender, RoutedEventArgs e)
     {
+        // Save the selected service to the default configuration
+        try
+        {
+            // Overwrite the data
+            DefaultSettings.ServiceEndpoint =
+                SelectedService?.Item.Guid.Replace(":SETUP", string.Empty);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
 
         MainGrid.Opacity = 0.0;
