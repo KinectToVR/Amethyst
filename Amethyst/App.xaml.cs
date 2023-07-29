@@ -690,59 +690,59 @@ public partial class App : Application
             }
 
 
-        // Check for updates : Installer
-        try
-        {
-            using var client = new RestClient();
-            var endpointData = string.Empty;
+        //// Check for updates : Installer
+        //try
+        //{
+        //    using var client = new RestClient();
+        //    var endpointData = string.Empty;
 
-            // Data
-            try
-            {
-                Logger.Info("Checking available configuration... [GET]");
-                var response = await client.ExecuteGetAsync(
-                    "https://github.com/KinectToVR/Amethyst/releases/download/latest/EndpointData.json",
-                    new RestRequest());
+        //    // Data
+        //    try
+        //    {
+        //        Logger.Info("Checking available configuration... [GET]");
+        //        var response = await client.ExecuteGetAsync(
+        //            "https://github.com/KinectToVR/Amethyst/releases/download/latest/EndpointData.json",
+        //            new RestRequest());
 
-                endpointData = response.Content;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(new Exception($"Error getting the configuration info! Message: {e.Message}"));
-                Logger.Error(e); // Log the actual exception in the next message
-            }
+        //        endpointData = response.Content;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Logger.Error(new Exception($"Error getting the configuration info! Message: {e.Message}"));
+        //        Logger.Error(e); // Log the actual exception in the next message
+        //    }
 
-            // Parse
-            try
-            {
-                if (!string.IsNullOrEmpty(endpointData))
-                {
-                    // Parse the loaded json
-                    var jsonRoot = JsonObject.Parse(endpointData);
+        //    // Parse
+        //    try
+        //    {
+        //        if (!string.IsNullOrEmpty(endpointData))
+        //        {
+        //            // Parse the loaded json
+        //            var jsonRoot = JsonObject.Parse(endpointData);
 
-                    // Check if the resource root is fine
-                    if (jsonRoot?.ContainsKey("C291EA26-9A68-4FA7-8571-477D4F7CB168") ?? false)
-                    {
-                        SetupData.LimitedHide = jsonRoot.GetNamedBoolean("C291EA26-9A68-4FA7-8571-477D4F7CB168");
-                        SetupData.LimitedSetup = jsonRoot.GetNamedBoolean("C291EA26-9A68-4FA7-8571-477D4F7CB168");
-                    }
-                }
-                else
-                {
-                    Logger.Error(new NoNullAllowedException("Configuration-check failed, the string was empty."));
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(new Exception($"Error updating the configuration info! Message: {e.Message}"));
-                Logger.Error(e); // Log the actual exception in the next message
-            }
-        }
-        catch (Exception e)
-        {
-            Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
-            Logger.Error(e); // Log the actual exception in the next message
-        }
+        //            // Check if the resource root is fine
+        //            if (jsonRoot?.ContainsKey("C291EA26-9A68-4FA7-8571-477D4F7CB168") ?? false)
+        //            {
+        //                SetupData.LimitedHide = jsonRoot.GetNamedBoolean("C291EA26-9A68-4FA7-8571-477D4F7CB168");
+        //                SetupData.LimitedSetup = jsonRoot.GetNamedBoolean("C291EA26-9A68-4FA7-8571-477D4F7CB168");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            Logger.Error(new NoNullAllowedException("Configuration-check failed, the string was empty."));
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Logger.Error(new Exception($"Error updating the configuration info! Message: {e.Message}"));
+        //        Logger.Error(e); // Log the actual exception in the next message
+        //    }
+        //}
+        //catch (Exception e)
+        //{
+        //    Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
+        //    Logger.Error(e); // Log the actual exception in the next message
+        //}
 
         // Check whether the first-time setup is complete
         if (!DefaultSettings.SetupFinished)
@@ -842,25 +842,6 @@ public partial class App : Application
                             await Interfacing.ExecuteAppRestart(admin: true); // Try restarting ame
                         }
                     }
-                };
-                _mHostWindow.Activate();
-
-                (_mHostWindow.Content as SetupError).ContinueEvent += (_, _) =>
-                {
-                    Logger.Info("The user has decided to continue with limited setup!");
-                    SetupData.LimitedSetup = true; // Mark our further setup as limited
-                    continueEvent.Release(); // Unlock further program execution
-                };
-                await continueEvent.WaitAsync(); // Wait for the 'continue' event
-            }
-
-            // Verify the internet connection
-            Logger.Info("Verifying the internet connection...");
-            if (!NetworkInterface.GetIsNetworkAvailable() && !SetupData.LimitedSetup)
-            {
-                _mHostWindow.Content = new SetupError
-                {
-                    Error = new InternetError()
                 };
                 _mHostWindow.Activate();
 
