@@ -2390,7 +2390,7 @@
     },
     {
       "id": "/SharedStrings/Plugins/Dep/Contents/InstallingPlaceholder",
-      "translation": "Installing dependencies..."
+      "translation": "Installing {0}..."
     },
     {
       "id": "/SharedStrings/Plugins/Dep/Contents/ProgressPlaceholder",
@@ -2402,11 +2402,11 @@
     },
     {
       "id": "/SharedStrings/Plugins/Dep/Contents/Success",
-      "translation": "Dependencies installed successfully! Restart Amethyst to load this plugin."
+      "translation": "{0} installed successfully! Restart Amethyst to load this plugin."
     },
     {
       "id": "/SharedStrings/Plugins/Dep/Contents/Failure",
-      "translation": "Dependency installation failure! Please try again later."
+      "translation": "{0} installation failure! Please try again later."
     },
     {
       "id": "/SharedStrings/Plugins/Dep/Contents/Cancelled",
@@ -2541,7 +2541,7 @@
     },
     {
       "id": "/Installer/Dep/Contents/Success",
-      "translation": "Dependencies installed successfully!"
+      "translation": "{0} installed successfully!"
     },
     {
       "id": "/Installer/Views/Setup/Dep/Select",

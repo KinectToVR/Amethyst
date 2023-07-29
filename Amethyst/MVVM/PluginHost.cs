@@ -780,6 +780,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         // Theoretically not possible, but check anyway
         if (dependenciesToInstall is null || !dependenciesToInstall.Any()) return;
         InstallHandler.TokenSource = new CancellationTokenSource();
+        InstallHandler.DependencyName = dependenciesToInstall.First().Name;
 
         // Block temporarily
         InstallHandler.AllowUserInput = false;
@@ -809,6 +810,9 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
                 // Prepare the progress update handler
                 var progress = new Progress<InstallationProgress>();
+                InstallHandler.DependencyName = dependency.Name;
+                InstallHandler.OnPropertyChanged(); // The name
+
                 progress.ProgressChanged += (_, installationProgress) =>
                     Shared.Main.DispatcherQueue.TryEnqueue(() =>
                     {
@@ -837,7 +841,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
                 if (result)
                     InstallHandler.StageName =
-                        LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Success");
+                        LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Success")
+                            .Format(InstallHandler.DependencyName);
 
                 InstallHandler.OnPropertyChanged();
                 await Task.Delay(6000, InstallHandler.TokenSource.Token);
@@ -845,7 +850,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
                 if (!result)
                 {
                     InstallHandler.StageName =
-                        LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Failure");
+                        LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Failure")
+                            .Format(InstallHandler.DependencyName);
 
                     InstallHandler.OnPropertyChanged();
                     await Task.Delay(5000, InstallHandler.TokenSource.Token);
@@ -986,9 +992,10 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         }
 
         public string StageName { get; set; }
+        public string DependencyName { get; set; }
 
         public string MessageString => string.IsNullOrEmpty(StageName)
-            ? LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/InstallingPlaceholder")
+            ? LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/InstallingPlaceholder").Format(DependencyName)
             : StageName;
 
         public string ProgressString => ProgressIndeterminate || _progressValue < 0 || HideProgress

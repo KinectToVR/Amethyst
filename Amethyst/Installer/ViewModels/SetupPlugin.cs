@@ -100,6 +100,7 @@ public class SetupPlugin : INotifyPropertyChanged
         // Theoretically not possible, but check anyway
         if (dependency is null) return;
         InstallHandler.TokenSource = new CancellationTokenSource();
+        InstallHandler.DependencyName = dependency.Name;
 
         // Block temporarily
         InstallHandler.AllowUserInput = false;
@@ -129,6 +130,9 @@ public class SetupPlugin : INotifyPropertyChanged
 
             // Prepare the progress update handler
             var progress = new Progress<InstallationProgress>();
+            InstallHandler.DependencyName = dependency.Name;
+            InstallHandler.OnPropertyChanged(); // The name
+
             progress.ProgressChanged += (_, installationProgress) =>
                 Shared.Main.DispatcherQueue.TryEnqueue(() =>
                 {
@@ -158,7 +162,8 @@ public class SetupPlugin : INotifyPropertyChanged
 
             if (result)
                 InstallHandler.StageName =
-                    Interfacing.LocalizedJsonString("/Installer/Dep/Contents/Success");
+                    Interfacing.LocalizedJsonString("/Installer/Dep/Contents/Success")
+                        .Format(InstallHandler.DependencyName);
 
             InstallHandler.OnPropertyChanged();
             await Task.Delay(6000, InstallHandler.TokenSource.Token);
@@ -166,7 +171,8 @@ public class SetupPlugin : INotifyPropertyChanged
             if (!result)
             {
                 InstallHandler.StageName =
-                    Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Failure");
+                    Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Failure")
+                        .Format(InstallHandler.DependencyName);
 
                 InstallHandler.OnPropertyChanged();
                 await Task.Delay(5000, InstallHandler.TokenSource.Token);
