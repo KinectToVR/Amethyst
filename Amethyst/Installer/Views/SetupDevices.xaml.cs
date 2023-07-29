@@ -73,7 +73,7 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
     public RaisedEvent ContinueEvent { get; set; }
     public List<SetupPlugin> Devices { get; set; }
 
-    private List<(GridViewItem Container, SetupPlugin Item)> SelectedDevices { get; set; }
+    private List<(GridViewItem Container, SetupPlugin Item)> SelectedDevices { get; set; } = new();
     private List<IDependency> DependenciesToInstall { get; set; }
     private SemaphoreSlim NextButtonClickedSemaphore { get; } = new(0);
 
@@ -219,9 +219,13 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
         }
 
         // Process the change - update the list of selected devices
-        SelectedDevices = (sender as GridView)?.SelectedItems
-            .Select(x => ((sender as GridView)?.ContainerFromItem(x)
-                as GridViewItem, x as SetupPlugin)).ToList();
+        e.RemovedItems?.ToList().ForEach(x => SelectedDevices
+            .Remove(((sender as GridView)?.ContainerFromItem(x)
+                as GridViewItem, x as SetupPlugin)));
+
+        e.AddedItems?.ToList().ForEach(x => SelectedDevices
+            .Add(((sender as GridView)?.ContainerFromItem(x)
+                as GridViewItem, x as SetupPlugin)));
 
         // Process the change - hide/show the 'next' button
         if (SelectedDevices?.Any() ?? false)
@@ -435,8 +439,9 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
     private void PluginGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke); // Also play a sound
-        if ((sender as GridView)?.SelectionMode is ListViewSelectionMode.Single &&
-            e.ClickedItem != ((GridView)sender).SelectedItem) return;
+        if (((sender as GridView)?.SelectionMode is ListViewSelectionMode.Single &&
+             e.ClickedItem != ((GridView)sender).SelectedItem) ||
+            (sender as GridView)?.SelectionMode is ListViewSelectionMode.Multiple) return;
 
         _blockSelectionOnce = true;
         ((GridView)sender).SelectedItem = null;

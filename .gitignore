@@ -349,3 +349,5 @@ healthchecksdb
 MigrationBackup/
 
 Amethyst/Assets/Plugins/
+
+Amethyst/Plugins/
