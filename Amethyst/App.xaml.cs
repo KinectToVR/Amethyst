@@ -505,17 +505,17 @@ public partial class App : Application
                         if (Directory.Exists(localPluginsFolder))
                             foreach (var pluginFolder in Directory.EnumerateDirectories(
                                              localPluginsFolder, "*", SearchOption.TopDirectoryOnly)
-                                         .Where(x => Directory.Exists(Path.Join(x, "Strings"))).ToList())
+                                         .Where(x => Directory.Exists(Path.Join(x, "Assets", "Strings"))).ToList())
                             {
                                 // Copy to the shared folder, creating a random name
                                 var outputFolder = await stringsFolder.CreateFolderAsync(
-                                    Path.GetDirectoryName(pluginFolder),
+                                    new DirectoryInfo(pluginFolder).Name,
                                     CreationCollisionOption.OpenIfExists);
 
-                                new DirectoryInfo(Path.Join(pluginFolder, "Strings"))
+                                new DirectoryInfo(Path.Join(pluginFolder, "Assets", "Strings"))
                                     .CopyToFolder(outputFolder.Path);
 
-                                pluginStringsFolders.Add(Path.Join(pluginFolder, "Strings"), outputFolder.Path);
+                                pluginStringsFolders.Add(Path.Join(pluginFolder, "Assets", "Strings"), outputFolder.Path);
                             }
 
                         // Create a new localization config
@@ -927,7 +927,7 @@ public partial class App : Application
     // Send a non-dismissible tip about reloading the app
     private static void OnWatcherOnChanged(object o, FileSystemEventArgs fileSystemEventArgs)
     {
-        Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        Shared.Main.DispatcherQueue?.TryEnqueue(() =>
         {
             Logger.Info("String resource files have changed, reloading!");
             Logger.Info($"What happened: {fileSystemEventArgs.ChangeType}");
