@@ -1,5 +1,6 @@
 trigger:
 - main
+- store
 
 pr:
 - main
@@ -111,8 +112,7 @@ stages:
         msbuildArgs: '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true 
                       /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml 
                       /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\" 
-                      /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)" 
-                      /p:PackageCertificateThumbprint="2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1" /p:PackageCertificatePassword="$(PackageCertificatePassword)"'
+                      /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=false'
 
     - task: CopyFiles@2
       displayName: Pack Amethyst
@@ -126,64 +126,6 @@ stages:
       displayName: Publish Amethyst
       artifact: pack
 
-- stage: Distribute
-  dependsOn: Build
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-  jobs:
-  - job: Distribute
-    variables:
-     packageVersion: $[ stageDependencies.Build.Publish.outputs['ParseAppxManifest.PackageVersion'] ]
-    steps:
-    - checkout: self
-      persistCredentials: 'true'
-
-    - download: current
-      displayName: Download published artifacts
-      artifact: pack
-
-    - task: AppCenterDistribute@3
-      displayName: Upload packed Amethyst artifact (AppCenter)
-      inputs:
-        serverEndpoint: K2VR
-        appSlug: K2VR/Amethyst
-        appFile: '$(Pipeline.Workspace)/pack/Amethyst_$(packageVersion)_$(buildPlatform).msix'
-        buildVersion: $(packageVersion)
-        releaseNotesOption: 'input'
-        releaseNotesInput: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, then install [Amethyst itself](https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest)  \n(Note: The cert import is one-time, no need to redo it each time)  \n(Note: You'll get protocol run errors if the crash handler is missing)  \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
-        isMandatory: true
-        destinationType: 'groups'
-        distributionGroupId: 'dd3c18b6-8f5a-4b66-8a9b-83575b32c9ce'
-
-    - task: GitHubRelease@1
-      displayName: Delete the latest release (GitHub)
-      inputs:
-        gitHubConnection: github.com_KimihikoAkayasaki
-        action: delete
-        tagSource: userSpecifiedTag
-        tag: latest
-        tagPattern: .*
-
-    - script: git push --delete origin latest
-      displayName: Cleanup tags before uploading
-
-    - task: GitHubRelease@1
-      displayName: Upload packed Amethyst artifact (GitHub)
-      inputs:
-        gitHubConnection: github.com_KimihikoAkayasaki
-        action: create
-        tagSource: userSpecifiedTag
-        tag: latest
-        tagPattern: .*
-        title: 'Amethyst $(Build.BuildNumber)'
-        releaseNotesSource: 'inline'
-        releaseNotesInline: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, then install [Amethyst itself](https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest)  \n(Note: The cert import is one-time, no need to redo it each time)  \n(Note: You'll get protocol run errors if the crash handler is missing)  \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
-        changeLogCompareToRelease: lastFullRelease
-        addChangeLog: true
-        changeLogType: commitBased
-        isPreRelease: true
-        assetUploadMode: delete
-        assets: '$(Pipeline.Workspace)/pack/Amethyst_$(packageVersion)_$(buildPlatform).msix'
-        
 - stage: Stage
   dependsOn: Build
   condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))

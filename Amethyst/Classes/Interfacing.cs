@@ -14,6 +14,7 @@ using Windows.Storage;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using Newtonsoft.Json;
 
@@ -737,7 +738,7 @@ public static class Interfacing
     }
 
     // Restart Amethyst
-    public static async Task ExecuteAppRestart(bool handleExit = true, string parameters = "")
+    public static async Task ExecuteAppRestart(bool handleExit = true, string parameters = "", bool admin = false)
     {
         Logger.Info("Restart requested: trying to restart the app...");
 
@@ -756,14 +757,27 @@ public static class Interfacing
             if (handleExit) // Handle a typical exit
                 await HandleAppExit(500);
 
-            // Restart and exit with code 0
-            Process.Start(new ProcessStartInfo
+            var info = new ProcessStartInfo
             {
                 FileName = ProgramLocation.FullName.Replace(".dll", ".exe"),
                 Arguments = parameters // Pass same args
-            });
+            };
+
+            if (admin)
+            {
+                info.UseShellExecute = true;
+                info.Verb = "runas";
+            }
+
+            // Restart and exit with code 0
+            if (FileUtils.IsCurrentProcessElevated() && !admin)
+            {
+                info.Arguments = "amethyst-app:";
+                info.FileName = "explorer.exe";
+            }
 
             // Exit without re-handling everything
+            Process.Start(info);
             Environment.Exit(0);
         }
 
@@ -788,7 +802,8 @@ public static class Interfacing
             {
                 if (string.IsNullOrEmpty(guid) || (!AppPlugins.TrackingDevicesList.ContainsKey(guid) &&
                                                    !AppPlugins.ServiceEndpointsList.ContainsKey(guid) &&
-                                                   AppPlugins.LoadAttemptedPluginsList.All(x => x.Guid != guid)))
+                                                   AppPlugins.LoadAttemptedPluginsList.All(x => x.Guid != guid) &&
+                                                   AppPlugins.InstallerPluginsList.All(x => x.Guid != guid)))
                 {
                     Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
@@ -825,6 +840,18 @@ public static class Interfacing
                         return resourceRootService.Messages.FirstOrDefault(x => x.Id == key)?.Translation ?? key;
                 }
 
+                // ReSharper disable once InvertIf | Check if the request was from a service
+                if (AppPlugins.InstallerPluginsList.Any(x => x.Guid == guid))
+                {
+                    // Prepare the plugin object
+                    var plugin = AppPlugins.InstallerPluginsList.First(x => x.Guid == guid);
+
+                    // Check if the resource root is fine
+                    var resourceRootService = plugin.LocalizationResourcesRoot.Root;
+                    if (resourceRootService?.Messages?.Any(x => x.Id == key) ?? false)
+                        return resourceRootService.Messages.FirstOrDefault(x => x.Id == key)?.Translation ?? key;
+                }
+
                 // Still here?!? We're screwed!
                 Logger.Error($"The resource root of plugin {guid} is empty! Its interface will be broken!");
                 return LocalizedJsonString(key); // Just give up
@@ -849,7 +876,8 @@ public static class Interfacing
 
                 if (string.IsNullOrEmpty(guid) || (!AppPlugins.TrackingDevicesList.ContainsKey(guid) &&
                                                    !AppPlugins.ServiceEndpointsList.ContainsKey(guid) &&
-                                                   AppPlugins.LoadAttemptedPluginsList.All(x => x.Guid != guid)))
+                                                   AppPlugins.LoadAttemptedPluginsList.All(x => x.Guid != guid) &&
+                                                   AppPlugins.InstallerPluginsList.All(x => x.Guid != guid)))
                 {
                     Logger.Info("[Requested by UNKNOWN DEVICE CALLER] " +
                                 "Null, empty or invalid GUID was passed to SetLocalizationResourcesRoot, aborting!");
@@ -995,6 +1023,34 @@ public static class Interfacing
                 {
                     // Prepare the plugin object
                     var plugin = AppPlugins.LoadAttemptedPluginsList.First(x => x.Guid == guid);
+
+                    // Parse the loaded json
+                    plugin.LocalizationResourcesRoot =
+                        (JsonConvert.DeserializeObject<LocalisationFileJson>(File.ReadAllText(resourcePath)), path);
+
+                    // Check if the resource root is fine
+                    var resourceRoot = plugin.LocalizationResourcesRoot.Root;
+                    if (!(resourceRoot?.Messages?.Any() ?? false))
+                    {
+                        Logger.Error($"[Requested by plugin with GUID {guid}] " +
+                                     $"Could not load language resources at \"{resourcePath}\"," +
+                                     $"for device {guid}! Its interface will be broken!");
+                        return false; // Just give up
+                    }
+
+                    // Still here? 
+                    Logger.Info($"[Requested by plugin with GUID {guid}] " +
+                                "Successfully loaded language resources with key " +
+                                $"\"{AppData.Settings.AppLanguage}\"!");
+
+                    return true; // Winning it, yay!
+                }
+
+                // ReSharper disable once InvertIf | Check if the request was from a service
+                if (AppPlugins.InstallerPluginsList.Any(x => x.Guid == guid))
+                {
+                    // Prepare the plugin object
+                    var plugin = AppPlugins.InstallerPluginsList.First(x => x.Guid == guid);
 
                     // Parse the loaded json
                     plugin.LocalizationResourcesRoot =

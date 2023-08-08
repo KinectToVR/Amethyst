@@ -338,12 +338,6 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                         Shared.TeachingTips.MainPage.ReloadInfoBar.IsOpen ? 1 : 0;
                     break; // That's all for now!
                 }
-                case "update":
-                {
-                    await MainWindow.RequestUpdateEvent(this, EventArgs.Empty);
-                    SetCommandText($"Sent an update signal to the '{typeof(MainWindow).FullName}' handler!");
-                    break; // That's all for now!
-                }
                 case "uwu" or "owo" or "omo" or "umu":
                 {
                     Interfacing.ShowToast(((TextBox)sender).Text

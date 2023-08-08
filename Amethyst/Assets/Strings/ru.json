@@ -1479,7 +1479,7 @@
     },
     {
       "id": "/SharedStrings/Plugins/Dep/Contents/InstallingPlaceholder",
-      "translation": "Installing dependencies..."
+      "translation": "Installing {0}..."
     },
     {
       "id": "/SharedStrings/Plugins/Dep/Contents/ProgressPlaceholder",
@@ -1491,11 +1491,11 @@
     },
     {
       "id": "/SharedStrings/Plugins/Dep/Contents/Success",
-      "translation": "Dependencies installed successfully! Restart Amethyst to load this plugin."
+      "translation": "{0} installed successfully! Restart Amethyst to load this plugin."
     },
     {
       "id": "/SharedStrings/Plugins/Dep/Contents/Failure",
-      "translation": "Dependency installation failure! Please try again later."
+      "translation": "{0} installation failure! Please try again later."
     },
     {
       "id": "/SharedStrings/Plugins/Dep/Contents/Cancelled",
@@ -1828,6 +1828,138 @@
     {
       "id": "/NUX/Tip14/Content",
       "translation": "Amethyst took a while to make and get it to where it's at now.\nSo, you better go have fun.\n\n14 of 14"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Continue",
+      "translation": "Continue with limited setup"
+    },
+    {
+      "id": "/Installer/Views/SetupError/MissingDeps",
+      "translation": "Some plugin dependencies won't be installed due to limited setup."
+    },
+    {
+      "id": "/Installer/Views/SetupError/Admin/Title",
+      "translation": "Restart as Administrator?"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Admin/Message",
+      "translation": "Running Amethyst as Administrator will be helpful during the first-time setup to properly set up your devices and configuration. It should also make the whole setup experience a bit less complicated."
+    },
+    {
+      "id": "/Installer/Views/SetupError/Admin/Tip/Title",
+      "translation": "Are you sure about that?"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Admin/Tip/Message",
+      "translation": "Amethyst may not be able to properly set up some of your devices without elevated privileges, please keep that in mind."
+    },
+    {
+      "id": "/Installer/Views/SetupError/Admin/Action",
+      "translation": "Restart"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Internet/Title",
+      "translation": "No internet"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Internet/Message",
+      "translation": "Internet connection will be helpful during the first-time setup to properly set up your devices and configuration. It should also make the whole setup experience less complicated, and error-prone."
+    },
+    {
+      "id": "/Installer/Views/SetupError/Internet/Tip/Title",
+      "translation": "Are you sure about that?"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Internet/Tip/Message",
+      "translation": "Amethyst may not be able to properly set up the configuration and some of your devices without a working internet connection."
+    },
+    {
+      "id": "/Installer/Views/SetupError/Internet/Action",
+      "translation": "Restart"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Plugins/Title",
+      "translation": "Plugins are missing!"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Plugins/Message",
+      "translation": "Amethyst has already searched for them everywhere, but couldn’t find anything. It is neither possible to complete the setup without any plugins, nor actually use Amethyst. Some application files are probably corrupted, please try performing a clean reinstall using the Microsoft Store."
+    },
+    {
+      "id": "/Installer/Dep/Contents/Success",
+      "translation": "{0} installed successfully!"
+    },
+    {
+      "id": "/Installer/Views/Setup/Dep/Select",
+      "translation": "Choose what to install and click 'Next'"
+    },
+    {
+      "id": "/Installer/Views/Setup/Dep/Eula",
+      "translation": "Please accept the EULA agreement to continue."
+    },
+    {
+      "id": "/Installer/Views/Setup/Dep/Success",
+      "translation": "{0} set up successfully!"
+    },
+    {
+      "id": "/Installer/Views/Setup/Captions/Select",
+      "translation": "Dependencies and tools to install:"
+    },
+    {
+      "id": "/Installer/Views/Setup/Captions/Selection",
+      "translation": "Which one should I choose?"
+    },
+    {
+      "id": "/Installer/Views/Setup/Captions/AlreadyInstalled",
+      "translation": "Already installed"
+    },
+    {
+      "id": "/Installer/Views/Setup/Titles/Device",
+      "translation": "What will you use for tracking?"
+    },
+    {
+      "id": "/Installer/Views/Setup/Titles/Service",
+      "translation": "Where will be trackers sent to?"
+    },
+    {
+      "id": "/Installer/Views/Setup/TeachingTips/Device/Title",
+      "translation": "Choosing the right tracking device"
+    },
+    {
+      "id": "/Installer/Views/Setup/TeachingTips/Device/Text",
+      "translation": "The device you choose here will be set up by Amethyst and then used for body tracking, or as a secondary (override) device you will need to set up manually. These settings can be changed later at any time."
+    },
+    {
+      "id": "/Installer/Views/Setup/TeachingTips/Service/Title",
+      "translation": "Choosing the right service endpoint"
+    },
+    {
+      "id": "/Installer/Views/Setup/TeachingTips/Service/Text",
+      "translation": "The service you choose here will be set up by Amethyst and then used for body tracking, as the receiver of the data from Amethyst. These settings can be changed later at any time."
+    },
+    {
+      "id": "/Installer/Top/Setup",
+      "translation": "SETUP"
+    },
+    {
+      "id": "/Installer/Splashes/Welcome/Header",
+      "translation": "Welcome to"
+    },
+    {
+      "id": "/Installer/Splashes/Welcome/ActionMessage",
+      "translation": "Continue"
+    },
+    {
+      "id": "/Installer/Splashes/Ending/Header",
+      "translation": "Amethyst is now set up."
+    },
+    {
+      "id": "/Installer/Splashes/Ending/Message",
+      "translation": "Have fun!"
+    },
+    {
+      "id": "/Installer/Splashes/Ending/ActionMessage",
+      "translation": "Start Amethyst"
     }
   ]
 }

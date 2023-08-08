@@ -28,8 +28,8 @@
         <Description>Amethyst (Desktop) App</Description>
         <PackageProjectUrl>k2vr.tech</PackageProjectUrl>
         <!--AZ_BUILD_DATA<Version>AZ_BUILD_NUMBER</Version>AZ_BUILD_DATA-->
-        <FileVersion>1.2.1.5</FileVersion>
-        <AssemblyVersion>1.2.1.5</AssemblyVersion>
+        <FileVersion>1.2.3.0</FileVersion>
+        <AssemblyVersion>1.2.3.0</AssemblyVersion>
         <RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
         <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
     </PropertyGroup>
@@ -52,7 +52,9 @@
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
         <PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
+        <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
         <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Markdown" Version="7.1.2" />
+        <PackageReference Include="CommunityToolkit.WinUI.UI.Media" Version="7.1.2" />
         <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
@@ -102,6 +104,11 @@
         <None Remove="Controls\JointSettingsExpander.xaml" />
         <None Remove="Controls\LoadAttemptedPluginsView.xaml" />
         <None Remove="Controls\OverrideExpander.xaml" />
+        <None Remove="Installer\Controls\TitleControl.xaml" />
+        <None Remove="Installer\Views\SetupDevices.xaml" />
+        <None Remove="Installer\Views\SetupError.xaml" />
+        <None Remove="Installer\Views\SetupServices.xaml" />
+        <None Remove="Installer\Views\SetupSplash.xaml" />
         <None Remove="Pages\Devices.xaml" />
         <None Remove="Pages\General.xaml" />
         <None Remove="Pages\Info.xaml" />
@@ -132,6 +139,21 @@
         <Content Include="$(SolutionDir)\Resources\**" Visible="false">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Installer\Views\SetupSplash.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Installer\Views\SetupServices.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Installer\Views\SetupDevices.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
     <ItemGroup>
       <Page Update="Popups\Report.xaml">
@@ -200,6 +222,16 @@
         <Page Update="Pages\General.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Installer\Views\SetupError.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Installer\Controls\TitleControl.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
     <ProjectExtensions><VisualStudio><UserProperties assets_4strings_4it_1json__JsonSchema="https://api.airplane.dev/v0/schemas/task.json" /></VisualStudio></ProjectExtensions>
 </Project>

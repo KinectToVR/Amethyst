@@ -1,0 +1,48 @@
+﻿<UserControl
+    x:Class="Amethyst.Installer.Controls.TitleControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:util="using:Amethyst.Utils"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls">
+
+    <UserControl.Resources>
+    </UserControl.Resources>
+
+    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Horizontal" Margin="10,0,0,0">
+        <Grid>
+            <controls:DropShadowPanel BlurRadius="50" ShadowOpacity="0.3" OffsetX="0" OffsetY="0"
+                                      Color="#8B72DF" Margin="20" IsMasked="True">
+                <Image Source="ms-appx:///Assets/ktvr.png" Height="100" Width="100"
+                       HorizontalAlignment="Left" VerticalAlignment="Center" />
+            </controls:DropShadowPanel>
+        </Grid>
+
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,3,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <controls:DropShadowPanel BlurRadius="20" ShadowOpacity="0.1" OffsetX="0" OffsetY="0"
+                                      Color="Black" Margin="0,0,0,0" IsMasked="True"
+                                      VerticalAlignment="Center" HorizontalAlignment="Right">
+                <TextBlock FontSize="85" Text="{x:Bind util:Translator.Get.String('/InfoPage/AppTitle'), Mode=OneWay}"
+                           ToolTipService.ToolTip="Pls donate if you like us! ˶ᵔ ᵕ ᵔ˶" />
+            </controls:DropShadowPanel>
+
+            <controls:DropShadowPanel BlurRadius="20" ShadowOpacity="0.5" OffsetX="0" OffsetY="0"
+                                      Color="Black" IsMasked="True" Grid.Row="1" Grid.Column="1"
+                                      HorizontalAlignment="Right" VerticalAlignment="Center"
+                                      Margin="-60,-15,0,0">
+                <TextBlock FontSize="22" Opacity="0.5"
+                           Text="{x:Bind util:Translator.Get.String('/InfoPage/AppCaption'), Mode=OneWay}"
+                           FontWeight="SemiBold" ToolTipService.ToolTip="(つ*ヮ*)つ" />
+            </controls:DropShadowPanel>
+        </Grid>
+    </StackPanel>
+
+</UserControl>

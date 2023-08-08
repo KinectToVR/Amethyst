@@ -15,10 +15,9 @@ using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using Windows.ApplicationModel;
 using Windows.Storage;
-using Windows.System;
 using Amethyst.Classes;
+using Amethyst.Installer.ViewModels;
 using Amethyst.Plugins.Contract;
 using Amethyst.Schedulers;
 using Amethyst.Utils;
@@ -495,7 +494,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
     public bool DependencySourceValid => !string.IsNullOrEmpty(DependencySource);
     public bool DependencyLinksValid => DependencyLinkValid && DependencySourceValid;
 
-    public bool ShowDependencyInstaller => DependencyInstaller is not null;
+    public bool ShowDependencyInstaller => DependencyInstaller is not null && !SetupData.LimitedHide;
 
     public bool ShowDependencyLinks =>
         !ShowDependencyInstaller && (DependencyLinkValid || DependencySourceValid);
@@ -781,6 +780,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         // Theoretically not possible, but check anyway
         if (dependenciesToInstall is null || !dependenciesToInstall.Any()) return;
         InstallHandler.TokenSource = new CancellationTokenSource();
+        InstallHandler.DependencyName = dependenciesToInstall.First().Name;
 
         // Block temporarily
         InstallHandler.AllowUserInput = false;
@@ -810,6 +810,9 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
                 // Prepare the progress update handler
                 var progress = new Progress<InstallationProgress>();
+                InstallHandler.DependencyName = dependency.Name;
+                InstallHandler.OnPropertyChanged(); // The name
+
                 progress.ProgressChanged += (_, installationProgress) =>
                     Shared.Main.DispatcherQueue.TryEnqueue(() =>
                     {
@@ -838,7 +841,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
                 if (result)
                     InstallHandler.StageName =
-                        LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Success");
+                        LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Success")
+                            .Format(InstallHandler.DependencyName);
 
                 InstallHandler.OnPropertyChanged();
                 await Task.Delay(6000, InstallHandler.TokenSource.Token);
@@ -846,7 +850,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
                 if (!result)
                 {
                     InstallHandler.StageName =
-                        LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Failure");
+                        LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/Failure")
+                            .Format(InstallHandler.DependencyName);
 
                     InstallHandler.OnPropertyChanged();
                     await Task.Delay(5000, InstallHandler.TokenSource.Token);
@@ -967,9 +972,8 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public class DependencyInstallHandler : INotifyPropertyChanged
     {
-        public CancellationTokenSource TokenSource { get; set; } = new();
-
         private double _progressValue;
+        public CancellationTokenSource TokenSource { get; set; } = new();
         public Task<bool> InstallationWorker { get; set; }
 
         public bool InstallingDependencies { get; set; }
@@ -979,6 +983,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         public bool ProgressError { get; set; }
         public bool ProgressIndeterminate { get; set; }
         public bool HideProgress { get; set; }
+        public bool NoProgress { get; set; }
 
         public double ProgressValue
         {
@@ -987,15 +992,23 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
         }
 
         public string StageName { get; set; }
+        public string DependencyName { get; set; }
 
         public string MessageString => string.IsNullOrEmpty(StageName)
-            ? LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/InstallingPlaceholder")
+            ? LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/InstallingPlaceholder").Format(DependencyName)
             : StageName;
 
         public string ProgressString => ProgressIndeterminate || _progressValue < 0 || HideProgress
             ? string.Empty
             : LocalizedJsonString("/SharedStrings/Plugins/Dep/Contents/ProgressPlaceholder")
                 .Format((int)ProgressValue);
+
+        public bool ShowProgressString => !string.IsNullOrEmpty(ProgressString);
+        public bool CirclePending { get; set; } = true;
+
+        public HorizontalAlignment MessageAlignment => NoProgress
+            ? HorizontalAlignment.Center
+            : HorizontalAlignment.Left;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -1139,7 +1152,7 @@ public static class CollectionExtensions
                             .Any(export => export.ConstructorArguments.FirstOrDefault().Value?.ToString() is "Guid"));
 
                         // Check whether the plugin defines a dependency installer
-                        if (false) // (result?.GetMetadata<Type>("DependencyInstaller") is not null)
+                        if (result?.GetMetadata<Type>("DependencyInstaller") is not null)
                             try
                             {
                                 var contextResult = new AssemblyLoadContext(placeholderGuid)

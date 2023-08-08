@@ -8,7 +8,7 @@
     xmlns:icons="using:WinUI.Fluent.Icons"
     xmlns:util="using:Amethyst.Utils">
 
-    <ItemsRepeater HorizontalAlignment="Stretch" AllowDrop="False" ItemsSource="{x:Bind DisplayedPlugins, Mode=OneWay}">
+    <ItemsRepeater HorizontalAlignment="Stretch" AllowDrop="False" ItemsSource="{x:Bind DisplayedPlugins}">
         <ItemsRepeater.ItemTemplate>
             <DataTemplate x:DataType="mvvm:LoadAttemptedPlugin">
 

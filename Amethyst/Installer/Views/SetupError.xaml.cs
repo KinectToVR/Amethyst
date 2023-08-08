@@ -1,43 +1,36 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Windows.Storage;
 using Amethyst.Classes;
+using Amethyst.Installer.ViewModels;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using WinUI.Fluent.Icons;
-using Windows.ApplicationModel.DataTransfer;
+using Microsoft.UI.Xaml.Input;
+using static Amethyst.Classes.Shared.Events;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace Amethyst.Popups;
+namespace Amethyst.Installer.Views;
 
 /// <summary>
 ///     An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class Report : Page, INotifyPropertyChanged
+public sealed partial class SetupError : Page, INotifyPropertyChanged
 {
     private readonly List<string> _languageList = new();
 
-    private bool _blockHiddenSoundOnce;
-    private bool _reportPageSetupFinished, _reportPageLoadedOnce;
+    private bool _blockHiddenSoundOnce, _blockTipSoundOnce;
+    private bool _pageSetupFinished, _pageLoadedOnce;
 
-    [SetsRequiredMembers]
-    public Report(List<AppDataFile> dataFiles)
+    public SetupError()
     {
         InitializeComponent();
 
         Logger.Info($"Constructing page: '{GetType().FullName}'...");
-        CollectedFiles = new ObservableCollection<AppDataFile>(dataFiles);
-
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
 
@@ -46,47 +39,52 @@ public sealed partial class Report : Page, INotifyPropertyChanged
             while (true)
             {
                 // Wait for a reload signal (blocking)
-                Shared.Events.ReloadVendorPagesEvent.WaitOne();
+                ReloadVendorPagesEvent.WaitOne();
 
                 // Reload & restart the waiting loop
-                if (_reportPageLoadedOnce && Interfacing.CurrentAppState == "blocked")
+                if (_pageLoadedOnce)
                     DispatcherQueue.TryEnqueue(Page_LoadedHandler);
 
                 // Reset the event
-                Shared.Events.ReloadPluginsPageEvent.Reset();
+                ReloadPluginsPageEvent.Reset();
             }
         });
     }
 
-    private bool IsElevated => FileUtils.IsCurrentProcessElevated();
-    private bool IsNotElevated => !IsElevated;
-    private double DragGridOpacity => IsElevated ? 0.5 : 1.0;
-
-    private string DragCaption => IsElevated
-        ? Interfacing.LocalizedJsonString("/ReportPage/Captions/Elevated")
-        : Interfacing.LocalizedJsonString("/ReportPage/Captions/Drop");
-
-    public required Host ParentWindow { get; set; }
-    public required ObservableCollection<AppDataFile> CollectedFiles { get; set; }
+    public ICustomError Error { get; set; }
+    public RaisedEvent ContinueEvent { get; set; }
 
     public event PropertyChangedEventHandler PropertyChanged;
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
         Logger.Info($"Re/Loading page: '{GetType().FullName}'...");
-        Interfacing.CurrentAppState = "blocked";
+
+        if (!_pageLoadedOnce)
+            Shared.Main.Window.Activated += (_, args) =>
+            {
+                if (_pageLoadedOnce)
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        AppTitleLabel.Opacity = args.WindowActivationState is not
+                            WindowActivationState.Deactivated
+                            ? 1.0
+                            : 0.5;
+                    });
+            };
 
         // Execute the handler
         Page_LoadedHandler();
 
         // Mark as loaded
-        _reportPageLoadedOnce = true;
+        _pageLoadedOnce = true;
+        MainGrid.Opacity = 1.0;
     }
 
     private void Page_LoadedHandler()
     {
         // Clear available languages' list
-        _reportPageSetupFinished = false;
+        _pageSetupFinished = false;
         LanguageOptionBox.Items.Clear();
 
         // Push all the found languages
@@ -107,7 +105,7 @@ public sealed partial class Report : Page, INotifyPropertyChanged
         // Mark as ready to go
         LanguageComboFlyout.Hide();
         _blockHiddenSoundOnce = true;
-        _reportPageSetupFinished = true;
+        _pageSetupFinished = true;
 
         // Reload
         OnPropertyChanged();
@@ -116,7 +114,7 @@ public sealed partial class Report : Page, INotifyPropertyChanged
     private void LanguageOptionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // Don't react to pre-init signals
-        if (!_reportPageSetupFinished) return;
+        if (!_pageSetupFinished) return;
         if (LanguageOptionBox.SelectedIndex < 0)
             LanguageOptionBox.SelectedItem = e.RemovedItems[0];
 
@@ -132,7 +130,7 @@ public sealed partial class Report : Page, INotifyPropertyChanged
 
         // Request page reloads
         Translator.Get.OnPropertyChanged();
-        Shared.Events.RequestInterfaceReload();
+        RequestInterfaceReload();
 
         // Reload this page
         Page_LoadedHandler();
@@ -142,7 +140,7 @@ public sealed partial class Report : Page, INotifyPropertyChanged
     private void OptionBox_DropDownOpened(object sender, object e)
     {
         // Don't react to pre-init signals
-        if (!_reportPageSetupFinished) return;
+        if (!_pageSetupFinished) return;
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
@@ -151,7 +149,7 @@ public sealed partial class Report : Page, INotifyPropertyChanged
     private void OptionBox_DropDownClosed(object sender, object e)
     {
         // Don't react to pre-init signals
-        if (!_reportPageSetupFinished) return;
+        if (!_pageSetupFinished) return;
 
         // If playing is not allowed yet
         if (_blockHiddenSoundOnce)
@@ -164,52 +162,46 @@ public sealed partial class Report : Page, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 
+    private void ContinueTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+        ContextTeachingTip.IsOpen = true;
+    }
+
+    private async void ActionButton_Click(object sender, RoutedEventArgs e)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        await Error.Action();
+    }
+
     private void OnPropertyChanged(string propName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 
-    private void FilesGrid_DragStarting(UIElement sender, DragStartingEventArgs args)
+    private async void ContextTeachingTip_ActionButtonClick(TeachingTip sender, object args)
     {
-        try
-        {
-            Logger.Info("Copying collected data files to the drag context...");
-            args.Data.SetStorageItems(CollectedFiles.Select(x => x.DataFile));
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e);
-        }
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+
+        _blockTipSoundOnce = true;
+        ContextTeachingTip.IsOpen = false;
+
+        MainGrid.Opacity = 0.0;
+        await Task.Delay(500);
+
+        ContinueEvent?.Invoke(this, EventArgs.Empty);
     }
 
-    private void CopyFilesButton_Click(object sender, RoutedEventArgs e)
+    private void ContextTeachingTip_Closing(TeachingTip sender, TeachingTipClosingEventArgs args)
     {
-        try
+        // If playing is not allowed yet
+        if (_blockTipSoundOnce)
         {
-            Logger.Info("Copying collected data files to a new data package...");
-            var clipboardData = new DataPackage
-            {
-                RequestedOperation = DataPackageOperation.Copy
-            };
-            clipboardData.SetStorageItems(CollectedFiles.Select(x => x.DataFile));
+            _blockTipSoundOnce = false;
+            return; // Don't play the sound
+        }
 
-            Logger.Info("Copying collected data files to clipboard...");
-            Clipboard.SetContent(clipboardData);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
-}
-
-public class AppDataFile(StorageFile file)
-{
-    public StorageFile DataFile { get; } = file;
-    public string Name => DataFile.Name;
-    public bool IsLog => Name.EndsWith(".log") || Name.EndsWith(".txt");
-
-    public FluentSymbol Icon => IsLog
-        ? FluentSymbol.DocumentText24
-        : FluentSymbol.TableSettings24;
 }

@@ -43,8 +43,27 @@ public class AppSettings : INotifyPropertyChanged
 
     [JsonIgnore] public string PreviousSelectedTrackingDeviceGuid;
 
-    // Current language & theme
-    public string AppLanguage { get; set; } = "en";
+#pragma warning disable CA1822
+    // ReSharper disable once MemberCanBeMadeStatic.Global
+    [JsonIgnore]
+    public string AppLanguage
+    {
+        get
+        {
+            try
+            {
+                return Windows.Storage.ApplicationData.Current.LocalSettings.Values["AppLanguage"] as string ??
+                       new Language(GlobalizationPreferences.Languages[0]).LanguageTag[..2] ?? "en";
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e);
+                return "en";
+            }
+        }
+        set => Windows.Storage.ApplicationData.Current.LocalSettings.Values["AppLanguage"] = value;
+    }
+#pragma warning restore CA1822
 
     // GitHub API token, encrypted using System.Security.Cryptography
     public (bool Valid, string Token) GitHubToken { get; set; } = (false, string.Empty);
@@ -269,30 +288,9 @@ public class AppSettings : INotifyPropertyChanged
 
             // Try reading the default config
             Logger.Info("Checking out the default configuration settings...");
-            (bool ExtraTrackers, bool Valid) defaultSettings = (false, false); // Invalid for now!
-
-            if (File.Exists(Interfacing.GetAppDataFilePath("PluginDefaults.json")))
-                try
-                {
-                    // Parse the loaded json
-                    var defaults = JsonConvert.DeserializeObject<DefaultSettings>(
-                                       File.ReadAllText(Interfacing.GetAppDataFilePath("PluginDefaults.json"))) ??
-                                   new DefaultSettings();
-
-                    if (defaults.ExtraTrackers is null)
-                        // Invalid configuration file, don't proceed further!
-                        Logger.Error("The default configuration json file was invalid!");
-                    else // Read from JSON and mark as valid
-                        defaultSettings = (defaults.ExtraTrackers ?? false, true);
-                }
-                catch (Exception e)
-                {
-                    Logger.Info($"Default settings checkout failed! Message: {e.Message}");
-                }
-            else Logger.Info("No default configuration found! [PluginDefaults.json]");
 
             // Enable more trackers if valid and requested
-            if (defaultSettings.Valid && defaultSettings.ExtraTrackers)
+            if (DefaultSettings.ExtraTrackers ?? false)
             {
                 TrackersVector[3].IsActiveEnabled = true;
                 TrackersVector[4].IsActiveEnabled = true;
@@ -523,11 +521,31 @@ public class AppSettings : INotifyPropertyChanged
     }
 }
 
-public class DefaultSettings
+public static class DefaultSettings
 {
-    public string TrackingDevice { get; set; }
-    public string ServiceEndpoint { get; set; }
-    public bool? ExtraTrackers { get; set; }
+    public static string TrackingDevice
+    {
+        get => Windows.Storage.ApplicationData.Current.LocalSettings.Values["TrackingDevice"] as string;
+        set => Windows.Storage.ApplicationData.Current.LocalSettings.Values["TrackingDevice"] = value;
+    }
+
+    public static string ServiceEndpoint
+    {
+        get => Windows.Storage.ApplicationData.Current.LocalSettings.Values["ServiceEndpoint"] as string;
+        set => Windows.Storage.ApplicationData.Current.LocalSettings.Values["ServiceEndpoint"] = value;
+    }
+
+    public static bool? ExtraTrackers
+    {
+        get => Windows.Storage.ApplicationData.Current.LocalSettings.Values["ExtraTrackers"] as bool?;
+        set => Windows.Storage.ApplicationData.Current.LocalSettings.Values["ExtraTrackers"] = value;
+    }
+
+    public static bool SetupFinished
+    {
+        get => Windows.Storage.ApplicationData.Current.LocalSettings.Values["SetupFinished"] as bool? ?? false;
+        set => Windows.Storage.ApplicationData.Current.LocalSettings.Values["SetupFinished"] = value;
+    }
 }
 
 public class LocalizationSettings

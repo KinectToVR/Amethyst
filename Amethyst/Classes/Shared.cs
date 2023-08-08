@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppNotifications;
 using WinUI.Fluent.Icons;
+using Expander = Microsoft.UI.Xaml.Controls.Expander;
 
 namespace Amethyst.Classes;
 

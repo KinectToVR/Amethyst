@@ -169,6 +169,10 @@ public sealed partial class Blocked : Page, INotifyPropertyChanged
         Interfacing.LoadJsonStringResourcesEnglish();
         Interfacing.LoadJsonStringResources(AppData.Settings.AppLanguage);
 
+        // Request page reloads
+        Translator.Get.OnPropertyChanged();
+        Shared.Events.RequestInterfaceReload();
+
         // Reload this page
         Page_LoadedHandler();
         OnPropertyChanged();
