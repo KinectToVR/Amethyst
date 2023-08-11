@@ -382,7 +382,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (node.TrackedJoints.Any(x => x.Role == TrackedJointType.JointHead))
         {
             // If manual calibration is not supported, proceed straight to automatic
-            if (AppPlugins.CurrentServiceEndpoint.HeadsetPose != null) ExecuteAutomaticCalibration(); 
+            if (AppPlugins.CurrentServiceEndpoint.HeadsetPose != null &&
+                AppPlugins.CurrentServiceEndpoint.ControllerInputActions is null) ExecuteAutomaticCalibration();
             return; // Else open the selection pane
         }
 
@@ -694,7 +695,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
             if (trackingDevice.TrackedJoints.Any(x => x.Role == TrackedJointType.JointHead))
             {
                 // If manual calibration is not supported, proceed straight to automatic
-                if (AppPlugins.CurrentServiceEndpoint.HeadsetPose != null) ExecuteAutomaticCalibration();
+                if (AppPlugins.CurrentServiceEndpoint.HeadsetPose != null &&
+                    AppPlugins.CurrentServiceEndpoint.ControllerInputActions is null) ExecuteAutomaticCalibration();
                 return; // Else open the selection pane
             }
 
