@@ -140,6 +140,13 @@
 
                         <TextBlock FontWeight="SemiBold">
                             <Run
+                                Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Artemis'), Mode=OneWay}" />
+                            <Run />
+                            <Hyperlink NavigateUri="https://github.com/Stiggimy" UnderlineStyle="None">Stiggimy</Hyperlink>
+                        </TextBlock>
+
+                        <TextBlock FontWeight="SemiBold">
+                            <Run
                                 Text="{x:Bind util:Translator.Get.String('/InfoPage/Credits/MainTeam/Roles/Aria'), Mode=OneWay}" />
                             <Run />
                             <Hyperlink NavigateUri="https://github.com/conatsera" UnderlineStyle="None">conatsera</Hyperlink>
@@ -170,6 +177,10 @@
                             <Run xml:space="preserve">"Artemis"</Run>
                         </TextBlock>
 
+                        <TextBlock FontWeight="SemiBold">
+                            <Run xml:space="preserve">"Stiggimy"</Run>
+                        </TextBlock>
+                        
                         <TextBlock FontWeight="SemiBold">
                             <Run xml:space="preserve">"Ene"</Run>
                         </TextBlock>
@@ -205,7 +216,6 @@
                     <Run xml:space="preserve">Sylva    </Run>
                     <Run xml:space="preserve">TeH_Venom    </Run>
                     <Run xml:space="preserve">vexa (vexatag)    </Run>
-                    <Run xml:space="preserve">Stiggimy</Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
@@ -216,7 +226,9 @@
                 <TextBlock FontWeight="SemiBold">
                     <Run xml:space="preserve">Lines    </Run>
                     <Run xml:space="preserve">_Legend    </Run>
-                    <Run xml:space="preserve">Pendrokar</Run>
+                    <Run xml:space="preserve">Pendrokar    </Run>
+                    <Run xml:space="preserve">Gehaktman    </Run>
+                    <Run xml:space="preserve">Enzo Bergström</Run>
                 </TextBlock>
 
                 <!--#Other-->

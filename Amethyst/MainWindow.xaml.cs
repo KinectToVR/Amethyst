@@ -29,7 +29,6 @@ using Amethyst.Pages;
 using Amethyst.Plugins.Contract;
 using Amethyst.Schedulers;
 using Amethyst.Utils;
-using CommunityToolkit.WinUI.Notifications;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI;
@@ -45,13 +44,10 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.WindowsAPICodePack.Taskbar;
-using Newtonsoft.Json;
 using RestSharp;
 using WinRT;
 using WinRT.Interop;
 using WinUI.Fluent.Icons;
-using Microsoft.WindowsAppSDK;
-using Newtonsoft.Json.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
