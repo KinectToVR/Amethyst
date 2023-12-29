@@ -167,76 +167,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         {
             Logger.Info("Basic setup done! Starting the main loop now...");
             Shared.Events.StartMainLoopEvent.Set();
-
-            if (Interfacing.IsServiceEndpointPresent && // If the driver's ok
-                AppPlugins.CurrentServiceEndpoint.StatusOk && // Service ok?
-                AppData.Settings.AutoSpawnEnabledJoints) // If autospawn
-                Shared.Main.DispatcherQueue.TryEnqueue(async () =>
-                {
-                    // Disable manual spawn controls (NOT console)
-                    ToggleTrackersButton.Opacity = 0.5;
-                    ToggleTrackersButtonBlocked.Opacity = 1.0;
-                    _isSpawningBlocked = true;
-
-                    // Wait a bit not to interfere with other stuff
-                    await Task.Delay(500); // Just a moment...
-
-                    // Check for the service endpoint again
-                    if (!Interfacing.IsServiceEndpointPresent ||
-                        AppPlugins.CurrentServiceEndpoint.StatusError)
-                    {
-                        // Make sure to revert our changes
-                        ToggleTrackersButton.Opacity = 1.0;
-                        ToggleTrackersButtonBlocked.Opacity = 0.0;
-                        _isSpawningBlocked = false;
-                    }
-
-                    // Wait a bit not to interfere with other stuff
-                    await Task.Delay(1500); // 2s should be fine...
-
-                    // Try auto-spawning trackers if stated so
-                    try
-                    {
-                        if (await Interfacing.SpawnEnabledTrackers())
-                        {
-                            // Make sure to revert our changes
-                            ToggleTrackersButton.Opacity = 1.0;
-                            ToggleTrackersButtonBlocked.Opacity = 0.0;
-                            _isSpawningBlocked = false;
-
-                            // Reflect our changes on the control
-                            ToggleTrackersButton.IsChecked = true;
-                        }
-                        else
-                        {
-                            // Make sure to revert our changes
-                            ToggleTrackersButton.Opacity = 1.0;
-                            ToggleTrackersButtonBlocked.Opacity = 0.0;
-                            _isSpawningBlocked = false;
-
-                            // The absolute, overwhelming misery
-                            Interfacing.ServiceEndpointFailure = true;
-                            Interfacing.ServiceEndpointSetup(); // Refresh
-                            Interfacing.ShowToast(
-                                Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
-                                Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"),
-                                true); // High priority - it's probably a server failure
-
-                            Interfacing.ShowServiceToast(
-                                Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
-                                Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"));
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e); // Wah
-                    }
-
-                    // Make sure to revert our changes
-                    ToggleTrackersButton.Opacity = 1.0;
-                    ToggleTrackersButtonBlocked.Opacity = 0.0;
-                    _isSpawningBlocked = false;
-                });
+            TryAutoSpawnEnabledTrackers(5);
         }
 
         // Update the internal version
@@ -257,6 +188,96 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Notify of the setup's end
         OnPropertyChanged(); // Just everything
         Shared.General.GeneralTabSetupFinished = true;
+    }
+
+    private void TryAutoSpawnEnabledTrackers(int retries = 0)
+    {
+        if (!TryAutoSpawnEnabledTrackersInternal() && retries >= 0)
+            Shared.Main.DispatcherQueue.TryEnqueue(async () =>
+            {
+                await Task.Delay(2000); // Wait for the service to load everything
+                Logger.Info($"Checking the selected service endpoint again... ({retries})");
+                Interfacing.ServiceEndpointSetup(); // Reload
+                TryAutoSpawnEnabledTrackers(retries - 1); // Again?
+            });
+    }
+
+    private bool TryAutoSpawnEnabledTrackersInternal()
+    {
+        if (!AppData.Settings.AutoSpawnEnabledJoints) return true;
+        if (!Interfacing.IsServiceEndpointPresent || // If the driver's ok
+            !AppPlugins.CurrentServiceEndpoint.StatusOk || // Service ok?
+            !AppData.Settings.AutoSpawnEnabledJoints) // If autospawn
+            return Interfacing.IsServiceEndpointPresent &&
+                   AppPlugins.CurrentServiceEndpoint.StatusOk;
+
+        Shared.Main.DispatcherQueue.TryEnqueue(async () =>
+        {
+            // Disable manual spawn controls (NOT console)
+            ToggleTrackersButton.Opacity = 0.5;
+            ToggleTrackersButtonBlocked.Opacity = 1.0;
+            _isSpawningBlocked = true;
+
+            // Wait a bit not to interfere with other stuff
+            await Task.Delay(500); // Just a moment...
+
+            // Check for the service endpoint again
+            if (!Interfacing.IsServiceEndpointPresent ||
+                AppPlugins.CurrentServiceEndpoint.StatusError)
+            {
+                // Make sure to revert our changes
+                ToggleTrackersButton.Opacity = 1.0;
+                ToggleTrackersButtonBlocked.Opacity = 0.0;
+                _isSpawningBlocked = false;
+            }
+
+            // Wait a bit not to interfere with other stuff
+            await Task.Delay(1500); // 2s should be fine...
+
+            // Try auto-spawning trackers if stated so
+            try
+            {
+                if (await Interfacing.SpawnEnabledTrackers())
+                {
+                    // Make sure to revert our changes
+                    ToggleTrackersButton.Opacity = 1.0;
+                    ToggleTrackersButtonBlocked.Opacity = 0.0;
+                    _isSpawningBlocked = false;
+
+                    // Reflect our changes on the control
+                    ToggleTrackersButton.IsChecked = true;
+                }
+                else
+                {
+                    // Make sure to revert our changes
+                    ToggleTrackersButton.Opacity = 1.0;
+                    ToggleTrackersButtonBlocked.Opacity = 0.0;
+                    _isSpawningBlocked = false;
+
+                    // The absolute, overwhelming misery
+                    Interfacing.ServiceEndpointFailure = true;
+                    Interfacing.ServiceEndpointSetup(); // Refresh
+                    Interfacing.ShowToast(
+                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"),
+                        true); // High priority - it's probably a server failure
+
+                    Interfacing.ShowServiceToast(
+                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed/Title"),
+                        Interfacing.LocalizedJsonString("/SharedStrings/Toasts/AutoSpawnFailed"));
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e); // Wah
+            }
+
+            // Make sure to revert our changes
+            ToggleTrackersButton.Opacity = 1.0;
+            ToggleTrackersButtonBlocked.Opacity = 0.0;
+            _isSpawningBlocked = false;
+        });
+        return true;
     }
 
     private void NoCalibrationTeachingTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
@@ -874,6 +895,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         OnPropertyChanged(); // Refresh the UI
         Interfacing.UpdateServerStatus();
         AppPlugins.UpdateTrackingDevicesInterface();
+        OnPropertyChanged(); // Refresh the UI
     }
 
     private void ToggleTrackersButton_Unchecked(object sender, RoutedEventArgs e)
@@ -903,6 +925,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         OnPropertyChanged(); // Refresh the UI
         Interfacing.UpdateServerStatus();
         AppPlugins.UpdateTrackingDevicesInterface();
+        OnPropertyChanged(); // Refresh the UI
     }
 
     private void ToggleTrackersTeachingTip_ActionButtonClick(TeachingTip sender, object args)
