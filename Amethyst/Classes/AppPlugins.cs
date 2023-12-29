@@ -166,7 +166,8 @@ public static class AppPlugins
                 // Show either if input actions (manual calibration) is available
                 CurrentServiceEndpoint.ControllerInputActions != null ||
                 // Or when automatic calibration *should be* available
-                CurrentServiceEndpoint.HeadsetPose != null
+                (CurrentServiceEndpoint.HeadsetPose != null &&
+                 currentDevice.TrackedJoints.Any(x => x.Role == TrackedJointType.JointHead))
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
@@ -247,7 +248,7 @@ public static class AppPlugins
         if (!BaseTrackingDevice.IsFlipSupported) return false;
 
         /* Now check if either waist tracker is overridden or disabled
-		 * And then search in OpenVR for a one with waist role */
+         * And then search in OpenVR for a one with waist role */
 
         // If we have an override and if it's actually affecting the waist rotation
         foreach (var overrideDeviceGuid in AppData.Settings.OverrideDevicesGuidMap
