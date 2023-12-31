@@ -335,7 +335,7 @@ public interface IServiceEndpoint
     ///     Returns the same vector with paired success property (or null)
     /// </summary>
     public Task<IEnumerable<(TrackerBase Tracker, bool Success)>> UpdateTrackerPoses(
-        IEnumerable<TrackerBase> trackerBases, bool wantReply = true);
+        IEnumerable<TrackerBase> trackerBases, bool wantReply = true, CancellationToken? token = null);
 
     /// <summary>
     ///     Check connection: status, serialized status, combined ping time

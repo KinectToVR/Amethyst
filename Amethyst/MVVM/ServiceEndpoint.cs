@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
@@ -154,9 +155,9 @@ public class ServiceEndpoint(string name, string guid, string path, Version vers
     // Check physics against null, they're passed as optional
     // Returns the same vector with paired success property (or null)
     public Task<IEnumerable<(TrackerBase Tracker, bool Success)>> UpdateTrackerPoses(
-        IEnumerable<TrackerBase> trackerBases, bool wantReply = true)
+        IEnumerable<TrackerBase> trackerBases, bool wantReply = true, CancellationToken? token = null)
     {
-        return Service.UpdateTrackerPoses(trackerBases, wantReply);
+        return Service.UpdateTrackerPoses(trackerBases, wantReply, token);
     }
 
     // This is called after the app loads the plugin

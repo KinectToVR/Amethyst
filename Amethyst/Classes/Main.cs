@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
@@ -112,7 +113,7 @@ public static class Main
         AppPlugins.CurrentServiceEndpoint?.Heartbeat();
     }
 
-    private static async Task UpdateServerTrackers()
+    private static async Task UpdateServerTrackers(CancellationToken token)
     {
         // Update only if we're connected and running
         if (!Interfacing.AppTrackersSpawned || Interfacing.ServiceEndpointFailure) return;
@@ -140,10 +141,15 @@ public static class Main
         if (!Interfacing.AppTrackersInitialized) return;
 
         // If the tracing's actually running
+        if (token.IsCancellationRequested) throw new OperationCanceledException();
         if (!Interfacing.IsTrackingFrozen || AppData.Settings.FreezeLowerBodyOnly)
         {
             // Update position & orientation filters
-            AppData.Settings.TrackersVector.ToList().ForEach(tracker => tracker.UpdateFilters());
+            foreach (var tracker in AppData.Settings.TrackersVector)
+            {
+                if (token.IsCancellationRequested) throw new OperationCanceledException();
+                tracker.UpdateFilters(); // Update the filters for all trackers
+            }
 
             // Update pose w/ filtering, options and calibration
             // Note: only position gets calibrated INSIDE trackers
@@ -157,11 +163,12 @@ public static class Main
                     .Where(x => (int)TypeUtils.TrackerTypeJointDictionary[x.Role] < 16 || updateLowerBody)
                     .Select(tracker => tracker.GetTrackerBase(
                         tracker.PositionTrackingFilterOption, tracker.OrientationTrackingFilterOption)).ToList(),
-                false);
+                false, token);
         }
 
         // Scan for already-added body trackers from other apps
         // (If any found, disable corresponding ame's trackers/pairs)
+        if (token.IsCancellationRequested) throw new OperationCanceledException();
         if (Interfacing.AlreadyAddedTrackersScanRequested)
         {
             // Mark the request as done
@@ -555,7 +562,21 @@ public static class Main
                             UpdateAppTrackers(); // Track joints from raw data
                         }
 
-                    await UpdateServerTrackers(); // Send it to the server
+                    // Create the cancellation token
+                    using var cancellationToken = new CancellationTokenSource();
+                    cancellationToken.CancelAfter(TimeSpan.FromTicks(500000));
+
+                    try
+                    {
+                        // Try sending all poses to the server, cancel on timeout
+                        await UpdateServerTrackers(cancellationToken.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        Logger.Warn(
+                            $"{AppPlugins.CurrentServiceEndpoint.Guid} couldn't update poses before timeout of 500000 [ticks] " +
+                            $"(~20fps). The operation has been cancelled for Amethyst to keep up with further server operations.");
+                    }
 
                     // Wait until certain loop time has passed
                     var diffTicks = vrFrameRate - loopStopWatch.ElapsedTicks;
