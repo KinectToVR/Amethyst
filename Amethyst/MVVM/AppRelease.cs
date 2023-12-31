@@ -50,3 +50,15 @@ internal class AppRelease
         public bool is_public { get; set; }
     }
 }
+
+internal class NoticeInfo
+{
+    public string Title { get; set; } = "";
+    public string Content { get; set; } = "";
+    public string ButtonText { get; set; } = null;
+    public string ButtonLink { get; set; } = null;
+    public bool Closable { get; set; } = true;
+    public int Severity { get; set; } = 0;
+
+    public bool IsValid => !string.IsNullOrEmpty(Title);
+}

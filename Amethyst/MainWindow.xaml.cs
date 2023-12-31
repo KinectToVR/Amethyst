@@ -48,6 +48,7 @@ using RestSharp;
 using WinRT;
 using WinRT.Interop;
 using WinUI.Fluent.Icons;
+using Newtonsoft.Json;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -144,6 +145,12 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         !PluginsUninstallInfoBar.IsOpen && !PluginsInstallInfoBar.IsOpen &&
         !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
         !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen;
+
+    private bool CanShowNoticeBar =>
+        !PluginsUninstallInfoBar.IsOpen && !PluginsInstallInfoBar.IsOpen &&
+        !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
+        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen &&
+        !ReloadInfoBar.IsOpen;
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
@@ -1259,59 +1266,68 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 Logger.Error(e); // Log the actual exception in the next message
             }
 
-            //// Check for updates : Installer
-            //try
-            //{
-            //    using var client = new RestClient();
-            //    var endpointData = string.Empty;
+            // Check for updates : Notices
+            try
+            {
+                // Data
+                try
+                {
+                    Logger.Info("Checking available notices... [GET]");
+                    var notice = JsonConvert.DeserializeObject<NoticeInfo>((await new RestClient().ExecuteGetAsync(
+                        "https://github.com/KinectToVR/Amethyst/releases/latest/download/NoticeInfo.json",
+                        new RestRequest())).Content!)!;
 
-            //    // Data
-            //    try
-            //    {
-            //        Logger.Info("Checking available configuration... [GET]");
-            //        var response = await client.ExecuteGetAsync(
-            //            "https://github.com/KinectToVR/Amethyst/releases/download/latest/EndpointData.json",
-            //            new RestRequest());
+                    // Parse the loaded json
+                    if (!notice.IsValid) return;
 
-            //        endpointData = response.Content;
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Logger.Error(new Exception($"Error getting the configuration info! Message: {e.Message}"));
-            //        Logger.Error(e); // Log the actual exception in the next message
-            //    }
+                    // Show the notice if available
+                    NoticeInfoBar.Title = notice.Title;
+                    NoticeInfoBar.Message = notice.Content;
+                    NoticeInfoBar.IsClosable = notice.Closable;
+                    NoticeInfoBar.Severity = (InfoBarSeverity)notice.Severity;
 
-            //    // Parse
-            //    try
-            //    {
-            //        if (!string.IsNullOrEmpty(endpointData))
-            //        {
-            //            // Parse the loaded json
-            //            var jsonRoot = JsonObject.Parse(endpointData);
+                    if (!string.IsNullOrEmpty(notice.ButtonText))
+                    {
+                        var actionButton = new Button
+                        {
+                            HorizontalAlignment = HorizontalAlignment.Right,
+                            Content = notice.ButtonText
+                        };
 
-            //            // Check if the resource root is fine
-            //            if (jsonRoot?.ContainsKey("C291EA26-9A68-4FA7-8571-477D4F7CB168") ?? false)
-            //            {
-            //                SetupData.LimitedHide = jsonRoot.GetNamedBoolean("C291EA26-9A68-4FA7-8571-477D4F7CB168");
-            //                SetupData.LimitedSetup = jsonRoot.GetNamedBoolean("C291EA26-9A68-4FA7-8571-477D4F7CB168");
-            //            }
-            //        }
-            //        else
-            //        {
-            //            Logger.Error(new NoNullAllowedException("Configuration-check failed, the string was empty."));
-            //        }
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Logger.Error(new Exception($"Error updating the configuration info! Message: {e.Message}"));
-            //        Logger.Error(e); // Log the actual exception in the next message
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    Logger.Error($"Update failed, an exception occurred. Message: {e.Message}");
-            //    Logger.Error(e); // Log the actual exception in the next message
-            //}
+                        actionButton.Click += async (_, _) =>
+                        {
+                            try
+                            {
+                                await Launcher.LaunchUriAsync(new Uri(notice.ButtonLink));
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+
+                            Shared.Main.DispatcherQueue.TryEnqueue(() =>
+                            {
+                                NoticeInfoBar.Opacity = 0.0;
+                                NoticeInfoBar.IsOpen = false;
+                            });
+                        };
+
+                        NoticeInfoBar.ActionButton = actionButton;
+                    }
+
+                    // Finally show the notice
+                    NoticeInfoBar.IsOpen = true;
+                    NoticeInfoBar.Opacity = 1.0;
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         // Check for plugin updates
@@ -1886,5 +1902,11 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Close the EULA flyout
         EulaFlyout.Hide();
+    }
+
+    private void NoticeInfoBar_Closing(InfoBar sender, InfoBarClosingEventArgs args)
+    {
+        NoticeInfoBar.Opacity = 0.0;
+        NoticeInfoBar.IsOpen = false;
     }
 }

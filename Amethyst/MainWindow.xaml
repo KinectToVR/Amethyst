@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:util="using:Amethyst.Utils"
-    xmlns:icons="using:WinUI.Fluent.Icons" 
+    xmlns:icons="using:WinUI.Fluent.Icons"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls">
 
     <!--Note: Change {ThemeResource AcrylicBackgroundFillColorBaseBrush} to Transparent if Mica is supported-->
@@ -282,6 +282,21 @@
                                 Content="{x:Bind util:Translator.Get.String('/DevicesPage/Devices/Reload/Restart'), Mode=OneWay}" />
                     </InfoBar.ActionButton>
 
+                    <InfoBar.OpacityTransition>
+                        <ScalarTransition />
+                    </InfoBar.OpacityTransition>
+                </InfoBar>
+                <Grid.OpacityTransition>
+                    <ScalarTransition />
+                </Grid.OpacityTransition>
+            </Grid>
+
+            <Grid Grid.Row="0" Opacity="{x:Bind BoolToOpacity(CanShowNoticeBar), Mode=OneWay}"
+                  Visibility="{x:Bind CanShowNoticeBar, Mode=OneWay}">
+                <InfoBar x:Name="NoticeInfoBar" Opacity="0.0"
+                         Closing="NoticeInfoBar_Closing"
+                         IsOpen="False" IsClosable="False" Margin="3,0,3,3"
+                         Severity="Warning" Title="?????" Message="?????">
                     <InfoBar.OpacityTransition>
                         <ScalarTransition />
                     </InfoBar.OpacityTransition>
@@ -600,13 +615,15 @@
                                 <ScrollViewer Margin="20,0,-15,20" Padding="-20,0,20,-20"
                                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
-                                        <TextBlock Text="Uh-Oh! EULA doko?" Style="{ThemeResource TitleLargeTextBlockStyle}"
-                                               x:Name="EulaHeader" Margin="10,10,90,0"
-                                               TextWrapping="WrapWholeWords" />
+                                        <TextBlock Text="Uh-Oh! EULA doko?"
+                                                   Style="{ThemeResource TitleLargeTextBlockStyle}"
+                                                   x:Name="EulaHeader" Margin="10,10,90,0"
+                                                   TextWrapping="WrapWholeWords" />
 
                                         <controls:MarkdownTextBlock x:Name="EulaText" Text="Uh-Oh! EULA doko?"
-                                               HorizontalAlignment="Center" TextWrapping="Wrap" Width="660"
-                                               Margin="10,20,0,0" Background="Transparent" />
+                                                                    HorizontalAlignment="Center" TextWrapping="Wrap"
+                                                                    Width="660"
+                                                                    Margin="10,20,0,0" Background="Transparent" />
                                     </StackPanel>
                                 </ScrollViewer>
                             </Grid>

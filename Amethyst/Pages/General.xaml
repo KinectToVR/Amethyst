@@ -35,7 +35,7 @@
 
                 <Grid Margin="40,15" x:Name="OffsetsControlHostGrid">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*" MinHeight="580" />
+                        <RowDefinition Height="*" MinHeight="560" />
                         <RowDefinition Height="75" />
                     </Grid.RowDefinitions>
 
@@ -229,12 +229,12 @@
                         <Button Click="DiscardOffsetsButton_Click" Grid.Column="0"
                                 Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Discard'), Mode=OneWay}"
                                 FontSize="14" HorizontalAlignment="Stretch" Height="50" FontWeight="Medium"
-                                CornerRadius="4" Margin="0,15,10,0" />
+                                CornerRadius="4" Margin="0,0,10,0" />
 
                         <Button Click="SaveOffsetsButton_Click" CornerRadius="4"
                                 Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Save'), Mode=OneWay}"
                                 FontSize="14" Height="50" Grid.Column="1" Style="{ThemeResource AccentButtonStyle}"
-                                FontWeight="Medium" Margin="10,15,5,0" HorizontalAlignment="Stretch" />
+                                FontWeight="Medium" Margin="10,0,5,0" HorizontalAlignment="Stretch" />
                     </Grid>
 
                 </Grid>
