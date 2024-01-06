@@ -140,14 +140,13 @@ public static class Main
         // That's all if we're not running!
         if (!Interfacing.AppTrackersInitialized) return;
 
-        // If the tracing's actually running
-        if (token.IsCancellationRequested) throw new OperationCanceledException();
+        token.ThrowIfCancellationRequested();
         if (!Interfacing.IsTrackingFrozen || AppData.Settings.FreezeLowerBodyOnly)
         {
             // Update position & orientation filters
             foreach (var tracker in AppData.Settings.TrackersVector)
             {
-                if (token.IsCancellationRequested) throw new OperationCanceledException();
+                token.ThrowIfCancellationRequested();
                 tracker.UpdateFilters(); // Update the filters for all trackers
             }
 
@@ -166,9 +165,7 @@ public static class Main
                 false, token);
         }
 
-        // Scan for already-added body trackers from other apps
-        // (If any found, disable corresponding ame's trackers/pairs)
-        if (token.IsCancellationRequested) throw new OperationCanceledException();
+        token.ThrowIfCancellationRequested();
         if (Interfacing.AlreadyAddedTrackersScanRequested)
         {
             // Mark the request as done
@@ -198,7 +195,7 @@ public static class Main
                             trackerBase.ConnectionState = false;
 
                             await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
-                            await Task.Delay(25);
+                            await Task.Delay(25, token);
                         }
 
                         // Check and save settings
