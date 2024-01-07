@@ -125,9 +125,17 @@ public partial class App : Application
         // Create an empty file for checking for crashes
         try
         {
-            Interfacing.CrashFile = new FileInfo(Path.Join(Interfacing.TemporaryFolder.Path, ".crash"));
-            if (Environment.GetCommandLineArgs().ElementAtOrDefault(1)?.StartsWith("amethyst-app:crash") ?? false)
-                Interfacing.CrashFile.Create(); // Create the file if not running as crash handler
+            if (!Interfacing.SuppressAllDomainExceptions &&
+                (string.IsNullOrEmpty(Environment.GetCommandLineArgs().ElementAtOrDefault(1)) ||
+                 Environment.GetCommandLineArgs().ElementAtOrDefault(1) is "amethyst-app:"))
+            {
+                Interfacing.CrashFile =
+                    new FileInfo(Path.Join(Interfacing.TemporaryFolder.Path, "Crash",
+                        Guid.NewGuid().ToString().ToUpper()));
+
+                Interfacing.CrashFile.Directory?.Create(); // Create the directory too...
+                Interfacing.CrashFile.Create(); // Create the file if not running as slave
+            }
         }
         catch (Exception e)
         {
@@ -515,7 +523,8 @@ public partial class App : Application
                                 new DirectoryInfo(Path.Join(pluginFolder, "Assets", "Strings"))
                                     .CopyToFolder(outputFolder.Path);
 
-                                pluginStringsFolders.Add(Path.Join(pluginFolder, "Assets", "Strings"), outputFolder.Path);
+                                pluginStringsFolders.Add(Path.Join(pluginFolder, "Assets", "Strings"),
+                                    outputFolder.Path);
                             }
 
                         // Create a new localization config
@@ -566,7 +575,7 @@ public partial class App : Application
 
         Logger.Info("Starting the crash handler passing the app PID...");
         await ($"amethyst-app:crash-watchdog?pid={Environment.ProcessId}&log={Logger.LogFilePath}" +
-               $"&crash={Path.Join(Interfacing.TemporaryFolder.Path, ".crash")}").ToUri().LaunchAsync();
+               $"&crash={Interfacing.CrashFile.FullName}").ToUri().LaunchAsync();
 
         // Disable internal sounds
         ElementSoundPlayer.State = ElementSoundPlayerState.Off;

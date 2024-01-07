@@ -86,7 +86,9 @@ public static class AppPlugins
         var failingOverrideGuid = "";
 
         foreach (var device in AppData.Settings.OverrideDevicesGuidMap
-                     .Where(device => TrackingDevicesList[device].DeviceStatus != 0))
+                     .Where(device =>
+                         TrackingDevicesList.TryGetValue(device, out var deviceInternal) &&
+                         deviceInternal.DeviceStatus != 0))
         {
             overrideStatusOk = false;
             failingOverrideGuid = device;

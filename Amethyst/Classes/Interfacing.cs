@@ -776,9 +776,16 @@ public static class Interfacing
                 info.FileName = "explorer.exe";
             }
 
-            // Exit without re-handling everything
-            Process.Start(info);
-            Environment.Exit(0);
+            try
+            {
+                // Exit without re-handling everything
+                Process.Start(info);
+                Environment.Exit(0);
+            }
+            catch (Exception e)
+            {
+                Logger.Fatal(e);
+            }
         }
 
         // Still here?
