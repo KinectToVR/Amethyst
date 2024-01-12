@@ -11,7 +11,7 @@
   <Identity
     Name="11835K2VRTeam.Amethyst-OpenSourceBodyTracking"
     Publisher="CN=91B2E3DA-4470-40D2-806F-0A45A7911612"
-    Version="1.2.8.0" />
+    Version="1.2.9.0" />
 
   <Properties>
     <DisplayName>Amethyst - Open Source Body Tracking</DisplayName>
