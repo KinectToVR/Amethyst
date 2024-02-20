@@ -28,8 +28,8 @@
         <Description>Amethyst (Desktop) App</Description>
         <PackageProjectUrl>k2vr.tech</PackageProjectUrl>
         <!--AZ_BUILD_DATA<Version>AZ_BUILD_NUMBER</Version>AZ_BUILD_DATA-->
-        <FileVersion>1.2.11.0</FileVersion>
-        <AssemblyVersion>1.2.11.0</AssemblyVersion>
+        <FileVersion>1.2.12.0</FileVersion>
+        <AssemblyVersion>1.2.12.0</AssemblyVersion>
         <RepositoryUrl>https://github.com/KinectToVR/Amethyst</RepositoryUrl>
         <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
     </PropertyGroup>
