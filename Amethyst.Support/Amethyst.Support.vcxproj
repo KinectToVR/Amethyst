@@ -129,7 +129,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="KalmanFilter.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Support.h">
       <DependentUpon>Support.idl</DependentUpon>

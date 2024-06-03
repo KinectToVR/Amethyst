@@ -1,7 +1,5 @@
 ﻿#pragma once
 #include "Support.g.h"
-#include "KalmanFilter.g.h"
-#include "KalmanFilter.h"
 #include "LowPassFilter.g.h"
 
 namespace winrt::AmethystSupport::implementation
@@ -29,16 +27,6 @@ namespace winrt::AmethystSupport::implementation
         SVector3 output_{0, 0, 0};
         float e_pow_; // Init-only
     };
-
-    struct KalmanFilter : KalmanFilterT<KalmanFilter>
-    {
-        KalmanFilter();
-
-        SVector3 Update(const SVector3& input);
-
-    private:
-        std::array<CKalmanFilter, 3> filters_;
-    };
 }
 
 namespace winrt::AmethystSupport::factory_implementation
@@ -48,10 +36,6 @@ namespace winrt::AmethystSupport::factory_implementation
     };
 
     struct LowPassFilter : LowPassFilterT<LowPassFilter, implementation::LowPassFilter>
-    {
-    };
-
-    struct KalmanFilter : KalmanFilterT<KalmanFilter, implementation::KalmanFilter>
     {
     };
 }

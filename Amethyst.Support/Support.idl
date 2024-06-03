@@ -40,11 +40,4 @@ namespace AmethystSupport
 		LowPassFilter(Single cutOff, Single deltaTime);
 		SVector3 Update(SVector3 input); // Recalculate
     }
-	
-    [default_interface]
-	runtimeclass KalmanFilter
-	{
-		KalmanFilter(); // No explc parameters required
-		SVector3 Update(SVector3 input); // Recalculate
-    }
 }

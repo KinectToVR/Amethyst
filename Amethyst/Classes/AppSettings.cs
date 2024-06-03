@@ -543,8 +543,8 @@ public static class DefaultSettings
 
     public static bool SetupFinished
     {
-        get => Windows.Storage.ApplicationData.Current.LocalSettings.Values["SetupFinished"] as bool? ?? false;
-        set => Windows.Storage.ApplicationData.Current.LocalSettings.Values["SetupFinished"] = value;
+        get => Windows.Storage.ApplicationData.Current.LocalSettings.Values["FirstSetupFinished"] as bool? ?? false;
+        set => Windows.Storage.ApplicationData.Current.LocalSettings.Values["FirstSetupFinished"] = value;
     }
 }
 

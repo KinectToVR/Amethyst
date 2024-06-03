@@ -122,6 +122,12 @@ public class TrackerBase
     public bool ConnectionState { get; set; } = false;
 
     /// <summary>
+    ///     Tracking state: tracked/occluded/not tracked
+    /// </summary>
+    [DataMember(Name = "TrackingState")]
+    public TrackedJointState TrackingState { get; set; } = TrackedJointState.StateNotTracked;
+
+    /// <summary>
     ///     Serial number, or name, identifies a tracker
     /// </summary>
     [DataMember(Name = "TrackerSerial")]

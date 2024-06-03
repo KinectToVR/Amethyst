@@ -402,6 +402,7 @@ public static class Main
 
                 // Push raw positions and timestamps
                 tracker.Position = joint.Position;
+                tracker.TrackingState = joint.TrackingState;
                 tracker.PreviousPosition = joint.PreviousPosition;
 
                 tracker.PoseTimestamp = joint.PoseTimestamp;
@@ -496,6 +497,7 @@ public static class Main
                 {
                     // Push raw positions and timestamps
                     tracker.Position = joint.Position;
+                    tracker.TrackingState = joint.TrackingState;
                     tracker.PreviousPosition = joint.PreviousPosition;
 
                     tracker.PoseTimestamp = joint.PoseTimestamp;

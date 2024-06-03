@@ -3,9 +3,8 @@
 
 #include "Support.g.cpp"       // NOLINT(bugprone-suspicious-include)
 #include "LowPassFilter.g.cpp" // NOLINT(bugprone-suspicious-include)
-#include "KalmanFilter.g.cpp"  // NOLINT(bugprone-suspicious-include)
 
-#include "KalmanFilter.h"
+#include <Eigen/Dense>
 #include <numbers>
 
 // The upper bound of the fog volume along the y-axis (height)
@@ -343,40 +342,5 @@ namespace winrt::AmethystSupport::implementation
         };
 
         return output_; // Update and return
-    }
-
-    KalmanFilter::KalmanFilter()
-    {
-        for (auto& filter : filters_)
-            filter.init(); // Setup!
-    }
-
-    SVector3 KalmanFilter::Update(const SVector3& input)
-    {
-        Eigen::VectorXf u(1);
-        Eigen::VectorXf y[3] =
-        {
-            Eigen::VectorXf(1),
-            Eigen::VectorXf(1),
-            Eigen::VectorXf(1)
-        };
-
-        y[0] << input.X;
-        y[1] << input.Y;
-        y[2] << input.Z;
-        u << 0; // zero control input
-
-        for (auto& filter : filters_)
-            filter.predict(u);
-
-        filters_[0].update(y[0]);
-        filters_[1].update(y[1]);
-        filters_[2].update(y[2]);
-
-        return SVector3{
-            .X = filters_[0].state().x(),
-            .Y = filters_[1].state().x(),
-            .Z = filters_[2].state().x()
-        };
     }
 }

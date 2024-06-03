@@ -11,7 +11,8 @@ using Amethyst.Utils;
 
 namespace Amethyst.MVVM;
 
-public class ServiceEndpoint(string name, string guid, string path, Version version, IServiceEndpoint service) : INotifyPropertyChanged
+public class ServiceEndpoint(string name, string guid, string path, Version version, IServiceEndpoint service)
+    : INotifyPropertyChanged
 {
     // Extensions: is this service used atm?
     public bool IsUsed => AppData.Settings.ServiceEndpointGuid == Guid;
@@ -181,7 +182,14 @@ public class ServiceEndpoint(string name, string guid, string path, Version vers
     // This is called when the service is closed
     public void Shutdown()
     {
-        Service.Shutdown();
+        try
+        {
+            Service.Shutdown();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
 
         // Try to cleanup memory after the plugin
         GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);

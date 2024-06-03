@@ -80,6 +80,7 @@ public class AppTracker : INotifyPropertyChanged
 
     [JsonIgnore] public long PoseTimestamp { get; set; } = 0;
     [JsonIgnore] public long PreviousPoseTimestamp { get; set; } = 0;
+    [JsonIgnore] public TrackedJointState TrackingState { get; set; } = TrackedJointState.StateNotTracked;
 
     // Is this joint overridden?
     public bool IsPositionOverridden
@@ -626,6 +627,7 @@ public class AppTracker : INotifyPropertyChanged
         var trackerBase = new TrackerBase
         {
             ConnectionState = IsActive,
+            TrackingState = TrackingState,
             Role = Role,
             Serial = Serial,
 
@@ -683,7 +685,7 @@ public class AppTracker : INotifyPropertyChanged
     {
         // Update LowPass and Kalman filters
         _lowPassPosition = _lowPassFilter.Update(Position.Projected()).V();
-        _kalmanPosition = _kalmanFilter.Update(Position.Projected()).V();
+        _kalmanPosition = _kalmanFilter.Update(Position);
 
         // Update the LERP (mix) filter
         _lerpPosition = Vector3.Lerp(_lastLerpPosition, Position, 0.31f);
