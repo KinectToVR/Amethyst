@@ -365,6 +365,14 @@ public partial class App : Application
                     Environment.Exit(0); // Cancel further application startup
                     break;
                 }
+                case "local-folder":
+                {
+                    SystemShell.OpenFolderAndSelectItem(Interfacing.LocalFolder.Path);
+
+                    Logger.Info("That's all! Shutting down now...");
+                    Environment.Exit(0); // Cancel further application startup
+                    break;
+                }
                 case "make-local":
                 {
                     try
@@ -756,16 +764,39 @@ public partial class App : Application
         // Check whether the first-time setup is complete
         if (!DefaultSettings.SetupFinished)
         {
+            // Update 1.2.13.0: reset configuration
+            try
+            {
+                if (ApplicationData.Current.LocalSettings.Values["SetupFinished"] as bool? ?? false)
+                {
+                    ApplicationData.Current.LocalSettings.Values.Remove("SetupFinished");
+                    AppData.Settings = new AppSettings(); // Reset application settings
+                    AppData.Settings.SaveSettings(); // Save empty settings to file
+
+                    Interfacing.SetupNotificationManager();
+                    Interfacing.ShowToast("Looking for your old settings?",
+                        "They're not here anymore! Amethyst has undergone " +
+                        "a critical update, so you'll need to reconfigure it.");
+
+                    // If there's an OVR driver folder, try to delete it if possible
+                    await (await ApplicationData.Current.LocalFolder.GetFolderAsync("Amethyst"))?.DeleteAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+            }
+
             // Scan for all default plugins
 
-            // Search the "Plugins" sub-directory for assemblies that match the imports.
+            // Search the "Plugins" subdirectory for assemblies that match the imports.
             // Iterate over all directories in .\Plugins dir and add all * dirs to catalogs
             Logger.Info("Searching for local plugins now...");
             var localPluginsFolder = Path.Combine(Interfacing.ProgramLocation.DirectoryName!, "Plugins");
 
             var pluginDirectoryList = Directory.Exists(localPluginsFolder)
                 ? Directory.EnumerateDirectories(localPluginsFolder, "*", SearchOption.TopDirectoryOnly).ToList()
-                : new List<string>(); // In case the folder doesn't exists, create an empty directory list
+                : new List<string>(); // In case the folder doesn't exist, create an empty directory list
 
             // Search the "Plugins" AppData directory for assemblies that match the imports.
             // Iterate over all directories in Plugins dir and add all * dirs to catalogs

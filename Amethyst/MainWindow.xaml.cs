@@ -201,34 +201,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         Logger.Info("Making the app dispatcher available for children views...");
         Shared.Main.DispatcherQueue = DispatcherQueue;
-
-        try
-        {
-            Logger.Info("Registering for NotificationInvoked WinRT event...");
-            if (!AppNotificationManager.IsSupported()) // Check for compatibility first
-                throw new NotSupportedException("AppNotificationManager is not supported on this system!");
-
-            // To ensure all Notification handling happens in this process instance, register for
-            // NotificationInvoked before calling Register(). Without this a new process will
-            // be launched to handle the notification.
-            AppNotificationManager.Default.NotificationInvoked +=
-                (_, notificationActivatedEventArgs) =>
-                {
-                    Interfacing.ProcessToastArguments(notificationActivatedEventArgs);
-                };
-
-            Logger.Info("Creating the default notification manager...");
-            Shared.Main.NotificationManager = AppNotificationManager.Default;
-
-            Logger.Info("Registering the notification manager...");
-            Shared.Main.NotificationManager.Register(); // Try registering
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e); // We couldn't set the manager up, sorry...
-            Logger.Info("Resetting the notification manager...");
-            Shared.Main.NotificationManager = null; // Not using it!
-        }
+        Interfacing.SetupNotificationManager();
 
         // Start the main program loop
         _ = Task.Run(Main.MainLoop);

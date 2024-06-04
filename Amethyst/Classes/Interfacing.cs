@@ -1109,4 +1109,32 @@ public static class Interfacing
             });
         }
     }
+
+    public static void SetupNotificationManager()
+    {
+        try
+        {
+            Logger.Info("Registering for NotificationInvoked WinRT event...");
+            if (!AppNotificationManager.IsSupported()) // Check for compatibility first
+                throw new NotSupportedException("AppNotificationManager is not supported on this system!");
+
+            // To ensure all Notification handling happens in this process instance, register for
+            // NotificationInvoked before calling Register(). Without this a new process will
+            // be launched to handle the notification.
+            AppNotificationManager.Default.NotificationInvoked +=
+                (_, notificationActivatedEventArgs) => { ProcessToastArguments(notificationActivatedEventArgs); };
+
+            Logger.Info("Creating the default notification manager...");
+            Shared.Main.NotificationManager = AppNotificationManager.Default;
+
+            Logger.Info("Registering the notification manager...");
+            Shared.Main.NotificationManager.Register(); // Try registering
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e); // We couldn't set the manager up, sorry...
+            Logger.Info("Resetting the notification manager...");
+            Shared.Main.NotificationManager = null; // Not using it!
+        }
+    }
 }
