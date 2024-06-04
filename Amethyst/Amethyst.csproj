@@ -61,14 +61,14 @@
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.4" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.9.2" />
         <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240428000" />
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
         <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.7" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="RestSharp" Version="108.0.3" />
         <PackageReference Include="System.ComponentModel.Composition" Version="8.0.0" />
         <PackageReference Include="System.ComponentModel.Composition.Registration" Version="8.0.0" />
         <PackageReference Include="System.Reflection.MetadataLoadContext" Version="8.0.0" />
-        <PackageReference Include="WinUI.Fluent.Icons" Version="1.0.1" />
+        <PackageReference Include="WinUI.Fluent.Icons" Version="1.0.2" />
         <Manifest Include="$(ApplicationManifest)" />
     </ItemGroup>
 
