@@ -590,7 +590,7 @@ public static class Main
                         {
                             serverLoops = 0; // Reset the counter for the next 10'000 service loops
                             var elapsedTicks = loopStopWatch.ElapsedTicks; // Cache the elapsed time
-                            await Task.Delay(TimeSpan.FromTicks(diffTicks));
+                            await Task.Delay(TimeSpan.FromTicks(diffTicks), cancellationToken.Token);
 
                             Logger.Info($"10000 loops have passed: this loop took {elapsedTicks} [ticks], " +
                                         $"the loop's time after time correction (sleep) is: {loopStopWatch.ElapsedTicks} [ticks]");
@@ -598,7 +598,7 @@ public static class Main
                         else
                         {
                             serverLoops++; // Else increase passed loops counter and wait
-                            await Task.Delay(TimeSpan.FromTicks(diffTicks));
+                            await Task.Delay(TimeSpan.FromTicks(diffTicks), cancellationToken.Token);
                         }
 
 #pragma warning disable CA1806 // Do not ignore method results
@@ -623,6 +623,9 @@ public static class Main
                 serverTries++; // One more?
                 switch (serverTries)
                 {
+                    case > 0 when e is TaskCanceledException:
+                        break; // It's probably the token timeout, just don't care...
+
                     case > 3 and <= 7:
                         // We've crashed the third time now. Something's off.. really...
                         Logger.Fatal(new AggregateException(
