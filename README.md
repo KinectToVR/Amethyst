@@ -1,7 +1,7 @@
 # **Amethyst**
 
-[<img style="width:300px; height:auto;" src="https://user-images.githubusercontent.com/8508676/189486639-7a845f9a-2ac9-4271-a67f-b2c087eaea07.png">](https://github.com/KinectToVR/Amethyst-Installer-Releases/releases/latest/download/Amethyst-Installer.exe)  
-**Click above to download! ([Download/start errors](https://download.getaughip.com/bill-gates.png))**  
+### How do I install or update Amethyst?
+[<img width="290px" src="https://get.microsoft.com/images/en-us%20light.svg">](https://www.microsoft.com/store/apps/9P7R8FGDDGDH)  
 **[Check out this repo for manual setup instructions](https://github.com/KinectToVR/Amethyst-Releases)**  
 
 ## **License**
