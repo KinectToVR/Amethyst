@@ -307,6 +307,50 @@ public interface IDependency
     public Task<bool> Install(IProgress<InstallationProgress> progress, CancellationToken cancellationToken);
 }
 
+
+// Fix applier worker helper class
+public interface IFix
+{
+	/// <summary>
+	///     [Title]
+	///     The name of the fix to be applied
+	/// </summary>
+	public string Name { get; }
+
+	/// <summary>
+	///     Whether it is a must to have this fix applied
+	///     (IsNecessary=true) for the plugin to be working properly
+	/// </summary>
+	public bool IsMandatory { get; }
+
+	/// <summary>
+	///     Check whether the fix is (already) applied
+	/// </summary>
+	public bool IsNecessary { get; }
+
+	/// <summary>
+	///     If there is a need to accept an EULA, pass its contents here
+	/// </summary>
+	public string InstallerEula { get; }
+
+	/// <summary>
+	///     Perform the main installation action, reporting the progress
+	/// </summary>
+	/// <param name="progress">
+	///     Report the progress using InstallationProgress
+	/// </param>
+	/// <param name="cancellationToken">
+	///     CancellationToken for task cancellation
+	/// </param>
+	/// <param name="arg">
+	///     Optional argument
+	/// </param>
+	/// <returns>
+	///     Success?
+	/// </returns>
+	public Task<bool> Apply(IProgress<InstallationProgress> progress, CancellationToken cancellationToken, object? arg = null);
+}
+
 // Plugin settings helper class
 public interface IPluginSettings
 {

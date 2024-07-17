@@ -483,13 +483,20 @@ public interface IDependencyInstaller
     /// </summary>
     public List<IDependency> ListDependencies();
 
-    /// <summary>
-    ///     The localization host, use it to request your strings
-    ///     Note: this property will be overwritten by Amethyst
-    ///     upon the initialization of your implemented class!
-    ///     You may use it ONLY after it's done constructing
-    /// </summary>
-    public ILocalizationHost? Host { get; set; }
+	/// <summary>
+	///     The list of fixes that may need to be applied,
+	///     or tools that can be included, see the IFix class
+	///     This is a method so it's easier for you to access the Host
+	/// </summary>
+	public List<IFix> ListFixes();
+
+	/// <summary>
+	///     The localization host, use it to request your strings
+	///     Note: this property will be overwritten by Amethyst
+	///     upon the initialization of your implemented class!
+	///     You may use it ONLY after it's done constructing
+	/// </summary>
+	public ILocalizationHost? Host { get; set; }
 
     /// <summary>
     ///     Use this interface to invoke AME localization methods

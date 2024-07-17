@@ -246,7 +246,175 @@ public class SetupPlugin : INotifyPropertyChanged
         InstallHandler.TokenSource.Dispose();
     }
 
-    public string TrimString(string s, int l)
+	public async Task PerformFixApplication(IFix fix, object param = null)
+	{
+		/*
+         * Logic
+         * - Validate the DependencyInstaller
+         * - Show the installation grid
+         * - Disable all user input
+         *
+         * Success
+         * - Show the last message, progress 100%S
+         * - Change to 'success', wait 6s
+         *
+         * Failure
+         * - Show the last message, progress 100%F
+         * - Wait 6s, change to 'failure', wait 5s
+         */
+
+		/* Show the installer part */
+
+		// Theoretically not possible, but check anyway
+		if (fix is null) return;
+		InstallHandler.TokenSource = new CancellationTokenSource();
+		InstallHandler.DependencyName = fix.Name;
+
+		// Block temporarily
+		InstallHandler.AllowUserInput = false;
+		InstallHandler.OnPropertyChanged();
+		await Task.Delay(500, InstallHandler.TokenSource.Token);
+
+		// Show the installer grid
+		InstallHandler.InstallationWorker = null;
+		InstallHandler.InstallingDependencies = true;
+		InstallHandler.ProgressError = false;
+		InstallHandler.ProgressIndeterminate = true;
+		InstallHandler.ProgressValue = 0.0;
+		InstallHandler.StageName = string.Empty;
+		InstallHandler.HideProgress = false;
+		InstallHandler.NoProgress = false;
+		InstallHandler.OnPropertyChanged();
+
+		// Unblock user input now
+		await Task.Delay(500, InstallHandler.TokenSource.Token);
+		InstallHandler.AllowUserInput = true;
+		InstallHandler.OnPropertyChanged();
+
+		// Loop over all dependencies and install them, give up on failures
+		try
+		{
+			/* Setup and start the installation */
+
+			// Prepare the progress update handler
+			var progress = new Progress<InstallationProgress>();
+			InstallHandler.DependencyName = fix.Name;
+			InstallHandler.OnPropertyChanged(); // The name
+
+			progress.ProgressChanged += (_, installationProgress) =>
+				Shared.Main.DispatcherQueue.TryEnqueue(() =>
+				{
+					// Update our progress here
+					InstallHandler.StageName = installationProgress.StageTitle;
+					InstallHandler.ProgressIndeterminate = installationProgress.IsIndeterminate;
+					InstallHandler.ProgressValue = installationProgress.OverallProgress * 100 ?? 0;
+
+					// Trigger a partial interface reload
+					InstallHandler.OnPropertyChanged();
+				});
+
+			// Capture the installation thread
+			InstallHandler.InstallationWorker = fix.Apply(progress, InstallHandler.TokenSource.Token, param);
+
+			// Actually start the installation now
+			var result = await InstallHandler.InstallationWorker;
+
+			/* Parse the result and present it */
+
+			// Show the progress indicator [and the last message if failed]
+			InstallHandler.ProgressError = !result;
+			InstallHandler.ProgressIndeterminate = false;
+			InstallHandler.ProgressValue = 100;
+			InstallHandler.HideProgress = true;
+			InstallHandler.NoProgress = true;
+
+			if (result)
+				InstallHandler.StageName =
+					Interfacing.LocalizedJsonString("/Installer/Fix/Contents/Success")
+						.Format(InstallHandler.DependencyName);
+
+			InstallHandler.OnPropertyChanged();
+			await Task.Delay(6000, InstallHandler.TokenSource.Token);
+
+			if (!result)
+			{
+				InstallHandler.StageName =
+					Interfacing.LocalizedJsonString("/SharedStrings/Plugins/Fix/Contents/Failure")
+						.Format(InstallHandler.DependencyName);
+
+				InstallHandler.OnPropertyChanged();
+				await Task.Delay(5000, InstallHandler.TokenSource.Token);
+			}
+
+			// Block temporarily
+			InstallHandler.AllowUserInput = false;
+			InstallHandler.OnPropertyChanged();
+			await Task.Delay(500, InstallHandler.TokenSource.Token);
+
+			// Hide the installer grid
+			InstallHandler.InstallingDependencies = false;
+			InstallHandler.OnPropertyChanged();
+			await Task.Delay(500, InstallHandler.TokenSource.Token);
+
+			// Unblock user input now
+			InstallHandler.AllowUserInput = true;
+			InstallHandler.OnPropertyChanged();
+
+			InstallHandler.TokenSource.Dispose();
+			return; // Exit the whole handler
+		}
+		catch (OperationCanceledException e)
+		{
+			// Show the fail information
+			InstallHandler.StageName = Interfacing.LocalizedJsonString(
+				"/SharedStrings/Plugins/Dep/Contents/Cancelled").Format(e.Message);
+
+			InstallHandler.ProgressError = true;
+			InstallHandler.HideProgress = true;
+			InstallHandler.NoProgress = true;
+			InstallHandler.ProgressValue = 100;
+
+			InstallHandler.OnPropertyChanged();
+			await Task.Delay(5000);
+
+			// Hide the installer grid and 'install'
+			InstallHandler.InstallingDependencies = false;
+			InstallHandler.OnPropertyChanged();
+			await Task.Delay(500);
+
+			// Unblock user input now
+			InstallHandler.AllowUserInput = true;
+			InstallHandler.OnPropertyChanged();
+		}
+		catch (Exception ex)
+		{
+			// Show the fail information
+			InstallHandler.StageName = Interfacing.LocalizedJsonString(
+				"/SharedStrings/Plugins/Fix/Contents/InternalException").Format(ex.Message);
+
+			InstallHandler.ProgressError = true;
+			InstallHandler.HideProgress = true;
+			InstallHandler.NoProgress = true;
+			InstallHandler.ProgressValue = 100;
+
+			InstallHandler.OnPropertyChanged();
+			await Task.Delay(5000);
+
+			// Hide the installer grid and 'install'
+			InstallHandler.InstallingDependencies = false;
+			InstallHandler.OnPropertyChanged();
+			await Task.Delay(500);
+
+			// Unblock user input now
+			InstallHandler.AllowUserInput = true;
+			InstallHandler.OnPropertyChanged();
+		}
+
+		// Clean up after installation
+		InstallHandler.TokenSource.Dispose();
+	}
+
+	public string TrimString(string s, int l)
     {
         return s?[..Math.Min(s.Length, l)] +
                (s?.Length > l ? "..." : "");

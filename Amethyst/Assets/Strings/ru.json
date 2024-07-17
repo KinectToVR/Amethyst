@@ -1,1965 +1,1989 @@
 {
   "language": "ru",
-  "messages": [
-    {
-      "id": "/GeneralPage/Buttons/Abort",
-      "translation": "Прервать"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Calibration/Base",
-      "translation": "Основное"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Calibration/Begin",
-      "translation": "Калибровка"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Calibration/Override",
-      "translation": "Переназначения"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Cancel",
-      "translation": "Отмена"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Discard",
-      "translation": "Отклонить"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Help/Discord",
-      "translation": "Discord сервер"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Help/Docs",
-      "translation": "Открыть документацию"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Offsets",
-      "translation": "Настройте смещения"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Save",
-      "translation": "Сохранить"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Skeleton/Freeze",
-      "translation": "Заморозить"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Skeleton/Hide",
-      "translation": "Скрыть скелет"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Skeleton/Show",
-      "translation": "Показать скелет"
-    },
-    {
-      "id": "/GeneralPage/Buttons/Skeleton/Unfreeze",
-      "translation": "Разморозить"
-    },
-    {
-      "id": "/GeneralPage/Buttons/TrackersToggle/Connect",
-      "translation": "Подключить трекеры"
-    },
-    {
-      "id": "/GeneralPage/Buttons/TrackersToggle/Disconnect",
-      "translation": "Отключить трекеры"
-    },
-    {
-      "id": "/GeneralPage/Buttons/TrackersToggle/Reconnect",
-      "translation": "Переподключить трекеры"
-    },
-    {
-      "id": "/GeneralPage/Buttons/DeviceSettings",
-      "translation": "View {0} device settings"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Captions/Aborted",
-      "translation": "Калибровка прервана!"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Captions/Automatic",
-      "translation": "Встаньте в трех местах вашей игровой площади."
-    },
-    {
-      "id": "/GeneralPage/Calibration/Captions/Captured",
-      "translation": "Положение зафиксировано!"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Captions/Done",
-      "translation": "Калибровка завершена!"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Captions/Manual",
-      "translation": "Перемещайте трекеры при помощи ваших VR контроллеров."
-    },
-    {
-      "id": "/GeneralPage/Calibration/Captions/Move",
-      "translation": "Положение {0} из {1}\nПерейдите в другую точку"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Captions/Points",
-      "translation": "Попробуйте увеличить точки захвата, если после калибровки трекеры находятся в неправильных местах."
-    },
-    {
-      "id": "/GeneralPage/Calibration/Captions/Recommended",
-      "translation": "Рекомендуемое"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Captions/Stand",
-      "translation": "Положение {0} из {1}\nПожалуйста, стойте неподвижно!"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Captions/Start",
-      "translation": "Начать калибровку"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Headers/Automatic",
-      "translation": "Автоматическая калибровка"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Headers/Manual",
-      "translation": "Ручная калибровка"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Labels/Brief/Left",
-      "translation": "L"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Labels/Brief/Right",
-      "translation": "R"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Labels/Grips/Both",
-      "translation": "L+R захват"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Labels/Grips/Left",
-      "translation": "L захват"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Labels/Grips/Right",
-      "translation": "R захват"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Labels/InputsNotice",
-      "translation": "Входы могут отличаться при использовании собственных привязок. В этом случае обратитесь к привязкам."
-    },
-    {
-      "id": "/GeneralPage/Calibration/Labels/Triggers/Both",
-      "translation": "L+R триггер"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Labels/Triggers/Left",
-      "translation": "L триггеры"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Labels/Triggers/Right",
-      "translation": "R триггеры"
-    },
-    {
-      "id": "/GeneralPage/Calibration/LabelsWhat/Brief/Left",
-      "translation": "Перемещение влево/вправо/вперед/назад\nВращение по оси Y"
-    },
-    {
-      "id": "/GeneralPage/Calibration/LabelsWhat/Brief/Right",
-      "translation": "Перемещение вверх/вниз\nВращение по оси X"
-    },
-    {
-      "id": "/GeneralPage/Calibration/LabelsWhat/Grips/Left",
-      "translation": "Точная настройка"
-    },
-    {
-      "id": "/GeneralPage/Calibration/LabelsWhat/Grips/Right",
-      "translation": "Поменять местами перемещение/вращение"
-    },
-    {
-      "id": "/GeneralPage/Calibration/LabelsWhat/Triggers",
-      "translation": "Подтвердить"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Titles/Automatic",
-      "translation": "Автоматически"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Titles/Choose",
-      "translation": "Выберите метод калибровки"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Titles/Device",
-      "translation": "Choose a device to calibrate"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Titles/Manual",
-      "translation": "Вручную"
-    },
-    {
-      "id": "/GeneralPage/Calibration/Titles/Points",
-      "translation": "Точки захвата:"
-    },
-    {
-      "id": "/GeneralPage/Captions/CalibrateOverrides",
-      "translation": "У вас имеются переназначения трекеров.\nКакое устройство вы хотите откалибровать?"
-    },
-    {
-      "id": "/GeneralPage/Captions/Device/Name",
-      "translation": "Текущее устройство:"
-    },
-    {
-      "id": "/GeneralPage/Captions/Device/Status",
-      "translation": "Статус:"
-    },
-    {
-      "id": "/GeneralPage/Captions/DriverStatus",
-      "translation": "Успешно! (Код 1)"
-    },
-    {
-      "id": "/GeneralPage/Captions/DriverStatus/Label",
-      "translation": "Статус {0}:"
-    },
-    {
-      "id": "/GeneralPage/Captions/FreezeLowerOnly",
-      "translation": "Заморозка только нижней части тела"
-    },
-    {
-      "id": "/GeneralPage/Captions/Offsets/Orientation/X",
-      "translation": "Тангаж (X):"
-    },
-    {
-      "id": "/GeneralPage/Captions/Offsets/Orientation/Y",
-      "translation": "Рыскание (Y):"
-    },
-    {
-      "id": "/GeneralPage/Captions/Offsets/Orientation/Z",
-      "translation": "Крен (Z):"
-    },
-    {
-      "id": "/GeneralPage/Captions/Offsets/Position/X",
-      "translation": "X (Влево):"
-    },
-    {
-      "id": "/GeneralPage/Captions/Offsets/Position/Y",
-      "translation": "Y (Вверх):"
-    },
-    {
-      "id": "/GeneralPage/Captions/Offsets/Position/Z",
-      "translation": "Z (Вперед):"
-    },
-    {
-      "id": "/GeneralPage/Captions/OverrideDevice/Name",
-      "translation": "Устройство переназначения:"
-    },
-    {
-      "id": "/GeneralPage/Captions/Preview/Disabled",
-      "translation": "Предпросмотр скелета отключен"
-    },
-    {
-      "id": "/GeneralPage/Captions/Preview/DisabledText",
-      "translation": "Чтобы включить его, пожалуйста нажмите\nна кнопку Показать скелет."
-    },
-    {
-      "id": "/GeneralPage/Captions/Preview/Force",
-      "translation": "Принудительный предпросмотр"
-    },
-    {
-      "id": "/GeneralPage/Captions/Preview/NoDashboard",
-      "translation": "Панель закрыта"
-    },
-    {
-      "id": "/GeneralPage/Captions/Preview/NoDashboardText",
-      "translation": "Предпросмотр отключен чтобы сохранить ресурсы\nи будет запущен снова как только вы вернетесь."
-    },
-    {
-      "id": "/GeneralPage/Captions/Preview/NoFocus",
-      "translation": "Окно не в фокусе"
-    },
-    {
-      "id": "/GeneralPage/Captions/Preview/NoFocusText",
-      "translation": "Предпросмотр отключен чтобы сохранить ресурсы\nи будет запущен снова как только вы вернетесь."
-    },
-    {
-      "id": "/GeneralPage/Captions/Preview/NoSkeleton",
-      "translation": "Скелет не обнаружен"
-    },
-    {
-      "id": "/GeneralPage/Captions/Preview/NoSkeletonText",
-      "translation": "Убедитесь, что устройство работает корректно\nи ваше тело находится в его поле зрения."
-    },
-    {
-      "id": "/GeneralPage/Captions/Preview/NoSkeletonTextCalibrating",
-      "translation": "Для использования автоматической калибровки\nваше тело должно быть полностью видимым для устройства."
-    },
-    {
-      "id": "/GeneralPage/Captions/Tooltips/Orientation",
-      "translation": "Вращение измеряется в градусах."
-    },
-    {
-      "id": "/GeneralPage/Captions/Tooltips/Position",
-      "translation": "Положение измеряется в сантиметрах."
-    },
-    {
-      "id": "/GeneralPage/Captions/VersionText",
-      "translation": "Версия Amethyst:"
-    },
-    {
-      "id": "/GeneralPage/Captions/OtherErrors/Line1",
-      "translation": "You have additional device errors!"
-    },
-    {
-      "id": "/GeneralPage/Captions/OtherErrors/Line2",
-      "translation": "Click here to inspect them now"
-    },
-    {
-      "id": "/GeneralPage/Labels/Inferred",
-      "translation": "предположительно"
-    },
-    {
-      "id": "/GeneralPage/Labels/Tracking",
-      "translation": "трекинг"
-    },
-    {
-      "id": "/GeneralPage/Tips/NoCalibration/Footer",
-      "translation": "Device you're trying to calibrate is reporting a status error.\nPlease make sure it's connected and working properly."
-    },
-    {
-      "id": "/GeneralPage/Tips/NoCalibration/Header",
-      "translation": "This device can't be calibrated right now!"
-    },
-    {
-      "id": "/GeneralPage/Titles/Device",
-      "translation": "Устройство"
-    },
-    {
-      "id": "/GeneralPage/Titles/Status",
-      "translation": "Статус"
-    },
-    {
-      "id": "/GeneralPage/Titles/Trackers",
-      "translation": "Трекеры"
-    },
-    {
-      "id": "/SettingsPage/Buttons/Error/Dismiss",
-      "translation": "Отклонить"
-    },
-    {
-      "id": "/SettingsPage/Buttons/Reset",
-      "translation": "Удалить конфигурацию и перезапустить"
-    },
-    {
-      "id": "/SettingsPage/Buttons/RestartService",
-      "translation": "Перезапустить {0}"
-    },
-    {
-      "id": "/SettingsPage/Buttons/ViewLogs",
-      "translation": "Откройте папку журналов Amethyst"
-    },
-    {
-      "id": "/SettingsPage/Buttons/ServiceSettings",
-      "translation": "View {0} service settings"
-    },
-    {
-      "id": "/SettingsPage/Captions/AutoStart",
-      "translation": "Автоматически запускать при открытии {0}"
-    },
-    {
-      "id": "/SettingsPage/Captions/CalibrateExtFlip",
-      "translation": "Нажмите для калибровки"
-    },
-    {
-      "id": "/SettingsPage/Captions/ExtFlip",
-      "translation": "Когда включено: Amethyst будет решать, если вы повернуты назад,\nпроверяя текущий активный трекер пояса"
-    },
-    {
-      "id": "/SettingsPage/Captions/ExtFlipStatus/Active",
-      "translation": "Обнаружено и работает!"
-    },
-    {
-      "id": "/SettingsPage/Captions/ExtFlipStatus/Disabled",
-      "translation": "Инвалид!"
-    },
-    {
-      "id": "/SettingsPage/Captions/ExtFlipStatus/NoTracker",
-      "translation": "Внешний поясной трекер или управление не обнаружены!"
-    },
-    {
-      "id": "/SettingsPage/Captions/FaceTheKinect",
-      "translation": "Повернитесь лицом к Kinect!"
-    },
-    {
-      "id": "/SettingsPage/Captions/Filters/Orientation",
-      "translation": "Трекинг вращения:"
-    },
-    {
-      "id": "/SettingsPage/Captions/Filters/Position",
-      "translation": "Фильтрация трекинга положения:"
-    },
-    {
-      "id": "/SettingsPage/Captions/SkeletonFlip",
-      "translation": "Отражение трекеров, если отвернуться от {0}"
-    },
-    {
-      "id": "/SettingsPage/Captions/Sounds",
-      "translation": "Включить звуки приложения"
-    },
-    {
-      "id": "/SettingsPage/Captions/TrackerPairs",
-      "translation": "Использовать трекеры"
-    },
-    {
-      "id": "/SettingsPage/Captions/TrackersAutoCheck",
-      "translation": "Проверьте трекеры и отключите уже существующие."
-    },
-    {
-      "id": "/SettingsPage/Captions/TrackersAutoSpawn",
-      "translation": "Автоматически подключать доступные трекеры при запуске"
-    },
-    {
-      "id": "/SettingsPage/Captions/TrackersRestart/Line1",
-      "translation": "При переключении трекера требуется перезагрузка"
-    },
-    {
-      "id": "/SettingsPage/Captions/TrackersRestart/Line2",
-      "translation": "{0} и Amethyst для применения настроек."
-    },
-    {
-      "id": "/SettingsPage/Captions/Services",
-      "translation": "Send trackers to:"
-    },
-    {
-      "id": "/SettingsPage/Captions/ServiceRestart",
-      "translation": "{0} needs to be restarted to enable/disable trackers properly."
-    },
-    {
-      "id": "/SettingsPage/Elements/ExtFlipCalibration/ToolTip",
-      "translation": "Калибровка"
-    },
-    {
-      "id": "/SettingsPage/Elements/FlipToggle/ToolTip",
-      "translation": "Отключение приведет к остановке отражения\nтрекинга когда вы отворачиваетесь."
-    },
-    {
-      "id": "/SettingsPage/Filters/Orientation/Device",
-      "translation": "Default Orientation"
-    },
-    {
-      "id": "/SettingsPage/Filters/Orientation/HMD",
-      "translation": "Follow VR Headset"
-    },
-    {
-      "id": "/SettingsPage/Filters/Orientation/MathBased",
-      "translation": "Ankle-based Orientation"
-    },
-    {
-      "id": "/SettingsPage/Filters/Orientation/MathBasedV2",
-      "translation": "Leg-based Orientation"
-    },
-    {
-      "id": "/SettingsPage/Filters/Orientation/Off",
-      "translation": "Disable Orientation"
-    },
-    {
-      "id": "/SettingsPage/Filters/Position/Kalman",
-      "translation": "Расширенная фильтрация Калмана (Kalman)"
-    },
-    {
-      "id": "/SettingsPage/Filters/Position/LERP",
-      "translation": "Линейная интерполяция (Linear)"
-    },
-    {
-      "id": "/SettingsPage/Filters/Position/LowPass",
-      "translation": "Фильтрация низких частот (Low Pass)"
-    },
-    {
-      "id": "/SettingsPage/Filters/Position/Prediction",
-      "translation": "Adaptive Prediction"
-    },
-    {
-      "id": "/SettingsPage/Filters/Position/Off",
-      "translation": "Отключить фильтрацию"
-    },
-    {
-      "id": "/SettingsPage/Filters/Managed",
-      "translation": "Managed by {0}"
-    },
-    {
-      "id": "/SettingsPage/ReManifest/Error/NotFound",
-      "translation": "Невозможно установить манифест Amethyst VR.\nУбедитесь, что он существует в корневом (.exe) пути."
-    },
-    {
-      "id": "/SettingsPage/ReManifest/Error/Other",
-      "translation": "Невозможно установить манифест Amethyst VR.\nПроверьте журнал событий для сообщите об этом нам."
-    },
-    {
-      "id": "/SettingsPage/ReRegister/Error/NotFound",
-      "translation": "Исполняемый файл обработчика ошибок (Crash Handler) Amethyst не найден.\nОн необходим для перерегистрации, пожалуйста, убедитесь, что он установлен."
-    },
-    {
-      "id": "/SettingsPage/Titles/ExtFlip",
-      "translation": "Использовать внешние данные для трекинга пояса вместо гарнитуры"
-    },
-    {
-      "id": "/SettingsPage/Titles/SkeletonFlip",
-      "translation": "Отражение скелета"
-    },
-    {
-      "id": "/SettingsPage/Titles/Application",
-      "translation": "Звуки"
-    },
-    {
-      "id": "/SettingsPage/Titles/TrackerConfig/Header",
-      "translation": "Конфигурация трекеров"
-    },
-    {
-      "id": "/SettingsPage/Titles/TrackerConfig/Learn",
-      "translation": "Узнать больше об этих настройках"
-    },
-    {
-      "id": "/SettingsPage/Titles/Services",
-      "translation": "Tracking Output"
-    },
-    {
-      "id": "/SettingsPage/Titles/Troubleshooting",
-      "translation": "Диагностика"
-    },
-    {
-      "id": "/SettingsPage/Themes/System",
-      "translation": "Системная"
-    },
-    {
-      "id": "/SettingsPage/Themes/Dark",
-      "translation": "Темная"
-    },
-    {
-      "id": "/SettingsPage/Themes/White",
-      "translation": "Светлая"
-    },
-    {
-      "id": "/SettingsPage/Labels/DisplayLanguage",
-      "translation": "Язык приложения"
-    },
-    {
-      "id": "/SettingsPage/Labels/AppTheme",
-      "translation": "Тема приложения"
-    },
-    {
-      "id": "/SettingsLearn/Captions/Filters/Explanations/EKF",
-      "translation": "Высокая задержка, но чистейшие результаты. Дрожание отсутствует,\nфильтрация предсказывает перемещение, поэтому быстрые движения очень отзывчивы."
-    },
-    {
-      "id": "/SettingsLearn/Captions/Filters/Explanations/LERP",
-      "translation": "Минимальная задержка, все движения выглядят быстрее, чем сенсор может их уловить.\nДрожание все еще заметно."
-    },
-    {
-      "id": "/SettingsLearn/Captions/Filters/Explanations/LowPass",
-      "translation": "Небольшая задержка, фильтрация сглаживает дрожание и выглядит плавнее, чем полное её отсутствие."
-    },
-    {
-      "id": "/SettingsLearn/Captions/Filters/Explanations/None",
-      "translation": "Исходные данные сенсора в 30Гц."
-    },
-    {
-      "id": "/SettingsLearn/Captions/Filters/Names/EKF",
-      "translation": "- Расширенная фильтрация Калмана (Kalman)"
-    },
-    {
-      "id": "/SettingsLearn/Captions/Filters/Names/LERP",
-      "translation": "- Линейная интерполяция (Linear) (по умолчанию)"
-    },
-    {
-      "id": "/SettingsLearn/Captions/Filters/Names/LowPass",
-      "translation": "- Фильтрация низких частот (Low Pass)"
-    },
-    {
-      "id": "/SettingsLearn/Captions/Filters/Names/None",
-      "translation": "- Отключить фильтрацию"
-    },
-    {
-      "id": "/SettingsLearn/Captions/ManageTrackers",
-      "translation": "Когда вы включаете или отключаете трекеры они моментально переключаются,\nпри этом все еще присутствуя в списке устройств {0}.\n[[Трекеры которые вы отключили будут отображаться в SteamVR как выключенные до его перезагрузки.\n]]Если вы столкнетесь с проблемами обнаружения трекеров в приложениях, то сначала перезагрузите {0}."
-    },
-    {
-      "id": "/SettingsLearn/Captions/Orientation/Explanations/Default",
-      "translation": "Эта настройка может быть нестабильной для некоторых пользователей Xbox One Kinect, если такое происходит,\nто попробуйте использовать программное вращение. Kinect SDK предсказывает направление суставов основываясь на положении\nкаждого сустава в цепочке. Представьте, что от каждой части тела проведены стрелки в направлении ваших конечностей.\nДля трекинга ног поведение отличается между разными моделями Kinect.\nДля Xbox One, вращение базируется на кончиках стоп, поэтому ваши ноги могут поворачиваться.\nДля Xbox 360, вращение базируется лишь на лодыжках, поэтому поворот ног отсутствует."
-    },
-    {
-      "id": "/SettingsLearn/Captions/Orientation/Explanations/HMD",
-      "translation": "Трекеры будут следовать в направлении вашей гарнитуры по оси Y (поворот в сторону)."
-    },
-    {
-      "id": "/SettingsLearn/Captions/Orientation/Explanations/MathBased",
-      "translation": "Эта настройка доступна только для трекинга ног.\nНаправление ваших ног рассчитывается от угла между лодыжкой и кончиком стопы.\nДиапазон уменьшен на 50% чтобы избежать дрожания. Это позволяет добиться поворота ног для Xbox 360 Kinect."
-    },
-    {
-      "id": "/SettingsLearn/Captions/Orientation/Explanations/MathBasedV2",
-      "translation": "This option is only available for feet trackers.\nThe orientation of your feet is calculated from the joints' poses of your whole leg and waist.\nThere's some additions to make it more responsive. This allows for foot rotation on Xbox One Kinect."
-    },
-    {
-      "id": "/SettingsLearn/Captions/Orientation/Explanations/None",
-      "translation": "Трекеры не вращаются, за исключением, когда отражение (skeleton flip) задействовано, если вы повернулись в противоположную сторону."
-    },
-    {
-      "id": "/SettingsLearn/Captions/Orientation/Introduction",
-      "translation": "Когда включено, все настройки вращения подвержены отражению (skeleton flip)."
-    },
-    {
-      "id": "/SettingsLearn/Captions/Orientation/Names/Default",
-      "translation": "- Default Orientation"
-    },
-    {
-      "id": "/SettingsLearn/Captions/Orientation/Names/HMD",
-      "translation": "- Follow VR Headset"
-    },
-    {
-      "id": "/SettingsLearn/Captions/Orientation/Names/MathBased",
-      "translation": "- Ankle-based Orientation"
-    },
-    {
-      "id": "/SettingsLearn/Captions/Orientation/Names/MathBasedV2",
-      "translation": "- Leg-based Orientation"
-    },
-    {
-      "id": "/SettingsLearn/Captions/Orientation/Names/None",
-      "translation": "- Disable Orientation"
-    },
-    {
-      "id": "/SettingsLearn/Captions/TrackerConfig",
-      "translation": "Amethyst поддерживает до 7 трекеров. Дополнительные трекеры можно переключить через значок шестеренки.\nКаждый трекер или набор трекеров имеет различные настройки, которые могут изменить поведение вращения и фильтрации для каждого из трекеров.\nЭто позволяет отдельно применить фильтрацию с наибольшим сглаживанием для ног и пояса, если вы собираетесь много сидеть,\nпри этом используя более отзывчивую фильтрацию локтей для наилучшего следования за вашими руками."
-    },
-    {
-      "id": "/SettingsLearn/Captions/TrackerConfigNote",
-      "translation": "Примечание: некоторые из этих настроек имеют значение только тогда, когда используется Kinect."
-    },
-    {
-      "id": "/SettingsLearn/Titles/FilterSettings",
-      "translation": "Настройки фильтрации:"
-    },
-    {
-      "id": "/SettingsLearn/Titles/ManageTrackers",
-      "translation": "Включение и отключение трекеров:"
-    },
-    {
-      "id": "/SettingsLearn/Titles/RotationSettings",
-      "translation": "Настройки вращения:"
-    },
-    {
-      "id": "/SettingsLearn/Titles/TrackerConfig",
-      "translation": "О конфигурации трекеров"
-    },
-    {
-      "id": "/DevicesPage/Buttons/Deselect/ToolTip",
-      "translation": "Снятие выделения приведет\nк сбросу настроек переназначения."
-    },
-    {
-      "id": "/DevicesPage/Buttons/Deselect",
-      "translation": "Снять выделение"
-    },
-    {
-      "id": "/DevicesPage/Buttons/Disconnect",
-      "translation": "Отключиться"
-    },
-    {
-      "id": "/DevicesPage/Buttons/JoinDiscord",
-      "translation": "Discord сервер"
-    },
-    {
-      "id": "/DevicesPage/Buttons/NoJoints/Dismiss",
-      "translation": "Отклонить"
-    },
-    {
-      "id": "/DevicesPage/Buttons/Reconnect",
-      "translation": "Обновить"
-    },
-    {
-      "id": "/DevicesPage/Buttons/SetAs/Base/ToolTip",
-      "translation": "Устройство обеспечит базовое\nположение и вращение виртуальных трекеров."
-    },
-    {
-      "id": "/DevicesPage/Buttons/SetAs/Base",
-      "translation": "Установить как основное"
-    },
-    {
-      "id": "/DevicesPage/Buttons/SetAs/Header/ToolTip",
-      "translation": "Установить выбранное устройство\nкак основное или как переназначенное."
-    },
-    {
-      "id": "/DevicesPage/Buttons/SetAs/Header",
-      "translation": "Установить устройство как..."
-    },
-    {
-      "id": "/DevicesPage/Buttons/SetAs/Override/ToolTip",
-      "translation": "Устройство переназначит положение/вращение\nодного или нескольких виртуальных трекеров."
-    },
-    {
-      "id": "/DevicesPage/Buttons/SetAs/Override",
-      "translation": "Установить как переназначенное"
-    },
-    {
-      "id": "/DevicesPage/Buttons/ViewDocs",
-      "translation": "Открыть документацию"
-    },
-    {
-      "id": "/DevicesPage/Placeholders/Joints/Disabled/PlaceholderText",
-      "translation": "Сустав отключен"
-    },
-    {
-      "id": "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText",
-      "translation": "Переназначение не задано"
-    },
-    {
-      "id": "/DevicesPage/Titles/Check/Orientation",
-      "translation": "Вращение"
-    },
-    {
-      "id": "/DevicesPage/Titles/Check/Position",
-      "translation": "Положение"
-    },
-    {
-      "id": "/DevicesPage/Titles/CurrentDevice",
-      "translation": "Текущий трекинг"
-    },
-    {
-      "id": "/DevicesPage/Titles/DeviceBase",
-      "translation": "Устройство:"
-    },
-    {
-      "id": "/DevicesPage/Titles/DeviceHasNoJoints",
-      "translation": "Это устройство не предоставляет никаких суставов.\nВы не можете использовать это устройтво как переназначенное."
-    },
-    {
-      "id": "/DevicesPage/Titles/DeviceOverride",
-      "translation": "Переназначение:"
-    },
-    {
-      "id": "/DevicesPage/Titles/Devices",
-      "translation": "Устройства"
-    },
-    {
-      "id": "/DevicesPage/Titles/DeviceSettings",
-      "translation": "Настройки, предоставляемые устройством"
-    },
-    {
-      "id": "/DevicesPage/Titles/DeviceStatus",
-      "translation": "Статус:"
-    },
-    {
-      "id": "/DevicesPage/Titles/Joints/Assign",
-      "translation": "Назначить суставы"
-    },
-    {
-      "id": "/DevicesPage/Titles/Joints/ElbowsAndKnees",
-      "translation": "Трекеры локтей и колен"
-    },
-    {
-      "id": "/DevicesPage/Titles/Joints/Other",
-      "translation": "Остальные трекеры"
-    },
-    {
-      "id": "/DevicesPage/Titles/Joints/WaistAndFeet",
-      "translation": "Трекеры пояса и ног"
-    },
-    {
-      "id": "/DevicesPage/Titles/NoOverrides",
-      "translation": "Переназначения отсутствуют"
-    },
-    {
-      "id": "/DevicesPage/Titles/Overrides/Header",
-      "translation": "Переназначения"
-    },
-    {
-      "id": "/DevicesPage/Titles/Set/Orientation",
-      "translation": "Вращение:"
-    },
-    {
-      "id": "/DevicesPage/Titles/Set/Position",
-      "translation": "Положение:"
-    },
-    {
-      "id": "/DevicesPage/Titles/Set/TrackedJoint",
-      "translation": "Отслеживаемый сустав:"
-    },
-    {
-      "id": "/DevicesPage/Titles/Set/Tracker",
-      "translation": "Трекер:"
-    },
-    {
-      "id": "/DevicesPage/Titles/SetAsDevice",
-      "translation": "Установить как устройство трекинга:"
-    },
-    {
-      "id": "/DevicesPage/Badges/Devices/Base",
-      "translation": "Base"
-    },
-    {
-      "id": "/DevicesPage/Badges/Devices/Override",
-      "translation": "Override"
-    },
-    {
-      "id": "/DevicesPage/Badges/Devices/Error",
-      "translation": "Error"
-    },
-    {
-      "id": "/DevicesPage/ToolTips/Overrides/Overlapping",
-      "translation": "This joint is currently overridden by {0}"
-    },
-    {
-      "id": "/DevicesPage/Devices/Reload/Title",
-      "translation": "Plugin configuration has changed!"
-    },
-    {
-      "id": "/DevicesPage/Devices/Reload/Content",
-      "translation": "A new plugin has been added or removed. Amethyst must be restarted for these changes to take effect."
-    },
-    {
-      "id": "/DevicesPage/Devices/Reload/Restart",
-      "translation": "Restart Amethyst"
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Open",
-      "translation": "Manage Plugins"
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Title",
-      "translation": "Manage Plugins"
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/Blocked",
-      "translation": "This plugin has encountered an error whilst loading, it will remain blocked as long as the error persists. Please see the reason below and check logs for more information."
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/Reason",
-      "translation": "Reason:"
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/GUID",
-      "translation": "GUID:"
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/Location",
-      "translation": "Location:"
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/Publisher",
-      "translation": "by"
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/Website",
-      "translation": "Website:"
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/Unknown",
-      "translation": "Some other unexpected error happened, please reach out to us on our Discord server."
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/NoError",
-      "translation": "Everything's fine, celebration time!"
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/LoadingSkipped",
-      "translation": "Disabled in the application settings by the user."
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/NoPluginFolder",
-      "translation": "The specified plugin folder wasn't found, please check if the folder is still there."
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/NoPluginDll",
-      "translation": "The plugin class library file (plugin*.dll) is missing. Please check if it is there."
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/NoPluginDependencyDll",
-      "translation": "One of the files this plugin needs wasn't found. Please check if all dependencies are there."
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/PluginDllLinkError",
-      "translation": "Linking to the plugin class library (.dll) failed."
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/InvalidFactory",
-      "translation": "Calling the plugin factory (lazy loading) method failed."
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/BadOrDuplicateGuid",
-      "translation": "GUID of this plugin is either empty, invalid, or already in use by another one."
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/Other",
-      "translation": "This plugin doesn't seem to be valid for some reason...."
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Buttons/Update",
-      "translation": "Update and relaunch"
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/UpdateAvailable",
-      "translation": "Update scheduled!"
-    },
-    {
-      "id": "/DevicesPage/Devices/Manager/Labels/UpdateMessage",
-      "translation": "Restart Amethyst to update {0} to {1}"
-    },
-    {
-      "id": "/InfoPage/AppCaption",
-      "translation": "от группа K2VR"
-    },
-    {
-      "id": "/InfoPage/AppTitle",
-      "translation": "Amethyst"
-    },
-    {
-      "id": "/InfoPage/Credits/Community",
-      "translation": "И все остальные, кто помогал на этом пути."
-    },
-    {
-      "id": "/InfoPage/Credits/Header",
-      "translation": "Авторы"
-    },
-    {
-      "id": "/InfoPage/Credits/Helpers/Title",
-      "translation": "Помощь:"
-    },
-    {
-      "id": "/InfoPage/Credits/Donators/Title",
-      "translation": "Donators:"
-    },
-    {
-      "id": "/InfoPage/Credits/MainTeam/Roles/Akaya",
-      "translation": "Ведущий разработчик:"
-    },
-    {
-      "id": "/InfoPage/Credits/MainTeam/Roles/Aria",
-      "translation": "Поддержка (неактивна):"
-    },
-    {
-      "id": "/InfoPage/Credits/MainTeam/Roles/Artemis",
-      "translation": "Поддержка:"
-    },
-    {
-      "id": "/InfoPage/Credits/MainTeam/Roles/Noelle",
-      "translation": "Управление проектом:"
-    },
-    {
-      "id": "/InfoPage/Credits/MainTeam/Roles/Hekky",
-      "translation": "Разработка разработка:"
-    },
-    {
-      "id": "/InfoPage/Credits/MainTeam/Roles/Himbeer",
-      "translation": "Разработка установщика:"
-    },
-    {
-      "id": "/InfoPage/Credits/MainTeam/Title",
-      "translation": "Главная команда:"
-    },
-    {
-      "id": "/InfoPage/Credits/Translators/Title",
-      "translation": "Переводчики:"
-    },
-    {
-      "id": "/InfoPage/Telemetry/Header",
-      "translation": "Collected data and privacy policy"
-    },
-    {
-      "id": "/InfoPage/Telemetry/Notice",
-      "translation": "Amethyst uses Microsoft App Center to collect anonymous data which helps us with app development and troubleshooting major bugs. \nInformation sent to App Center is anonymous and free of any user or contextual data. Additionally, you can disable sending it at any time."
-    },
-    {
-      "id": "/InfoPage/Telemetry/Switch",
-      "translation": "Toggle the switch below to disable/enable sending anything to App Center."
-    },
-    {
-      "id": "/InfoPage/Telemetry/Toggle/On",
-      "translation": "Data collection is enabled"
-    },
-    {
-      "id": "/InfoPage/Telemetry/Toggle/Off",
-      "translation": "Data collection is disabled"
-    },
-    {
-      "id": "/BlockedPage/Buttons/Kill",
-      "translation": "End task"
-    },
-    {
-      "id": "/BlockedPage/Buttons/Skip",
-      "translation": "Skip updating {0}"
-    },
-    {
-      "id": "/BlockedPage/Headers/Blocked",
-      "translation": "Couldn't update {0}!"
-    },
-    {
-      "id": "/BlockedPage/Contents/Blocked",
-      "translation": "Some processes are blocking {0} from being updated automatically, please shut them down manually, kill each process using the button next to it, or skip updating {0} for now."
-    },
-    {
-      "id": "/BlockedPage/Flyouts/Elevated/Notice",
-      "translation": "This process is currently running with administrator privileges, \nAmethyst will need to ask for additional permissions to kill it."
-    },
-    {
-      "id": "/ReportPage/Titles/Captured",
-      "translation": "Files captured for bug report"
-    },
-    {
-      "id": "/ReportPage/Contents/Captured",
-      "translation": "It is possible that support asked you for Amethyst log files and its config. Amethyst has already prepared these files for you. Simply drag-and-drop the outlined element below to share these files, or copy them manually."
-    },
-    {
-      "id": "/ReportPage/Contents/Clipboard",
-      "translation": "Copy to clipboard"
-    },
-    {
-      "id": "/ReportPage/Captions/Clipboard",
-      "translation": "You can also manually copy everything to your clipboard using the button below, and paste like any other copied file, text, or image."
-    },
-    {
-      "id": "/ReportPage/Captions/Drop",
-      "translation": "Drag and drop the outlined field to share last Amethyst log files and settings. This is the same as dragging a file from a folder."
-    },
-    {
-      "id": "/ReportPage/Captions/Elevated",
-      "translation": "Drag and drop functionality is disabled for applications running with elevated privileges. Please copy all needed files manually."
-    },
-    {
-      "id": "/SharedStrings/Buttons/Devices",
-      "translation": "Устройства"
-    },
-    {
-      "id": "/SharedStrings/Buttons/General",
-      "translation": "Общие"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Developers",
-      "translation": "Для разработчиков"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Discord",
-      "translation": "Сообщество K2VR"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overrides",
-      "translation": "Переназначения Docs"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overview",
-      "translation": "Устройства Страница Документы"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Automatic",
-      "translation": "Автоматическая калибровка"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Main",
-      "translation": "Документы по калибровке"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Manual",
-      "translation": "Ручная калибровка"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Offsets",
-      "translation": "Документы по зачетам"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Overview",
-      "translation": "Общие документы страницы"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Docs/InfoPage/OpenCollective",
-      "translation": "Наш OpenCollective"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Docs/SettingsPage/Overview",
-      "translation": "Страница настроек Документы"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Header",
-      "translation": "Помощь"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Help/Licenses",
-      "translation": "Лицензии с открытым кодом"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Info",
-      "translation": "Информация"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Plugins",
-      "translation": "Plugins"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Settings",
-      "translation": "Настройки"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Updates/Header",
-      "translation": "Обновить"
-    },
-    {
-      "id": "/SharedStrings/Buttons/Updates/Install",
-      "translation": "Update and relaunch"
-    },
-    {
-      "id": "/SharedStrings/Buttons/PluginUpdates/Inspect",
-      "translation": "Update and relaunch"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/0",
-      "translation": "Рука"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/1",
-      "translation": "Левая нога"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/10",
-      "translation": "Грудная клетка"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/11",
-      "translation": "Камера"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/12",
-      "translation": "Клавиатура"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/2",
-      "translation": "Правая нога"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/3",
-      "translation": "Левое плечо"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/4",
-      "translation": "Правое плечо"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/5",
-      "translation": "Левый локоть"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/6",
-      "translation": "Правый локоть"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/7",
-      "translation": "Левое колено"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/8",
-      "translation": "Правое колено"
-    },
-    {
-      "id": "/SharedStrings/Joints/Enum/9",
-      "translation": "Талия"
-    },
-    {
-      "id": "/SharedStrings/Joints/Pairs/1",
-      "translation": "Feet Trackers"
-    },
-    {
-      "id": "/SharedStrings/Joints/Pairs/3",
-      "translation": "Shoulder Trackers"
-    },
-    {
-      "id": "/SharedStrings/Joints/Pairs/5",
-      "translation": "Elbow Trackers"
-    },
-    {
-      "id": "/SharedStrings/Joints/Pairs/7",
-      "translation": "Knee Trackers"
-    },
-    {
-      "id": "/SharedStrings/Joints/NotSupported/Flag",
-      "translation": "(Not supported)"
-    },
-    {
-      "id": "/SharedStrings/Joints/NotSupported/Tooltip",
-      "translation": "Trackers with this role aren't supported by {0}"
-    },
-    {
-      "id": "/SharedStrings/Toasts/AutoSpawnFailed",
-      "translation": "Невозможно разместить трекеры из-за ошибки сервера"
-    },
-    {
-      "id": "/SharedStrings/Toasts/AutoSpawnFailed/Title",
-      "translation": "Невозможно разместить трекеры автоматически!"
-    },
-    {
-      "id": "/SharedStrings/Toasts/RestartFailed",
-      "translation": "Пожалуйста, попробуйте перезагрузить его вручную"
-    },
-    {
-      "id": "/SharedStrings/Toasts/RestartFailed/Title",
-      "translation": "Мы не смогли перезагрузить Amethyst для вас!"
-    },
-    {
-      "id": "/SharedStrings/Toasts/TrackersAutoDisabled",
-      "translation": "Найдены дополнительные трекеры с переназначениями, поэтому трекеры назначенные Amethyst были отключены"
-    },
-    {
-      "id": "/SharedStrings/Toasts/TrackersAutoDisabled/Title",
-      "translation": "Один или несколько трекеров были отключены"
-    },
-    {
-      "id": "/SharedStrings/Toasts/TrackersConfigChanged",
-      "translation": "Перезагрузите {0} для применения настроек"
-    },
-    {
-      "id": "/SharedStrings/Toasts/TrackersConfigChanged/Title",
-      "translation": "Конфигурация трекеров была изменена"
-    },
-    {
-      "id": "/SharedStrings/Updates/NewUpdateFound",
-      "translation": "New Update Available!"
-    },
-    {
-      "id": "/SharedStrings/Updates/NewUpdateMessage",
-      "translation": "Restart Amethyst to update it to version v{0}"
-    },
-    {
-      "id": "/SharedStrings/Updates/Suggestions",
-      "translation": "Please tell us if you have any ideas\nfor the next Amethyst update."
-    },
-    {
-      "id": "/SharedStrings/Updates/PluginUpdates/Title",
-      "translation": "New plugin updates available!"
-    },
-    {
-      "id": "/SharedStrings/Updates/PluginUpdates/Message",
-      "translation": "Restart Amethyst to apply all pending plugin updates."
-    },
-    {
-      "id": "/SharedStrings/Updates/PluginInstall/Title",
-      "translation": "Plugin installations pending!"
-    },
-    {
-      "id": "/SharedStrings/Updates/PluginInstall/Message",
-      "translation": "Restart Amethyst to execute all queued plugin installs."
-    },
-    {
-      "id": "/SharedStrings/Updates/PluginInstall/Action",
-      "translation": "Restart now"
-    },
-    {
-      "id": "/SharedStrings/Updates/PluginUninstall/Title",
-      "translation": "Plugin uninstallations pending!"
-    },
-    {
-      "id": "/SharedStrings/Updates/PluginUninstall/Message",
-      "translation": "Restart Amethyst to execute all queued plugin uninstalls."
-    },
-    {
-      "id": "/SharedStrings/Updates/PluginUninstall/Action",
-      "translation": "Restart now"
-    },
-    {
-      "id": "/SharedStrings/Updates/UpToDate",
-      "translation": "У вас все актуально"
-    },
-    {
-      "id": "/SharedStrings/Updates/Headers/Downloading",
-      "translation": "Updating to Amethyst v{0}"
-    },
-    {
-      "id": "/SharedStrings/Updates/Headers/Preparing",
-      "translation": "Preparing for the update..."
-    },
-    {
-      "id": "/SharedStrings/Updates/Headers/Status",
-      "translation": "Статус:"
-    },
-    {
-      "id": "/SharedStrings/Updates/Statuses/Downloading",
-      "translation": "Скачивание - 0%"
-    },
-    {
-      "id": "/SharedStrings/Updates/Statuses/DownloadingNoProgress",
-      "translation": "Скачивание..."
-    },
-    {
-      "id": "/SharedStrings/Updates/Statuses/Error",
-      "translation": "Ошибка при скачивании!"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Updates/Headers/Downloading",
-      "translation": "Updating {0} to v{1}"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Updates/Headers/Preparing",
-      "translation": "Preparing for the update..."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Updates/Headers/Restart",
-      "translation": "{0} will have been updated by the next time Amethyst opens!"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Updates/Headers/Status",
-      "translation": "Status:"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Updates/Statuses/Downloading",
-      "translation": "Downloading {0} v{1}..."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Updates/Statuses/Error",
-      "translation": "Error updating {0}!"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/Downloading",
-      "translation": "Installing {0} {1}"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/Preparing",
-      "translation": "Preparing the plugin package..."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/Restart",
-      "translation": "{0} will have been installed by the next time Amethyst opens!"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/Status",
-      "translation": "Status:"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Statuses/Downloading",
-      "translation": "Downloading {0} {1}..."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Statuses/Error",
-      "translation": "Error installing {0}!"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/Search",
-      "translation": "Search or paste a link:"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Contents/Search",
-      "translation": "Search for plugins, or paste the link to a plugin repo"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/SearchTip/Search",
-      "translation": "Search for plugins using keywords from their names or descriptions, \nor just paste the link to a plugin repository located on GitHub."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/SearchTip/Drag",
-      "translation": "You can also drag-and-drop a plugin link/folder/zip here to install it."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/ErrorTip/Content",
-      "translation": "A fatal exception occurred whilst executing the plugin search query, \nor you've just exceeded the GitHub API request rate limit."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/ErrorTip/Drag",
-      "translation": "You can still install plugins via drag-and-drop or using a link/folder/zip."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/RateTip/Start",
-      "translation": "GitHub API rate exceeded. Please wait a while, or"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/RateTip/Link",
-      "translation": "log in to GitHub"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/RateTip/End",
-      "translation": "to search for more Amethyst plugins. You can still install plugins using drag-and-drop."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/NoResults",
-      "translation": "Your search happened not to return any results. \n...or was it just the wind all along, who knows?"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/Login/Instructions",
-      "translation": "Paste this code into the prompt your web browser has just shown."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Headers/Login/Message",
-      "translation": "This will log you in to the GitHub API, allowing higher query rate."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Tips/Official",
-      "translation": "Published by K2VR Team"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Tips/AlreadyInstalled",
-      "translation": "This plugin is already installed, do you wish to uninstall it?"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Labels/Description",
-      "translation": "Plugin description:"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Labels/NoReleases",
-      "translation": "This plugin has no releases and can't be installed using the store.\nFeel free to contact the author about testing or preview releases."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Labels/Title",
-      "translation": "Release title:"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Labels/Date",
-      "translation": "Published on:"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Labels/Changelog",
-      "translation": "Changelog:"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Store/Buttons/Install",
-      "translation": "Install"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Headers/Error/Validating",
-      "translation": "Error validating {0}!"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Headers/Error/Installing",
-      "translation": "Error installing {0}!"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Headers/Error/Exception",
-      "translation": "Error installing the package!"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Headers/Downloading",
-      "translation": "Downloading {0}..."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Headers/Validating",
-      "translation": "Validating {0}..."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Headers/Installing",
-      "translation": "Installing {0}..."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Headers/Installed",
-      "translation": "Installed {0}!"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound",
-      "translation": "{0} does not contain a plugin class library file (plugin*.dll) and can't be installed. Please validate the package manually."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound/Plural",
-      "translation": "{0} do not contain a plugin class library file (plugin*.dll) and can't be installed. Please validate the package manually."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid",
-      "translation": "{0} is not a valid plugin package (has to be a .zip file) and can't be installed. Please validate the package manually."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Statuses/Error/Exception",
-      "translation": "Couldn't process the package due to an exception: {0}. Please install the package manually."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Statuses/Installed",
-      "translation": "Successfully parsed the plugin package! {0} will have been installed by the next time Amethyst opens!"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Resources/Files",
-      "translation": "files"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Resources/Folder",
-      "translation": "folder"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Drop/Resources/Package",
-      "translation": "package"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Dep/Contents/DependencyNotFound",
-      "translation": "Amethyst couldn't load this plugin due to missing dependencies."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Dep/Contents/DependencyInstaller",
-      "translation": "This plugin provides an integrated dependency installer, which should (hopefully) fix that."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Dep/Contents/InstallingPlaceholder",
-      "translation": "Installing {0}..."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Dep/Contents/ProgressPlaceholder",
-      "translation": "{0}%"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Dep/Contents/InternalException",
-      "translation": "An exception occurred and the installation process couldn't continue. Message: {0}"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Dep/Contents/Success",
-      "translation": "{0} installed successfully! Restart Amethyst to load this plugin."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Dep/Contents/Failure",
-      "translation": "{0} installation failure! Please try again later."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Dep/Contents/Cancelled",
-      "translation": "Cancelled by the user."
-    },
-    {
-      "id": "/SharedStrings/Plugins/Dep/Contents/AdditionalLinks",
-      "translation": "This plugin provides additional links, so you can"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Dep/Contents/PluginDocs",
-      "translation": "view troubleshooting docs"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Dep/Contents/Separator",
-      "translation": "or"
-    },
-    {
-      "id": "/SharedStrings/Plugins/Dep/Contents/Download",
-      "translation": "download its dependencies"
-    },
-    {
-      "id": "/PluginStore/Titles/Install",
-      "translation": "Install {0} {1}"
-    },
-    {
-      "id": "/PluginStore/Titles/Installing/Setup",
-      "translation": "Enqueued {0} installation!"
-    },
-    {
-      "id": "/PluginStore/Titles/Uninstalling/Notice",
-      "translation": "Enqueued {0} removal!"
-    },
-    {
-      "id": "/PluginStore/Captions/Uninstalling/Notice",
-      "translation": "Amethyst should delete it during the next startup."
-    },
-    {
-      "id": "/PluginStore/Captions/Installing/Setup",
-      "translation": "Restart Amethyst to install it."
-    },
-    {
-      "id": "/CrashHandler/Content/AlreadyRunning",
-      "translation": "Looks like the app is already running\nand you've tried to launch a second instance,\nthis action is not currently supported.\n\nPlease check if the app isn't opened.\nIf problem persists, press the 'Force Exit' button."
-    },
-    {
-      "id": "/CrashHandler/Content/Crash/NoPlugins",
-      "translation": "There were no appropriate plugins available to load and use in Amethyst.\n\nPlease check if you have all dependencies installed, like proper Service or Framework Runtime and other dependency libraries needed by your plugins."
-    },
-    {
-      "id": "/CrashHandler/Content/Crash/NoDevices",
-      "translation": "There were no appropriate device plugins available to load and use for body tracking.\n\nPlease check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices."
-    },
-    {
-      "id": "/CrashHandler/Content/Crash/NoServices",
-      "translation": "There were no appropriate service plugins available to load and use for endpoints.\n\nPlease check if you have all dependencies installed, like proper Service Runtime and other dependency libraries needed by your services."
-    },
-    {
-      "id": "/CrashHandler/Content/Crash/NoJoints",
-      "translation": "There were no valid loaded device plugins available to handle body tracking.\n\nPlease check if all your device plugins are valid and working. This error occurs when none of the loaded devices provides valid tracked joints, upon init."
-    },
-    {
-      "id": "/CrashHandler/Content/Crash/OpenVR",
-      "translation": "The app couldn't successfully initialize OpenVR (SteamVR) and decided to give up.\n\nPlease check if SteamVR is running, and your VR headset is connected properly to it. Furthermore, you can try restarting and checking the log files."
-    },
-    {
-      "id": "/CrashHandler/Content/Crash/Panic",
-      "translation": "The main program loop has crashed consequently more than 7 times so Amethyst was shut down.\n\nPlease check if all your plugins are working and check the log files. Optionally, you can reset the (outer) app config and try running it again."
-    },
-    {
-      "id": "/CrashHandler/Content/Crash/Unknown",
-      "translation": "Похоже программа дала непредвиденный сбой.\n\nНе паникуйте, это (скорее всего) не ваша ошибка.\n\nПожалуйста перезагрузите приложение.\nЕсли проблема не устранена, то свяжитесь с нами через Discord и приложите журнал событий."
-    },
-    {
-      "id": "/CrashHandler/Content/Crash/UnknownStack",
-      "translation": "Looks like some weird thing happened to the app.\n\nDon't panic yet, it (probably) isn't even your fault.\n\nPlease try re-running the app.\nIf problem persists, grab logs and reach us on Discord.\n\nAvailable crash info:\n{0}"
-    },
-    {
-      "id": "/CrashHandler/Content/Crash/Elevated",
-      "translation": "SteamVR в настоящее время поднят, и Amethyst не может с ним взаимодействовать.\n\nЛибо в Steam, либо в SteamVR были внесены изменения, которые привели к этому. Отмените эти изменения и попробуйте снова."
-    },
-    {
-      "id": "/CrashHandler/Content/Recovery",
-      "translation": "Похоже, что вы вручную запустили обработчик аварий. Что вы хотели сделать?\n\nПока вы еще здесь, пожалуйста, подумайте о пожертвовании в наш OpenCollective, чтобы мы могли поддерживать все эти вещи в рабочем состоянии. О, и спасибо за использование Amethyst!"
-    },
-    {
-      "id": "/CrashHandler/PrimaryButton/AlreadyRunning",
-      "translation": "Принудительный выход"
-    },
-    {
-      "id": "/CrashHandler/PrimaryButton/Crash/Default",
-      "translation": "Посмотреть документацию"
-    },
-    {
-      "id": "/CrashHandler/PrimaryButton/Crash/Panic",
-      "translation": "Сбросить конфигурацию"
-    },
-    {
-      "id": "/CrashHandler/PrimaryButton/Crash/Unknown",
-      "translation": "Discord сервер"
-    },
-    {
-      "id": "/CrashHandler/PrimaryButton/Recovery",
-      "translation": "OpenCollective"
-    },
-    {
-      "id": "/CrashHandler/ReRegister/DriverNotFound",
-      "translation": "Папка Amethyst не найдена.\nМожет быть она находится рядом с Crash Handler (обработчиком ошибок)?"
-    },
-    {
-      "id": "/CrashHandler/ReRegister/ExistingDrivers/Content",
-      "translation": "Один или несколько драйверов \"Amethyst\"\nуже существуют, удалить их?"
-    },
-    {
-      "id": "/CrashHandler/ReRegister/ExistingDrivers/Content_K2EX",
-      "translation": "Один или несколько драйверов \"KinectToVR\"\nсуществуют, удалить их?"
-    },
-    {
-      "id": "/CrashHandler/ReRegister/ExistingDrivers/PrimaryButton",
-      "translation": "Удалить"
-    },
-    {
-      "id": "/CrashHandler/ReRegister/ExistingDrivers/PrimaryButton_K2EX",
-      "translation": "Удалить"
-    },
-    {
-      "id": "/CrashHandler/ReRegister/ExistingDrivers/SecondaryButton",
-      "translation": "Отмена"
-    },
-    {
-      "id": "/CrashHandler/ReRegister/ExistingDrivers/SecondaryButton_K2EX",
-      "translation": "Отмена"
-    },
-    {
-      "id": "/CrashHandler/ReRegister/FatalRegisterException",
-      "translation": "Невозможно зарегистрировать драйвер Amethyst,\nвозникла непредвиденная ошибка."
-    },
-    {
-      "id": "/CrashHandler/ReRegister/FatalRemoveException",
-      "translation": "Невозможно удалить драйвер Amethyst,\nвозникла непредвиденная ошибка."
-    },
-    {
-      "id": "/CrashHandler/ReRegister/FatalRemoveException_K2EX",
-      "translation": "Невозможно удалить драйвер KinectToVR,\nвозникла непредвиденная ошибка."
-    },
-    {
-      "id": "/CrashHandler/ReRegister/Finished",
-      "translation": "Перерегистрация завершена!"
-    },
-    {
-      "id": "/CrashHandler/ReRegister/KillSteamVR/Content",
-      "translation": "SteamVR не должен быть запущен\nдля корректной регистрации, завершить сейчас?"
-    },
-    {
-      "id": "/CrashHandler/ReRegister/KillSteamVR/PrimaryButton",
-      "translation": "Завершить"
-    },
-    {
-      "id": "/CrashHandler/ReRegister/KillSteamVR/SecondaryButton",
-      "translation": "Отмена"
-    },
-    {
-      "id": "/CrashHandler/ReRegister/OpenVRPathsError",
-      "translation": "Не удалось прочитать OpenVRPaths!\nУбедитесь, что файл не поврежден\nи запустите SteamVR хотя бы один раз."
-    },
-    {
-      "id": "/CrashHandler/ReRegister/OpenVRPathsWriteError",
-      "translation": "Не удалось зарегистрировать драйвер Amethyst,\nошибка записи в openvrpaths."
-    },
-    {
-      "id": "/CrashHandler/ReRegister/SteamVRNotFound",
-      "translation": "Не удалось обнаружить SteamVR,\nубедитесь, что программа установлена."
-    },
-    {
-      "id": "/CrashHandler/SecondaryButton/Recovery",
-      "translation": "Закрыть"
-    },
-    {
-      "id": "/CrashHandler/Title/AlreadyRunning",
-      "translation": "Amethyst уже запущен!"
-    },
-    {
-      "id": "/CrashHandler/Title/Crash",
-      "translation": "Amethyst прекратил свою работу!"
-    },
-    {
-      "id": "/CrashHandler/Title/Recovery",
-      "translation": "Восстановление Amethyst"
-    },
-    {
-      "id": "/CrashHandler/Title/Elevated",
-      "translation": "SteamVR как админ!"
-    },
-    {
-      "id": "/NUX/Replay",
-      "translation": "Replay the welcome tour"
-    },
-    {
-      "id": "/NUX/Prev",
-      "translation": "Go back"
-    },
-    {
-      "id": "/NUX/Next",
-      "translation": "Next"
-    },
-    {
-      "id": "/NUX/Skip",
-      "translation": "Skip tutorial"
-    },
-    {
-      "id": "/NUX/Finish",
-      "translation": "Finish"
-    },
-    {
-      "id": "/NUX/Tip0/Title",
-      "translation": "Are you sure?"
-    },
-    {
-      "id": "/NUX/Tip0/Content",
-      "translation": "Amethyst must be running for tracking to work. Click again to exit.\n\nThis message will only show once."
-    },
-    {
-      "id": "/NUX/Tip1/Title",
-      "translation": "Welcome to Amethyst"
-    },
-    {
-      "id": "/NUX/Tip1/Content",
-      "translation": "Let's take a tour of the app and how to use it.\n\nYou can replay this tutorial at any time from the Settings tab.\n\n1 of 14"
-    },
-    {
-      "id": "/NUX/Tip2/Title",
-      "translation": "Connecting trackers"
-    },
-    {
-      "id": "/NUX/Tip2/Content",
-      "translation": "Click here to connect the Amethyst trackers to {0}. (If your VR controllers are unresponsive, disconnect and reconnect the trackers)\n\n2 of 14"
-    },
-    {
-      "id": "/NUX/Tip3/Title",
-      "translation": "Calibration and alignment"
-    },
-    {
-      "id": "/NUX/Tip3/Content",
-      "translation": "Before using your trackers, you must go through calibration to align them to your existing VR play area.\n\n3 of 14"
-    },
-    {
-      "id": "/NUX/Tip4/Title",
-      "translation": "Devices at a glance"
-    },
-    {
-      "id": "/NUX/Tip4/Content",
-      "translation": "Here you can see what devices are currently active for tracking.\nAny problems or errors will show up here too.\n\n4 of 14"
-    },
-    {
-      "id": "/NUX/Tip5/Title",
-      "translation": "Configuring trackers"
-    },
-    {
-      "id": "/NUX/Tip5/Content",
-      "translation": "You can enable or disable trackers here, and set their rotation and filter settings by expanding each category.\nSee the link on the right for more info.\n\n5 of 14"
-    },
-    {
-      "id": "/NUX/Tip6/Title",
-      "translation": "Enable more trackers"
-    },
-    {
-      "id": "/NUX/Tip6/Content",
-      "translation": "Click the gear icon to enable or disable more trackers than shown by default. (Not all trackers are supported by every app)\n\n6 of 14"
-    },
-    {
-      "id": "/NUX/Tip7/Title",
-      "translation": "Start Amethyst with {0}"
-    },
-    {
-      "id": "/NUX/Tip7/Content",
-      "translation": "Instead of searching for the app on your computer each time, you can click the dropdown to enable Amethyst start alongside {0}.\n\n7 of 14"
-    },
-    {
-      "id": "/NUX/Tip8/Title",
-      "translation": "Available devices"
-    },
-    {
-      "id": "/NUX/Tip8/Content",
-      "translation": "Here you can see the list of devices available to Amethyst. If something is missing, you most likely don't have the drivers for it.\n\n8 of 14"
-    },
-    {
-      "id": "/NUX/Tip9/Title",
-      "translation": "Configure and check on devices"
-    },
-    {
-      "id": "/NUX/Tip9/Content",
-      "translation": "Check the status of devices and change per-device settings.\nErrors will show up here.\n\n9 of 14"
-    },
-    {
-      "id": "/NUX/Tip10/Title",
-      "translation": "Overrides and troubleshooting"
-    },
-    {
-      "id": "/NUX/Tip10/Content",
-      "translation": "The buttons on the right will let you set a device as the base or override, refresh it and get help whenever an error happens.\n\n10 of 14"
-    },
-    {
-      "id": "/NUX/Tip11/Title",
-      "translation": "Getting help and support"
-    },
-    {
-      "id": "/NUX/Tip11/Content",
-      "translation": "Click the Help button on any page to get links to documentation about that page. Join us on Discord if you have any questions.\n\n11 of 14"
-    },
-    {
-      "id": "/NUX/Tip12/Title",
-      "translation": "Managing plugins"
-    },
-    {
-      "id": "/NUX/Tip12/Content",
-      "translation": "These are the plugins that are currently installed on Amethyst. From this list, you can toggle each plugin on or off, update them, and see any errors.\n\n12 of 14"
-    },
-    {
-      "id": "/NUX/Tip13/Title",
-      "translation": "Getting new plugins"
-    },
-    {
-      "id": "/NUX/Tip13/Content",
-      "translation": "Amethyst allows you to search for new plugins and install them directly within the app. You can also paste direct links, or drag in ZIP files.\n\n13 of 14"
-    },
-    {
-      "id": "/NUX/Tip14/Title",
-      "translation": "Thank you!"
-    },
-    {
-      "id": "/NUX/Tip14/Content",
-      "translation": "Amethyst took a while to make and get it to where it's at now.\nSo, you better go have fun.\n\n14 of 14"
-    },
-    {
-      "id": "/Installer/Views/SetupError/Continue",
-      "translation": "Continue with limited setup"
-    },
-    {
-      "id": "/Installer/Views/SetupError/MissingDeps",
-      "translation": "Some plugin dependencies won't be installed due to limited setup."
-    },
-    {
-      "id": "/Installer/Views/SetupError/Admin/Title",
-      "translation": "Restart as Administrator?"
-    },
-    {
-      "id": "/Installer/Views/SetupError/Admin/Message",
-      "translation": "Running Amethyst as Administrator will be helpful during the first-time setup to properly set up your devices and configuration. It should also make the whole setup experience a bit less complicated."
-    },
-    {
-      "id": "/Installer/Views/SetupError/Admin/Tip/Title",
-      "translation": "Are you sure about that?"
-    },
-    {
-      "id": "/Installer/Views/SetupError/Admin/Tip/Message",
-      "translation": "Amethyst may not be able to properly set up some of your devices without elevated privileges, please keep that in mind."
-    },
-    {
-      "id": "/Installer/Views/SetupError/Admin/Action",
-      "translation": "Restart"
-    },
-    {
-      "id": "/Installer/Views/SetupError/Internet/Title",
-      "translation": "No internet"
-    },
-    {
-      "id": "/Installer/Views/SetupError/Internet/Message",
-      "translation": "Internet connection will be helpful during the first-time setup to properly set up your devices and configuration. It should also make the whole setup experience less complicated, and error-prone."
-    },
-    {
-      "id": "/Installer/Views/SetupError/Internet/Tip/Title",
-      "translation": "Are you sure about that?"
-    },
-    {
-      "id": "/Installer/Views/SetupError/Internet/Tip/Message",
-      "translation": "Amethyst may not be able to properly set up the configuration and some of your devices without a working internet connection."
-    },
-    {
-      "id": "/Installer/Views/SetupError/Internet/Action",
-      "translation": "Restart"
-    },
-    {
-      "id": "/Installer/Views/SetupError/Plugins/Title",
-      "translation": "Plugins are missing!"
-    },
-    {
-      "id": "/Installer/Views/SetupError/Plugins/Message",
-      "translation": "Amethyst has already searched for them everywhere, but couldn’t find anything. It is neither possible to complete the setup without any plugins, nor actually use Amethyst. Some application files are probably corrupted, please try performing a clean reinstall using the Microsoft Store."
-    },
-    {
-      "id": "/Installer/Dep/Contents/Success",
-      "translation": "{0} installed successfully!"
-    },
-    {
-      "id": "/Installer/Views/Setup/Dep/Select",
-      "translation": "Choose what to install and click 'Next'"
-    },
-    {
-      "id": "/Installer/Views/Setup/Dep/Eula",
-      "translation": "Please accept the EULA agreement to continue."
-    },
-    {
-      "id": "/Installer/Views/Setup/Dep/Success",
-      "translation": "{0} set up successfully!"
-    },
-    {
-      "id": "/Installer/Views/Setup/Captions/Select",
-      "translation": "Dependencies and tools to install:"
-    },
-    {
-      "id": "/Installer/Views/Setup/Captions/Selection",
-      "translation": "Which one should I choose?"
-    },
-    {
-      "id": "/Installer/Views/Setup/Captions/AlreadyInstalled",
-      "translation": "Already installed"
-    },
-    {
-      "id": "/Installer/Views/Setup/Titles/Device",
-      "translation": "What will you use for tracking?"
-    },
-    {
-      "id": "/Installer/Views/Setup/Titles/Service",
-      "translation": "Where will be trackers sent to?"
-    },
-    {
-      "id": "/Installer/Views/Setup/TeachingTips/Device/Title",
-      "translation": "Choosing the right tracking device"
-    },
-    {
-      "id": "/Installer/Views/Setup/TeachingTips/Device/Text",
-      "translation": "The device you choose here will be set up by Amethyst and then used for body tracking, or as a secondary (override) device you will need to set up manually. These settings can be changed later at any time."
-    },
-    {
-      "id": "/Installer/Views/Setup/TeachingTips/Service/Title",
-      "translation": "Choosing the right service endpoint"
-    },
-    {
-      "id": "/Installer/Views/Setup/TeachingTips/Service/Text",
-      "translation": "The service you choose here will be set up by Amethyst and then used for body tracking, as the receiver of the data from Amethyst. These settings can be changed later at any time."
-    },
-    {
-      "id": "/Installer/Top/Setup",
-      "translation": "SETUP"
-    },
-    {
-      "id": "/Installer/Splashes/Welcome/Header",
-      "translation": "Welcome to"
-    },
-    {
-      "id": "/Installer/Splashes/Welcome/ActionMessage",
-      "translation": "Continue"
-    },
-    {
-      "id": "/Installer/Splashes/Ending/Header",
-      "translation": "Amethyst is now set up."
-    },
-    {
-      "id": "/Installer/Splashes/Ending/Message",
-      "translation": "Have fun!"
-    },
-    {
-      "id": "/Installer/Splashes/Ending/ActionMessage",
-      "translation": "Start Amethyst"
-    }
-  ]
+    "messages": [
+        {
+            "id": "/GeneralPage/Buttons/Abort",
+            "translation": "Прервать"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Calibration/Base",
+            "translation": "Основное"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Calibration/Begin",
+            "translation": "Калибровка"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Calibration/Override",
+            "translation": "Переназначения"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Cancel",
+            "translation": "Отмена"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Discard",
+            "translation": "Отклонить"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Help/Discord",
+            "translation": "Discord сервер"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Help/Docs",
+            "translation": "Открыть документацию"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Offsets",
+            "translation": "Настройте смещения"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Save",
+            "translation": "Сохранить"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Skeleton/Freeze",
+            "translation": "Заморозить"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Skeleton/Hide",
+            "translation": "Скрыть скелет"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Skeleton/Show",
+            "translation": "Показать скелет"
+        },
+        {
+            "id": "/GeneralPage/Buttons/Skeleton/Unfreeze",
+            "translation": "Разморозить"
+        },
+        {
+            "id": "/GeneralPage/Buttons/TrackersToggle/Connect",
+            "translation": "Подключить трекеры"
+        },
+        {
+            "id": "/GeneralPage/Buttons/TrackersToggle/Disconnect",
+            "translation": "Отключить трекеры"
+        },
+        {
+            "id": "/GeneralPage/Buttons/TrackersToggle/Reconnect",
+            "translation": "Переподключить трекеры"
+        },
+        {
+            "id": "/GeneralPage/Buttons/DeviceSettings",
+            "translation": "View {0} device settings"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Aborted",
+            "translation": "Калибровка прервана!"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Automatic",
+            "translation": "Встаньте в трех местах вашей игровой площади."
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Captured",
+            "translation": "Положение зафиксировано!"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Done",
+            "translation": "Калибровка завершена!"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Manual",
+            "translation": "Перемещайте трекеры при помощи ваших VR контроллеров."
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Move",
+            "translation": "Положение {0} из {1}\nПерейдите в другую точку"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Points",
+            "translation": "Попробуйте увеличить точки захвата, если после калибровки трекеры находятся в неправильных местах."
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Recommended",
+            "translation": "Рекомендуемое"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Stand",
+            "translation": "Положение {0} из {1}\nПожалуйста, стойте неподвижно!"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Start",
+            "translation": "Начать калибровку"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Headers/Automatic",
+            "translation": "Автоматическая калибровка"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Headers/Manual",
+            "translation": "Ручная калибровка"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Labels/Brief/Left",
+            "translation": "L"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Labels/Brief/Right",
+            "translation": "R"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Labels/Grips/Both",
+            "translation": "L+R захват"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Labels/Grips/Left",
+            "translation": "L захват"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Labels/Grips/Right",
+            "translation": "R захват"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Labels/InputsNotice",
+            "translation": "Входы могут отличаться при использовании собственных привязок. В этом случае обратитесь к привязкам."
+        },
+        {
+            "id": "/GeneralPage/Calibration/Labels/Triggers/Both",
+            "translation": "L+R триггер"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Labels/Triggers/Left",
+            "translation": "L триггеры"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Labels/Triggers/Right",
+            "translation": "R триггеры"
+        },
+        {
+            "id": "/GeneralPage/Calibration/LabelsWhat/Brief/Left",
+            "translation": "Перемещение влево/вправо/вперед/назад\nВращение по оси Y"
+        },
+        {
+            "id": "/GeneralPage/Calibration/LabelsWhat/Brief/Right",
+            "translation": "Перемещение вверх/вниз\nВращение по оси X"
+        },
+        {
+            "id": "/GeneralPage/Calibration/LabelsWhat/Grips/Left",
+            "translation": "Точная настройка"
+        },
+        {
+            "id": "/GeneralPage/Calibration/LabelsWhat/Grips/Right",
+            "translation": "Поменять местами перемещение/вращение"
+        },
+        {
+            "id": "/GeneralPage/Calibration/LabelsWhat/Triggers",
+            "translation": "Подтвердить"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Titles/Automatic",
+            "translation": "Автоматически"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Titles/Choose",
+            "translation": "Выберите метод калибровки"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Titles/Device",
+            "translation": "Choose a device to calibrate"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Titles/Manual",
+            "translation": "Вручную"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Titles/Points",
+            "translation": "Точки захвата:"
+        },
+        {
+            "id": "/GeneralPage/Captions/CalibrateOverrides",
+            "translation": "У вас имеются переназначения трекеров.\nКакое устройство вы хотите откалибровать?"
+        },
+        {
+            "id": "/GeneralPage/Captions/Device/Name",
+            "translation": "Текущее устройство:"
+        },
+        {
+            "id": "/GeneralPage/Captions/Device/Status",
+            "translation": "Статус:"
+        },
+        {
+            "id": "/GeneralPage/Captions/DriverStatus",
+            "translation": "Успешно! (Код 1)"
+        },
+        {
+            "id": "/GeneralPage/Captions/DriverStatus/Label",
+            "translation": "Статус {0}:"
+        },
+        {
+            "id": "/GeneralPage/Captions/FreezeLowerOnly",
+            "translation": "Заморозка только нижней части тела"
+        },
+        {
+            "id": "/GeneralPage/Captions/Offsets/Orientation/X",
+            "translation": "Тангаж (X):"
+        },
+        {
+            "id": "/GeneralPage/Captions/Offsets/Orientation/Y",
+            "translation": "Рыскание (Y):"
+        },
+        {
+            "id": "/GeneralPage/Captions/Offsets/Orientation/Z",
+            "translation": "Крен (Z):"
+        },
+        {
+            "id": "/GeneralPage/Captions/Offsets/Position/X",
+            "translation": "X (Влево):"
+        },
+        {
+            "id": "/GeneralPage/Captions/Offsets/Position/Y",
+            "translation": "Y (Вверх):"
+        },
+        {
+            "id": "/GeneralPage/Captions/Offsets/Position/Z",
+            "translation": "Z (Вперед):"
+        },
+        {
+            "id": "/GeneralPage/Captions/OverrideDevice/Name",
+            "translation": "Устройство переназначения:"
+        },
+        {
+            "id": "/GeneralPage/Captions/Preview/Disabled",
+            "translation": "Предпросмотр скелета отключен"
+        },
+        {
+            "id": "/GeneralPage/Captions/Preview/DisabledText",
+            "translation": "Чтобы включить его, пожалуйста нажмите\nна кнопку Показать скелет."
+        },
+        {
+            "id": "/GeneralPage/Captions/Preview/Force",
+            "translation": "Принудительный предпросмотр"
+        },
+        {
+            "id": "/GeneralPage/Captions/Preview/NoDashboard",
+            "translation": "Панель закрыта"
+        },
+        {
+            "id": "/GeneralPage/Captions/Preview/NoDashboardText",
+            "translation": "Предпросмотр отключен чтобы сохранить ресурсы\nи будет запущен снова как только вы вернетесь."
+        },
+        {
+            "id": "/GeneralPage/Captions/Preview/NoFocus",
+            "translation": "Окно не в фокусе"
+        },
+        {
+            "id": "/GeneralPage/Captions/Preview/NoFocusText",
+            "translation": "Предпросмотр отключен чтобы сохранить ресурсы\nи будет запущен снова как только вы вернетесь."
+        },
+        {
+            "id": "/GeneralPage/Captions/Preview/NoSkeleton",
+            "translation": "Скелет не обнаружен"
+        },
+        {
+            "id": "/GeneralPage/Captions/Preview/NoSkeletonText",
+            "translation": "Убедитесь, что устройство работает корректно\nи ваше тело находится в его поле зрения."
+        },
+        {
+            "id": "/GeneralPage/Captions/Preview/NoSkeletonTextCalibrating",
+            "translation": "Для использования автоматической калибровки\nваше тело должно быть полностью видимым для устройства."
+        },
+        {
+            "id": "/GeneralPage/Captions/Tooltips/Orientation",
+            "translation": "Вращение измеряется в градусах."
+        },
+        {
+            "id": "/GeneralPage/Captions/Tooltips/Position",
+            "translation": "Положение измеряется в сантиметрах."
+        },
+        {
+            "id": "/GeneralPage/Captions/VersionText",
+            "translation": "Версия Amethyst:"
+        },
+        {
+            "id": "/GeneralPage/Captions/OtherErrors/Line1",
+            "translation": "You have additional device errors!"
+        },
+        {
+            "id": "/GeneralPage/Captions/OtherErrors/Line2",
+            "translation": "Click here to inspect them now"
+        },
+        {
+            "id": "/GeneralPage/Labels/Inferred",
+            "translation": "предположительно"
+        },
+        {
+            "id": "/GeneralPage/Labels/Tracking",
+            "translation": "трекинг"
+        },
+        {
+            "id": "/GeneralPage/Tips/NoCalibration/Footer",
+            "translation": "Device you're trying to calibrate is reporting a status error.\nPlease make sure it's connected and working properly."
+        },
+        {
+            "id": "/GeneralPage/Tips/NoCalibration/Header",
+            "translation": "This device can't be calibrated right now!"
+        },
+        {
+            "id": "/GeneralPage/Titles/Device",
+            "translation": "Устройство"
+        },
+        {
+            "id": "/GeneralPage/Titles/Status",
+            "translation": "Статус"
+        },
+        {
+            "id": "/GeneralPage/Titles/Trackers",
+            "translation": "Трекеры"
+        },
+        {
+            "id": "/SettingsPage/Buttons/Error/Dismiss",
+            "translation": "Отклонить"
+        },
+        {
+            "id": "/SettingsPage/Buttons/Reset",
+            "translation": "Удалить конфигурацию и перезапустить"
+        },
+        {
+            "id": "/SettingsPage/Buttons/RestartService",
+            "translation": "Перезапустить {0}"
+        },
+        {
+            "id": "/SettingsPage/Buttons/ViewLogs",
+            "translation": "Откройте папку журналов Amethyst"
+        },
+        {
+            "id": "/SettingsPage/Buttons/ServiceSettings",
+            "translation": "View {0} service settings"
+        },
+        {
+            "id": "/SettingsPage/Captions/AutoStart",
+            "translation": "Автоматически запускать при открытии {0}"
+        },
+        {
+            "id": "/SettingsPage/Captions/CalibrateExtFlip",
+            "translation": "Нажмите для калибровки"
+        },
+        {
+            "id": "/SettingsPage/Captions/ExtFlip",
+            "translation": "Когда включено: Amethyst будет решать, если вы повернуты назад,\nпроверяя текущий активный трекер пояса"
+        },
+        {
+            "id": "/SettingsPage/Captions/ExtFlipStatus/Active",
+            "translation": "Обнаружено и работает!"
+        },
+        {
+            "id": "/SettingsPage/Captions/ExtFlipStatus/Disabled",
+            "translation": "Инвалид!"
+        },
+        {
+            "id": "/SettingsPage/Captions/ExtFlipStatus/NoTracker",
+            "translation": "Внешний поясной трекер или управление не обнаружены!"
+        },
+        {
+            "id": "/SettingsPage/Captions/FaceTheKinect",
+            "translation": "Повернитесь лицом к Kinect!"
+        },
+        {
+            "id": "/SettingsPage/Captions/Filters/Orientation",
+            "translation": "Трекинг вращения:"
+        },
+        {
+            "id": "/SettingsPage/Captions/Filters/Position",
+            "translation": "Фильтрация трекинга положения:"
+        },
+        {
+            "id": "/SettingsPage/Captions/SkeletonFlip",
+            "translation": "Отражение трекеров, если отвернуться от {0}"
+        },
+        {
+            "id": "/SettingsPage/Captions/Sounds",
+            "translation": "Включить звуки приложения"
+        },
+        {
+            "id": "/SettingsPage/Captions/TrackerPairs",
+            "translation": "Использовать трекеры"
+        },
+        {
+            "id": "/SettingsPage/Captions/TrackersAutoCheck",
+            "translation": "Проверьте трекеры и отключите уже существующие."
+        },
+        {
+            "id": "/SettingsPage/Captions/TrackersAutoSpawn",
+            "translation": "Автоматически подключать доступные трекеры при запуске"
+        },
+        {
+            "id": "/SettingsPage/Captions/TrackersRestart/Line1",
+            "translation": "При переключении трекера требуется перезагрузка"
+        },
+        {
+            "id": "/SettingsPage/Captions/TrackersRestart/Line2",
+            "translation": "{0} и Amethyst для применения настроек."
+        },
+        {
+            "id": "/SettingsPage/Captions/Services",
+            "translation": "Send trackers to:"
+        },
+        {
+            "id": "/SettingsPage/Captions/ServiceRestart",
+            "translation": "{0} needs to be restarted to enable/disable trackers properly."
+        },
+        {
+            "id": "/SettingsPage/Elements/ExtFlipCalibration/ToolTip",
+            "translation": "Калибровка"
+        },
+        {
+            "id": "/SettingsPage/Elements/FlipToggle/ToolTip",
+            "translation": "Отключение приведет к остановке отражения\nтрекинга когда вы отворачиваетесь."
+        },
+        {
+            "id": "/SettingsPage/Filters/Orientation/Device",
+            "translation": "Default Orientation"
+        },
+        {
+            "id": "/SettingsPage/Filters/Orientation/HMD",
+            "translation": "Follow VR Headset"
+        },
+        {
+            "id": "/SettingsPage/Filters/Orientation/MathBased",
+            "translation": "Ankle-based Orientation"
+        },
+        {
+            "id": "/SettingsPage/Filters/Orientation/MathBasedV2",
+            "translation": "Leg-based Orientation"
+        },
+        {
+            "id": "/SettingsPage/Filters/Orientation/Off",
+            "translation": "Disable Orientation"
+        },
+        {
+            "id": "/SettingsPage/Filters/Position/Kalman",
+            "translation": "Расширенная фильтрация Калмана (Kalman)"
+        },
+        {
+            "id": "/SettingsPage/Filters/Position/LERP",
+            "translation": "Линейная интерполяция (Linear)"
+        },
+        {
+            "id": "/SettingsPage/Filters/Position/LowPass",
+            "translation": "Фильтрация низких частот (Low Pass)"
+        },
+        {
+            "id": "/SettingsPage/Filters/Position/Prediction",
+            "translation": "Adaptive Prediction"
+        },
+        {
+            "id": "/SettingsPage/Filters/Position/Off",
+            "translation": "Отключить фильтрацию"
+        },
+        {
+            "id": "/SettingsPage/Filters/Managed",
+            "translation": "Managed by {0}"
+        },
+        {
+            "id": "/SettingsPage/ReManifest/Error/NotFound",
+            "translation": "Невозможно установить манифест Amethyst VR.\nУбедитесь, что он существует в корневом (.exe) пути."
+        },
+        {
+            "id": "/SettingsPage/ReManifest/Error/Other",
+            "translation": "Невозможно установить манифест Amethyst VR.\nПроверьте журнал событий для сообщите об этом нам."
+        },
+        {
+            "id": "/SettingsPage/ReRegister/Error/NotFound",
+            "translation": "Исполняемый файл обработчика ошибок (Crash Handler) Amethyst не найден.\nОн необходим для перерегистрации, пожалуйста, убедитесь, что он установлен."
+        },
+        {
+            "id": "/SettingsPage/Titles/ExtFlip",
+            "translation": "Использовать внешние данные для трекинга пояса вместо гарнитуры"
+        },
+        {
+            "id": "/SettingsPage/Titles/SkeletonFlip",
+            "translation": "Отражение скелета"
+        },
+        {
+            "id": "/SettingsPage/Titles/Application",
+            "translation": "Звуки"
+        },
+        {
+            "id": "/SettingsPage/Titles/TrackerConfig/Header",
+            "translation": "Конфигурация трекеров"
+        },
+        {
+            "id": "/SettingsPage/Titles/TrackerConfig/Learn",
+            "translation": "Узнать больше об этих настройках"
+        },
+        {
+            "id": "/SettingsPage/Titles/Services",
+            "translation": "Tracking Output"
+        },
+        {
+            "id": "/SettingsPage/Titles/Troubleshooting",
+            "translation": "Диагностика"
+        },
+        {
+            "id": "/SettingsPage/Themes/System",
+            "translation": "Системная"
+        },
+        {
+            "id": "/SettingsPage/Themes/Dark",
+            "translation": "Темная"
+        },
+        {
+            "id": "/SettingsPage/Themes/White",
+            "translation": "Светлая"
+        },
+        {
+            "id": "/SettingsPage/Labels/DisplayLanguage",
+            "translation": "Язык приложения"
+        },
+        {
+            "id": "/SettingsPage/Labels/AppTheme",
+            "translation": "Тема приложения"
+        },
+        {
+            "id": "/SettingsLearn/Captions/Filters/Explanations/EKF",
+            "translation": "Высокая задержка, но чистейшие результаты. Дрожание отсутствует,\nфильтрация предсказывает перемещение, поэтому быстрые движения очень отзывчивы."
+        },
+        {
+            "id": "/SettingsLearn/Captions/Filters/Explanations/LERP",
+            "translation": "Минимальная задержка, все движения выглядят быстрее, чем сенсор может их уловить.\nДрожание все еще заметно."
+        },
+        {
+            "id": "/SettingsLearn/Captions/Filters/Explanations/LowPass",
+            "translation": "Небольшая задержка, фильтрация сглаживает дрожание и выглядит плавнее, чем полное её отсутствие."
+        },
+        {
+            "id": "/SettingsLearn/Captions/Filters/Explanations/None",
+            "translation": "Исходные данные сенсора в 30Гц."
+        },
+        {
+            "id": "/SettingsLearn/Captions/Filters/Names/EKF",
+            "translation": "- Расширенная фильтрация Калмана (Kalman)"
+        },
+        {
+            "id": "/SettingsLearn/Captions/Filters/Names/LERP",
+            "translation": "- Линейная интерполяция (Linear) (по умолчанию)"
+        },
+        {
+            "id": "/SettingsLearn/Captions/Filters/Names/LowPass",
+            "translation": "- Фильтрация низких частот (Low Pass)"
+        },
+        {
+            "id": "/SettingsLearn/Captions/Filters/Names/None",
+            "translation": "- Отключить фильтрацию"
+        },
+        {
+            "id": "/SettingsLearn/Captions/ManageTrackers",
+            "translation": "Когда вы включаете или отключаете трекеры они моментально переключаются,\nпри этом все еще присутствуя в списке устройств {0}.\n[[Трекеры которые вы отключили будут отображаться в SteamVR как выключенные до его перезагрузки.\n]]Если вы столкнетесь с проблемами обнаружения трекеров в приложениях, то сначала перезагрузите {0}."
+        },
+        {
+            "id": "/SettingsLearn/Captions/Orientation/Explanations/Default",
+            "translation": "Эта настройка может быть нестабильной для некоторых пользователей Xbox One Kinect, если такое происходит,\nто попробуйте использовать программное вращение. Kinect SDK предсказывает направление суставов основываясь на положении\nкаждого сустава в цепочке. Представьте, что от каждой части тела проведены стрелки в направлении ваших конечностей.\nДля трекинга ног поведение отличается между разными моделями Kinect.\nДля Xbox One, вращение базируется на кончиках стоп, поэтому ваши ноги могут поворачиваться.\nДля Xbox 360, вращение базируется лишь на лодыжках, поэтому поворот ног отсутствует."
+        },
+        {
+            "id": "/SettingsLearn/Captions/Orientation/Explanations/HMD",
+            "translation": "Трекеры будут следовать в направлении вашей гарнитуры по оси Y (поворот в сторону)."
+        },
+        {
+            "id": "/SettingsLearn/Captions/Orientation/Explanations/MathBased",
+            "translation": "Эта настройка доступна только для трекинга ног.\nНаправление ваших ног рассчитывается от угла между лодыжкой и кончиком стопы.\nДиапазон уменьшен на 50% чтобы избежать дрожания. Это позволяет добиться поворота ног для Xbox 360 Kinect."
+        },
+        {
+            "id": "/SettingsLearn/Captions/Orientation/Explanations/MathBasedV2",
+            "translation": "This option is only available for feet trackers.\nThe orientation of your feet is calculated from the joints' poses of your whole leg and waist.\nThere's some additions to make it more responsive. This allows for foot rotation on Xbox One Kinect."
+        },
+        {
+            "id": "/SettingsLearn/Captions/Orientation/Explanations/None",
+            "translation": "Трекеры не вращаются, за исключением, когда отражение (skeleton flip) задействовано, если вы повернулись в противоположную сторону."
+        },
+        {
+            "id": "/SettingsLearn/Captions/Orientation/Introduction",
+            "translation": "Когда включено, все настройки вращения подвержены отражению (skeleton flip)."
+        },
+        {
+            "id": "/SettingsLearn/Captions/Orientation/Names/Default",
+            "translation": "- Default Orientation"
+        },
+        {
+            "id": "/SettingsLearn/Captions/Orientation/Names/HMD",
+            "translation": "- Follow VR Headset"
+        },
+        {
+            "id": "/SettingsLearn/Captions/Orientation/Names/MathBased",
+            "translation": "- Ankle-based Orientation"
+        },
+        {
+            "id": "/SettingsLearn/Captions/Orientation/Names/MathBasedV2",
+            "translation": "- Leg-based Orientation"
+        },
+        {
+            "id": "/SettingsLearn/Captions/Orientation/Names/None",
+            "translation": "- Disable Orientation"
+        },
+        {
+            "id": "/SettingsLearn/Captions/TrackerConfig",
+            "translation": "Amethyst поддерживает до 7 трекеров. Дополнительные трекеры можно переключить через значок шестеренки.\nКаждый трекер или набор трекеров имеет различные настройки, которые могут изменить поведение вращения и фильтрации для каждого из трекеров.\nЭто позволяет отдельно применить фильтрацию с наибольшим сглаживанием для ног и пояса, если вы собираетесь много сидеть,\nпри этом используя более отзывчивую фильтрацию локтей для наилучшего следования за вашими руками."
+        },
+        {
+            "id": "/SettingsLearn/Captions/TrackerConfigNote",
+            "translation": "Примечание: некоторые из этих настроек имеют значение только тогда, когда используется Kinect."
+        },
+        {
+            "id": "/SettingsLearn/Titles/FilterSettings",
+            "translation": "Настройки фильтрации:"
+        },
+        {
+            "id": "/SettingsLearn/Titles/ManageTrackers",
+            "translation": "Включение и отключение трекеров:"
+        },
+        {
+            "id": "/SettingsLearn/Titles/RotationSettings",
+            "translation": "Настройки вращения:"
+        },
+        {
+            "id": "/SettingsLearn/Titles/TrackerConfig",
+            "translation": "О конфигурации трекеров"
+        },
+        {
+            "id": "/DevicesPage/Buttons/Deselect/ToolTip",
+            "translation": "Снятие выделения приведет\nк сбросу настроек переназначения."
+        },
+        {
+            "id": "/DevicesPage/Buttons/Deselect",
+            "translation": "Снять выделение"
+        },
+        {
+            "id": "/DevicesPage/Buttons/Disconnect",
+            "translation": "Отключиться"
+        },
+        {
+            "id": "/DevicesPage/Buttons/JoinDiscord",
+            "translation": "Discord сервер"
+        },
+        {
+            "id": "/DevicesPage/Buttons/NoJoints/Dismiss",
+            "translation": "Отклонить"
+        },
+        {
+            "id": "/DevicesPage/Buttons/Reconnect",
+            "translation": "Обновить"
+        },
+        {
+            "id": "/DevicesPage/Buttons/SetAs/Base/ToolTip",
+            "translation": "Устройство обеспечит базовое\nположение и вращение виртуальных трекеров."
+        },
+        {
+            "id": "/DevicesPage/Buttons/SetAs/Base",
+            "translation": "Установить как основное"
+        },
+        {
+            "id": "/DevicesPage/Buttons/SetAs/Header/ToolTip",
+            "translation": "Установить выбранное устройство\nкак основное или как переназначенное."
+        },
+        {
+            "id": "/DevicesPage/Buttons/SetAs/Header",
+            "translation": "Установить устройство как..."
+        },
+        {
+            "id": "/DevicesPage/Buttons/SetAs/Override/ToolTip",
+            "translation": "Устройство переназначит положение/вращение\nодного или нескольких виртуальных трекеров."
+        },
+        {
+            "id": "/DevicesPage/Buttons/SetAs/Override",
+            "translation": "Установить как переназначенное"
+        },
+        {
+            "id": "/DevicesPage/Buttons/ViewDocs",
+            "translation": "Открыть документацию"
+        },
+        {
+            "id": "/DevicesPage/Placeholders/Joints/Disabled/PlaceholderText",
+            "translation": "Сустав отключен"
+        },
+        {
+            "id": "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText",
+            "translation": "Переназначение не задано"
+        },
+        {
+            "id": "/DevicesPage/Titles/Check/Orientation",
+            "translation": "Вращение"
+        },
+        {
+            "id": "/DevicesPage/Titles/Check/Position",
+            "translation": "Положение"
+        },
+        {
+            "id": "/DevicesPage/Titles/CurrentDevice",
+            "translation": "Текущий трекинг"
+        },
+        {
+            "id": "/DevicesPage/Titles/DeviceBase",
+            "translation": "Устройство:"
+        },
+        {
+            "id": "/DevicesPage/Titles/DeviceHasNoJoints",
+            "translation": "Это устройство не предоставляет никаких суставов.\nВы не можете использовать это устройтво как переназначенное."
+        },
+        {
+            "id": "/DevicesPage/Titles/DeviceOverride",
+            "translation": "Переназначение:"
+        },
+        {
+            "id": "/DevicesPage/Titles/Devices",
+            "translation": "Устройства"
+        },
+        {
+            "id": "/DevicesPage/Titles/DeviceSettings",
+            "translation": "Настройки, предоставляемые устройством"
+        },
+        {
+            "id": "/DevicesPage/Titles/DeviceStatus",
+            "translation": "Статус:"
+        },
+        {
+            "id": "/DevicesPage/Titles/Joints/Assign",
+            "translation": "Назначить суставы"
+        },
+        {
+            "id": "/DevicesPage/Titles/Joints/ElbowsAndKnees",
+            "translation": "Трекеры локтей и колен"
+        },
+        {
+            "id": "/DevicesPage/Titles/Joints/Other",
+            "translation": "Остальные трекеры"
+        },
+        {
+            "id": "/DevicesPage/Titles/Joints/WaistAndFeet",
+            "translation": "Трекеры пояса и ног"
+        },
+        {
+            "id": "/DevicesPage/Titles/NoOverrides",
+            "translation": "Переназначения отсутствуют"
+        },
+        {
+            "id": "/DevicesPage/Titles/Overrides/Header",
+            "translation": "Переназначения"
+        },
+        {
+            "id": "/DevicesPage/Titles/Set/Orientation",
+            "translation": "Вращение:"
+        },
+        {
+            "id": "/DevicesPage/Titles/Set/Position",
+            "translation": "Положение:"
+        },
+        {
+            "id": "/DevicesPage/Titles/Set/TrackedJoint",
+            "translation": "Отслеживаемый сустав:"
+        },
+        {
+            "id": "/DevicesPage/Titles/Set/Tracker",
+            "translation": "Трекер:"
+        },
+        {
+            "id": "/DevicesPage/Titles/SetAsDevice",
+            "translation": "Установить как устройство трекинга:"
+        },
+        {
+            "id": "/DevicesPage/Badges/Devices/Base",
+            "translation": "Base"
+        },
+        {
+            "id": "/DevicesPage/Badges/Devices/Override",
+            "translation": "Override"
+        },
+        {
+            "id": "/DevicesPage/Badges/Devices/Error",
+            "translation": "Error"
+        },
+        {
+            "id": "/DevicesPage/ToolTips/Overrides/Overlapping",
+            "translation": "This joint is currently overridden by {0}"
+        },
+        {
+            "id": "/DevicesPage/Devices/Reload/Title",
+            "translation": "Plugin configuration has changed!"
+        },
+        {
+            "id": "/DevicesPage/Devices/Reload/Content",
+            "translation": "A new plugin has been added or removed. Amethyst must be restarted for these changes to take effect."
+        },
+        {
+            "id": "/DevicesPage/Devices/Reload/Restart",
+            "translation": "Restart Amethyst"
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Open",
+            "translation": "Manage Plugins"
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Title",
+            "translation": "Manage Plugins"
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/Blocked",
+            "translation": "This plugin has encountered an error whilst loading, it will remain blocked as long as the error persists. Please see the reason below and check logs for more information."
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/Reason",
+            "translation": "Reason:"
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/GUID",
+            "translation": "GUID:"
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/Location",
+            "translation": "Location:"
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/Publisher",
+            "translation": "by"
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/Website",
+            "translation": "Website:"
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/Unknown",
+            "translation": "Some other unexpected error happened, please reach out to us on our Discord server."
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/NoError",
+            "translation": "Everything's fine, celebration time!"
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/LoadingSkipped",
+            "translation": "Disabled in the application settings by the user."
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/NoPluginFolder",
+            "translation": "The specified plugin folder wasn't found, please check if the folder is still there."
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/NoPluginDll",
+            "translation": "The plugin class library file (plugin*.dll) is missing. Please check if it is there."
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/NoPluginDependencyDll",
+            "translation": "One of the files this plugin needs wasn't found. Please check if all dependencies are there."
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/PluginDllLinkError",
+            "translation": "Linking to the plugin class library (.dll) failed."
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/InvalidFactory",
+            "translation": "Calling the plugin factory (lazy loading) method failed."
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/BadOrDuplicateGuid",
+            "translation": "GUID of this plugin is either empty, invalid, or already in use by another one."
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/Other",
+            "translation": "This plugin doesn't seem to be valid for some reason...."
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Buttons/Update",
+            "translation": "Update and relaunch"
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/UpdateAvailable",
+            "translation": "Update scheduled!"
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Labels/UpdateMessage",
+            "translation": "Restart Amethyst to update {0} to {1}"
+        },
+        {
+            "id": "/InfoPage/AppCaption",
+            "translation": "от группа K2VR"
+        },
+        {
+            "id": "/InfoPage/AppTitle",
+            "translation": "Amethyst"
+        },
+        {
+            "id": "/InfoPage/Credits/Community",
+            "translation": "И все остальные, кто помогал на этом пути."
+        },
+        {
+            "id": "/InfoPage/Credits/Header",
+            "translation": "Авторы"
+        },
+        {
+            "id": "/InfoPage/Credits/Helpers/Title",
+            "translation": "Помощь:"
+        },
+        {
+            "id": "/InfoPage/Credits/Donators/Title",
+            "translation": "Donators:"
+        },
+        {
+            "id": "/InfoPage/Credits/MainTeam/Roles/Akaya",
+            "translation": "Ведущий разработчик:"
+        },
+        {
+            "id": "/InfoPage/Credits/MainTeam/Roles/Aria",
+            "translation": "Поддержка (неактивна):"
+        },
+        {
+            "id": "/InfoPage/Credits/MainTeam/Roles/Artemis",
+            "translation": "Поддержка:"
+        },
+        {
+            "id": "/InfoPage/Credits/MainTeam/Roles/Noelle",
+            "translation": "Управление проектом:"
+        },
+        {
+            "id": "/InfoPage/Credits/MainTeam/Roles/Hekky",
+            "translation": "Разработка разработка:"
+        },
+        {
+            "id": "/InfoPage/Credits/MainTeam/Roles/Himbeer",
+            "translation": "Разработка установщика:"
+        },
+        {
+            "id": "/InfoPage/Credits/MainTeam/Title",
+            "translation": "Главная команда:"
+        },
+        {
+            "id": "/InfoPage/Credits/Translators/Title",
+            "translation": "Переводчики:"
+        },
+        {
+            "id": "/InfoPage/Telemetry/Header",
+            "translation": "Collected data and privacy policy"
+        },
+        {
+            "id": "/InfoPage/Telemetry/Notice",
+            "translation": "Amethyst uses Microsoft App Center to collect anonymous data which helps us with app development and troubleshooting major bugs. \nInformation sent to App Center is anonymous and free of any user or contextual data. Additionally, you can disable sending it at any time."
+        },
+        {
+            "id": "/InfoPage/Telemetry/Switch",
+            "translation": "Toggle the switch below to disable/enable sending anything to App Center."
+        },
+        {
+            "id": "/InfoPage/Telemetry/Toggle/On",
+            "translation": "Data collection is enabled"
+        },
+        {
+            "id": "/InfoPage/Telemetry/Toggle/Off",
+            "translation": "Data collection is disabled"
+        },
+        {
+            "id": "/BlockedPage/Buttons/Kill",
+            "translation": "End task"
+        },
+        {
+            "id": "/BlockedPage/Buttons/Skip",
+            "translation": "Skip updating {0}"
+        },
+        {
+            "id": "/BlockedPage/Headers/Blocked",
+            "translation": "Couldn't update {0}!"
+        },
+        {
+            "id": "/BlockedPage/Contents/Blocked",
+            "translation": "Some processes are blocking {0} from being updated automatically, please shut them down manually, kill each process using the button next to it, or skip updating {0} for now."
+        },
+        {
+            "id": "/BlockedPage/Flyouts/Elevated/Notice",
+            "translation": "This process is currently running with administrator privileges, \nAmethyst will need to ask for additional permissions to kill it."
+        },
+        {
+            "id": "/ReportPage/Titles/Captured",
+            "translation": "Files captured for bug report"
+        },
+        {
+            "id": "/ReportPage/Contents/Captured",
+            "translation": "It is possible that support asked you for Amethyst log files and its config. Amethyst has already prepared these files for you. Simply drag-and-drop the outlined element below to share these files, or copy them manually."
+        },
+        {
+            "id": "/ReportPage/Contents/Clipboard",
+            "translation": "Copy to clipboard"
+        },
+        {
+            "id": "/ReportPage/Captions/Clipboard",
+            "translation": "You can also manually copy everything to your clipboard using the button below, and paste like any other copied file, text, or image."
+        },
+        {
+            "id": "/ReportPage/Captions/Drop",
+            "translation": "Drag and drop the outlined field to share last Amethyst log files and settings. This is the same as dragging a file from a folder."
+        },
+        {
+            "id": "/ReportPage/Captions/Elevated",
+            "translation": "Drag and drop functionality is disabled for applications running with elevated privileges. Please copy all needed files manually."
+        },
+        {
+            "id": "/SharedStrings/Buttons/Devices",
+            "translation": "Устройства"
+        },
+        {
+            "id": "/SharedStrings/Buttons/General",
+            "translation": "Общие"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Developers",
+            "translation": "Для разработчиков"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Discord",
+            "translation": "Сообщество K2VR"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overrides",
+            "translation": "Переназначения Docs"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overview",
+            "translation": "Устройства Страница Документы"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Automatic",
+            "translation": "Автоматическая калибровка"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Main",
+            "translation": "Документы по калибровке"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Manual",
+            "translation": "Ручная калибровка"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Offsets",
+            "translation": "Документы по зачетам"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Overview",
+            "translation": "Общие документы страницы"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Docs/InfoPage/OpenCollective",
+            "translation": "Наш OpenCollective"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Docs/SettingsPage/Overview",
+            "translation": "Страница настроек Документы"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Header",
+            "translation": "Помощь"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Help/Licenses",
+            "translation": "Лицензии с открытым кодом"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Info",
+            "translation": "Информация"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Plugins",
+            "translation": "Plugins"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Settings",
+            "translation": "Настройки"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Updates/Header",
+            "translation": "Обновить"
+        },
+        {
+            "id": "/SharedStrings/Buttons/Updates/Install",
+            "translation": "Update and relaunch"
+        },
+        {
+            "id": "/SharedStrings/Buttons/PluginUpdates/Inspect",
+            "translation": "Update and relaunch"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/0",
+            "translation": "Рука"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/1",
+            "translation": "Левая нога"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/10",
+            "translation": "Грудная клетка"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/11",
+            "translation": "Камера"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/12",
+            "translation": "Клавиатура"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/2",
+            "translation": "Правая нога"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/3",
+            "translation": "Левое плечо"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/4",
+            "translation": "Правое плечо"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/5",
+            "translation": "Левый локоть"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/6",
+            "translation": "Правый локоть"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/7",
+            "translation": "Левое колено"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/8",
+            "translation": "Правое колено"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/9",
+            "translation": "Талия"
+        },
+        {
+            "id": "/SharedStrings/Joints/Pairs/1",
+            "translation": "Feet Trackers"
+        },
+        {
+            "id": "/SharedStrings/Joints/Pairs/3",
+            "translation": "Shoulder Trackers"
+        },
+        {
+            "id": "/SharedStrings/Joints/Pairs/5",
+            "translation": "Elbow Trackers"
+        },
+        {
+            "id": "/SharedStrings/Joints/Pairs/7",
+            "translation": "Knee Trackers"
+        },
+        {
+            "id": "/SharedStrings/Joints/NotSupported/Flag",
+            "translation": "(Not supported)"
+        },
+        {
+            "id": "/SharedStrings/Joints/NotSupported/Tooltip",
+            "translation": "Trackers with this role aren't supported by {0}"
+        },
+        {
+            "id": "/SharedStrings/Toasts/AutoSpawnFailed",
+            "translation": "Невозможно разместить трекеры из-за ошибки сервера"
+        },
+        {
+            "id": "/SharedStrings/Toasts/AutoSpawnFailed/Title",
+            "translation": "Невозможно разместить трекеры автоматически!"
+        },
+        {
+            "id": "/SharedStrings/Toasts/RestartFailed",
+            "translation": "Пожалуйста, попробуйте перезагрузить его вручную"
+        },
+        {
+            "id": "/SharedStrings/Toasts/RestartFailed/Title",
+            "translation": "Мы не смогли перезагрузить Amethyst для вас!"
+        },
+        {
+            "id": "/SharedStrings/Toasts/TrackersAutoDisabled",
+            "translation": "Найдены дополнительные трекеры с переназначениями, поэтому трекеры назначенные Amethyst были отключены"
+        },
+        {
+            "id": "/SharedStrings/Toasts/TrackersAutoDisabled/Title",
+            "translation": "Один или несколько трекеров были отключены"
+        },
+        {
+            "id": "/SharedStrings/Toasts/TrackersConfigChanged",
+            "translation": "Перезагрузите {0} для применения настроек"
+        },
+        {
+            "id": "/SharedStrings/Toasts/TrackersConfigChanged/Title",
+            "translation": "Конфигурация трекеров была изменена"
+        },
+        {
+            "id": "/SharedStrings/Updates/NewUpdateFound",
+            "translation": "New Update Available!"
+        },
+        {
+            "id": "/SharedStrings/Updates/NewUpdateMessage",
+            "translation": "Restart Amethyst to update it to version v{0}"
+        },
+        {
+            "id": "/SharedStrings/Updates/Suggestions",
+            "translation": "Please tell us if you have any ideas\nfor the next Amethyst update."
+        },
+        {
+            "id": "/SharedStrings/Updates/PluginUpdates/Title",
+            "translation": "New plugin updates available!"
+        },
+        {
+            "id": "/SharedStrings/Updates/PluginUpdates/Message",
+            "translation": "Restart Amethyst to apply all pending plugin updates."
+        },
+        {
+            "id": "/SharedStrings/Updates/PluginInstall/Title",
+            "translation": "Plugin installations pending!"
+        },
+        {
+            "id": "/SharedStrings/Updates/PluginInstall/Message",
+            "translation": "Restart Amethyst to execute all queued plugin installs."
+        },
+        {
+            "id": "/SharedStrings/Updates/PluginInstall/Action",
+            "translation": "Restart now"
+        },
+        {
+            "id": "/SharedStrings/Updates/PluginUninstall/Title",
+            "translation": "Plugin uninstallations pending!"
+        },
+        {
+            "id": "/SharedStrings/Updates/PluginUninstall/Message",
+            "translation": "Restart Amethyst to execute all queued plugin uninstalls."
+        },
+        {
+            "id": "/SharedStrings/Updates/PluginUninstall/Action",
+            "translation": "Restart now"
+        },
+        {
+            "id": "/SharedStrings/Updates/UpToDate",
+            "translation": "У вас все актуально"
+        },
+        {
+            "id": "/SharedStrings/Updates/Headers/Downloading",
+            "translation": "Updating to Amethyst v{0}"
+        },
+        {
+            "id": "/SharedStrings/Updates/Headers/Preparing",
+            "translation": "Preparing for the update..."
+        },
+        {
+            "id": "/SharedStrings/Updates/Headers/Status",
+            "translation": "Статус:"
+        },
+        {
+            "id": "/SharedStrings/Updates/Statuses/Downloading",
+            "translation": "Скачивание - 0%"
+        },
+        {
+            "id": "/SharedStrings/Updates/Statuses/DownloadingNoProgress",
+            "translation": "Скачивание..."
+        },
+        {
+            "id": "/SharedStrings/Updates/Statuses/Error",
+            "translation": "Ошибка при скачивании!"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Updates/Headers/Downloading",
+            "translation": "Updating {0} to v{1}"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Updates/Headers/Preparing",
+            "translation": "Preparing for the update..."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Updates/Headers/Restart",
+            "translation": "{0} will have been updated by the next time Amethyst opens!"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Updates/Headers/Status",
+            "translation": "Status:"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Updates/Statuses/Downloading",
+            "translation": "Downloading {0} v{1}..."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Updates/Statuses/Error",
+            "translation": "Error updating {0}!"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/Downloading",
+            "translation": "Installing {0} {1}"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/Preparing",
+            "translation": "Preparing the plugin package..."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/Restart",
+            "translation": "{0} will have been installed by the next time Amethyst opens!"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/Status",
+            "translation": "Status:"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Statuses/Downloading",
+            "translation": "Downloading {0} {1}..."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Statuses/Error",
+            "translation": "Error installing {0}!"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/Search",
+            "translation": "Search or paste a link:"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Contents/Search",
+            "translation": "Search for plugins, or paste the link to a plugin repo"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/SearchTip/Search",
+            "translation": "Search for plugins using keywords from their names or descriptions, \nor just paste the link to a plugin repository located on GitHub."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/SearchTip/Drag",
+            "translation": "You can also drag-and-drop a plugin link/folder/zip here to install it."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/ErrorTip/Content",
+            "translation": "A fatal exception occurred whilst executing the plugin search query, \nor you've just exceeded the GitHub API request rate limit."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/ErrorTip/Drag",
+            "translation": "You can still install plugins via drag-and-drop or using a link/folder/zip."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/RateTip/Start",
+            "translation": "GitHub API rate exceeded. Please wait a while, or"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/RateTip/Link",
+            "translation": "log in to GitHub"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/RateTip/End",
+            "translation": "to search for more Amethyst plugins. You can still install plugins using drag-and-drop."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/NoResults",
+            "translation": "Your search happened not to return any results. \n...or was it just the wind all along, who knows?"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/Login/Instructions",
+            "translation": "Paste this code into the prompt your web browser has just shown."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Headers/Login/Message",
+            "translation": "This will log you in to the GitHub API, allowing higher query rate."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Tips/Official",
+            "translation": "Published by K2VR Team"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Tips/AlreadyInstalled",
+            "translation": "This plugin is already installed, do you wish to uninstall it?"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Labels/Description",
+            "translation": "Plugin description:"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Labels/NoReleases",
+            "translation": "This plugin has no releases and can't be installed using the store.\nFeel free to contact the author about testing or preview releases."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Labels/Title",
+            "translation": "Release title:"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Labels/Date",
+            "translation": "Published on:"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Labels/Changelog",
+            "translation": "Changelog:"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Store/Buttons/Install",
+            "translation": "Install"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Headers/Error/Validating",
+            "translation": "Error validating {0}!"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Headers/Error/Installing",
+            "translation": "Error installing {0}!"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Headers/Error/Exception",
+            "translation": "Error installing the package!"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Headers/Downloading",
+            "translation": "Downloading {0}..."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Headers/Validating",
+            "translation": "Validating {0}..."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Headers/Installing",
+            "translation": "Installing {0}..."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Headers/Installed",
+            "translation": "Installed {0}!"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound",
+            "translation": "{0} does not contain a plugin class library file (plugin*.dll) and can't be installed. Please validate the package manually."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound/Plural",
+            "translation": "{0} do not contain a plugin class library file (plugin*.dll) and can't be installed. Please validate the package manually."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid",
+            "translation": "{0} is not a valid plugin package (has to be a .zip file) and can't be installed. Please validate the package manually."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Statuses/Error/Exception",
+            "translation": "Couldn't process the package due to an exception: {0}. Please install the package manually."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Statuses/Installed",
+            "translation": "Successfully parsed the plugin package! {0} will have been installed by the next time Amethyst opens!"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Resources/Files",
+            "translation": "files"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Resources/Folder",
+            "translation": "folder"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Drop/Resources/Package",
+            "translation": "package"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/DependencyNotFound",
+            "translation": "Amethyst couldn't load this plugin due to missing dependencies."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/DependencyInstaller",
+            "translation": "This plugin provides an integrated dependency installer, which should (hopefully) fix that."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/InstallingPlaceholder",
+            "translation": "Installing {0}..."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/ProgressPlaceholder",
+            "translation": "{0}%"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/InternalException",
+            "translation": "An exception occurred and the installation process couldn't continue. Message: {0}"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Fix/Contents/InternalException",
+            "translation": "An exception occurred and the fix application process couldn't continue. Message: {0}"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/Success",
+            "translation": "{0} installed successfully! Restart Amethyst to load this plugin."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/Failure",
+            "translation": "{0} installation failure! Please try again later."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Fix/Contents/Failure",
+            "translation": "{0} fix failure! Please try again later."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Fix/Uri/NotFound",
+            "translation": "There were no loadable plugins found in any Amethyst plugin directories. \n\nPlease verify Amethyst is up to date and its files are not corrupt."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Fix/Uri/FixName",
+            "translation": "There were no loadable plugins with guid {0} found in any Amethyst plugin directories. \n\nPlease verify the query and available plugins."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Fix/Uri/Error",
+            "translation": "There were no visible fixes with name \"{0}\" found under plugin with guid {1}. \n\nPlease verify the query and available plugins."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/Cancelled",
+            "translation": "Cancelled by the user."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/AdditionalLinks",
+            "translation": "This plugin provides additional links, so you can"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/PluginDocs",
+            "translation": "view troubleshooting docs"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/Separator",
+            "translation": "or"
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/Download",
+            "translation": "download its dependencies"
+        },
+        {
+            "id": "/PluginStore/Titles/Install",
+            "translation": "Install {0} {1}"
+        },
+        {
+            "id": "/PluginStore/Titles/Installing/Setup",
+            "translation": "Enqueued {0} installation!"
+        },
+        {
+            "id": "/PluginStore/Titles/Uninstalling/Notice",
+            "translation": "Enqueued {0} removal!"
+        },
+        {
+            "id": "/PluginStore/Captions/Uninstalling/Notice",
+            "translation": "Amethyst should delete it during the next startup."
+        },
+        {
+            "id": "/PluginStore/Captions/Installing/Setup",
+            "translation": "Restart Amethyst to install it."
+        },
+        {
+            "id": "/CrashHandler/Content/AlreadyRunning",
+            "translation": "Looks like the app is already running\nand you've tried to launch a second instance,\nthis action is not currently supported.\n\nPlease check if the app isn't opened.\nIf problem persists, press the 'Force Exit' button."
+        },
+        {
+            "id": "/CrashHandler/Content/Crash/NoPlugins",
+            "translation": "There were no appropriate plugins available to load and use in Amethyst.\n\nPlease check if you have all dependencies installed, like proper Service or Framework Runtime and other dependency libraries needed by your plugins."
+        },
+        {
+            "id": "/CrashHandler/Content/Crash/NoDevices",
+            "translation": "There were no appropriate device plugins available to load and use for body tracking.\n\nPlease check if you have all dependencies installed, like proper Kinect SDK / Runtime and other dependency libraries needed by your devices."
+        },
+        {
+            "id": "/CrashHandler/Content/Crash/NoServices",
+            "translation": "There were no appropriate service plugins available to load and use for endpoints.\n\nPlease check if you have all dependencies installed, like proper Service Runtime and other dependency libraries needed by your services."
+        },
+        {
+            "id": "/CrashHandler/Content/Crash/NoJoints",
+            "translation": "There were no valid loaded device plugins available to handle body tracking.\n\nPlease check if all your device plugins are valid and working. This error occurs when none of the loaded devices provides valid tracked joints, upon init."
+        },
+        {
+            "id": "/CrashHandler/Content/Crash/OpenVR",
+            "translation": "The app couldn't successfully initialize OpenVR (SteamVR) and decided to give up.\n\nPlease check if SteamVR is running, and your VR headset is connected properly to it. Furthermore, you can try restarting and checking the log files."
+        },
+        {
+            "id": "/CrashHandler/Content/Crash/Panic",
+            "translation": "The main program loop has crashed consequently more than 7 times so Amethyst was shut down.\n\nPlease check if all your plugins are working and check the log files. Optionally, you can reset the (outer) app config and try running it again."
+        },
+        {
+            "id": "/CrashHandler/Content/Crash/Unknown",
+            "translation": "Похоже программа дала непредвиденный сбой.\n\nНе паникуйте, это (скорее всего) не ваша ошибка.\n\nПожалуйста перезагрузите приложение.\nЕсли проблема не устранена, то свяжитесь с нами через Discord и приложите журнал событий."
+        },
+        {
+            "id": "/CrashHandler/Content/Crash/UnknownStack",
+            "translation": "Looks like some weird thing happened to the app.\n\nDon't panic yet, it (probably) isn't even your fault.\n\nPlease try re-running the app.\nIf problem persists, grab logs and reach us on Discord.\n\nAvailable crash info:\n{0}"
+        },
+        {
+            "id": "/CrashHandler/Content/Crash/Elevated",
+            "translation": "SteamVR в настоящее время поднят, и Amethyst не может с ним взаимодействовать.\n\nЛибо в Steam, либо в SteamVR были внесены изменения, которые привели к этому. Отмените эти изменения и попробуйте снова."
+        },
+        {
+            "id": "/CrashHandler/Content/Recovery",
+            "translation": "Похоже, что вы вручную запустили обработчик аварий. Что вы хотели сделать?\n\nПока вы еще здесь, пожалуйста, подумайте о пожертвовании в наш OpenCollective, чтобы мы могли поддерживать все эти вещи в рабочем состоянии. О, и спасибо за использование Amethyst!"
+        },
+        {
+            "id": "/CrashHandler/PrimaryButton/AlreadyRunning",
+            "translation": "Принудительный выход"
+        },
+        {
+            "id": "/CrashHandler/PrimaryButton/Crash/Default",
+            "translation": "Посмотреть документацию"
+        },
+        {
+            "id": "/CrashHandler/PrimaryButton/Crash/Panic",
+            "translation": "Сбросить конфигурацию"
+        },
+        {
+            "id": "/CrashHandler/PrimaryButton/Crash/Unknown",
+            "translation": "Discord сервер"
+        },
+        {
+            "id": "/CrashHandler/PrimaryButton/Recovery",
+            "translation": "OpenCollective"
+        },
+        {
+            "id": "/CrashHandler/ReRegister/DriverNotFound",
+            "translation": "Папка Amethyst не найдена.\nМожет быть она находится рядом с Crash Handler (обработчиком ошибок)?"
+        },
+        {
+            "id": "/CrashHandler/ReRegister/ExistingDrivers/Content",
+            "translation": "Один или несколько драйверов \"Amethyst\"\nуже существуют, удалить их?"
+        },
+        {
+            "id": "/CrashHandler/ReRegister/ExistingDrivers/Content_K2EX",
+            "translation": "Один или несколько драйверов \"KinectToVR\"\nсуществуют, удалить их?"
+        },
+        {
+            "id": "/CrashHandler/ReRegister/ExistingDrivers/PrimaryButton",
+            "translation": "Удалить"
+        },
+        {
+            "id": "/CrashHandler/ReRegister/ExistingDrivers/PrimaryButton_K2EX",
+            "translation": "Удалить"
+        },
+        {
+            "id": "/CrashHandler/ReRegister/ExistingDrivers/SecondaryButton",
+            "translation": "Отмена"
+        },
+        {
+            "id": "/CrashHandler/ReRegister/ExistingDrivers/SecondaryButton_K2EX",
+            "translation": "Отмена"
+        },
+        {
+            "id": "/CrashHandler/ReRegister/FatalRegisterException",
+            "translation": "Невозможно зарегистрировать драйвер Amethyst,\nвозникла непредвиденная ошибка."
+        },
+        {
+            "id": "/CrashHandler/ReRegister/FatalRemoveException",
+            "translation": "Невозможно удалить драйвер Amethyst,\nвозникла непредвиденная ошибка."
+        },
+        {
+            "id": "/CrashHandler/ReRegister/FatalRemoveException_K2EX",
+            "translation": "Невозможно удалить драйвер KinectToVR,\nвозникла непредвиденная ошибка."
+        },
+        {
+            "id": "/CrashHandler/ReRegister/Finished",
+            "translation": "Перерегистрация завершена!"
+        },
+        {
+            "id": "/CrashHandler/ReRegister/KillSteamVR/Content",
+            "translation": "SteamVR не должен быть запущен\nдля корректной регистрации, завершить сейчас?"
+        },
+        {
+            "id": "/CrashHandler/ReRegister/KillSteamVR/PrimaryButton",
+            "translation": "Завершить"
+        },
+        {
+            "id": "/CrashHandler/ReRegister/KillSteamVR/SecondaryButton",
+            "translation": "Отмена"
+        },
+        {
+            "id": "/CrashHandler/ReRegister/OpenVRPathsError",
+            "translation": "Не удалось прочитать OpenVRPaths!\nУбедитесь, что файл не поврежден\nи запустите SteamVR хотя бы один раз."
+        },
+        {
+            "id": "/CrashHandler/ReRegister/OpenVRPathsWriteError",
+            "translation": "Не удалось зарегистрировать драйвер Amethyst,\nошибка записи в openvrpaths."
+        },
+        {
+            "id": "/CrashHandler/ReRegister/SteamVRNotFound",
+            "translation": "Не удалось обнаружить SteamVR,\nубедитесь, что программа установлена."
+        },
+        {
+            "id": "/CrashHandler/SecondaryButton/Recovery",
+            "translation": "Закрыть"
+        },
+        {
+            "id": "/CrashHandler/Title/AlreadyRunning",
+            "translation": "Amethyst уже запущен!"
+        },
+        {
+            "id": "/CrashHandler/Title/Crash",
+            "translation": "Amethyst прекратил свою работу!"
+        },
+        {
+            "id": "/CrashHandler/Title/Recovery",
+            "translation": "Восстановление Amethyst"
+        },
+        {
+            "id": "/CrashHandler/Title/Elevated",
+            "translation": "SteamVR как админ!"
+        },
+        {
+            "id": "/NUX/Replay",
+            "translation": "Replay the welcome tour"
+        },
+        {
+            "id": "/NUX/Prev",
+            "translation": "Go back"
+        },
+        {
+            "id": "/NUX/Next",
+            "translation": "Next"
+        },
+        {
+            "id": "/NUX/Skip",
+            "translation": "Skip tutorial"
+        },
+        {
+            "id": "/NUX/Finish",
+            "translation": "Finish"
+        },
+        {
+            "id": "/NUX/Tip0/Title",
+            "translation": "Are you sure?"
+        },
+        {
+            "id": "/NUX/Tip0/Content",
+            "translation": "Amethyst must be running for tracking to work. Click again to exit.\n\nThis message will only show once."
+        },
+        {
+            "id": "/NUX/Tip1/Title",
+            "translation": "Welcome to Amethyst"
+        },
+        {
+            "id": "/NUX/Tip1/Content",
+            "translation": "Let's take a tour of the app and how to use it.\n\nYou can replay this tutorial at any time from the Settings tab.\n\n1 of 14"
+        },
+        {
+            "id": "/NUX/Tip2/Title",
+            "translation": "Connecting trackers"
+        },
+        {
+            "id": "/NUX/Tip2/Content",
+            "translation": "Click here to connect the Amethyst trackers to {0}. (If your VR controllers are unresponsive, disconnect and reconnect the trackers)\n\n2 of 14"
+        },
+        {
+            "id": "/NUX/Tip3/Title",
+            "translation": "Calibration and alignment"
+        },
+        {
+            "id": "/NUX/Tip3/Content",
+            "translation": "Before using your trackers, you must go through calibration to align them to your existing VR play area.\n\n3 of 14"
+        },
+        {
+            "id": "/NUX/Tip4/Title",
+            "translation": "Devices at a glance"
+        },
+        {
+            "id": "/NUX/Tip4/Content",
+            "translation": "Here you can see what devices are currently active for tracking.\nAny problems or errors will show up here too.\n\n4 of 14"
+        },
+        {
+            "id": "/NUX/Tip5/Title",
+            "translation": "Configuring trackers"
+        },
+        {
+            "id": "/NUX/Tip5/Content",
+            "translation": "You can enable or disable trackers here, and set their rotation and filter settings by expanding each category.\nSee the link on the right for more info.\n\n5 of 14"
+        },
+        {
+            "id": "/NUX/Tip6/Title",
+            "translation": "Enable more trackers"
+        },
+        {
+            "id": "/NUX/Tip6/Content",
+            "translation": "Click the gear icon to enable or disable more trackers than shown by default. (Not all trackers are supported by every app)\n\n6 of 14"
+        },
+        {
+            "id": "/NUX/Tip7/Title",
+            "translation": "Start Amethyst with {0}"
+        },
+        {
+            "id": "/NUX/Tip7/Content",
+            "translation": "Instead of searching for the app on your computer each time, you can click the dropdown to enable Amethyst start alongside {0}.\n\n7 of 14"
+        },
+        {
+            "id": "/NUX/Tip8/Title",
+            "translation": "Available devices"
+        },
+        {
+            "id": "/NUX/Tip8/Content",
+            "translation": "Here you can see the list of devices available to Amethyst. If something is missing, you most likely don't have the drivers for it.\n\n8 of 14"
+        },
+        {
+            "id": "/NUX/Tip9/Title",
+            "translation": "Configure and check on devices"
+        },
+        {
+            "id": "/NUX/Tip9/Content",
+            "translation": "Check the status of devices and change per-device settings.\nErrors will show up here.\n\n9 of 14"
+        },
+        {
+            "id": "/NUX/Tip10/Title",
+            "translation": "Overrides and troubleshooting"
+        },
+        {
+            "id": "/NUX/Tip10/Content",
+            "translation": "The buttons on the right will let you set a device as the base or override, refresh it and get help whenever an error happens.\n\n10 of 14"
+        },
+        {
+            "id": "/NUX/Tip11/Title",
+            "translation": "Getting help and support"
+        },
+        {
+            "id": "/NUX/Tip11/Content",
+            "translation": "Click the Help button on any page to get links to documentation about that page. Join us on Discord if you have any questions.\n\n11 of 14"
+        },
+        {
+            "id": "/NUX/Tip12/Title",
+            "translation": "Managing plugins"
+        },
+        {
+            "id": "/NUX/Tip12/Content",
+            "translation": "These are the plugins that are currently installed on Amethyst. From this list, you can toggle each plugin on or off, update them, and see any errors.\n\n12 of 14"
+        },
+        {
+            "id": "/NUX/Tip13/Title",
+            "translation": "Getting new plugins"
+        },
+        {
+            "id": "/NUX/Tip13/Content",
+            "translation": "Amethyst allows you to search for new plugins and install them directly within the app. You can also paste direct links, or drag in ZIP files.\n\n13 of 14"
+        },
+        {
+            "id": "/NUX/Tip14/Title",
+            "translation": "Thank you!"
+        },
+        {
+            "id": "/NUX/Tip14/Content",
+            "translation": "Amethyst took a while to make and get it to where it's at now.\nSo, you better go have fun.\n\n14 of 14"
+        },
+        {
+            "id": "/Installer/Views/SetupError/Continue",
+            "translation": "Continue with limited setup"
+        },
+        {
+            "id": "/Installer/Views/SetupError/MissingDeps",
+            "translation": "Some plugin dependencies won't be installed due to limited setup."
+        },
+        {
+            "id": "/Installer/Views/SetupError/Admin/Title",
+            "translation": "Restart as Administrator?"
+        },
+        {
+            "id": "/Installer/Views/SetupError/Admin/Message",
+            "translation": "Running Amethyst as Administrator will be helpful during the first-time setup to properly set up your devices and configuration. It should also make the whole setup experience a bit less complicated."
+        },
+        {
+            "id": "/Installer/Views/SetupError/Admin/Tip/Title",
+            "translation": "Are you sure about that?"
+        },
+        {
+            "id": "/Installer/Views/SetupError/Admin/Tip/Message",
+            "translation": "Amethyst may not be able to properly set up some of your devices without elevated privileges, please keep that in mind."
+        },
+        {
+            "id": "/Installer/Views/SetupError/Admin/Action",
+            "translation": "Restart"
+        },
+        {
+            "id": "/Installer/Views/SetupError/Internet/Title",
+            "translation": "No internet"
+        },
+        {
+            "id": "/Installer/Views/SetupError/Internet/Message",
+            "translation": "Internet connection will be helpful during the first-time setup to properly set up your devices and configuration. It should also make the whole setup experience less complicated, and error-prone."
+        },
+        {
+            "id": "/Installer/Views/SetupError/Internet/Tip/Title",
+            "translation": "Are you sure about that?"
+        },
+        {
+            "id": "/Installer/Views/SetupError/Internet/Tip/Message",
+            "translation": "Amethyst may not be able to properly set up the configuration and some of your devices without a working internet connection."
+        },
+        {
+            "id": "/Installer/Views/SetupError/Internet/Action",
+            "translation": "Restart"
+        },
+        {
+            "id": "/Installer/Views/SetupError/Plugins/Title",
+            "translation": "Plugins are missing!"
+        },
+        {
+            "id": "/Installer/Views/SetupError/Plugins/Message",
+            "translation": "Amethyst has already searched for them everywhere, but couldn’t find anything. It is neither possible to complete the setup without any plugins, nor actually use Amethyst. Some application files are probably corrupted, please try performing a clean reinstall using the Microsoft Store."
+        },
+        {
+            "id": "/Installer/Dep/Contents/Success",
+            "translation": "{0} installed successfully!"
+        },
+        {
+            "id": "/Installer/Fix/Contents/Success",
+            "translation": "{0} fix applied!"
+        },
+        {
+            "id": "/Installer/Views/Setup/Dep/Select",
+            "translation": "Choose what to install and click 'Next'"
+        },
+        {
+            "id": "/Installer/Views/Setup/Dep/Eula",
+            "translation": "Please accept the EULA agreement to continue."
+        },
+        {
+            "id": "/Installer/Views/Setup/Dep/Success",
+            "translation": "{0} set up successfully!"
+        },
+        {
+            "id": "/Installer/Views/Setup/Captions/Select",
+            "translation": "Dependencies and tools to install:"
+        },
+        {
+            "id": "/Installer/Views/Setup/Captions/Selection",
+            "translation": "Which one should I choose?"
+        },
+        {
+            "id": "/Installer/Views/Setup/Captions/AlreadyInstalled",
+            "translation": "Already installed"
+        },
+        {
+            "id": "/Installer/Views/Setup/Titles/Device",
+            "translation": "What will you use for tracking?"
+        },
+        {
+            "id": "/Installer/Views/Setup/Titles/Service",
+            "translation": "Where will be trackers sent to?"
+        },
+        {
+            "id": "/Installer/Views/Setup/TeachingTips/Device/Title",
+            "translation": "Choosing the right tracking device"
+        },
+        {
+            "id": "/Installer/Views/Setup/TeachingTips/Device/Text",
+            "translation": "The device you choose here will be set up by Amethyst and then used for body tracking, or as a secondary (override) device you will need to set up manually. These settings can be changed later at any time."
+        },
+        {
+            "id": "/Installer/Views/Setup/TeachingTips/Service/Title",
+            "translation": "Choosing the right service endpoint"
+        },
+        {
+            "id": "/Installer/Views/Setup/TeachingTips/Service/Text",
+            "translation": "The service you choose here will be set up by Amethyst and then used for body tracking, as the receiver of the data from Amethyst. These settings can be changed later at any time."
+        },
+        {
+            "id": "/Installer/Top/Setup",
+            "translation": "SETUP"
+        },
+        {
+            "id": "/Installer/Splashes/Welcome/Header",
+            "translation": "Welcome to"
+        },
+        {
+            "id": "/Installer/Splashes/Welcome/ActionMessage",
+            "translation": "Continue"
+        },
+        {
+            "id": "/Installer/Splashes/Ending/Header",
+            "translation": "Amethyst is now set up."
+        },
+        {
+            "id": "/Installer/Splashes/Ending/Message",
+            "translation": "Have fun!"
+        },
+        {
+            "id": "/Installer/Splashes/Ending/ActionMessage",
+            "translation": "Start Amethyst"
+        }
+    ]
 }

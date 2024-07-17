@@ -75,7 +75,8 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
 
     private (GridViewItem Container, SetupPlugin Item)? SelectedService { get; set; }
     private List<IDependency> DependenciesToInstall { get; set; }
-    private SemaphoreSlim NextButtonClickedSemaphore { get; } = new(0);
+    private List<IFix> FixesToApply { get; set; }
+	private SemaphoreSlim NextButtonClickedSemaphore { get; } = new(0);
 
     public List<SetupPluginGroup> GroupedServices =>
         Services.GroupBy(
@@ -291,21 +292,25 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
         /* Service setup */
 
         DependenciesToInstall = service.Item.DependencyInstaller?.ListDependencies()
-            .Where(x => x.IsMandatory && !x.IsInstalled).ToList();
+            .Where(x => x is { IsMandatory: true, IsInstalled: false }).ToList();
 
-        // Enable the 'next button and wait
-        NextButton.Click += NextButtonOnClick;
+        FixesToApply = service.Item.DependencyInstaller?.ListFixes()
+	        .Where(x => x is { IsMandatory: true, IsNecessary: true }).ToList();
+
+		// Enable the 'next button and wait
+		NextButton.Click += NextButtonOnClick;
         NextButton.IsEnabled = true;
 
         await NextButtonClickedSemaphore.WaitAsync();
         NextButton.Click -= NextButtonOnClick;
         NextButton.IsEnabled = false;
 
-        // Skip the animation if there's nothing to install
-        if (!(DependenciesToInstall?.Any() ?? true)) goto backAnim;
+		// Skip the animation if there's nothing to install
+		if (!(DependenciesToInstall?.Any() ?? true) &&
+		    !(FixesToApply?.Any() ?? true)) goto backAnim;
 
-        // Block user input
-        service.Item.DependencySetupPending = true;
+		// Block user input
+		service.Item.DependencySetupPending = true;
         service.Item.OnPropertyChanged();
 
         // Loop over all dependencies and install them
@@ -343,10 +348,45 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
             service.Item.InstallHandler.NoProgress = true;
         }
 
-        /* Back animation */
+        // Loop over all fixes and apply them
+        foreach (var fix in FixesToApply ?? new List<IFix>())
+		{
+	        eula:
+	        if (!string.IsNullOrEmpty(fix.InstallerEula))
+	        {
+		        // Set the progress indicator and title
+		        service.Item.InstallHandler.NoProgress = true;
+		        service.Item.InstallHandler.HideProgress = true;
+		        service.Item.InstallHandler.ProgressIndeterminate = true;
 
-        // Mark as done, wait a bit and go back
-        service.Item.InstallHandler.HideProgress = true;
+		        service.Item.InstallHandler.StageName =
+			        Interfacing.LocalizedJsonString("/Installer/Views/Setup/Dep/Eula");
+		        service.Item.InstallHandler.OnPropertyChanged();
+		        await Task.Delay(2500);
+
+		        // Set up EULA values and open the flyout
+		        EulaHeader.Text = "{0} EULA".Format(fix.Name);
+		        EulaText.Text = fix.InstallerEula;
+		        EulaFlyout.ShowAt(MainGrid);
+
+		        // Wait for the eula flyout to be closed
+		        await Shared.Main.EulaFlyoutClosed.WaitAsync();
+
+		        // Validate the result and try again
+		        if (!Shared.Main.EulaFlyoutResult) goto eula;
+	        }
+
+	        // The EULA must have already been accepted, install now
+	        service.Item.InstallHandler.NoProgress = false;
+	        service.Item.InstallHandler.StageName = " ";
+	        await service.Item.PerformFixApplication(fix);
+	        service.Item.InstallHandler.NoProgress = true;
+        }
+
+		/* Back animation */
+
+		// Mark as done, wait a bit and go back
+		service.Item.InstallHandler.HideProgress = true;
         service.Item.InstallHandler.NoProgress = true;
         service.Item.InstallHandler.ProgressIndeterminate = false;
         service.Item.InstallHandler.CirclePending = false;
