@@ -33,7 +33,7 @@ public class ServiceEndpoint(string name, string guid, string path, Version vers
     [DefaultValue("0.0.0.0")] public Version Version { get; } = version;
 
     // Underlying service handler
-    private IServiceEndpoint Service { get; } = service;
+    public IServiceEndpoint Service { get; } = service;
 
     // To support settings daemon and register the layout root,
     // the device must properly report it first

@@ -104,6 +104,9 @@ public static class Interfacing
     // Flip defines for the override device - iteration persistent
     public static bool OverrideFlip = false; // Assume non flipped
 
+    // For the relay module to override the "Relay active" bar
+    public static (string Title, string Content, string Button, Action Click, bool Closable)? RelayBarOverride = null;
+
     public static bool IsServiceEndpointPresent => ServiceEndpointStatusCode == 0;
 
     public static FileInfo ProgramLocation => new(Assembly.GetExecutingAssembly().Location);
@@ -170,6 +173,21 @@ public static class Interfacing
             Logger.Info("Waiting...");
             await Task.Delay(1000); // Wait for the crash handler to be activated
         }).Wait();
+
+        try
+        {
+            if (AppPlugins.ServiceEndpointsList.TryGetValue("K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY", out var relay))
+            {
+                Logger.Info("Telling connected tracking clients to shut down... (Amethyst Tracking Relay)");
+                var requestShutdownProperty = relay.Service.GetType().GetProperty("RequestShutdown");
+                if (requestShutdownProperty is not null && requestShutdownProperty.CanRead)
+                    ((Action<string, bool>)requestShutdownProperty.GetValue(relay.Service))?.Invoke(message, true);
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(e);
+        }
 
         Environment.Exit(0); // Exit
     }
@@ -285,6 +303,21 @@ public static class Interfacing
         // Wait a moment & exit
         Logger.Info($"Shutdown actions completed, disconnecting devices and exiting in {sleepMillis}ms...");
         await Task.Delay(sleepMillis); // Sleep a bit for a proper server disconnect
+
+        try
+        {
+            if (AppPlugins.ServiceEndpointsList.TryGetValue("K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY", out var relay))
+            {
+                Logger.Info("Telling connected tracking clients to shut down... (Amethyst Tracking Relay)");
+                var requestShutdownProperty = relay.Service.GetType().GetProperty("RequestShutdown");
+                if (requestShutdownProperty is not null && requestShutdownProperty.CanRead)
+                    ((Action<string, bool>)requestShutdownProperty.GetValue(relay.Service))?.Invoke("Server shutting down", false);
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(e);
+        }
 
         try
         {

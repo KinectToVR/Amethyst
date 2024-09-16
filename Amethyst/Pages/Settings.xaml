@@ -193,7 +193,8 @@
                     </Grid.Resources>
                 </Grid>
 
-                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
+				<StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
+				            Visibility="{x:Bind ServiceNotRelay, Mode=OneWay}"
                             x:Name="FlipDropDownContainer" Margin="0,20,0,10">
 
                     <TextBlock FontWeight="SemiBold" FontSize="25"
@@ -327,7 +328,7 @@
 
                 </StackPanel>
 
-                <Grid>
+				<Grid Visibility="{x:Bind ServiceNotRelay, Mode=OneWay}">
                     <Grid.Transitions>
                         <TransitionCollection>
                             <RepositionThemeTransition />
@@ -503,7 +504,8 @@
                 </Grid>
 
                 <!--For the waist & pair trackers' expanders-->
-                <StackPanel x:Name="JointExpanderHostStackPanel" HorizontalAlignment="Stretch"
+				<StackPanel x:Name="JointExpanderHostStackPanel" HorizontalAlignment="Stretch"
+				            Visibility="{x:Bind ServiceNotRelay, Mode=OneWay}"
                             VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
 
                     <StackPanel.Transitions>
@@ -529,7 +531,7 @@
                     </ItemsRepeater>
                 </StackPanel>
 
-                <Grid Margin="0,10,0,0">
+				<Grid Margin="0,10,0,0" Visibility="{x:Bind ServiceNotRelay, Mode=OneWay}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />

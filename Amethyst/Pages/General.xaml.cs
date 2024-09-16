@@ -129,11 +129,23 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private string ServiceStatusLabel => Interfacing.LocalizedJsonString(
         "/GeneralPage/Captions/DriverStatus/Label").Format(AppPlugins.CurrentServiceEndpoint.Name);
 
-    private bool AllowCalibration => Interfacing.AppTrackersInitialized && ServiceStatusOk;
+    private bool AllowCalibration => Interfacing.AppTrackersInitialized && ServiceStatusOk && ServiceNotRelay;
 
     private bool ServiceStatusError => AppPlugins.CurrentServiceEndpoint.StatusError;
 
     private bool ServiceStatusOk => AppPlugins.CurrentServiceEndpoint.StatusOk;
+
+    private bool ServiceNotRelay => AppPlugins.CurrentServiceEndpoint.Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
+
+    private bool ServiceIsRelay => AppPlugins.CurrentServiceEndpoint.Guid is "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
+
+    private IEnumerable<TrackingDevice> SelectedDevices => new List<TrackingDevice>()
+        .Append(AppPlugins.BaseTrackingDevice).Concat(
+            AppData.Settings.OverrideDevicesGuidMap.Select(overrideGuid =>
+                AppPlugins.GetDevice(overrideGuid).Device));
+
+    private GridLength TrackingControlsGridHeight => ServiceIsRelay ? new GridLength(1, GridUnitType.Star) : new GridLength(170);
+    private GridLength DeviceControlsGridHeight => ServiceIsRelay ? GridLength.Auto : new GridLength(1, GridUnitType.Star);
 
     private string[] ServiceStatusText
     {

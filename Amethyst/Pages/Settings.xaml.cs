@@ -120,7 +120,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     private bool ServiceSupportsSettings => AppPlugins.CurrentServiceEndpoint.IsSettingsDaemonSupported &&
                                             AppPlugins.CurrentServiceEndpoint.SettingsInterfaceRoot is Page;
 
-    private bool CanAutoStartAmethyst => AppPlugins.CurrentServiceEndpoint.CanAutoStartAmethyst;
+    private bool CanAutoStartAmethyst => AppPlugins.CurrentServiceEndpoint.CanAutoStartAmethyst && ServiceNotRelay;
 
     private string[] ServiceStatusText
     {
@@ -160,6 +160,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
     private string FlipDropDownHeader => Interfacing.LocalizedJsonString(
         "/SettingsPage/Captions/SkeletonFlip").Format(AppPlugins.BaseTrackingDevice.Name);
+
+    private bool ServiceNotRelay => AppPlugins.CurrentServiceEndpoint.Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
 
     private string ManageTrackersText
     {

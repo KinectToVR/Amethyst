@@ -459,7 +459,7 @@
         },
         {
             "id": "/SettingsPage/Filters/Position/Kalman",
-            "translation": "Extended Kalman Filter"
+            "translation": "1€ Filter"
         },
         {
             "id": "/SettingsPage/Filters/Position/LERP",
@@ -559,7 +559,7 @@
         },
         {
             "id": "/SettingsLearn/Captions/Filters/Names/EKF",
-            "translation": "- Extended Kalman Filter"
+            "translation": "- 1€ Filter"
         },
         {
             "id": "/SettingsLearn/Captions/Filters/Names/LERP",
@@ -1984,6 +1984,10 @@
         {
             "id": "/Installer/Splashes/Ending/ActionMessage",
             "translation": "Start Amethyst"
+        },
+        {
+            "id": "/GeneralPage/Titles/Relay",
+            "translation": "Tracking Relay"
         }
     ]
 }

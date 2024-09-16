@@ -195,7 +195,8 @@ public class PluginHost(string guid) : IAmethystHost
 
             // Check if used in any way: as the base, an override, or the endpoint
             if (!AppPlugins.IsBase(Guid) && !AppPlugins.IsOverride(Guid) &&
-                AppPlugins.CurrentServiceEndpoint.Guid != Guid) return;
+                AppPlugins.CurrentServiceEndpoint.Guid != Guid &&
+                Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY") return;
 
             Logger.Info($"{Guid} is currently being used, refreshing its config!");
             var locked = Monitor.TryEnter(UpdateLock); // Try entering the lock
@@ -204,6 +205,27 @@ public class PluginHost(string guid) : IAmethystHost
             AppData.Settings.SaveSettings(); // Save it!
             if (locked) Monitor.Exit(UpdateLock); // Try entering the lock
         });
+
+        try
+        {
+            // Check if the relay plugin is there
+            if (!AppPlugins.ServiceEndpointsList.TryGetValue("K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY", out var relay)) return;
+            Logger.Info("Reloading additional devices from Amethyst Tracking Relay...");
+
+            // Check for backfeed configuration not to "reload" ourselves away
+            var isBackfeedProperty = relay.Service.GetType().GetProperty("IsBackfeed");
+            if (isBackfeedProperty is null || !isBackfeedProperty.CanRead) return;
+            if (isBackfeedProperty.GetValue(relay.Service) as bool? ?? false) return;
+
+            // Get the reload property and tell the client to refresh itself
+            var requestReloadProperty = relay.Service.GetType().GetProperty("RequestReload");
+            if (requestReloadProperty is null || !requestReloadProperty.CanRead) return;
+            ((Action)requestReloadProperty.GetValue(relay.Service))?.Invoke(); // Refresh
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(e);
+        }
     }
 
     // Get Amethyst UI language
@@ -250,6 +272,33 @@ public class PluginHost(string guid) : IAmethystHost
             // Finally exit with code 0
             Environment.Exit(0);
         });
+    }
+
+    // INTERNAL: Available only via reflection, not defined in the Host interface
+    // Return all devices added from plugins, INCLUDING forwarded ones
+    public Dictionary<string, ITrackingDevice> TrackingDevices =>
+        AppPlugins.TrackingDevicesList.ToDictionary(pair => pair.Key, pair => pair.Value.Device);
+
+    // INTERNAL: Available only via reflection, not defined in the Host interface
+    // Return the device's name, based on its GUID string
+    public string GetDeviceName(string deviceGuid)
+    {
+        return AppPlugins.TrackingDevicesList.Values.FirstOrDefault(x => x.Guid == deviceGuid, null)?.Name;
+    }
+
+    // INTERNAL: Available only via reflection, not defined in the Host interface
+    // Tells the application to reload remote devices, MUST be called from the relay
+    public void ReloadRemoteDevices()
+    {
+        AppPlugins.ReloadRemoteDevices();
+    }
+
+    // INTERNAL: Available only via reflection, not defined in the Host interface
+    // Override the Relay InfoBar title, content, and button data
+    // Passing null will reset the bar, and if there's no bar, passing data will show it
+    public void SetRelayInfoBarOverride((string Title, string Content, string Button, Action Click, bool Closable)? infoBarData)
+    {
+        RelayBarOverride = infoBarData;
     }
 }
 
@@ -360,12 +409,15 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public (LocalisationFileJson Root, string Directory) LocalizationResourcesRoot { get; set; }
 
-    public Uri DependencyLinkUri => Uri.TryCreate(DependencyLink, UriKind.RelativeOrAbsolute, out var uri) ? uri : null;
+    public Uri DependencyLinkUri => Uri.TryCreate(DependencyLink, UriKind.RelativeOrAbsolute, out var uri) ? uri :
+        Uri.TryCreate("https://k2vr.tech", UriKind.RelativeOrAbsolute, out var uri1) ? uri1 : null;
 
     public Uri DependencySourceUri =>
-        Uri.TryCreate(DependencySource, UriKind.RelativeOrAbsolute, out var uri) ? uri : null;
+        Uri.TryCreate(DependencySource, UriKind.RelativeOrAbsolute, out var uri) ? uri :
+        Uri.TryCreate("https://k2vr.tech", UriKind.RelativeOrAbsolute, out var uri1) ? uri1 : null;
 
-    public Uri WebsiteUri => Uri.TryCreate(Website, UriKind.RelativeOrAbsolute, out var uri) ? uri : null;
+    public Uri WebsiteUri => Uri.TryCreate(Website, UriKind.RelativeOrAbsolute, out var uri) ? uri :
+        Uri.TryCreate("https://k2vr.tech", UriKind.RelativeOrAbsolute, out var uri1) ? uri1 : null;
 
     public Version Version { get; init; } = new("0.0.0.0");
 

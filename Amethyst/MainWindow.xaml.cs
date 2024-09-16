@@ -49,6 +49,7 @@ using WinRT;
 using WinRT.Interop;
 using WinUI.Fluent.Icons;
 using Newtonsoft.Json;
+using static Amethyst.Classes.Interfacing;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -151,6 +152,15 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
         !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen &&
         !ReloadInfoBar.IsOpen;
+
+    private bool ShowRelayActiveInfoBar =>
+        AppPlugins.CurrentServiceEndpoint.Guid is "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY" || Interfacing.RelayBarOverride is not null;
+
+    private bool ServiceIsRelay => AppPlugins.CurrentServiceEndpoint.Guid is "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
+    private bool RelayActiveInfoBarClosable => Interfacing.RelayBarOverride?.Closable ?? false;
+    private string RelayActiveInfoBarTitle => Interfacing.RelayBarOverride?.Title ?? "Amethyst running in relay mode!"; // TODO translate
+    private string RelayActiveInfoBarContent => Interfacing.RelayBarOverride?.Content ?? "All available devices will be forwarded to the receiver.";
+    private string RelayActiveInfoBarButtonContent => Interfacing.RelayBarOverride?.Button ?? "Relay Settings";
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
@@ -450,7 +460,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             }
 
             // Check if we have enough plugins to run the app
-            if (AppPlugins.TrackingDevicesList.Count < 1)
+            if (!AppPlugins.TrackingDevicesList.Any(x => x.Key is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY"))
             {
                 Logger.Fatal(new CompositionException("No plugins (tracking devices) loaded! Shutting down..."));
                 Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoDevices"));
@@ -696,6 +706,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                          $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
         }
 
+        // Load remote devices now
+        AppPlugins.ReloadRemoteDevices();
+
         // Try reading the default config
         Logger.Info("Checking out the default configuration settings...");
 
@@ -727,7 +740,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Validate the saved base plugin guid
         Logger.Info("Checking if the saved base device exists in loaded plugins...");
-        if (!AppPlugins.TrackingDevicesList.ContainsKey(AppData.Settings.TrackingDeviceGuid))
+        if (!AppPlugins.TrackingDevicesList.ContainsKey(AppData.Settings.TrackingDeviceGuid) ||
+            AppData.Settings.TrackingDeviceGuid is "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY")
         {
             // Check against the defaults
             var firstValidDevice = string.IsNullOrEmpty(DefaultSettings.TrackingDevice)
@@ -768,6 +782,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Logger.Info("Checking if saved override devices exist in loaded plugins...");
         AppData.Settings.OverrideDevicesGuidMap.RemoveWhere(overrideGuid =>
         {
+            if (overrideGuid is "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY") return true;
             Logger.Info($"Checking if override ({overrideGuid}) exists in loaded plugins...");
             if (!AppPlugins.TrackingDevicesList.ContainsKey(overrideGuid))
             {
@@ -1881,5 +1896,22 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
         NoticeInfoBar.Opacity = 0.0;
         NoticeInfoBar.IsOpen = false;
+    }
+
+    private void RelayBarButton_Click(object sender, RoutedEventArgs e)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+        if (Interfacing.RelayBarOverride is not null)
+        {
+            Interfacing.RelayBarOverride?.Click();
+            return; // Don't proceed further
+        }
+
+        // Navigate to the devices page
+        Shared.Main.MainNavigationView.SelectedItem =
+            Shared.Main.MainNavigationView.MenuItems[1];
+
+        Shared.Main.NavigateToPage("settings",
+            new EntranceNavigationTransitionInfo());
     }
 }

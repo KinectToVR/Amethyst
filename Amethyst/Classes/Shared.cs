@@ -43,6 +43,7 @@ public static class Shared
         public static RequestEvent RequestJointSelectorExpandersCollapseEvent;
         public static RequestEvent RequestOverrideExpandersCollapseEvent;
         public static RaisedEvent RequestJointSettingsRefreshEvent;
+        public static RaisedEvent RequestReloadRemoteDevicesEvent;
 
         public static void RequestInterfaceReload(bool all = true)
         {

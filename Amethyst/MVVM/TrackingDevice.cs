@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media.Animation;
 using static Amethyst.Classes.Interfacing;
 
 namespace Amethyst.MVVM;
@@ -34,7 +37,7 @@ public class TrackingDevice(string name, string guid, string path, Version versi
     [DefaultValue(null)] public Uri ErrorDocsUri => Device.ErrorDocsUri;
 
     // Underlying device handler
-    private ITrackingDevice Device { get; } = device;
+    public ITrackingDevice Device { get; } = device;
 
     // Joints' list / you need to (should) update at every update() call
     // Each must have its own role or _Manual to force user's manual set
@@ -233,5 +236,50 @@ public class TrackingDevice(string name, string guid, string path, Version versi
             // We're done with our changes now!
             Shared.Devices.DevicesJointsValid = true;
         });
+    }
+
+    public string[] DeviceStatusSplit
+    {
+        get
+        {
+            // Split status and message by \n
+            var message = StringUtils.SplitStatusString(DeviceStatusString);
+            return message is null || message.Length < 3 ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" } : message;
+        }
+    }
+
+    public string DeviceJointsCount => $"Forwarded joints: {TrackedJoints.Count}";
+    public string DeviceSettingsText => LocalizedJsonString("/GeneralPage/Buttons/DeviceSettings").Format(Name);
+    public bool ServiceNotRelay => AppPlugins.CurrentServiceEndpoint.Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
+    public bool IsFromRelay => Guid.StartsWith("TRACKINGRELAY:");
+    public string RelayText => $"From {HostMachineName}";
+    public string HostMachineName { get; set; } = "Amethyst Tracking Relay";
+
+    public async void ViewDeviceSettings(object sender, RoutedEventArgs e)
+    {
+        // Go to the devices page to view device settings
+
+        // Navigate to the settings page
+        Shared.Main.MainNavigationView.SelectedItem =
+            Shared.Main.MainNavigationView.MenuItems[2];
+
+        Shared.Main.NavigateToPage("devices",
+            new EntranceNavigationTransitionInfo());
+
+        await Task.Delay(500);
+
+        // Should already be init-ed after 500ms, but check anyway
+        if (Shared.Devices.DevicesTreeView is null) return;
+        var devicesListIndex = AppPlugins.TrackingDevicesList.Keys.ToList().IndexOf(Guid);
+        var devicesListNode = Shared.Devices.DevicesTreeView.RootNodes[devicesListIndex];
+
+        var skipAnimation = Shared.Devices.DevicesTreeView.SelectedNode == devicesListNode;
+        Shared.Devices.DevicesTreeView.SelectedNode = devicesListNode;
+
+        AppData.Settings.PreviousSelectedTrackingDeviceGuid = Guid;
+        AppData.Settings.SelectedTrackingDeviceGuid = Guid;
+
+        await Shared.Devices.ReloadSelectedDevice(skipAnimation);
+        Shared.Events.ReloadDevicesPageEvent?.Set(); // Full reload
     }
 }

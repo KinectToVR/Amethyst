@@ -551,31 +551,36 @@ public static class Main
                 // Run until termination
                 while (true)
                 {
+                    // Normal loop - start the timer
                     loopStopWatch.Restart();
 
-                    // Skip some things if we're getting ready to exit
-                    if (!Interfacing.IsExitingNow)
-                        lock (Interfacing.UpdateLock)
-                        {
-                            UpdateTrackingDevices(); // Update actual tracking
-                            UpdateAppTrackers(); // Track joints from raw data
-                        }
+                    if (AppPlugins.CurrentServiceEndpoint.Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY")
+                        // Skip some things if we're getting ready to exit
+                        if (!Interfacing.IsExitingNow)
+                            lock (Interfacing.UpdateLock)
+                            {
+                                UpdateTrackingDevices(); // Update actual tracking
+                                UpdateAppTrackers(); // Track joints from raw data
+                            }
 
                     // Create the cancellation token
                     using var cancellationToken = new CancellationTokenSource();
                     cancellationToken.CancelAfter(TimeSpan.FromTicks(500000));
 
-                    try
-                    {
-                        // Try sending all poses to the server, cancel on timeout
-                        await UpdateServerTrackers(cancellationToken.Token);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        Logger.Warn(
-                            $"{AppPlugins.CurrentServiceEndpoint.Guid} couldn't update poses before timeout of 500000 [ticks] " +
-                            $"(~20fps). The operation has been cancelled for Amethyst to keep up with further server operations.");
-                    }
+                    if (AppPlugins.CurrentServiceEndpoint.Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY")
+                        try
+                        {
+                            // Try sending all poses to the server, cancel on timeout
+                            await UpdateServerTrackers(cancellationToken.Token);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            Logger.Warn(
+                                $"{AppPlugins.CurrentServiceEndpoint.Guid} couldn't update poses before timeout of 500000 [ticks] " +
+                                $"(~20fps). The operation has been cancelled for Amethyst to keep up with further server operations.");
+                        }
+                    // Update service endpoints for relay mode instead
+                    else AppPlugins.CurrentServiceEndpoint?.Heartbeat();
 
                     // Wait until certain loop time has passed
                     var diffTicks = vrFrameRate - loopStopWatch.ElapsedTicks;

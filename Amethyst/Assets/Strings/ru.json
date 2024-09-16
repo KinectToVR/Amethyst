@@ -459,7 +459,7 @@
         },
         {
             "id": "/SettingsPage/Filters/Position/Kalman",
-            "translation": "Расширенная фильтрация Калмана (Kalman)"
+            "translation": "1€ Filter"
         },
         {
             "id": "/SettingsPage/Filters/Position/LERP",
@@ -559,7 +559,7 @@
         },
         {
             "id": "/SettingsLearn/Captions/Filters/Names/EKF",
-            "translation": "- Расширенная фильтрация Калмана (Kalman)"
+            "translation": "- 1€ Filter"
         },
         {
             "id": "/SettingsLearn/Captions/Filters/Names/LERP",

@@ -628,7 +628,7 @@
         },
         {
             "id": "/SettingsPage/Filters/Position/Kalman",
-            "translation": "Filtro di Kalman esteso",
+            "translation": "1€ Filter",
             "translatorComment": ""
         },
         {
@@ -798,7 +798,7 @@
         },
         {
             "id": "/SettingsLearn/Captions/Filters/Names/EKF",
-            "translation": "- Filtro di Kalman esteso",
+            "translation": "- 1€ Filter",
             "translatorComment": ""
         },
         {

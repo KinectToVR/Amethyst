@@ -13,7 +13,7 @@ namespace Amethyst.Classes;
 
 public class AppTracker : INotifyPropertyChanged
 {
-    [JsonIgnore] private readonly KalmanFilter _kalmanFilter = new();
+    [JsonIgnore] private readonly OneEuroFilter<Vector3> _euroFilter = new(120.0f);
 
     [JsonIgnore] private readonly LowPassFilter _lowPassFilter = new(6.9f, .005f);
 
@@ -27,7 +27,7 @@ public class AppTracker : INotifyPropertyChanged
     private bool _isTrackerExpanderOpen;
 
     // Internal filters' data
-    private Vector3 _kalmanPosition = new(0);
+    private Vector3 _euroPosition = new(0);
     private Vector3 _lastLerpPosition = new(0);
     private Quaternion _lastSlerpOrientation = new(0, 0, 0, 1);
     private Quaternion _lastSlerpSlowOrientation = new(0, 0, 0, 1);
@@ -497,7 +497,7 @@ public class AppTracker : INotifyPropertyChanged
         {
             JointPositionTrackingOption.PositionTrackingFilterLerp => _lerpPosition,
             JointPositionTrackingOption.PositionTrackingFilterLowpass => _lowPassPosition,
-            JointPositionTrackingOption.PositionTrackingFilterKalman => _kalmanPosition,
+            JointPositionTrackingOption.PositionTrackingFilterKalman => _euroPosition,
             JointPositionTrackingOption.PositionTrackingFilterPrediction => _predictedPosition,
             JointPositionTrackingOption.NoPositionTrackingFilter => Position,
             _ => Position
@@ -685,7 +685,7 @@ public class AppTracker : INotifyPropertyChanged
     {
         // Update LowPass and Kalman filters
         _lowPassPosition = _lowPassFilter.Update(Position.Projected()).V();
-        _kalmanPosition = _kalmanFilter.Update(Position);
+        _euroPosition = _euroFilter.Filter(Position);
 
         // Update the LERP (mix) filter
         _lerpPosition = Vector3.Lerp(_lastLerpPosition, Position, 0.31f);

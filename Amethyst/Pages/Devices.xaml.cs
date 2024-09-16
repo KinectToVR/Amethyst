@@ -53,17 +53,19 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
         Shared.TeachingTips.DevicesPage.DevicesListTeachingTip = DevicesListTeachingTip;
 
         Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
-        TrackingDeviceTreeView.ItemsSource = AppPlugins.TrackingDevicesList.Values;
+        TrackingDeviceTreeView.ItemsSource = AppPlugins.TrackingDevicesList.Values
+            .Where(x => x.Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY");
 
         ResubscribeListeners(); // Register for any pending changes
         Interfacing.AppSettingsRead += (_, _) => ResubscribeListeners();
 
         // Set currently tracking device & selected device
         Logger.Info("Overwriting the devices TreeView selected item...");
-        var devicesListIndex = AppPlugins.TrackingDevicesList.Keys.ToList()
-            .IndexOf(AppData.Settings.TrackingDeviceGuid);
-        TrackingDeviceTreeView.SelectedNode = TrackingDeviceTreeView.RootNodes[devicesListIndex];
+        var devicesListIndex = AppPlugins.TrackingDevicesList.Keys
+            .Where(x => x is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY")
+            .ToList().IndexOf(AppData.Settings.TrackingDeviceGuid);
 
+        TrackingDeviceTreeView.SelectedNode = TrackingDeviceTreeView.RootNodes[devicesListIndex];
         AppData.Settings.SelectedTrackingDeviceGuid = AppData.Settings.TrackingDeviceGuid;
         AppData.Settings.PreviousSelectedTrackingDeviceGuid = AppData.Settings.TrackingDeviceGuid;
 
@@ -89,7 +91,38 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
                 Shared.Events.ReloadDevicesPageEvent.Reset();
             }
         });
+
+        Logger.Info("Registering a shared device list reload event...");
+        Shared.Events.RequestReloadRemoteDevicesEvent = (_, _) => Shared.Main.DispatcherQueue.TryEnqueue(() =>
+        {
+            // Reload the devices list if it's changed
+            if (TrackingDeviceTreeView.ItemsSource is not IEnumerable<TrackingDevice> source ||
+                Equals(source.Select(x => x.Guid), AppPlugins.TrackingDevicesList.Values
+                    .Where(x => x.Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY").Select(x => x.Guid))) return;
+
+            Logger.Info($"Registering devices MVVM for page: '{GetType().FullName}'...");
+            TrackingDeviceTreeView.ItemsSource = AppPlugins.TrackingDevicesList.Values
+                .Where(x => x.Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY");
+
+            // Set currently tracking device & selected device
+            Logger.Info("Overwriting the devices TreeView selected item...");
+            var devicesListIndexNew = AppPlugins.TrackingDevicesList.Keys
+                .Where(x => x is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY")
+                .ToList().IndexOf(AppData.Settings.TrackingDeviceGuid);
+
+            TrackingDeviceTreeView.SelectedNode = TrackingDeviceTreeView.RootNodes[devicesListIndexNew];
+            AppData.Settings.SelectedTrackingDeviceGuid = AppData.Settings.TrackingDeviceGuid;
+            AppData.Settings.PreviousSelectedTrackingDeviceGuid = AppData.Settings.TrackingDeviceGuid;
+        });
     }
+
+    private bool RelayDeviceExists =>
+        AppPlugins.TrackingDevicesList.TryGetValue("K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY", out var device) ? device.SettingsInterfaceRoot is not null : false;
+
+    private bool ServiceNotRelay => AppPlugins.CurrentServiceEndpoint.Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
+
+    private Page RelayDeviceSettingsPage =>
+        AppPlugins.TrackingDevicesList.TryGetValue("K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY", out var device) ? device.SettingsInterfaceRoot as Page : null;
 
     // Waist, LR Foot
     public List<AppTracker> BasicTrackers => AppData.Settings.TrackersVector.ToArray()[..3].ToList();
@@ -554,5 +587,18 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     public Visibility CombineVisibility(Visibility v1, Visibility v2, Visibility v3)
     {
         return new[] { v1, v2, v3 }.Contains(Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void ButtonFlyout_Opening(object sender, object e)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
+
+    private void ButtonFlyout_Closing(FlyoutBase sender,
+        FlyoutBaseClosingEventArgs args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
 }
