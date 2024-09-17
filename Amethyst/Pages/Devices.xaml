@@ -88,7 +88,8 @@
 									</Style>
 								</Flyout.FlyoutPresenterStyle>
 
-								<ContentPresenter VerticalContentAlignment="Stretch"
+								<ContentPresenter VerticalContentAlignment="Stretch" VerticalAlignment="Stretch"
+												  MaxWidth="690" MinWidth="690" MaxHeight="590"
 								                  Content="{x:Bind RelayDeviceSettingsPage, Mode=OneWay}" />
 							</Flyout>
 						</Button.Flyout>

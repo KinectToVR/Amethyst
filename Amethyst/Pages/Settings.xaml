@@ -666,7 +666,7 @@
                     <StackPanel Style="{ThemeResource CardMiddleStyle}"
                                 CornerRadius="{x:Bind ServiceControlsCornerRadius, Mode=OneWay}">
                         <Grid Margin="5,0,0,0" HorizontalAlignment="Stretch">
-                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" 
                                        Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/DeviceStatus'), Mode=OneWay}"
                                        Foreground="{ThemeResource ControlDisplayTextBrush}" />
 
@@ -675,7 +675,7 @@
                                        Margin="55,0,0,0" />
 
                             <SplitButton VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                         CornerRadius="4" Height="35" MinWidth="160"
+                                         CornerRadius="4" Height="35" MinWidth="160" 
                                          HorizontalAlignment="Right" VerticalAlignment="Top"
                                          Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/Reconnect'), Mode=OneWay}"
                                          Click="RefreshServiceButton_Click">

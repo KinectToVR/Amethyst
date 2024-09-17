@@ -1,31 +1,31 @@
 trigger:
-- main
-- store
+  - main
+  - store
 
 pr:
-- main
+  - main
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: "windows-latest"
 
 variables:
   - name: solution
-    value: '**/*.sln'
+    value: "**/*.sln"
   - name: buildPlatform
-    value: 'x64'
+    value: "x64"
   - name: buildConfiguration
-    value: 'Release'
+    value: "Release"
   - name: publishDirectory
-    value: 'Pack/Output'
+    value: "Pack/Output"
   - name: artifactDirectory
-    value: 'Pack/Zip'
+    value: "Pack/Zip"
   - group: AppCenter
   - group: Protected
-  
+
 parameters:
-  - name: 'plugins'
+  - name: "plugins"
     type: object
-    default: 
+    default:
       - "plugin_Kinect360"
       - "plugin_KinectOne"
       - "plugin_PSMoveService"
@@ -36,125 +36,149 @@ parameters:
 name: 1.2.$(Date:yyyyMMdd).$(Rev:r)
 
 stages:
-- stage: Build
-  jobs:
-  - job: Publish
-    steps:
-    - checkout: self
-      submodules: true | recursive
-      persistCredentials: 'true'
+  - stage: Build
+    jobs:
+      - job: Publish
+        steps:
+          - checkout: self
+            submodules: true | recursive
+            persistCredentials: "true"
 
-    - task: NuGetToolInstaller@1
+          - task: NuGetToolInstaller@1
 
-    - task: NuGetCommand@2
-      inputs:
-        restoreSolution: '$(solution)'
+          - task: NuGetCommand@2
+            inputs:
+              restoreSolution: "$(solution)"
 
-    - pwsh: |
-        ((Get-Content -path .\Amethyst\Amethyst.csproj -Raw) -replace 'AZ_BUILD_DATA-->', "") | Set-Content -Path .\Amethyst\Amethyst.csproj
-        ((Get-Content -path .\Amethyst\Amethyst.csproj -Raw) -replace '<!--AZ_BUILD_DATA', "") | Set-Content -Path .\Amethyst\Amethyst.csproj
-        ((Get-Content -path .\Amethyst\Amethyst.csproj -Raw) -replace 'AZ_BUILD_NUMBER', "$(Build.BuildNumber)") | Set-Content -Path .\Amethyst\Amethyst.csproj
-        ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_BUILD_NUMBER', "$(Build.BuildNumber)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
-      displayName: Add version data to Amethyst
+          - pwsh: |
+              ((Get-Content -path .\Amethyst\Amethyst.csproj -Raw) -replace 'AZ_BUILD_DATA-->', "") | Set-Content -Path .\Amethyst\Amethyst.csproj
+              ((Get-Content -path .\Amethyst\Amethyst.csproj -Raw) -replace '<!--AZ_BUILD_DATA', "") | Set-Content -Path .\Amethyst\Amethyst.csproj
+              ((Get-Content -path .\Amethyst\Amethyst.csproj -Raw) -replace 'AZ_BUILD_NUMBER', "$(Build.BuildNumber)") | Set-Content -Path .\Amethyst\Amethyst.csproj
+              ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_BUILD_NUMBER', "$(Build.BuildNumber)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
+            displayName: Add version data to Amethyst
 
-    - pwsh: |
-        ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_API_TOKEN', "$(AppToken)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
-        ((Get-Content -path .\Amethyst\App.xaml.cs -Raw) -replace 'AZ_COMMIT_SHA', "$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\App.xaml.cs
-        ((Get-Content -path .\Amethyst\App.xaml.cs -Raw) -replace 'AZ_APPSECRET', "$(AppSecret)") | Set-Content -Path .\Amethyst\App.xaml.cs
-        (((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace '<!--AZ_COMMIT_DATA', '') -replace 'AZ_COMMIT_DATA-->', '') | Set-Content -Path .\Amethyst\Pages\Info.xaml
-        ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_SHA', "$("$(Build.SourceVersion)".Substring(0,7))") | Set-Content -Path .\Amethyst\Pages\Info.xaml
-        ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_LINK', "https://github.com/KinectToVR/Amethyst/commit/$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\Pages\Info.xaml
-      displayName: Add commit data to Amethyst
+          - pwsh: |
+              ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_API_TOKEN', "$(AppToken)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
+              ((Get-Content -path .\Amethyst\App.xaml.cs -Raw) -replace 'AZ_COMMIT_SHA', "$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\App.xaml.cs
+              ((Get-Content -path .\Amethyst\App.xaml.cs -Raw) -replace 'AZ_APPSECRET', "$(AppSecret)") | Set-Content -Path .\Amethyst\App.xaml.cs
+              (((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace '<!--AZ_COMMIT_DATA', '') -replace 'AZ_COMMIT_DATA-->', '') | Set-Content -Path .\Amethyst\Pages\Info.xaml
+              ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_SHA', "$("$(Build.SourceVersion)".Substring(0,7))") | Set-Content -Path .\Amethyst\Pages\Info.xaml
+              ((Get-Content -path .\Amethyst\Pages\Info.xaml -Raw) -replace 'AZ_COMMIT_LINK', "https://github.com/KinectToVR/Amethyst/commit/$(Build.SourceVersion)") | Set-Content -Path .\Amethyst\Pages\Info.xaml
+            displayName: Add commit data to Amethyst
 
-    - pwsh: |
-        ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_APPCENTER_SECRET', "$(Amethyst_AppSecret)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
-        ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_APPCENTER_RO_TOKEN', "$(UserApiToken_ReadOnly)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
-      displayName: Add API keys to Amethyst
+          - pwsh: |
+              ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_APPCENTER_SECRET', "$(Amethyst_AppSecret)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
+              ((Get-Content -path .\Amethyst\Classes\AppData.cs -Raw) -replace 'AZ_APPCENTER_RO_TOKEN', "$(UserApiToken_ReadOnly)") | Set-Content -Path .\Amethyst\Classes\AppData.cs
+            displayName: Add API keys to Amethyst
 
-    - pwsh: |
-        Write-Host "##vso[task.setvariable variable=PackageVersion;]$(([xml](Get-Content .\Amethyst\Package.appxmanifest)).Package.Identity.Version)"
-        Write-Host "##vso[task.setvariable variable=packageVersion;isOutput=true;]$(([xml](Get-Content .\Amethyst\Package.appxmanifest)).Package.Identity.Version)"
-      displayName: Prepare package version variables
-      name: ParseAppxManifest
+          - pwsh: |
+              Write-Host "##vso[task.setvariable variable=PackageVersion;]$(([xml](Get-Content .\Amethyst\Package.appxmanifest)).Package.Identity.Version)"
+              Write-Host "##vso[task.setvariable variable=packageVersion;isOutput=true;]$(([xml](Get-Content .\Amethyst\Package.appxmanifest)).Package.Identity.Version)"
+            displayName: Prepare package version variables
+            name: ParseAppxManifest
 
-    - task: DownloadSecureFile@1
-      name: signingCert
-      displayName: Download the signing certificate
-      inputs:
-        secureFile: 'Amethyst_TestingKey.pfx'
+          - task: DownloadSecureFile@1
+            name: signingCert
+            displayName: Download the signing certificate
+            inputs:
+              secureFile: "Amethyst_TestingKey.pfx"
 
-    - ${{each plugin in parameters.plugins}}:
-      - task: DownloadGitHubRelease@0
-        displayName: 'Download plugin ${{ plugin  }}'
-        inputs:
-          connection: github.com_KimihikoAkayasaki
-          userRepository: 'KinectToVR/${{ plugin  }}'
-          defaultVersionType: latest
-          version: latest
-          downloadPath: $(artifactDirectory)
+          - ${{each plugin in parameters.plugins}}:
+              - task: DownloadGitHubRelease@0
+                displayName: "Download plugin ${{ plugin  }}"
+                inputs:
+                  connection: github.com_KimihikoAkayasaki
+                  userRepository: "KinectToVR/${{ plugin  }}"
+                  defaultVersionType: latest
+                  version: latest
+                  downloadPath: $(artifactDirectory)
 
-      - task: ExtractFiles@1
-        displayName: 'Pack plugin ${{ plugin  }}'
-        inputs:
-          archiveFilePatterns: '$(artifactDirectory)/${{ plugin  }}.zip'
-          destinationFolder: 'Amethyst/Plugins/${{ plugin  }}'
-          cleanDestinationFolder: false
+              - task: ExtractFiles@1
+                displayName: "Pack plugin ${{ plugin  }}"
+                inputs:
+                  archiveFilePatterns: "$(artifactDirectory)/${{ plugin  }}.zip"
+                  destinationFolder: "Amethyst/Plugins/${{ plugin  }}"
+                  cleanDestinationFolder: false
 
-    - pwsh: Import-PfxCertificate -CertStoreLocation Cert:\CurrentUser\My -FilePath "$(signingCert.secureFilePath)" -Password $(ConvertTo-SecureString "$(PackageCertificatePassword)" -AsPlainText -Force)
-      displayName: Import the signing certificate
+          - pwsh: Import-PfxCertificate -CertStoreLocation Cert:\CurrentUser\My -FilePath "$(signingCert.secureFilePath)" -Password $(ConvertTo-SecureString "$(PackageCertificatePassword)" -AsPlainText -Force)
+            displayName: Import the signing certificate
 
-    - task: VSBuild@1
-      displayName: Build (publish) Amethyst
-      inputs:
-        platform: '$(buildPlatform)'
-        solution: '$(solution)'
-        configuration: '$(buildConfiguration)'
-        msbuildArgs: '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true 
-                      /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml 
-                      /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\" 
-                      /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=false'
+          - task: VSBuild@1
+            displayName: Build (publish) Amethyst - Unsigned
+            inputs:
+              platform: "$(buildPlatform)"
+              solution: "$(solution)"
+              configuration: "$(buildConfiguration)"
+              msbuildArgs:
+                '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true
+                /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml
+                /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\"
+                /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=false'
 
-    - task: CopyFiles@2
-      displayName: Pack Amethyst
-      inputs:
-        SourceFolder: 'Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test'
-        Contents: 'Amethyst_$(packageVersion)_$(buildPlatform).msix'
-        TargetFolder: $(Build.ArtifactStagingDirectory)
-        preserveTimestamp: true
+          - task: CopyFiles@2
+            displayName: Pack Amethyst - Unsigned
+            inputs:
+              SourceFolder: 'Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test'
+              Contents: "Amethyst_$(packageVersion)_$(buildPlatform).msix"
+              TargetFolder: $(Build.ArtifactStagingDirectory)
+              preserveTimestamp: true
 
-    - publish: '$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform).msix'
-      displayName: Publish Amethyst
-      artifact: pack
+          - publish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform).msix"
+            displayName: Publish Amethyst - Unsigned
+            artifact: Unsigned (Store release)
 
-- stage: Stage
-  dependsOn: Build
-  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
-  jobs:
-  - job: Artifacts
-    variables:
-     packageVersion: $[ stageDependencies.Build.Publish.outputs['ParseAppxManifest.PackageVersion'] ]
-    steps:
-    - checkout: self
-      persistCredentials: 'true'
+          - task: VSBuild@1
+            displayName: Build (publish) Amethyst - Signed
+            inputs:
+              platform: "$(buildPlatform)"
+              solution: "$(solution)"
+              configuration: "$(buildConfiguration)"
+              msbuildArgs:
+                '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true
+                /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml
+                /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\"
+                /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)"
+                /p:PackageCertificateThumbprint="2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1" /p:PackageCertificatePassword="$(PackageCertificatePassword)"'
 
-    - download: current
-      displayName: Download published artifacts
-      artifact: pack
+          - task: PowerShell@2
+            displayName: Pack Amethyst - Signed
+            inputs:
+              targetType: inline
+              script: Copy-Item -Path "Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test\Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix" -Destination "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
 
-    - task: AppCenterDistribute@3
-      displayName: Upload packed Amethyst artifact (AppCenter)
-      inputs:
-        serverEndpoint: K2VR
-        appSlug: K2VR/Amethyst
-        appFile: '$(Pipeline.Workspace)/pack/Amethyst_$(packageVersion)_$(buildPlatform).msix'
-        buildVersion: $(packageVersion)
-        releaseNotesOption: 'input'
-        releaseNotesInput: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, then install [Amethyst itself](https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest)  \n(Note: The cert import is one-time, no need to redo it each time)  \n(Note: You'll get protocol run errors if the crash handler is missing)  \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
-        isMandatory: true
-        destinationType: 'groups'
-        distributionGroupId: 'dd3c18b6-8f5a-4b66-8a9b-83575b32c9ce'
+          - publish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
+            displayName: Publish Amethyst - Signed
+            artifact: Signed (Testing)
 
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform).msix'
-        ArtifactName: 'Amethyst_$(packageVersion)_$(buildPlatform)'
+  - stage: Stage
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+    jobs:
+      - job: Artifacts
+        variables:
+          packageVersion: $[ stageDependencies.Build.Publish.outputs['ParseAppxManifest.PackageVersion'] ]
+        steps:
+          - checkout: self
+            persistCredentials: "true"
+
+          - download: current
+            displayName: Download published artifacts
+            artifact: pack
+
+          - task: AppCenterDistribute@3
+            displayName: Upload packed Amethyst artifact (AppCenter)
+            inputs:
+              serverEndpoint: K2VR
+              appSlug: K2VR/Amethyst
+              appFile: "$(Pipeline.Workspace)/pack/Amethyst_$(packageVersion)_$(buildPlatform).msix"
+              buildVersion: $(packageVersion)
+              releaseNotesOption: "input"
+              releaseNotesInput: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, then install [Amethyst itself](https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest)  \n(Note: The cert import is one-time, no need to redo it each time)  \n(Note: You'll get protocol run errors if the crash handler is missing)  \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
+              isMandatory: true
+              destinationType: "groups"
+              distributionGroupId: "dd3c18b6-8f5a-4b66-8a9b-83575b32c9ce"
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform).msix"
+              ArtifactName: "Amethyst_$(packageVersion)_$(buildPlatform)"

@@ -42,14 +42,12 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.Windows.AppNotifications;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using RestSharp;
 using WinRT;
 using WinRT.Interop;
 using WinUI.Fluent.Icons;
 using Newtonsoft.Json;
-using static Amethyst.Classes.Interfacing;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

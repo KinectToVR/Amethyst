@@ -299,6 +299,7 @@ public class PluginHost(string guid) : IAmethystHost
     public void SetRelayInfoBarOverride((string Title, string Content, string Button, Action Click, bool Closable)? infoBarData)
     {
         RelayBarOverride = infoBarData;
+        Shared.Events.RefreshMainWindowEvent?.Set();
     }
 }
 
