@@ -125,7 +125,7 @@ stages:
 
           - publish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform).msix"
             displayName: Publish Amethyst - Unsigned
-            artifact: Unsigned (Store release)
+            artifact: pack
 
           - task: VSBuild@1
             displayName: Build (publish) Amethyst - Signed
@@ -148,11 +148,11 @@ stages:
 
           - publish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
             displayName: Publish Amethyst - Signed
-            artifact: Signed (Testing)
+            artifact: signed
 
   - stage: Stage
     dependsOn: Build
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
     jobs:
       - job: Artifacts
         variables:
@@ -163,22 +163,22 @@ stages:
 
           - download: current
             displayName: Download published artifacts
-            artifact: pack
+            artifact: signed
 
           - task: AppCenterDistribute@3
             displayName: Upload packed Amethyst artifact (AppCenter)
             inputs:
               serverEndpoint: K2VR
               appSlug: K2VR/Amethyst
-              appFile: "$(Pipeline.Workspace)/pack/Amethyst_$(packageVersion)_$(buildPlatform).msix"
+              appFile: "$(Pipeline.Workspace)/signed/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
               buildVersion: $(packageVersion)
               releaseNotesOption: "input"
-              releaseNotesInput: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, then install [Amethyst itself](https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest)  \n(Note: The cert import is one-time, no need to redo it each time)  \n(Note: You'll get protocol run errors if the crash handler is missing)  \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
+              releaseNotesInput: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, then install [Amethyst itself](https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest)  \n(Note: The cert import is one-time, no need to redo it each time) \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
               isMandatory: true
               destinationType: "groups"
-              distributionGroupId: "dd3c18b6-8f5a-4b66-8a9b-83575b32c9ce"
+              distributionGroupId: "6753850b-854c-455b-a88f-2b335104a64a"
 
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform).msix"
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
               ArtifactName: "Amethyst_$(packageVersion)_$(buildPlatform)"
