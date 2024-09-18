@@ -144,7 +144,7 @@ stages:
             displayName: Pack Amethyst - Signed
             inputs:
               targetType: inline
-              script: Copy-Item -Path "Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test\Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix" -Destination "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
+              script: Copy-Item -Path "Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test\Amethyst_$(packageVersion)_$(buildPlatform).msix" -Destination "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
 
           - publish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
             displayName: Publish Amethyst - Signed
