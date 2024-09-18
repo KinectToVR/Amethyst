@@ -177,8 +177,3 @@ stages:
               isMandatory: true
               destinationType: "groups"
               distributionGroupId: "6753850b-854c-455b-a88f-2b335104a64a"
-
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
-              ArtifactName: "Amethyst_$(packageVersion)_$(buildPlatform)"
