@@ -138,7 +138,7 @@ stages:
                 /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml
                 /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\"
                 /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)"
-                /p:PackageCertificateThumbprint="2D357ED0C01AC8D65E6D35CDACF75CFA9EAFE7C1" /p:PackageCertificatePassword="$(PackageCertificatePassword)"'
+                /p:PackageCertificateThumbprint="8331956E2C74F924455FADE58DAA22036E4A4B66" /p:PackageCertificatePassword="$(PackageCertificatePassword)"'
 
           - task: PowerShell@2
             displayName: Pack Amethyst - Signed
