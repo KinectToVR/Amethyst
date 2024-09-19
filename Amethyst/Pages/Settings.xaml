@@ -194,7 +194,6 @@
                 </Grid>
 
 				<StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
-				            Visibility="{x:Bind ServiceNotRelay, Mode=OneWay}"
                             x:Name="FlipDropDownContainer" Margin="0,20,0,10">
 
                     <TextBlock FontWeight="SemiBold" FontSize="25"
