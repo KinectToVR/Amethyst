@@ -17,6 +17,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace Amethyst.Classes;
 
@@ -181,7 +182,7 @@ public static class Interfacing
                 Logger.Info("Telling connected tracking clients to shut down... (Amethyst Tracking Relay)");
                 var requestShutdownProperty = relay.Service.GetType().GetProperty("RequestShutdown");
                 if (requestShutdownProperty is not null && requestShutdownProperty.CanRead)
-                    ((Action<string, bool>)requestShutdownProperty.GetValue(relay.Service))?.Invoke(message, true);
+                    ((Action<string, bool, CancellationToken>)requestShutdownProperty.GetValue(relay.Service))?.Invoke(message, true, default);
             }
         }
         catch (Exception e)
@@ -311,7 +312,7 @@ public static class Interfacing
                 Logger.Info("Telling connected tracking clients to shut down... (Amethyst Tracking Relay)");
                 var requestShutdownProperty = relay.Service.GetType().GetProperty("RequestShutdown");
                 if (requestShutdownProperty is not null && requestShutdownProperty.CanRead)
-                    ((Action<string, bool>)requestShutdownProperty.GetValue(relay.Service))?.Invoke("Server shutting down", false);
+                    ((Action<string, bool, CancellationToken>)requestShutdownProperty.GetValue(relay.Service))?.Invoke("Server shutting down", false, default);
             }
         }
         catch (Exception e)

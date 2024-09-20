@@ -220,7 +220,7 @@ public class PluginHost(string guid) : IAmethystHost
             // Get the reload property and tell the client to refresh itself
             var requestReloadProperty = relay.Service.GetType().GetProperty("RequestReload");
             if (requestReloadProperty is null || !requestReloadProperty.CanRead) return;
-            ((Action)requestReloadProperty.GetValue(relay.Service))?.Invoke(); // Refresh
+            ((Action<CancellationToken>)requestReloadProperty.GetValue(relay.Service))?.Invoke(default);
         }
         catch (Exception e)
         {
