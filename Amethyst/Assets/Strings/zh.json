@@ -1,0 +1,1993 @@
+{
+  "language": "zh",
+  "messages": [
+    {
+      "id": "/GeneralPage/Buttons/Abort",
+      "translation": "中止"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Calibration/Base",
+      "translation": "根据"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Calibration/Begin",
+      "translation": "校准"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Calibration/Override",
+      "translation": "覆盖"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Cancel",
+      "translation": "取消"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Discard",
+      "translation": "丢弃"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Help/Discord",
+      "translation": "获取有关 Discord 的帮助"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Help/Docs",
+      "translation": "查看在线文档"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Offsets",
+      "translation": "调整偏移量"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Save",
+      "translation": "保存"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Skeleton/Freeze",
+      "translation": "冻结"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Skeleton/Hide",
+      "translation": "隐藏骨骼"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Skeleton/Show",
+      "translation": "显示骨骼"
+    },
+    {
+      "id": "/GeneralPage/Buttons/Skeleton/Unfreeze",
+      "translation": "解冻"
+    },
+    {
+      "id": "/GeneralPage/Buttons/TrackersToggle/Connect",
+      "translation": "连接追踪器"
+    },
+    {
+      "id": "/GeneralPage/Buttons/TrackersToggle/Disconnect",
+      "translation": "断开追踪器"
+    },
+    {
+      "id": "/GeneralPage/Buttons/TrackersToggle/Reconnect",
+      "translation": "重新连接追踪器"
+    },
+    {
+      "id": "/GeneralPage/Buttons/DeviceSettings",
+      "translation": "查看 {0} 设备设置"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Aborted",
+      "translation": "校准中止！"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Automatic",
+      "translation": "站在游乐区的三个位置。"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Captured",
+      "translation": "位置已被占据！"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Done",
+      "translation": "校准完成！"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Manual",
+      "translation": "使用 VR 控制器移动跟踪器。"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Move",
+      "translation": "第 {0} 个位置（共 {1} 个）\n移动到另外的地方"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Points",
+      "translation": "如果校准将跟踪器放置在错误的位置，请尝试增加捕获点。"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Recommended",
+      "translation": "推荐"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Stand",
+      "translation": "第 {0} 个位置（共 {1} 个）\n请站稳！"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Captions/Start",
+      "translation": "开始校准"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Headers/Automatic",
+      "translation": "自动校准"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Headers/Manual",
+      "translation": "手动校准"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Brief/Left",
+      "translation": "L"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Brief/Right",
+      "translation": "R"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Grips/Both",
+      "translation": "L+R握把"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Grips/Left",
+      "translation": "L握把"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Grips/Right",
+      "translation": "R握把"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/InputsNotice",
+      "translation": "使用自定义绑定时，输入可能会有所不同。在这种情况下，请参阅Amethyst的输入绑定屏幕。"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Triggers/Both",
+      "translation": "L+R 触发器"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Triggers/Left",
+      "translation": "L 触发器"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Labels/Triggers/Right",
+      "translation": "R 触发器"
+    },
+    {
+      "id": "/GeneralPage/Calibration/LabelsWhat/Brief/Left",
+      "translation": "左/右/前/后移动\nY轴旋转"
+    },
+    {
+      "id": "/GeneralPage/Calibration/LabelsWhat/Brief/Right",
+      "translation": "上/下移动\n绕 X 轴旋转"
+    },
+    {
+      "id": "/GeneralPage/Calibration/LabelsWhat/Grips/Left",
+      "translation": "微调"
+    },
+    {
+      "id": "/GeneralPage/Calibration/LabelsWhat/Grips/Right",
+      "translation": "切换移动/旋转"
+    },
+    {
+      "id": "/GeneralPage/Calibration/LabelsWhat/Triggers",
+      "translation": "确认"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Titles/Automatic",
+      "translation": "自动"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Titles/Choose",
+      "translation": "选择校准模式"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Titles/Device",
+      "translation": "选择要校准的设备"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Titles/Manual",
+      "translation": "手动"
+    },
+    {
+      "id": "/GeneralPage/Calibration/Titles/Points",
+      "translation": "占领点："
+    },
+    {
+      "id": "/GeneralPage/Captions/CalibrateOverrides",
+      "translation": "您已设置跟踪覆盖。\n您想要校准哪个设备？"
+    },
+    {
+      "id": "/GeneralPage/Captions/Device/Name",
+      "translation": "当前设备："
+    },
+    {
+      "id": "/GeneralPage/Captions/Device/Status",
+      "translation": "状态："
+    },
+    {
+      "id": "/GeneralPage/Captions/DriverStatus",
+      "translation": "成功！ （代码1）"
+    },
+    {
+      "id": "/GeneralPage/Captions/DriverStatus/Label",
+      "translation": "{0}状态："
+    },
+    {
+      "id": "/GeneralPage/Captions/FreezeLowerOnly",
+      "translation": "仅冻结下半身"
+    },
+    {
+      "id": "/GeneralPage/Captions/Offsets/Orientation/X",
+      "translation": "螺距 (X)："
+    },
+    {
+      "id": "/GeneralPage/Captions/Offsets/Orientation/Y",
+      "translation": "偏航 (Y)："
+    },
+    {
+      "id": "/GeneralPage/Captions/Offsets/Orientation/Z",
+      "translation": "滚动（Z）："
+    },
+    {
+      "id": "/GeneralPage/Captions/Offsets/Position/X",
+      "translation": "X（左）："
+    },
+    {
+      "id": "/GeneralPage/Captions/Offsets/Position/Y",
+      "translation": "是的）："
+    },
+    {
+      "id": "/GeneralPage/Captions/Offsets/Position/Z",
+      "translation": "Z（前）："
+    },
+    {
+      "id": "/GeneralPage/Captions/OverrideDevice/Name",
+      "translation": "覆盖设备："
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/Disabled",
+      "translation": "骨骼预览已禁用"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/DisabledText",
+      "translation": "要重新启用它，请单击\n“显示骨骼”按钮。"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/Force",
+      "translation": "强制预览"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoDashboard",
+      "translation": "仪表板已关闭"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoDashboardText",
+      "translation": "暂停预览以节省资源\n当你回来时会再次运行。"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoFocus",
+      "translation": "窗口失去焦点"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoFocusText",
+      "translation": "暂停预览以节省资源\n当你回来时会再次运行。"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoSkeleton",
+      "translation": "没有发现骨骼"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoSkeletonText",
+      "translation": "确保设备正常工作\n并可以看到您的身体进行跟踪。"
+    },
+    {
+      "id": "/GeneralPage/Captions/Preview/NoSkeletonTextCalibrating",
+      "translation": "您必须在 VR 中并且正在工作\n骨骼跟踪使用自动校准。"
+    },
+    {
+      "id": "/GeneralPage/Captions/Tooltips/Orientation",
+      "translation": "旋转以度为单位。"
+    },
+    {
+      "id": "/GeneralPage/Captions/Tooltips/Position",
+      "translation": "位置以米为单位。"
+    },
+    {
+      "id": "/GeneralPage/Captions/VersionText",
+      "translation": "Amethyst版本："
+    },
+    {
+      "id": "/GeneralPage/Captions/OtherErrors/Line1",
+      "translation": "您还有其他设备错误！"
+    },
+    {
+      "id": "/GeneralPage/Captions/OtherErrors/Line2",
+      "translation": "单击此处立即检查它们"
+    },
+    {
+      "id": "/GeneralPage/Labels/Inferred",
+      "translation": "推断"
+    },
+    {
+      "id": "/GeneralPage/Labels/Tracking",
+      "translation": "追踪"
+    },
+    {
+      "id": "/GeneralPage/Tips/NoCalibration/Footer",
+      "translation": "您尝试校准的设备正在报告状态错误。\n请确保其已连接且工作正常。"
+    },
+    {
+      "id": "/GeneralPage/Tips/NoCalibration/Header",
+      "translation": "该设备目前无法校准！"
+    },
+    {
+      "id": "/GeneralPage/Titles/Device",
+      "translation": "设备"
+    },
+    {
+      "id": "/GeneralPage/Titles/Status",
+      "translation": "状态"
+    },
+    {
+      "id": "/GeneralPage/Titles/Trackers",
+      "translation": "追踪器"
+    },
+    {
+      "id": "/SettingsPage/Buttons/Error/Dismiss",
+      "translation": "解绑"
+    },
+    {
+      "id": "/SettingsPage/Buttons/Reset",
+      "translation": "删除配置并重启"
+    },
+    {
+      "id": "/SettingsPage/Buttons/RestartService",
+      "translation": "重新启动{0}"
+    },
+    {
+      "id": "/SettingsPage/Buttons/ViewLogs",
+      "translation": "打开 Amethyst 的日志文件夹"
+    },
+    {
+      "id": "/SettingsPage/Buttons/ServiceSettings",
+      "translation": "查看{0}服务设置"
+    },
+    {
+      "id": "/SettingsPage/Captions/AutoStart",
+      "translation": "自动以 {0} 开头"
+    },
+    {
+      "id": "/SettingsPage/Captions/CalibrateExtFlip",
+      "translation": "点击校准"
+    },
+    {
+      "id": "/SettingsPage/Captions/ExtFlip",
+      "translation": "开启时：Amethyst会决定你是否回头，\n检查当前活动的外部腰部追踪器（如果有）"
+    },
+    {
+      "id": "/SettingsPage/Captions/ExtFlipStatus/Active",
+      "translation": "已检测到并正在运行！"
+    },
+    {
+      "id": "/SettingsPage/Captions/ExtFlipStatus/Disabled",
+      "translation": "残疾人！"
+    },
+    {
+      "id": "/SettingsPage/Captions/ExtFlipStatus/NoTracker",
+      "translation": "未检测到外部腰部追踪器或超控！"
+    },
+    {
+      "id": "/SettingsPage/Captions/FaceTheKinect",
+      "translation": "面对 Kinect！"
+    },
+    {
+      "id": "/SettingsPage/Captions/Filters/Orientation",
+      "translation": "方向跟踪："
+    },
+    {
+      "id": "/SettingsPage/Captions/Filters/Position",
+      "translation": "位置跟踪过滤器："
+    },
+    {
+      "id": "/SettingsPage/Captions/SkeletonFlip",
+      "translation": "当转身离开{0}时镜子追踪器"
+    },
+    {
+      "id": "/SettingsPage/Captions/Sounds",
+      "translation": "启用应用程序声音"
+    },
+    {
+      "id": "/SettingsPage/Captions/TrackerPairs",
+      "translation": "使用追踪器对"
+    },
+    {
+      "id": "/SettingsPage/Captions/TrackersAutoCheck",
+      "translation": "检查并禁用现有的跟踪器"
+    },
+    {
+      "id": "/SettingsPage/Captions/TrackersAutoSpawn",
+      "translation": "启动时自动连接启用的跟踪器"
+    },
+    {
+      "id": "/SettingsPage/Captions/TrackersRestart/Line1",
+      "translation": "启用或禁用跟踪器需要重新启动 {0}"
+    },
+    {
+      "id": "/SettingsPage/Captions/TrackersRestart/Line2",
+      "translation": "和Amethyst以使更改生效。"
+    },
+    {
+      "id": "/SettingsPage/Captions/Services",
+      "translation": "将跟踪器发送至："
+    },
+    {
+      "id": "/SettingsPage/Captions/ServiceRestart",
+      "translation": "需要重新启动 {0} 才能正确启用/禁用跟踪器。"
+    },
+    {
+      "id": "/SettingsPage/Elements/ExtFlipCalibration/ToolTip",
+      "translation": "校准"
+    },
+    {
+      "id": "/SettingsPage/Elements/FlipToggle/ToolTip",
+      "translation": "禁用将停止跟踪\n当你转身时不会翻转。"
+    },
+    {
+      "id": "/SettingsPage/Filters/Orientation/Device",
+      "translation": "默认方向"
+    },
+    {
+      "id": "/SettingsPage/Filters/Orientation/HMD",
+      "translation": "跟随 VR 耳机"
+    },
+    {
+      "id": "/SettingsPage/Filters/Orientation/MathBased",
+      "translation": "基于脚踝的方向"
+    },
+    {
+      "id": "/SettingsPage/Filters/Orientation/MathBasedV2",
+      "translation": "基于腿部的定向"
+    },
+    {
+      "id": "/SettingsPage/Filters/Orientation/Off",
+      "translation": "禁用方向"
+    },
+    {
+      "id": "/SettingsPage/Filters/Position/Kalman",
+      "translation": "1 欧元过滤器"
+    },
+    {
+      "id": "/SettingsPage/Filters/Position/LERP",
+      "translation": "线性插值"
+    },
+    {
+      "id": "/SettingsPage/Filters/Position/LowPass",
+      "translation": "低通滤波器"
+    },
+    {
+      "id": "/SettingsPage/Filters/Position/Prediction",
+      "translation": "自适应预测"
+    },
+    {
+      "id": "/SettingsPage/Filters/Position/Off",
+      "translation": "禁用过滤器"
+    },
+    {
+      "id": "/SettingsPage/Filters/Managed",
+      "translation": "由{0}管理"
+    },
+    {
+      "id": "/SettingsPage/ReManifest/Error/NotFound",
+      "translation": "无法安装 Amethyst VR 清单。\n请检查它是否存在于根 (.exe) 路径中。"
+    },
+    {
+      "id": "/SettingsPage/ReManifest/Error/Other",
+      "translation": "无法安装 Amethyst VR 清单。\n请检查日志并考虑报告。"
+    },
+    {
+      "id": "/SettingsPage/ReRegister/Error/NotFound",
+      "translation": "未找到 Amethyst 崩溃处理程序可执行文件。\n重新注册需要它，请检查是否有。"
+    },
+    {
+      "id": "/SettingsPage/Titles/ExtFlip",
+      "translation": "检测到时使用外部腰部跟踪数据而不是耳机"
+    },
+    {
+      "id": "/SettingsPage/Titles/SkeletonFlip",
+      "translation": "骨骼翻转"
+    },
+    {
+      "id": "/SettingsPage/Titles/Application",
+      "translation": "应用"
+    },
+    {
+      "id": "/SettingsPage/Titles/TrackerConfig/Header",
+      "translation": "追踪器配置"
+    },
+    {
+      "id": "/SettingsPage/Titles/TrackerConfig/Learn",
+      "translation": "了解有关这些设置的更多信息"
+    },
+    {
+      "id": "/SettingsPage/Titles/Services",
+      "translation": "跟踪输出"
+    },
+    {
+      "id": "/SettingsPage/Titles/Troubleshooting",
+      "translation": "故障排除"
+    },
+    {
+      "id": "/SettingsPage/Themes/System",
+      "translation": "遵循系统主题"
+    },
+    {
+      "id": "/SettingsPage/Themes/Dark",
+      "translation": "黑暗"
+    },
+    {
+      "id": "/SettingsPage/Themes/White",
+      "translation": "明亮"
+    },
+    {
+      "id": "/SettingsPage/Labels/DisplayLanguage",
+      "translation": "显示语言："
+    },
+    {
+      "id": "/SettingsPage/Labels/AppTheme",
+      "translation": "应用程序主题："
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Explanations/EKF",
+      "translation": "延迟最高，但结果非常干净。所有抖动均已消除，\n快速移动仍然具有响应性，因为过滤器具有预测性。"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Explanations/LERP",
+      "translation": "最小的延迟，使所有运动看起来都比传感器的能力更快。\n抖动仍然很明显。"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Explanations/LowPass",
+      "translation": "延迟稍微明显，但它消除了抖动，并且整体看起来比没有滤波器更平滑。"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Explanations/None",
+      "translation": "传感器的原始 30hz 输出。"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Names/EKF",
+      "translation": "- 1 欧元过滤器"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Names/LERP",
+      "translation": "- 线性插值（默认）"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Names/LowPass",
+      "translation": "- 低通滤波器"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Filters/Names/None",
+      "translation": "- 禁用过滤器"
+    },
+    {
+      "id": "/SettingsLearn/Captions/ManageTrackers",
+      "translation": "当您启用或禁用一组跟踪器时，它们将立即生成或消失，\n但仍将存在于 {0} 中的设备列表中。\n[[您刚刚禁用的跟踪器将显示为关闭状态，直到重新启动 {0}。\n]]如果您在应用程序中遇到跟踪器检测问题，请先重新启动。"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Explanations/Default",
+      "translation": "对于 Xbox One Kinect 上的某些用户来说，此设置可能不稳定，请尝试软件计算的旋转\n如果是这样的话。这是Kinect SDK根据位置猜测的关节方向\n链中的每个关节。想象一下，如果你在身体的每一个肢体上都贴上箭头，指向\n朝向你的四肢。对于足部追踪器，Kinect 型号之间的行为有所不同。\n在 Xbox One 上，旋转基于脚尖，这意味着您的脚可以转动。\n在 Xbox 360 上，旋转仅基于脚踝，这意味着脚没有旋转。"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Explanations/HMD",
+      "translation": "跟踪器将跟随耳机在 Y 轴上面向的方向（转身）\n但不会在其他两个轴上旋转。"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Explanations/MathBased",
+      "translation": "此选项仅适用于脚步追踪器。\n脚的方向是根据脚踝和脚尖之间的角度计算的。\n并且范围缩小到50%以避免抖动。这允许在 Xbox 360 Kinect 上旋转脚部。"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Explanations/MathBasedV2",
+      "translation": "此选项仅适用于脚步追踪器。\n你的脚的方向是根据你的整条腿和腰部的关节姿势计算出来的。\n有一些调整可以使其更具响应性。这允许在 Xbox One Kinect 上旋转脚部。"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Explanations/None",
+      "translation": "跟踪器根本不旋转，除非通过背向进行跟踪器镜像（翻转）。"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Introduction",
+      "translation": "启用跟踪器镜像（骨骼翻转）后，所有旋转设置仍会受到其影响。"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Names/Default",
+      "translation": "- 默认方向"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Names/HMD",
+      "translation": "- 跟随VR耳机"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Names/MathBased",
+      "translation": "- 基于脚踝的方向"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Names/MathBasedV2",
+      "translation": "- 基于腿部的定向"
+    },
+    {
+      "id": "/SettingsLearn/Captions/Orientation/Names/None",
+      "translation": "- 禁用方向"
+    },
+    {
+      "id": "/SettingsLearn/Captions/TrackerConfig",
+      "translation": "Amethyst 支持最多 7 个基地跟踪器。可以通过齿轮图标切换其他选项。\n每个跟踪器或跟踪器组都包含用于调整特定跟踪器的旋转和过滤处理方式的设置。\n例如，如果您打算坐着，您可以在脚和腰部设置一个强大的过滤器\n向下很多，同时还对肘部使用更快的设置，以便它们更紧密地跟随您的手。"
+    },
+    {
+      "id": "/SettingsLearn/Captions/TrackerConfigNote",
+      "translation": "注意：其中一些设置仅在使用 Kinect 时相关。"
+    },
+    {
+      "id": "/SettingsLearn/Titles/FilterSettings",
+      "translation": "过滤器设置："
+    },
+    {
+      "id": "/SettingsLearn/Titles/ManageTrackers",
+      "translation": "启用和禁用跟踪器："
+    },
+    {
+      "id": "/SettingsLearn/Titles/RotationSettings",
+      "translation": "旋转设置："
+    },
+    {
+      "id": "/SettingsLearn/Titles/TrackerConfig",
+      "translation": "关于跟踪器配置"
+    },
+    {
+      "id": "/DevicesPage/Buttons/Deselect/ToolTip",
+      "translation": "取消选择该设备将\n将其从覆盖角色中取消设置。"
+    },
+    {
+      "id": "/DevicesPage/Buttons/Deselect",
+      "translation": "取消选择"
+    },
+    {
+      "id": "/DevicesPage/Buttons/Disconnect",
+      "translation": "断开"
+    },
+    {
+      "id": "/DevicesPage/Buttons/JoinDiscord",
+      "translation": "加入不和谐"
+    },
+    {
+      "id": "/DevicesPage/Buttons/NoJoints/Dismiss",
+      "translation": "解雇"
+    },
+    {
+      "id": "/DevicesPage/Buttons/Reconnect",
+      "translation": "刷新"
+    },
+    {
+      "id": "/DevicesPage/Buttons/SetAs/Base/ToolTip",
+      "translation": "该设备将提供主要\n虚拟跟踪器的位置和旋转。"
+    },
+    {
+      "id": "/DevicesPage/Buttons/SetAs/Base",
+      "translation": "设置为基础"
+    },
+    {
+      "id": "/DevicesPage/Buttons/SetAs/Header/ToolTip",
+      "translation": "设置所选设备\n作为基础或覆盖。"
+    },
+    {
+      "id": "/DevicesPage/Buttons/SetAs/Header",
+      "translation": "将设备设置为..."
+    },
+    {
+      "id": "/DevicesPage/Buttons/SetAs/Override/ToolTip",
+      "translation": "设备将覆盖位置/旋转\n一个或多个虚拟跟踪器。"
+    },
+    {
+      "id": "/DevicesPage/Buttons/SetAs/Override",
+      "translation": "设置为覆盖"
+    },
+    {
+      "id": "/DevicesPage/Buttons/ViewDocs",
+      "translation": "查看文档"
+    },
+    {
+      "id": "/DevicesPage/Placeholders/Joints/Disabled/PlaceholderText",
+      "translation": "关节残疾"
+    },
+    {
+      "id": "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText",
+      "translation": "无覆盖"
+    },
+    {
+      "id": "/DevicesPage/Titles/Check/Orientation",
+      "translation": "方向"
+    },
+    {
+      "id": "/DevicesPage/Titles/Check/Position",
+      "translation": "位置"
+    },
+    {
+      "id": "/DevicesPage/Titles/CurrentDevice",
+      "translation": "目前正在追踪"
+    },
+    {
+      "id": "/DevicesPage/Titles/DeviceBase",
+      "translation": "设备："
+    },
+    {
+      "id": "/DevicesPage/Titles/DeviceHasNoJoints",
+      "translation": "该设备不提供任何关节\n您将无法设置或使用它！"
+    },
+    {
+      "id": "/DevicesPage/Titles/DeviceOverride",
+      "translation": "覆盖："
+    },
+    {
+      "id": "/DevicesPage/Titles/Devices",
+      "translation": "设备"
+    },
+    {
+      "id": "/DevicesPage/Titles/DeviceSettings",
+      "translation": "设备提供的设置"
+    },
+    {
+      "id": "/DevicesPage/Titles/DeviceStatus",
+      "translation": "地位："
+    },
+    {
+      "id": "/DevicesPage/Titles/Joints/Assign",
+      "translation": "分配关节"
+    },
+    {
+      "id": "/DevicesPage/Titles/Joints/ElbowsAndKnees",
+      "translation": "肘部和膝盖追踪器"
+    },
+    {
+      "id": "/DevicesPage/Titles/Joints/Other",
+      "translation": "其他追踪器"
+    },
+    {
+      "id": "/DevicesPage/Titles/Joints/WaistAndFeet",
+      "translation": "腰部和脚部追踪器"
+    },
+    {
+      "id": "/DevicesPage/Titles/NoOverrides",
+      "translation": "无覆盖"
+    },
+    {
+      "id": "/DevicesPage/Titles/Overrides/Header",
+      "translation": "覆盖"
+    },
+    {
+      "id": "/DevicesPage/Titles/Set/Orientation",
+      "translation": "方向："
+    },
+    {
+      "id": "/DevicesPage/Titles/Set/Position",
+      "translation": "位置："
+    },
+    {
+      "id": "/DevicesPage/Titles/Set/TrackedJoint",
+      "translation": "履带式接头："
+    },
+    {
+      "id": "/DevicesPage/Titles/Set/Tracker",
+      "translation": "追踪器："
+    },
+    {
+      "id": "/DevicesPage/Titles/SetAsDevice",
+      "translation": "设置为跟踪设备："
+    },
+    {
+      "id": "/DevicesPage/Badges/Devices/Base",
+      "translation": "根据"
+    },
+    {
+      "id": "/DevicesPage/Badges/Devices/Override",
+      "translation": "覆盖"
+    },
+    {
+      "id": "/DevicesPage/Badges/Devices/Error",
+      "translation": "错误"
+    },
+    {
+      "id": "/DevicesPage/ToolTips/Overrides/Overlapping",
+      "translation": "该关节当前被 {0} 覆盖"
+    },
+    {
+      "id": "/DevicesPage/Devices/Reload/Title",
+      "translation": "插件配置已更改！"
+    },
+    {
+      "id": "/DevicesPage/Devices/Reload/Content",
+      "translation": "添加或删除了新插件。必须重新启动 Amethyst 才能使这些更改生效。"
+    },
+    {
+      "id": "/DevicesPage/Devices/Reload/Restart",
+      "translation": "重启紫晶"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Open",
+      "translation": "管理插件"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Title",
+      "translation": "管理插件"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Blocked",
+      "translation": "该插件在加载时遇到错误，只要错误仍然存​​在，它将保持阻塞状态。请查看下面的原因并检查日志以获取更多信息。"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Reason",
+      "translation": "原因："
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/GUID",
+      "translation": "GUID："
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Location",
+      "translation": "地点："
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Publisher",
+      "translation": "经过"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Website",
+      "translation": "网站："
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Unknown",
+      "translation": "发生了其他一些意外错误，请通过我们的 Discord 服务器联系我们。"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/NoError",
+      "translation": "一切都很好，庆祝时刻！"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/LoadingSkipped",
+      "translation": "由用户在应用程序设置中禁用。"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/NoPluginFolder",
+      "translation": "未找到指定的插件文件夹，请检查该文件夹是否仍然存在。"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/NoPluginDll",
+      "translation": "插件类库文件（plugin*.dll）丢失。请检查它是否存在。"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/NoPluginDependencyDll",
+      "translation": "找不到该插件所需的文件之一。请检查所有依赖项是否都存在。"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/PluginDllLinkError",
+      "translation": "链接到插件类库 (.dll) 失败。"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/InvalidFactory",
+      "translation": "调用插件工厂（延迟加载）方法失败。"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/BadOrDuplicateGuid",
+      "translation": "此插件的 GUID 为空、无效或已被另一插件使用。"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/Other",
+      "translation": "由于某种原因，该插件似乎无效......"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Buttons/Update",
+      "translation": "更新并重新启动"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/UpdateAvailable",
+      "translation": "更新已定！"
+    },
+    {
+      "id": "/DevicesPage/Devices/Manager/Labels/UpdateMessage",
+      "translation": "重新启动 Amethyst 以将 {0} 更新为 {1}"
+    },
+    {
+      "id": "/InfoPage/AppCaption",
+      "translation": "由 K2VR 团队提供"
+    },
+    {
+      "id": "/InfoPage/AppTitle",
+      "translation": "紫晶"
+    },
+    {
+      "id": "/InfoPage/Credits/Community",
+      "translation": "以及一路上提供帮助的所有其他人。"
+    },
+    {
+      "id": "/InfoPage/Credits/Header",
+      "translation": "制作人员"
+    },
+    {
+      "id": "/InfoPage/Credits/Helpers/Title",
+      "translation": "帮手："
+    },
+    {
+      "id": "/InfoPage/Credits/Donators/Title",
+      "translation": "捐助者："
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Akaya",
+      "translation": "首席开发人员："
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Aria",
+      "translation": "支持（未激活）："
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Artemis",
+      "translation": "支持："
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Noelle",
+      "translation": "项目管理："
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Hekky",
+      "translation": "安装程序开发："
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Roles/Himbeer",
+      "translation": "安装程序开发："
+    },
+    {
+      "id": "/InfoPage/Credits/MainTeam/Title",
+      "translation": "主要团队："
+    },
+    {
+      "id": "/InfoPage/Credits/Translators/Title",
+      "translation": "译者："
+    },
+    {
+      "id": "/InfoPage/Telemetry/Header",
+      "translation": "收集的数据和隐私政策"
+    },
+    {
+      "id": "/InfoPage/Telemetry/Notice",
+      "translation": "Amethyst 使用 Microsoft App Center 收集匿名数据，这有助于我们进行应用程序开发和排除重大错误。 \n发送到应用程序中心的信息是匿名的，并且不含任何用户或上下文数据。此外，您可以随时禁用发送。"
+    },
+    {
+      "id": "/InfoPage/Telemetry/Switch",
+      "translation": "切换下面的开关以禁用/启用向应用程序中心发送任何内容。"
+    },
+    {
+      "id": "/InfoPage/Telemetry/Toggle/On",
+      "translation": "数据收集已启用"
+    },
+    {
+      "id": "/InfoPage/Telemetry/Toggle/Off",
+      "translation": "数据收集已禁用"
+    },
+    {
+      "id": "/BlockedPage/Buttons/Kill",
+      "translation": "结束任务"
+    },
+    {
+      "id": "/BlockedPage/Buttons/Skip",
+      "translation": "跳过更新 {0}"
+    },
+    {
+      "id": "/BlockedPage/Headers/Blocked",
+      "translation": "无法更新{0}！"
+    },
+    {
+      "id": "/BlockedPage/Contents/Blocked",
+      "translation": "某些进程阻止 {0} 自动更新，请手动关闭它们，使用每个进程旁边的按钮终止每个进程，或者暂时跳过更新 {0}。"
+    },
+    {
+      "id": "/BlockedPage/Flyouts/Elevated/Notice",
+      "translation": "该进程当前正在以管理员权限运行， \nAmethyst需要请求额外的权限才能杀死它。"
+    },
+    {
+      "id": "/ReportPage/Titles/Captured",
+      "translation": "为错误报告捕获的文件"
+    },
+    {
+      "id": "/ReportPage/Contents/Captured",
+      "translation": "支持人员可能会要求您提供 Amethyst 日志文件及其配置。 Amethyst 已经为您准备好了这些文件。只需拖放下面概述的元素即可共享这些文件，或手动复制它们。"
+    },
+    {
+      "id": "/ReportPage/Contents/Clipboard",
+      "translation": "复制到剪贴板"
+    },
+    {
+      "id": "/ReportPage/Captions/Clipboard",
+      "translation": "您还可以使用下面的按钮手动将所有内容复制到剪贴板，然后像任何其他复制的文件、文本或图像一样粘贴。"
+    },
+    {
+      "id": "/ReportPage/Captions/Drop",
+      "translation": "拖放概述的字段以共享最后的 Amethyst 日志文件和设置。这与从文件夹中拖动文件相同。"
+    },
+    {
+      "id": "/ReportPage/Captions/Elevated",
+      "translation": "对于以提升的权限运行的应用程序，拖放功能被禁用。请手动复制所有需要的文件。"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Devices",
+      "translation": "设备"
+    },
+    {
+      "id": "/SharedStrings/Buttons/General",
+      "translation": "一般的"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Developers",
+      "translation": "对于开发人员"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Discord",
+      "translation": "K2VR社区"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overrides",
+      "translation": "覆盖文档"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/DevicesPage/Overview",
+      "translation": "设备页面文档"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Automatic",
+      "translation": "自动校准"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Main",
+      "translation": "校准文档"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Calibration/Manual",
+      "translation": "手动校准"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Offsets",
+      "translation": "偏移量文档"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/GeneralPage/Overview",
+      "translation": "通用页面文档"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/InfoPage/OpenCollective",
+      "translation": "我们的开放集体"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Docs/SettingsPage/Overview",
+      "translation": "设置页面文档"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Header",
+      "translation": "帮助"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Help/Licenses",
+      "translation": "开源许可证"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Info",
+      "translation": "信息"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Plugins",
+      "translation": "插件"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Settings",
+      "translation": "设置"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Updates/Header",
+      "translation": "更新"
+    },
+    {
+      "id": "/SharedStrings/Buttons/Updates/Install",
+      "translation": "更新并重新启动"
+    },
+    {
+      "id": "/SharedStrings/Buttons/PluginUpdates/Inspect",
+      "translation": "更新并重新启动"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/0",
+      "translation": "双手"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/1",
+      "translation": "左脚"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/10",
+      "translation": "胸部"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/11",
+      "translation": "相机"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/12",
+      "translation": "键盘"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/2",
+      "translation": "右脚"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/3",
+      "translation": "左肩"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/4",
+      "translation": "右肩"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/5",
+      "translation": "左肘"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/6",
+      "translation": "右肘"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/7",
+      "translation": "左膝"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/8",
+      "translation": "右膝"
+    },
+    {
+      "id": "/SharedStrings/Joints/Enum/9",
+      "translation": "腰部"
+    },
+    {
+      "id": "/SharedStrings/Joints/Pairs/1",
+      "translation": "足部追踪器"
+    },
+    {
+      "id": "/SharedStrings/Joints/Pairs/3",
+      "translation": "肩部追踪器"
+    },
+    {
+      "id": "/SharedStrings/Joints/Pairs/5",
+      "translation": "肘部追踪器"
+    },
+    {
+      "id": "/SharedStrings/Joints/Pairs/7",
+      "translation": "膝盖追踪器"
+    },
+    {
+      "id": "/SharedStrings/Joints/NotSupported/Flag",
+      "translation": "（不支持）"
+    },
+    {
+      "id": "/SharedStrings/Joints/NotSupported/Tooltip",
+      "translation": "{0} 不支持具有此角色的跟踪器"
+    },
+    {
+      "id": "/SharedStrings/Toasts/AutoSpawnFailed",
+      "translation": "服务器发生故障，无法生成人体追踪器"
+    },
+    {
+      "id": "/SharedStrings/Toasts/AutoSpawnFailed/Title",
+      "translation": "我们无法自动生成跟踪器！"
+    },
+    {
+      "id": "/SharedStrings/Toasts/RestartFailed",
+      "translation": "请尝试手动重启"
+    },
+    {
+      "id": "/SharedStrings/Toasts/RestartFailed/Title",
+      "translation": "我们无法为您重新启动 Amethyst！"
+    },
+    {
+      "id": "/SharedStrings/Toasts/TrackersAutoDisabled",
+      "translation": "发现了具有压倒性作用的其他跟踪器，因此Amethyst的相应跟踪器被禁用"
+    },
+    {
+      "id": "/SharedStrings/Toasts/TrackersAutoDisabled/Title",
+      "translation": "一个或多个跟踪器已被禁用"
+    },
+    {
+      "id": "/SharedStrings/Toasts/TrackersConfigChanged",
+      "translation": "重新启动 {0} 以使更改生效"
+    },
+    {
+      "id": "/SharedStrings/Toasts/TrackersConfigChanged/Title",
+      "translation": "跟踪器配置已更改"
+    },
+    {
+      "id": "/SharedStrings/Updates/NewUpdateFound",
+      "translation": "新更新可用！"
+    },
+    {
+      "id": "/SharedStrings/Updates/NewUpdateMessage",
+      "translation": "重新启动 Amethyst 以将其更新至版本 v{0}"
+    },
+    {
+      "id": "/SharedStrings/Updates/Suggestions",
+      "translation": "如果您有任何想法请告诉我们\n以便下次Amethyst更新。"
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginUpdates/Title",
+      "translation": "新插件更新可用！"
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginUpdates/Message",
+      "translation": "重新启动 Amethyst 以应用所有待处理的插件更新。"
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginInstall/Title",
+      "translation": "插件安装待定！"
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginInstall/Message",
+      "translation": "重新启动 Amethyst 以执行所有排队的插件安装。"
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginInstall/Action",
+      "translation": "立即重新启动"
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginUninstall/Title",
+      "translation": "插件卸载待处理！"
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginUninstall/Message",
+      "translation": "重新启动 Amethyst 以执行所有排队的插件卸载。"
+    },
+    {
+      "id": "/SharedStrings/Updates/PluginUninstall/Action",
+      "translation": "立即重新启动"
+    },
+    {
+      "id": "/SharedStrings/Updates/UpToDate",
+      "translation": "你是最新的"
+    },
+    {
+      "id": "/SharedStrings/Updates/Headers/Downloading",
+      "translation": "更新到Amethyst v{0}"
+    },
+    {
+      "id": "/SharedStrings/Updates/Headers/Preparing",
+      "translation": "正在准备更新，这可能需要一些时间......"
+    },
+    {
+      "id": "/SharedStrings/Updates/Headers/Status",
+      "translation": "地位："
+    },
+    {
+      "id": "/SharedStrings/Updates/Statuses/Downloading",
+      "translation": "下载 - 0%"
+    },
+    {
+      "id": "/SharedStrings/Updates/Statuses/DownloadingNoProgress",
+      "translation": "正在下载..."
+    },
+    {
+      "id": "/SharedStrings/Updates/Statuses/Error",
+      "translation": "更新Amethyst时出错！"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Updates/Headers/Downloading",
+      "translation": "将 {0} 更新到 v{1}"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Updates/Headers/Preparing",
+      "translation": "正在准备更新..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Updates/Headers/Restart",
+      "translation": "{0} 将在下次 Amethyst 打开时更新！"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Updates/Headers/Status",
+      "translation": "地位："
+    },
+    {
+      "id": "/SharedStrings/Plugins/Updates/Statuses/Downloading",
+      "translation": "正在下载{0} v{1}..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Updates/Statuses/Error",
+      "translation": "更新{0}时出错！"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Downloading",
+      "translation": "正在安装{0} {1}"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Preparing",
+      "translation": "正在准备插件包..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Restart",
+      "translation": "{0} 将在下次 Amethyst 打开时安装完毕！"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Status",
+      "translation": "地位："
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Statuses/Downloading",
+      "translation": "正在下载{0} {1}..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Statuses/Error",
+      "translation": "安装{0}时出错！"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Search",
+      "translation": "搜索或粘贴链接："
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Contents/Search",
+      "translation": "搜索插件，或将链接粘贴到插件存储库"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/SearchTip/Search",
+      "translation": "使用名称或描述中的关键字搜索插件， \n或者只需将链接粘贴到位于 GitHub 上的插件存储库。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/SearchTip/Drag",
+      "translation": "您还可以将插件链接/文件夹/zip 拖放到此处进行安装。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/ErrorTip/Content",
+      "translation": "执行插件搜索查询时发生致命异常， \n或者您刚刚超出了 GitHub API 请求速率限制。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/ErrorTip/Drag",
+      "translation": "您仍然可以通过拖放或使用链接/文件夹/zip 安装插件。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/RateTip/Start",
+      "translation": "GitHub API 速率超出。请稍等，或者"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/RateTip/Link",
+      "translation": "登录 GitHub"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/RateTip/End",
+      "translation": "搜索更多 Amethyst 插件。您仍然可以使用拖放来安装插件。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/NoResults",
+      "translation": "您的搜索碰巧没有返回任何结果。 \n……或者只是风而已，谁知道呢？"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Login/Instructions",
+      "translation": "将此代码粘贴到您的网络浏览器刚刚显示的提示中。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Headers/Login/Message",
+      "translation": "这将使您登录到 GitHub API，从而允许更高的查询率。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Tips/Official",
+      "translation": "K2VR团队发布"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Tips/AlreadyInstalled",
+      "translation": "该插件已安装，是否要卸载？"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Labels/Description",
+      "translation": "插件说明："
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Labels/NoReleases",
+      "translation": "该插件没有版本，无法使用商店安装。\n请随时联系作者有关测试或预览版本的事宜。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Labels/Title",
+      "translation": "发布标题："
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Labels/Date",
+      "translation": "发表于："
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Labels/Changelog",
+      "translation": "变更日志："
+    },
+    {
+      "id": "/SharedStrings/Plugins/Store/Buttons/Install",
+      "translation": "安装"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Error/Validating",
+      "translation": "验证 {0} 时出错！"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Error/Installing",
+      "translation": "安装{0}时出错！"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Error/Exception",
+      "translation": "安装包时出错！"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Downloading",
+      "translation": "正在下载{0}..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Validating",
+      "translation": "正在验证{0}..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Installing",
+      "translation": "正在安装{0}..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Headers/Installed",
+      "translation": "已安装{0}！"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound",
+      "translation": "{0} 不包含插件类库文件 (plugin*.dll)，无法安装。请手动验证包。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Statuses/Error/NotFound/Plural",
+      "translation": "{0} 不包含插件类库文件 (plugin*.dll)，无法安装。请手动验证包。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Statuses/Error/Invalid",
+      "translation": "{0} 不是有效的插件包（必须是 .zip 文件），无法安装。请手动验证包。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Statuses/Error/Exception",
+      "translation": "由于异常而无法处理包：{0}。请手动安装该软件包。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Statuses/Installed",
+      "translation": "插件包解析成功！ {0} 将在下次 Amethyst 打开时安装完毕！"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Resources/Files",
+      "translation": "文件"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Resources/Folder",
+      "translation": "文件夹"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Drop/Resources/Package",
+      "translation": "包裹"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/DependencyNotFound",
+      "translation": "由于缺少依赖项，Amethyst 无法加载此插件。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/DependencyInstaller",
+      "translation": "这个插件提供了一个集成的依赖安装程序，它应该（希望）解决这个问题。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/InstallingPlaceholder",
+      "translation": "正在安装{0}..."
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/ProgressPlaceholder",
+      "translation": "{0}%"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/InternalException",
+      "translation": "发生异常，安装过程无法继续。消息：{0}"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Fix/Contents/InternalException",
+      "translation": "发生异常，修复应用程序进程无法继续。消息：{0}"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/Success",
+      "translation": "{0}安装成功！重新启动 Amethyst 以加载此插件。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/Failure",
+      "translation": "{0}安装失败！请稍后重试。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Fix/Contents/Failure",
+      "translation": "{0}修复失败！请稍后重试。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Fix/Uri/NotFound",
+      "translation": "在任何 Amethyst 插件目录中都没有找到可加载的插件。 \n\n请验证 Amethyst 是否是最新的并且其文件未损坏。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Fix/Uri/FixName",
+      "translation": "在任何 Amethyst 插件目录中均未找到 guid 为 {0} 的可加载插件。 \n\n请验证查询和可用插件。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Fix/Uri/Error",
+      "translation": "在 GUID 为 {1} 的插件下未找到名称为“{0}”的可见修复。 \n\n请验证查询和可用插件。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/Cancelled",
+      "translation": "已被用户取消。"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/AdditionalLinks",
+      "translation": "该插件提供了附加链接，因此您可以"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/PluginDocs",
+      "translation": "查看故障排除文档"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/Separator",
+      "translation": "或者"
+    },
+    {
+      "id": "/SharedStrings/Plugins/Dep/Contents/Download",
+      "translation": "下载其依赖项"
+    },
+    {
+      "id": "/PluginStore/Titles/Install",
+      "translation": "安装{0} {1}"
+    },
+    {
+      "id": "/PluginStore/Titles/Installing/Setup",
+      "translation": "已将 {0} 安装排队！"
+    },
+    {
+      "id": "/PluginStore/Titles/Uninstalling/Notice",
+      "translation": "已删除排队的 {0}！"
+    },
+    {
+      "id": "/PluginStore/Captions/Uninstalling/Notice",
+      "translation": "Amethyst 应在下次启动时将其删除。"
+    },
+    {
+      "id": "/PluginStore/Captions/Installing/Setup",
+      "translation": "重新启动 Amethyst 进行安装。"
+    },
+    {
+      "id": "/CrashHandler/Content/AlreadyRunning",
+      "translation": "看起来该应用程序已经在运行\n并且您尝试启动第二个实例，\n目前不支持此操作。\n\n请检查应用程序是否未打开。\n如果问题仍然存在，请按“强制退出”按钮。"
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/NoPlugins",
+      "translation": "Amethyst中没有可加载和使用的合适插件。\n\n请检查您是否安装了所有依赖项，例如正确的服务或框架运行时以及插件所需的其他依赖项库。"
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/NoDevices",
+      "translation": "没有合适的设备（插件）可用于加载和用于身体跟踪。\n\n请检查您是否已安装所有依赖项，例如正确的 Kinect SDK/运行时以及您的设备所需的其他依赖项库。"
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/NoServices",
+      "translation": "没有合适的服务插件可用于端点加载和使用。\n\n请检查您是否已安装所有依赖项，例如正确的服务运行时和服务所需的其他依赖项库。"
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/NoJoints",
+      "translation": "没有有效的加载设备插件可用于处理身体跟踪。\n\n请检查您的所有设备插件是否有效且正常工作。当加载的设备在初始化时均不提供有效的跟踪关节时，就会发生此错误。"
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/OpenVR",
+      "translation": "该应用程序无法成功初始化 OpenVR (SteamVR)，并决定放弃。\n\n请检查SteamVR是否正在运行，并且您的VR耳机是否已正确连接。此外，您可以尝试重新启动并检查日志文件。"
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/Panic",
+      "translation": "主程序循环已崩溃超过 7 次，因此 Amethyst 被关闭。\n\n请检查您的所有设备/插件是否正常工作并检查日志。或者，您可以删除应用程序配置，然后尝试再次运行它。"
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/Unknown",
+      "translation": "看起来该应用程序发生了一些奇怪的事情。\n\n先别惊慌，这（可能）甚至不是你的错。\n\n请尝试重新运行该应用程序。\n如果问题仍然存在，请获取日志并通过 Discord 联系我们。"
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/UnknownStack",
+      "translation": "看起来该应用程序发生了一些奇怪的事情。\n\n先别惊慌，这（可能）甚至不是你的错。\n\n请尝试重新运行该应用程序。\n如果问题仍然存在，请获取日志并通过 Discord 联系我们。\n\n可用的崩溃信息：\n{0}"
+    },
+    {
+      "id": "/CrashHandler/Content/Crash/Elevated",
+      "translation": "SteamVR 进程当前已提升，Amethyst 无法与其通信。\n\nSteam 或 SteamVR 被篡改导致了这种情况。撤消这些更改并重试。"
+    },
+    {
+      "id": "/CrashHandler/Content/Recovery",
+      "translation": "看起来您已经手动运行了崩溃处理程序。你想做什么？\n\n当您还在这里时，请考虑向我们的 OpenCollective 捐款，以便我们能够保持所有这些东西的正常运行。哦，感谢您使用Amethyst！"
+    },
+    {
+      "id": "/CrashHandler/PrimaryButton/AlreadyRunning",
+      "translation": "强制退出"
+    },
+    {
+      "id": "/CrashHandler/PrimaryButton/Crash/Default",
+      "translation": "查看文档"
+    },
+    {
+      "id": "/CrashHandler/PrimaryButton/Crash/Panic",
+      "translation": "重置配置"
+    },
+    {
+      "id": "/CrashHandler/PrimaryButton/Crash/Unknown",
+      "translation": "加入不和谐"
+    },
+    {
+      "id": "/CrashHandler/PrimaryButton/Recovery",
+      "translation": "开放集体"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/DriverNotFound",
+      "translation": "未找到 Amethyst Driver 文件夹。\n它是在崩溃处理程序周围的某个地方吗？"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/ExistingDrivers/Content",
+      "translation": "一名或多名名为“Amethyst”的司机\n已经存在，现在删除它们吗？"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/ExistingDrivers/Content_K2EX",
+      "translation": "已找到 K2EX SteamVR 驱动程序的副本。\n它与Amethyst不相容，需要去除。\n现在就做吗？"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/ExistingDrivers/PrimaryButton",
+      "translation": "消除"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/ExistingDrivers/PrimaryButton_K2EX",
+      "translation": "消除"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/ExistingDrivers/SecondaryButton",
+      "translation": "中止"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/ExistingDrivers/SecondaryButton_K2EX",
+      "translation": "中止"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/FatalRegisterException",
+      "translation": "无法注册 Amethyst 驱动程序，\n发生致命异常。"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/FatalRemoveException",
+      "translation": "无法删除 Amethyst 驱动程序，\n发生致命异常。"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/FatalRemoveException_K2EX",
+      "translation": "无法删除 K2EX SteamVR 驱动程序，\n发生致命异常。"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/Finished",
+      "translation": "你可以走了！"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/KillSteamVR/Content",
+      "translation": "SteamVR需要关闭\n要正确注册，现在杀死它吗？"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/KillSteamVR/PrimaryButton",
+      "translation": "杀掉"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/KillSteamVR/SecondaryButton",
+      "translation": "中止"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/OpenVRPathsError",
+      "translation": "无法读取 OpenVRPaths！\n确保它没有损坏，\n并运行 SteamVR 至少一次。"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/OpenVRPathsWriteError",
+      "translation": "无法注册 Amethyst 驱动程序，\nopenvrpaths 写入错误。"
+    },
+    {
+      "id": "/CrashHandler/ReRegister/SteamVRNotFound",
+      "translation": "找不到 SteamVR，\n确保它已安装。"
+    },
+    {
+      "id": "/CrashHandler/SecondaryButton/Recovery",
+      "translation": "关闭"
+    },
+    {
+      "id": "/CrashHandler/Title/AlreadyRunning",
+      "translation": "Amethyst正在运行！"
+    },
+    {
+      "id": "/CrashHandler/Title/Crash",
+      "translation": "Amethyst崩溃了！"
+    },
+    {
+      "id": "/CrashHandler/Title/Recovery",
+      "translation": "Amethyst回收"
+    },
+    {
+      "id": "/CrashHandler/Title/Elevated",
+      "translation": "SteamVR 以管理员身份运行！"
+    },
+    {
+      "id": "/NUX/Replay",
+      "translation": "重播欢迎导览"
+    },
+    {
+      "id": "/NUX/Prev",
+      "translation": "回去"
+    },
+    {
+      "id": "/NUX/Next",
+      "translation": "下一个"
+    },
+    {
+      "id": "/NUX/Skip",
+      "translation": "跳过教程"
+    },
+    {
+      "id": "/NUX/Finish",
+      "translation": "结束"
+    },
+    {
+      "id": "/NUX/Tip0/Title",
+      "translation": "你确定吗？"
+    },
+    {
+      "id": "/NUX/Tip0/Content",
+      "translation": "Amethyst 必须运行才能进行跟踪。再次单击退出。\n\n该消息只会显示一次。"
+    },
+    {
+      "id": "/NUX/Tip1/Title",
+      "translation": "欢迎来到Amethyst"
+    },
+    {
+      "id": "/NUX/Tip1/Content",
+      "translation": "让我们浏览一下该应用程序以及如何使用它。\n\n您可以随时从“设置”选项卡重播本教程。\n\n1 共 14 个"
+    },
+    {
+      "id": "/NUX/Tip2/Title",
+      "translation": "连接追踪器"
+    },
+    {
+      "id": "/NUX/Tip2/Content",
+      "translation": "单击此处将 Amethyst 跟踪器连接到 {0}。 （如果您的 VR 控制器没有响应，请断开并重新连接跟踪器）\n\n2 共 14 个"
+    },
+    {
+      "id": "/NUX/Tip3/Title",
+      "translation": "校准和对准"
+    },
+    {
+      "id": "/NUX/Tip3/Content",
+      "translation": "在使用跟踪器之前，您必须进行校准，将其与现有的 VR 游戏区域对齐。\n\n3 共 14 个"
+    },
+    {
+      "id": "/NUX/Tip4/Title",
+      "translation": "设备一览"
+    },
+    {
+      "id": "/NUX/Tip4/Content",
+      "translation": "您可以在此处查看当前正在跟踪哪些设备。\n任何问题或错误也会显示在这里。\n\n4 个（共 14 个）"
+    },
+    {
+      "id": "/NUX/Tip5/Title",
+      "translation": "配置跟踪器"
+    },
+    {
+      "id": "/NUX/Tip5/Content",
+      "translation": "您可以在此处启用或禁用跟踪器，并通过展开每个类别来设置其旋转和过滤器设置。\n请参阅右侧的链接以获取更多信息。\n\n5 共 14 个"
+    },
+    {
+      "id": "/NUX/Tip6/Title",
+      "translation": "启用更多跟踪器"
+    },
+    {
+      "id": "/NUX/Tip6/Content",
+      "translation": "单击齿轮图标可启用或禁用比默认显示的更多跟踪器。 （并非每个应用程序都支持所有跟踪器）\n\n6 共 14 个"
+    },
+    {
+      "id": "/NUX/Tip7/Title",
+      "translation": "使用 {0} 开始Amethyst"
+    },
+    {
+      "id": "/NUX/Tip7/Content",
+      "translation": "您不必每次都在计算机上搜索该应用程序，而是可以单击下拉菜单以启用 Amethyst 与 {0} 一起启动。\n\n7 共 14 个"
+    },
+    {
+      "id": "/NUX/Tip8/Title",
+      "translation": "可用设备"
+    },
+    {
+      "id": "/NUX/Tip8/Content",
+      "translation": "您可以在此处查看 Amethyst 可用的设备列表。如果缺少某些内容，您很可能没有相应的驱动程序。\n\n8 共 14 个"
+    },
+    {
+      "id": "/NUX/Tip9/Title",
+      "translation": "配置并检查设备"
+    },
+    {
+      "id": "/NUX/Tip9/Content",
+      "translation": "检查设备的状态并更改每个设备的设置。\n错误将显示在这里。\n\n9 共 14"
+    },
+    {
+      "id": "/NUX/Tip10/Title",
+      "translation": "覆盖和故障排除"
+    },
+    {
+      "id": "/NUX/Tip10/Content",
+      "translation": "右侧的按钮可让您将设备设置为基础或覆盖、刷新它并在发生错误时获取帮助。\n\n10 共 14"
+    },
+    {
+      "id": "/NUX/Tip11/Title",
+      "translation": "获得帮助和支持"
+    },
+    {
+      "id": "/NUX/Tip11/Content",
+      "translation": "单击任意页面上的“帮助”按钮即可获取有关该页面的文档的链接。如果您有任何疑问，请加入我们的 Discord。\n\n11 共 14"
+    },
+    {
+      "id": "/NUX/Tip12/Title",
+      "translation": "管理插件"
+    },
+    {
+      "id": "/NUX/Tip12/Content",
+      "translation": "这些是当前安装在 Amethyst 上的插件。从此列表中，您可以打开或关闭每个插件、更新它们并查看任何错误。\n\n12 共 14"
+    },
+    {
+      "id": "/NUX/Tip13/Title",
+      "translation": "获取新插件"
+    },
+    {
+      "id": "/NUX/Tip13/Content",
+      "translation": "Amethyst 允许您搜索新插件并直接在应用程序中安装它们。您还可以粘贴直接链接，或拖入 ZIP 文件。\n\n13 共 14"
+    },
+    {
+      "id": "/NUX/Tip14/Title",
+      "translation": "谢谢你！"
+    },
+    {
+      "id": "/NUX/Tip14/Content",
+      "translation": "Amethyst花了一段时间才制作并达到现在的状态。\n所以，你最好去玩玩。\n\n14 共 14"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Continue",
+      "translation": "继续进行有限设置"
+    },
+    {
+      "id": "/Installer/Views/SetupError/MissingDeps",
+      "translation": "由于设置有限，某些插件依赖项将不会安装。"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Admin/Title",
+      "translation": "以管理员身份重新启动？"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Admin/Message",
+      "translation": "在首次设置期间以管理员身份运行 Amethyst 将有助于正确设置您的设备和配置。它还应该使整个设置体验变得不那么复杂。"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Admin/Tip/Title",
+      "translation": "你确定吗？"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Admin/Tip/Message",
+      "translation": "如果没有提升的权限，Amethyst 可能无法正确设置您的某些设备，请记住这一点。"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Admin/Action",
+      "translation": "重新启动"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Internet/Title",
+      "translation": "没有互联网"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Internet/Message",
+      "translation": "在首次设置期间，互联网连接将有助于正确设置您的设备和配置。它还应该使整个设置体验变得不那么复杂且不易出错。"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Internet/Tip/Title",
+      "translation": "你确定吗？"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Internet/Tip/Message",
+      "translation": "如果没有有效的互联网连接，Amethyst 可能无法正确设置配置和某些设备。"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Internet/Action",
+      "translation": "重新启动"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Plugins/Title",
+      "translation": "缺少插件！"
+    },
+    {
+      "id": "/Installer/Views/SetupError/Plugins/Message",
+      "translation": "紫晶已经到处寻找过，却一无所获。既不可能在没有任何插件的情况下完成设置，也不可能实际使用 Amethyst。某些应用程序文件可能已损坏，请尝试使用 Microsoft Store 执行全新安装。"
+    },
+    {
+      "id": "/Installer/Dep/Contents/Success",
+      "translation": "{0}安装成功！"
+    },
+    {
+      "id": "/Installer/Fix/Contents/Success",
+      "translation": "已应用 {0} 修复！"
+    },
+    {
+      "id": "/Installer/Views/Setup/Dep/Select",
+      "translation": "选择要安装的内容并单击“下一步”"
+    },
+    {
+      "id": "/Installer/Views/Setup/Dep/Eula",
+      "translation": "请接受 EULA 协议以继续。"
+    },
+    {
+      "id": "/Installer/Views/Setup/Dep/Success",
+      "translation": "{0}设置成功！"
+    },
+    {
+      "id": "/Installer/Views/Setup/Captions/Select",
+      "translation": "要安装的依赖项和工具："
+    },
+    {
+      "id": "/Installer/Views/Setup/Captions/Selection",
+      "translation": "我应该选择哪一个？"
+    },
+    {
+      "id": "/Installer/Views/Setup/Captions/AlreadyInstalled",
+      "translation": "已安装"
+    },
+    {
+      "id": "/Installer/Views/Setup/Titles/Device",
+      "translation": "您将使用什么来进行跟踪？"
+    },
+    {
+      "id": "/Installer/Views/Setup/Titles/Service",
+      "translation": "追踪器将被发送到哪里？"
+    },
+    {
+      "id": "/Installer/Views/Setup/TeachingTips/Device/Title",
+      "translation": "选择正确的跟踪设备"
+    },
+    {
+      "id": "/Installer/Views/Setup/TeachingTips/Device/Text",
+      "translation": "您在此处选择的设备将由 Amethyst 设置，然后用于身体跟踪，或者作为您需要手动设置的辅助（覆盖）设备。这些设置稍后可以随时更改。"
+    },
+    {
+      "id": "/Installer/Views/Setup/TeachingTips/Service/Title",
+      "translation": "选择正确的服务端点"
+    },
+    {
+      "id": "/Installer/Views/Setup/TeachingTips/Service/Text",
+      "translation": "您在这里选择的服务将由 Amethyst 设置，然后用于身体跟踪，作为 Amethyst 数据的接收者。这些设置稍后可以随时更改。"
+    },
+    {
+      "id": "/Installer/Top/Setup",
+      "translation": "设置"
+    },
+    {
+      "id": "/Installer/Splashes/Welcome/Header",
+      "translation": "欢迎来到"
+    },
+    {
+      "id": "/Installer/Splashes/Welcome/ActionMessage",
+      "translation": "继续"
+    },
+    {
+      "id": "/Installer/Splashes/Ending/Header",
+      "translation": "Amethyst现已设置完毕。"
+    },
+    {
+      "id": "/Installer/Splashes/Ending/Message",
+      "translation": "玩得开心！"
+    },
+    {
+      "id": "/Installer/Splashes/Ending/ActionMessage",
+      "translation": "开始Amethyst"
+    },
+    {
+      "id": "/GeneralPage/Titles/Relay",
+      "translation": "跟踪中继"
+    }
+  ]
+}
