@@ -5,7 +5,8 @@
         "de": "German",
         "ru": "Russian",
         "it": "Italian",
-        "es": "Spanish"
+        "es": "Spanish",
+        "zh": "Chinese"
     },
     "fr": {
         "en": "Anglais",
@@ -13,7 +14,8 @@
         "de": "Allemand",
         "ru": "Russe",
         "it": "Italien",
-        "es": "Espagnol"
+        "es": "Espagnol",
+        "zh": "Chinois"
     },
     "de": {
         "en": "Englisch",
@@ -21,7 +23,8 @@
         "de": "Deutsch",
         "ru": "Russisch",
         "it": "Italienisch",
-        "es": "Spanisch"
+        "es": "Spanisch",
+        "zh": "Chinesisch"
     },
     "ru": {
         "en": "Английский",
@@ -29,7 +32,8 @@
         "de": "Немецкий",
         "ru": "Русский",
         "it": "Итальянский",
-        "es": "Испанский"
+        "es": "Испанский",
+        "zh": "Китайский"
     },
     "it": {
         "en": "Inglese",
@@ -37,7 +41,8 @@
         "de": "Tedesco",
         "ru": "Russo",
         "it": "Italiano",
-        "es": "Spagnolo"
+        "es": "Spagnolo",
+        "zh": "Cinese"
     },
     "es": {
         "en": "Inglés",
@@ -45,6 +50,15 @@
         "de": "Alemán",
         "ru": "Ruso",
         "es": "Español",
-        "it": "Italiano"
-    }
+        "it": "Italiano",
+        "zh": "Chino"
+    },
+    "zh": {
+        "en": "英语",
+        "fr": "法语",
+        "de": "德语",
+        "ru": "俄语",
+        "it": "意大利语",
+        "es": "西班牙语",
+        "zh": "简体中文"
 }
