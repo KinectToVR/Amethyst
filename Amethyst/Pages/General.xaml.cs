@@ -22,6 +22,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Shapes;
 using static Amethyst.Classes.Shared.TeachingTips;
 using Path = System.IO.Path;
@@ -47,6 +48,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
     private int _previousOffsetPageIndex;
     private bool _showSkeletonPrevious = true;
+    private bool _showCameraPrevious = false;
 
     private bool _skeletonDrawingCanvassLoadedOnce;
 
@@ -138,6 +140,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private bool ServiceNotRelay => AppPlugins.CurrentServiceEndpoint.Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
 
     private bool ServiceIsRelay => AppPlugins.CurrentServiceEndpoint.Guid is "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
+
+    private bool DeviceSupportsCamera => AppPlugins.BaseTrackingDevice.Guid
+        is "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1" or "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2";
 
     private IEnumerable<TrackingDevice> SelectedDevices => new List<TrackingDevice>()
         .Append(AppPlugins.BaseTrackingDevice).Concat(
@@ -407,6 +412,10 @@ public sealed partial class General : Page, INotifyPropertyChanged
         AppData.Settings.SkeletonPreviewEnabled = true; // Change to show
         SetSkeletonVisibility(true); // Change to show
 
+        _showCameraPrevious = AppData.Settings.CameraPreviewEnabled; // Back up
+        AppData.Settings.CameraPreviewEnabled = true; // Change to show
+        SetCameraEnabled(true); // Change to show
+
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
 
@@ -597,7 +606,10 @@ public sealed partial class General : Page, INotifyPropertyChanged
         _autoCalibrationStillPending = false;
 
         AppData.Settings.SkeletonPreviewEnabled = _showSkeletonPrevious; // Change to whatever
+        AppData.Settings.CameraPreviewEnabled = _showCameraPrevious; // Change to whatever
+
         SetSkeletonVisibility(_showSkeletonPrevious); // Change to whatever
+        SetCameraEnabled(_showCameraPrevious); // Change to whatever
     }
 
     private void CalibrationPointsNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
@@ -639,7 +651,10 @@ public sealed partial class General : Page, INotifyPropertyChanged
             NoSkeletonTextNotice.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoSkeletonText");
 
             AppData.Settings.SkeletonPreviewEnabled = _showSkeletonPrevious; // Change to whatever
+            AppData.Settings.CameraPreviewEnabled = _showCameraPrevious; // Change to whatever
+
             SetSkeletonVisibility(_showSkeletonPrevious); // Change to whatever
+            SetCameraEnabled(_showCameraPrevious); // Change to whatever
         }
         // Begin abort
         else
@@ -720,6 +735,10 @@ public sealed partial class General : Page, INotifyPropertyChanged
             AppData.Settings.SkeletonPreviewEnabled = true; // Change to show
             SetSkeletonVisibility(true); // Change to show
 
+            _showCameraPrevious = AppData.Settings.CameraPreviewEnabled; // Back up
+            AppData.Settings.CameraPreviewEnabled = true; // Change to show
+            SetCameraEnabled(true); // Change to show
+
             // Play a sound
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
 
@@ -783,6 +802,10 @@ public sealed partial class General : Page, INotifyPropertyChanged
             _showSkeletonPrevious = AppData.Settings.SkeletonPreviewEnabled; // Back up
             AppData.Settings.SkeletonPreviewEnabled = true; // Change to show
             SetSkeletonVisibility(true); // Change to show
+
+            _showCameraPrevious = AppData.Settings.CameraPreviewEnabled; // Back up
+            AppData.Settings.CameraPreviewEnabled = true; // Change to show
+            SetCameraEnabled(true); // Change to show
 
             // Play a sound
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
@@ -1053,6 +1076,46 @@ public sealed partial class General : Page, INotifyPropertyChanged
         Shared.Events.ReloadDevicesPageEvent?.Set(); // Full reload
     }
 
+    private void CameraImage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        // Don't handle preloads
+        if (!_skeletonDrawingCanvassLoadedOnce) return;
+        if (CameraImage?.Source is not BitmapSource imageSource ||
+            !AppData.Settings.CameraPreviewEnabled)
+        {
+            // If no image, keep the Canvas at its default size
+            SkeletonDrawingCanvas.Width = 640;
+            SkeletonDrawingCanvas.Height = 480;
+            Canvas.SetLeft(SkeletonDrawingCanvas, 0);
+            Canvas.SetTop(SkeletonDrawingCanvas, 0);
+            return;
+        }
+
+        var sourceAspectRatio = imageSource.PixelWidth / (double)imageSource.PixelHeight;
+        var containerAspectRatio = DrawingContainerGrid.ActualWidth / DrawingContainerGrid.ActualHeight;
+
+        double newCanvasWidth, newCanvasHeight;
+        if (sourceAspectRatio > containerAspectRatio)
+        {
+            // The image is wider than the container
+            newCanvasWidth = DrawingContainerGrid.ActualWidth;
+            newCanvasHeight = newCanvasWidth / sourceAspectRatio;
+        }
+        else
+        {
+            // The image is taller than the container
+            newCanvasHeight = DrawingContainerGrid.ActualHeight;
+            newCanvasWidth = newCanvasHeight * sourceAspectRatio;
+        }
+
+        // Center the canvas to match the visible part of the image
+        SkeletonDrawingCanvas.Width = newCanvasWidth;
+        SkeletonDrawingCanvas.Height = newCanvasHeight;
+
+        Canvas.SetLeft(SkeletonDrawingCanvas, (DrawingContainerGrid.ActualWidth - newCanvasWidth) / 2);
+        Canvas.SetTop(SkeletonDrawingCanvas, (DrawingContainerGrid.ActualHeight - newCanvasHeight) / 2);
+    }
+
     private void SkeletonDrawingCanvas_Loaded(object sender, RoutedEventArgs e)
     {
         // Don't handle reloads
@@ -1086,6 +1149,20 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 _isCurrentWindowActiveBackup = windowActive;
             }
 
+            if (CameraImage.Source is not BitmapSource ||
+                !AppData.Settings.CameraPreviewEnabled)
+            {
+                // If no image, keep the Canvas at its default size
+                SkeletonDrawingCanvas.Width = 640;
+                SkeletonDrawingCanvas.Height = 480;
+                Canvas.SetLeft(SkeletonDrawingCanvas, 0);
+                Canvas.SetTop(SkeletonDrawingCanvas, 0);
+            }
+
+            // Reset camera source if currently in use
+            if (AppData.Settings.CameraPreviewEnabled)
+                CameraImage.Source = AppPlugins.BaseTrackingDevice.CameraImage;
+
             // If we've disabled the preview
             if (!AppData.Settings.SkeletonPreviewEnabled)
             {
@@ -1106,6 +1183,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                     (SkeletonDrawingCanvas.Opacity, TrackingStateLabelsPanel.Opacity) = (0, 0);
                     (NoSkeletonNotice.Opacity, OutOfFocusNotice.Opacity) = (0, 0);
                     (DashboardClosedNotice.Opacity, PreviewDisabledNotice.Opacity) = (1, 0);
+                    CameraImage.Opacity = 0;
                     return; // Nothing more to do anyway
                 }
 
@@ -1116,6 +1194,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                     (SkeletonDrawingCanvas.Opacity, TrackingStateLabelsPanel.Opacity) = (0, 0);
                     (NoSkeletonNotice.Opacity, OutOfFocusNotice.Opacity) = (0, 1);
                     (DashboardClosedNotice.Opacity, PreviewDisabledNotice.Opacity) = (0, 0);
+                    CameraImage.Opacity = 0;
                     return; // Nothing more to do anyway
                 }
             }
@@ -1123,6 +1202,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             // Else hide the notices
             (DashboardClosedNotice.Opacity, PreviewDisabledNotice.Opacity,
                 OutOfFocusNotice.Opacity) = (0, 0, 0); // Only these for now
+            CameraImage.Opacity = AppData.Settings.CameraPreviewEnabled ? 1 : 0;
 
             var trackingDevice = AppPlugins.BaseTrackingDevice;
             var joints = trackingDevice.TrackedJoints;
@@ -1142,7 +1222,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
             // Show the UI
             (SkeletonDrawingCanvas.Opacity, TrackingStateLabelsPanel.Opacity) = (1, 1);
-            NoSkeletonNotice.Opacity = 0.0; // Say it
+            NoSkeletonNotice.Opacity = 0;
 
             // Clear visibilities
             BoneLines.ForEach(x => x.Visibility = Visibility.Collapsed);
@@ -1291,6 +1371,21 @@ public sealed partial class General : Page, INotifyPropertyChanged
             SkeletonToggleButton.IsChecked ? 1.0 : 0.5;
     }
 
+    private void CameraToggleButton_Click(object sender, object args)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+
+        AppPlugins.BaseTrackingDevice.IsCameraEnabled = CameraToggleButton.IsChecked ?? false;
+        AppData.Settings.CameraPreviewEnabled = CameraToggleButton.IsChecked ?? false;
+        AppData.Settings.SaveSettings();
+
+        // Play a sound
+        AppSounds.PlayAppSound(AppData.Settings.CameraPreviewEnabled
+            ? AppSounds.AppSoundType.ToggleOn
+            : AppSounds.AppSoundType.ToggleOff);
+    }
+
     private void ToggleButtonFlyout_Opening(object sender, object e)
     {
         // Play a sound
@@ -1396,9 +1491,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (matHeight < 1) matHeight = matHeightDefault;
 
         // Where to scale by 1.0 in perspective
-        const double normalDistance = 3;
-        const double normalEllipseSize = 12,
-            normalEllipseStrokeSize = 2;
+        const double normalDistance = 3, normalEllipseStrokeSize = 2, normalEllipseSize = 8;
 
         // Compose perspective constants, make it 70%
         var multiply = .7 * (normalDistance /
@@ -1443,20 +1536,43 @@ public sealed partial class General : Page, INotifyPropertyChanged
             sScaleH = matHeight / matHeightDefault;
 
         // Move the ellipse to the appropriate point
-        ellipse.Margin = new Thickness(
-            // Left
-            joint.Position.X * 300.0 *
-            Math.Min(sScaleW, sScaleH) * multiply +
-            matWidth / 2.0 - (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
+        if (AppPlugins.BaseTrackingDevice.CameraImage is not null)
+        {
+            var mapped = AppPlugins.BaseTrackingDevice.MapCoordinate(joint.Position);
 
-            // Top
-            joint.Position.Y * -300.0 *
-            Math.Min(sScaleW, sScaleH) * multiply +
-            matHeight / 3.0 - (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
+            var actualWidth = Math.Max(CameraImage.ActualWidth, 640.0);
+            var actualHeight = Math.Max(CameraImage.ActualHeight, 480.0);
 
-            // Not used
-            0, 0
-        );
+            ellipse.Margin = new Thickness(
+                // Left
+                mapped.Left * actualWidth / 640.0f -
+                (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
+
+                // Top
+                mapped.Top * actualHeight / 480.0f -
+                (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
+
+                // Not used
+                0, 0
+            );
+        }
+        else
+        {
+            ellipse.Margin = new Thickness(
+                // Left
+                joint.Position.X * 300.0 *
+                Math.Min(sScaleW, sScaleH) * multiply +
+                matWidth / 2.0 - (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
+
+                // Top
+                joint.Position.Y * -300.0 *
+                Math.Min(sScaleW, sScaleH) * multiply +
+                matHeight / 3.0 - (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
+
+                // Not used
+                0, 0
+            );
+        }
 
         ellipse.Visibility = Visibility.Visible;
     }
@@ -1479,8 +1595,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (matHeight < 1) matHeight = matHeightDefault;
 
         // Where to scale by 1.0 in perspective
-        const double normalDistance = 3;
-        const double normalLineStrokeSize = 5;
+        const double normalDistance = 3, normalLineStrokeSize = 4;
 
         // Compose perspective constants, make it 70%
         var fromMultiply = .7 * (normalDistance /
@@ -1504,15 +1619,31 @@ public sealed partial class General : Page, INotifyPropertyChanged
             sScaleH = matHeight / matHeightDefault;
 
         // Move the line to the appropriate point
-        line.X1 = fromJoint.Position.X * 300.0 *
-            Math.Min(sScaleW, sScaleH) * fromMultiply + matWidth / 2.0;
-        line.Y1 = fromJoint.Position.Y * -300.0 *
-            Math.Min(sScaleW, sScaleH) * fromMultiply + matHeight / 3.0;
+        if (AppPlugins.BaseTrackingDevice.CameraImage is not null)
+        {
+            var fromMapped = AppPlugins.BaseTrackingDevice.MapCoordinate(fromJoint.Position);
+            var toMapped = AppPlugins.BaseTrackingDevice.MapCoordinate(toJoint.Position);
 
-        line.X2 = toJoint.Position.X * 300.0 *
-            Math.Min(sScaleW, sScaleH) * toMultiply + matWidth / 2.0;
-        line.Y2 = toJoint.Position.Y * -300.0 *
-            Math.Min(sScaleW, sScaleH) * toMultiply + matHeight / 3.0;
+            var actualWidth = Math.Max(CameraImage.ActualWidth, 640.0);
+            var actualHeight = Math.Max(CameraImage.ActualHeight, 480.0);
+
+            (line.X1, line.Y1) = (fromMapped.Left * actualWidth / 640.0f,
+                fromMapped.Top * actualHeight / 480.0f);
+            (line.X2, line.Y2) = (toMapped.Left * actualWidth / 640.0f,
+                toMapped.Top * actualHeight / 480.0f);
+        }
+        else
+        {
+            line.X1 = fromJoint.Position.X * 300.0 *
+                Math.Min(sScaleW, sScaleH) * fromMultiply + matWidth / 2.0;
+            line.Y1 = fromJoint.Position.Y * -300.0 *
+                Math.Min(sScaleW, sScaleH) * fromMultiply + matHeight / 3.0;
+
+            line.X2 = toJoint.Position.X * 300.0 *
+                Math.Min(sScaleW, sScaleH) * toMultiply + matWidth / 2.0;
+            line.Y2 = toJoint.Position.Y * -300.0 *
+                Math.Min(sScaleW, sScaleH) * toMultiply + matHeight / 3.0;
+        }
 
         line.Visibility = Visibility.Visible;
         return true; // All good
@@ -1764,6 +1895,14 @@ public sealed partial class General : Page, INotifyPropertyChanged
             visibility ? "/GeneralPage/Buttons/Skeleton/Hide" : "/GeneralPage/Buttons/Skeleton/Show");
     }
 
+    private void SetCameraEnabled(bool visibility)
+    {
+        // Don't even care if we're not set up yet
+        if (!Shared.General.GeneralTabSetupFinished) return;
+
+        CameraToggleButton.IsChecked = visibility;
+    }
+
     private void SetSkeletonForce(bool visibility)
     {
         // Don't even care if we're not set up yet
@@ -1816,6 +1955,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Setup the preview button
         SetSkeletonVisibility(AppData.Settings.SkeletonPreviewEnabled);
+        SetCameraEnabled(AppData.Settings.CameraPreviewEnabled);
         SetSkeletonForce(AppData.Settings.ForceSkeletonPreview);
 
         // Setup the freeze button

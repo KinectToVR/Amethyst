@@ -160,6 +160,9 @@ public class AppSettings : INotifyPropertyChanged
     // Save the skeleton preview state
     public bool SkeletonPreviewEnabled { get; set; } = true;
 
+    // Save the camera preview state
+    public bool CameraPreviewEnabled { get; set; } = false;
+
     // If we wanna dismiss all warnings during the preview
     public bool ForceSkeletonPreview { get; set; } = false;
 

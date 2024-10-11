@@ -1,20 +1,54 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Imaging;
 using static Amethyst.Classes.Interfacing;
 
 namespace Amethyst.MVVM;
 
-public class TrackingDevice(string name, string guid, string path, Version version, ITrackingDevice device) : INotifyPropertyChanged
+public class TrackingDevice : INotifyPropertyChanged
 {
+    public TrackingDevice(string name, string guid, string path, Version version, ITrackingDevice device)
+    {
+        // Setup device data
+        Guid = guid;
+        Name = name;
+        Location = path;
+        Version = version;
+        Device = device;
+
+        // Setup optional camera streams
+        if (guid is not "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1"
+            and not "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2") return;
+
+        var cameraImageProperty = device.GetType().GetProperty("GetCameraImage");
+        var cameraMapperProperty = device.GetType().GetProperty("MapCoordinateDelegate");
+        var cameraEnabledProperty = device.GetType().GetProperty("GetIsCameraEnabled");
+        var cameraEnabledSetter = device.GetType().GetProperty("SetIsCameraEnabled");
+
+        if (!(cameraImageProperty?.CanRead ?? false) ||
+            !(cameraEnabledProperty?.CanRead ?? false) ||
+            !(cameraEnabledSetter?.CanRead ?? false) ||
+            !(cameraMapperProperty?.CanRead ?? false)) return;
+
+        // Cache all getters & setters for quicker access later on
+        GetCameraImage = cameraImageProperty.GetValue(device) as Func<BitmapSource>;
+        GetIsCameraEnabled = cameraEnabledProperty.GetValue(device) as Func<bool>;
+        SetIsCameraEnabled = cameraEnabledSetter.GetValue(device) as Action<bool>;
+        MapCoordinateDelegate = cameraMapperProperty.GetValue(device) as Func<Vector3, Size>;
+    }
+
     // Extensions: is this device set as base?
     public bool IsBase => AppPlugins.IsBase(Guid);
 
@@ -22,22 +56,22 @@ public class TrackingDevice(string name, string guid, string path, Version versi
     public bool IsOverride => AppPlugins.IsOverride(Guid);
 
     // Get GUID
-    [DefaultValue("INVALID")] public string Guid { get; } = guid;
+    [DefaultValue("INVALID")] public string Guid { get; }
 
     // Get Name
-    [DefaultValue("UNKNOWN")] public string Name { get; } = name;
+    [DefaultValue("UNKNOWN")] public string Name { get; }
 
     // Get Path
-    [DefaultValue("UNKNOWN")] public string Location { get; } = path;
+    [DefaultValue("UNKNOWN")] public string Location { get; }
 
     // Get the plugin version using its host assembly
-    [DefaultValue("0.0.0.0")] public Version Version { get; } = version;
+    [DefaultValue("0.0.0.0")] public Version Version { get; }
 
     // Get Docs
     [DefaultValue(null)] public Uri ErrorDocsUri => Device.ErrorDocsUri;
 
     // Underlying device handler
-    public ITrackingDevice Device { get; } = device;
+    public ITrackingDevice Device { get; }
 
     // Joints' list / you need to (should) update at every update() call
     // Each must have its own role or _Manual to force user's manual set
@@ -114,6 +148,36 @@ public class TrackingDevice(string name, string guid, string path, Version versi
 
     // Hot reload handler
     public FileSystemWatcher AssetsWatcher { get; set; }
+
+    public string[] DeviceStatusSplit
+    {
+        get
+        {
+            // Split status and message by \n
+            var message = StringUtils.SplitStatusString(DeviceStatusString);
+            return message is null || message.Length < 3 ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" } : message;
+        }
+    }
+
+    public string DeviceJointsCount => $"Forwarded joints: {TrackedJoints.Count}";
+    public string DeviceSettingsText => LocalizedJsonString("/GeneralPage/Buttons/DeviceSettings").Format(Name);
+    public bool ServiceNotRelay => AppPlugins.CurrentServiceEndpoint.Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
+    public bool IsFromRelay => Guid.StartsWith("TRACKINGRELAY:");
+    public string RelayText => $"From {HostMachineName}";
+    public string HostMachineName { get; set; } = "Amethyst Tracking Relay";
+
+    private Func<BitmapSource> GetCameraImage { get; }
+    private Func<bool> GetIsCameraEnabled { get; }
+    private Action<bool> SetIsCameraEnabled { get; }
+    private Func<Vector3, Size> MapCoordinateDelegate { get; }
+
+    public BitmapSource CameraImage => GetCameraImage?.Invoke();
+
+    public bool IsCameraEnabled
+    {
+        get => GetIsCameraEnabled?.Invoke() ?? false;
+        set => SetIsCameraEnabled?.Invoke(value);
+    }
 
     // Property changed event
     public event PropertyChangedEventHandler PropertyChanged;
@@ -238,23 +302,6 @@ public class TrackingDevice(string name, string guid, string path, Version versi
         });
     }
 
-    public string[] DeviceStatusSplit
-    {
-        get
-        {
-            // Split status and message by \n
-            var message = StringUtils.SplitStatusString(DeviceStatusString);
-            return message is null || message.Length < 3 ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" } : message;
-        }
-    }
-
-    public string DeviceJointsCount => $"Forwarded joints: {TrackedJoints.Count}";
-    public string DeviceSettingsText => LocalizedJsonString("/GeneralPage/Buttons/DeviceSettings").Format(Name);
-    public bool ServiceNotRelay => AppPlugins.CurrentServiceEndpoint.Guid is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
-    public bool IsFromRelay => Guid.StartsWith("TRACKINGRELAY:");
-    public string RelayText => $"From {HostMachineName}";
-    public string HostMachineName { get; set; } = "Amethyst Tracking Relay";
-
     public async void ViewDeviceSettings(object sender, RoutedEventArgs e)
     {
         // Go to the devices page to view device settings
@@ -281,5 +328,12 @@ public class TrackingDevice(string name, string guid, string path, Version versi
 
         await Shared.Devices.ReloadSelectedDevice(skipAnimation);
         Shared.Events.ReloadDevicesPageEvent?.Set(); // Full reload
+    }
+
+    public (double Left, double Top) MapCoordinate(Vector3 position)
+    {
+        var result = MapCoordinateDelegate?.Invoke(position) ?? Size.Empty;
+        //return (Left: result.Width / 1000.0f, Top: result.Height / 1000.0f);
+        return (Left: result.Width, Top: result.Height);
     }
 }

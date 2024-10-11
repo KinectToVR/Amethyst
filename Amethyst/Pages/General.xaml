@@ -9,6 +9,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:mvvm="using:Amethyst.MVVM" xmlns:classes="using:Amethyst.Classes"
 	xmlns:local="using:Amethyst.Pages" xmlns:util="using:Amethyst.Utils"
+	xmlns:media="using:CommunityToolkit.WinUI.UI.Media"
 	Loaded="Page_Loaded" NavigationCacheMode="Required"
 	mc:Ignorable="d" Background="Transparent">
 
@@ -1198,7 +1199,7 @@
 										<StackPanel Orientation="Vertical" Margin="10,0">
 											<StackPanel Orientation="Horizontal">
 												<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
-												           Text="{x:Bind Name, Mode=OneWay}" Margin="0,5,0,0" 
+												           Text="{x:Bind Name, Mode=OneWay}" Margin="0,5,0,0"
 												           Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
 
 												<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="SemiBold"
@@ -1545,16 +1546,29 @@
 			</Grid>
 
 			<!--Skeleton canvas-->
-			<Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Canvas.ZIndex="-1"
-			        Opacity="0.0" x:Name="SkeletonDrawingCanvas" Loaded="SkeletonDrawingCanvas_Loaded">
-				<Canvas.OpacityTransition>
-					<ScalarTransition />
-				</Canvas.OpacityTransition>
+			<Viewbox Grid.Column="1" Canvas.ZIndex="-1" Stretch="UniformToFill"
+			         HorizontalAlignment="Center" VerticalAlignment="Center">
+				<Grid x:Name="DrawingContainerGrid">
+					<Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="640" Height="480"
+					        Opacity="0.0" x:Name="SkeletonDrawingCanvas" Loaded="SkeletonDrawingCanvas_Loaded">
+						<Canvas.OpacityTransition>
+							<ScalarTransition />
+						</Canvas.OpacityTransition>
 
-				<Canvas.Clip>
-					<RectangleGeometry Rect="0,0,10000000,10000000" />
-				</Canvas.Clip>
-			</Canvas>
+						<Canvas.Clip>
+							<RectangleGeometry Rect="0,0,10000000,10000000" />
+						</Canvas.Clip>
+					</Canvas>
+
+					<Image x:Name="CameraImage" Opacity="0.0" Stretch="Uniform"
+					       HorizontalAlignment="Center" VerticalAlignment="Center"
+					       SizeChanged="CameraImage_OnSizeChanged" Canvas.ZIndex="-1">
+						<Image.OpacityTransition>
+							<ScalarTransition />
+						</Image.OpacityTransition>
+					</Image>
+				</Grid>
+			</Viewbox>
 
 			<!--Background-->
 			<Grid Background="Black" Grid.Column="1" Canvas.ZIndex="-2"
@@ -1563,22 +1577,27 @@
 			<!--No Skeleton-->
 			<Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
 			         VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-				<StackPanel Opacity="1.0" HorizontalAlignment="Center" VerticalAlignment="Center"
-				            x:Name="NoSkeletonNotice" Margin="0,-10,0,0">
-					<StackPanel.OpacityTransition>
+				<Grid Padding="35, 20,35,23" CornerRadius="25" x:Name="NoSkeletonNotice">
+					<Grid.OpacityTransition>
 						<ScalarTransition />
-					</StackPanel.OpacityTransition>
+					</Grid.OpacityTransition>
 
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-						<FontIcon Glyph="&#xE7BA;" FontSize="45" FontWeight="Bold" Foreground="White" />
-						<TextBlock Margin="10,0,0,7" FontSize="50" FontWeight="SemiBold" Foreground="White"
-						           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/NoSkeleton'), Mode=OneWay}" />
+					<Grid.Background>
+						<media:BackdropBlurBrush Amount="25.0"/>
+					</Grid.Background>
+					<StackPanel Opacity="1.0" HorizontalAlignment="Center" VerticalAlignment="Center"
+					            Margin="0,-10,0,0">
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+							<FontIcon Glyph="&#xE7BA;" FontSize="45" FontWeight="Bold" Foreground="White" />
+							<TextBlock Margin="10,0,0,7" FontSize="50" FontWeight="SemiBold" Foreground="White"
+							           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/NoSkeleton'), Mode=OneWay}" />
+						</StackPanel>
+
+						<TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+						           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/NoSkeletonText'), Mode=OneWay}"
+						           x:Name="NoSkeletonTextNotice" HorizontalTextAlignment="Center" Foreground="White" />
 					</StackPanel>
-
-					<TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
-					           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/NoSkeletonText'), Mode=OneWay}"
-					           x:Name="NoSkeletonTextNotice" HorizontalTextAlignment="Center" Foreground="White" />
-				</StackPanel>
+				</Grid>
 			</Viewbox>
 
 			<!--Skeleton Disabled-->
@@ -1678,6 +1697,7 @@
 
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" MinWidth="175" />
+					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
 
@@ -1709,7 +1729,7 @@
 									           FontWeight="Medium" Margin="30,0,0,0"
 									           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/Force'), Mode=OneWay}"
 									           Grid.Column="0" x:Name="ForceRenderText" />
-									<CheckBox x:Name="ForceRenderCheckBox"
+									<CheckBox x:Name="ForceRenderCheckBox" Grid.Column="0"
 									          Checked="ForceRenderCheckBox_Checked"
 									          Unchecked="ForceRenderCheckBox_Unchecked"
 									          HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -1719,6 +1739,18 @@
 							</Flyout>
 						</ToggleSplitButton.Flyout>
 					</ToggleSplitButton>
+				</Grid>
+
+				<Grid Grid.Row="1" Grid.Column="1">
+					<ToggleButton x:Name="CameraToggleButton" Click="CameraToggleButton_Click"
+					              Visibility="{x:Bind DeviceSupportsCamera, Mode=OneWay}"
+					              IsChecked="False" VerticalContentAlignment="Center" FontWeight="SemiBold"
+					              IsTabStop="False" Margin="10,0,0,0" CornerRadius="4"
+					              Padding="12,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+						<ToggleButton.Content>
+							<SymbolIcon Symbol="Camera" />
+						</ToggleButton.Content>
+					</ToggleButton>
 				</Grid>
 
 				<!--Flyout for manifest and reregister errors-->
