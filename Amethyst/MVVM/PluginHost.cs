@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
+using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -24,6 +25,7 @@ using Amethyst.Utils;
 using AmethystSupport;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
+using Newtonsoft.Json;
 using RestSharp;
 using static Amethyst.Classes.Interfacing;
 
@@ -272,6 +274,25 @@ public class PluginHost(string guid) : IAmethystHost
             // Finally exit with code 0
             Environment.Exit(0);
         });
+    }
+
+
+    // Process a key input action called from a single joint
+    // The handler will check whether the action is used anywhere,
+    // and trigger the linked output action if applicable
+    public void ReceiveKeyInput(KeyInputAction action, TrackedJoint joint = null)
+    {
+        try
+        {
+            // Invoke all linked input actions
+            AppData.Settings.TrackersVector
+                .SelectMany(x => x.InputActionsMap.Where(y => y.Value.Action == action.Guid && (joint is null || y.Value.Tracker == joint.Role)))
+                .Select(x => x.Key.LinkedAction).ToList().ForEach(x => x?.Invoke(joint));
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(e);
+        }
     }
 
     // INTERNAL: Available only via reflection, not defined in the Host interface
@@ -1291,4 +1312,72 @@ public static class CollectionExtensions
 
         return false; // Nah, not this time
     }
+}
+
+public class InputActionEndpoint
+{
+    // Action's container tracker
+    public TrackerType Tracker { get; set; }
+
+    // Action that should be called
+    public Guid Action { get; set; }
+
+    // MVVM Stuff
+    [JsonIgnore]
+    [IgnoreDataMember]
+    public KeyInputAction LinkedAction
+    {
+        get
+        {
+            try
+            {
+                return AppPlugins.CurrentServiceEndpoint?.SupportedInputActions?
+                    .First(x => x.Key == Tracker).Value?.First(x => x.Key == Action).Value;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+
+    [JsonIgnore] [IgnoreDataMember] public bool IsValid => LinkedAction is not null;
+}
+
+public class InputActionSource
+{
+    // The provider device's Guid
+    public string Device { get; set; }
+
+    // The action's friendly name (cached)
+    public string Name { get; set; }
+
+    // Action's container tracker
+    public TrackedJointType Tracker { get; set; }
+
+    // Action that should be called
+    public Guid Action { get; set; }
+
+    // MVVM Stuff
+    [JsonIgnore]
+    [IgnoreDataMember]
+    public KeyInputAction LinkedAction
+    {
+        get
+        {
+            try
+            {
+                return AppPlugins.TrackingDevicesList.TryGetValue(Device, out var device)
+                    ? device?.TrackedJoints?.First(x => x.Role == Tracker && x.SupportedInputActions.ContainsKey(Action))
+                        .SupportedInputActions[Action]
+                    : null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+
+    [JsonIgnore] [IgnoreDataMember] public bool IsValid => LinkedAction is not null;
 }

@@ -1,3 +1,4 @@
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.Serialization;
@@ -258,6 +259,13 @@ public class InputActions
 // Input action declaration for key events
 public class KeyInputAction
 {
+    [SetsRequiredMembers]
+    public KeyInputAction()
+    {
+        Guid = Guid.NewGuid();
+        Name = "INVALID";
+    }
+
     /// <summary>
     ///     Identifies the action
     /// </summary>
