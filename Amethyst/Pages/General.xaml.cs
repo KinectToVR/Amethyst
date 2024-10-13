@@ -141,8 +141,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
     private bool ServiceIsRelay => AppPlugins.CurrentServiceEndpoint.Guid is "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
 
-    private bool DeviceSupportsCamera => AppPlugins.BaseTrackingDevice.Guid
-        is "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1" or "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2";
+    private bool DeviceSupportsCamera => AppPlugins.BaseTrackingDevice.IsCameraSupported;
 
     private IEnumerable<TrackingDevice> SelectedDevices => new List<TrackingDevice>()
         .Append(AppPlugins.BaseTrackingDevice).Concat(

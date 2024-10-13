@@ -278,6 +278,13 @@ public interface IServiceEndpoint
     public Uri ErrorDocsUri { get; }
 
     /// <summary>
+    ///     Keeps all supported input actions that may be received from ProcessKeyInput
+    ///     You will not be able to receive actions from unsupported TrackerType either
+    /// </summary>
+    [DefaultValue(null)]
+    public Dictionary<TrackerType, Dictionary<Guid, KeyInputAction>> SupportedInputActions { get; }
+
+    /// <summary>
     ///     Get the absolute pose of the HMD, calibrated against the play space
     ///     Return null if unknown to the service or unavailable
     ///     You'll need to provide this to support automatic calibration
@@ -341,6 +348,12 @@ public interface IServiceEndpoint
     ///     Check connection: status, serialized status, combined ping time
     /// </summary>
     public Task<(int Status, string StatusMessage, long PingTime)> TestConnection();
+
+    /// <summary>
+    ///     Process a key input event sent by a device, that was assigned and found
+    ///     TrackerType may only be omitted if there are no duplicate actions
+    /// </summary>
+    public Task ProcessKeyInput(KeyInputAction action, TrackerType? receiver = null, CancellationToken? token = null);
 }
 
 /// <summary>
@@ -352,7 +365,7 @@ public interface IAmethystHost
     ///     Helper to get all joints' positions from the app, which are added in Amethyst.
     ///     Note: if joint's off, its trackingState will be ITrackedJointState::State_NotTracked
     ///     Note: [AppJointPoses] will always be returned raw and w/o tweaks/offsets
-    ///     /     if need the final ones, please consider writing an IServiceEndpoint
+    ///     /     if you need the final ones, please consider writing an IServiceEndpoint
     /// </summary>
     List<TrackedJoint> AppJointPoses { get; }
 
@@ -465,6 +478,20 @@ public interface IAmethystHost
     ///     Mark fatal as true to show the crash handler with your message
     /// </summary>
     void RequestExit(string message, bool fatal = false);
+
+    /// <summary>
+    ///     Process a key input action called from a single joint
+    ///     The handler will check whether the action is used anywhere,
+    ///     and trigger the linked output action if applicable
+    /// </summary>
+    /// <param name="action">
+    ///     Data of the key input action called
+    /// </param>
+    /// <param name="joint">
+    ///     Reference to the joint that called the action
+    ///     May be null only if there are no duplicate actions
+    /// </param>
+    void ReceiveKeyInput(KeyInputAction action, TrackedJoint? joint = null);
 }
 
 /// <summary>

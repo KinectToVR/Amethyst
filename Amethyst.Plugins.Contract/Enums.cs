@@ -48,7 +48,10 @@ public enum TrackerType
     TrackerWaist,
     TrackerChest,
     TrackerCamera,
-    TrackerKeyboard
+    TrackerKeyboard,
+    TrackerHead,
+    TrackerLeftHand,
+    TrackerRightHand
 }
 
 // Global joint states

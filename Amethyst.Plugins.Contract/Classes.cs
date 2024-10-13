@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Amethyst.Plugins.Contract;
 
@@ -103,6 +104,13 @@ public class TrackedJoint
     ///     Auto-computed on each pose [position] change
     /// </summary>
     public long PreviousPoseTimestamp { get; private set; }
+
+    /// <summary>
+    ///     Supported key input actions that can be used by Amethyst
+    /// </summary>
+    [JsonIgnore]
+    [IgnoreDataMember]
+    public Dictionary<Guid, KeyInputAction> SupportedInputActions { get; init; } = new();
 }
 
 [DataContract]
@@ -245,6 +253,33 @@ public class InputActions
     ///     Leave null or empty to skip showing anything
     /// </summary>
     public string? SkeletonFlipActionContentString { get; set; }
+}
+
+// Input action declaration for key events
+public class KeyInputAction
+{
+    /// <summary>
+    ///     Identifies the action
+    /// </summary>
+    public required Guid Guid { get; init; }
+
+    /// <summary>
+    ///     Friendly name of the action
+    /// </summary>
+    public required string Name { get; init; }
+
+    /// <summary>
+    ///     Host import for Invoke() calls
+    /// </summary>
+    public IAmethystHost? Host { get; set; }
+
+    /// <summary>
+    ///     Invoke the action (shortcut)
+    /// </summary>
+    public void Invoke(TrackedJoint? parent)
+    {
+        Host?.ReceiveKeyInput(this, parent);
+    }
 }
 
 // Dependency installer progress helper class
