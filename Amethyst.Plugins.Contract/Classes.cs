@@ -282,6 +282,21 @@ public class KeyInputAction
     public IAmethystHost? Host { get; set; }
 
     /// <summary>
+    ///     Action description for binding UI
+    /// </summary>
+    public string Description { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Action image for binding UI to be shown in info
+    ///     MUST BE OF TYPE Microsoft.UI.Xaml.Controls.Image
+    /// </summary>
+    /// <remarks>
+    ///     Make this a getter and return an Image constructed
+    ///     during OnLoad, expect COM-related crashes otherwise
+    /// </remarks>
+    public object? Image { get; set; } = null;
+
+    /// <summary>
     ///     Invoke the action (shortcut)
     /// </summary>
     public void Invoke(TrackedJoint? parent)
