@@ -430,14 +430,16 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public (LocalisationFileJson Root, string Directory) LocalizationResourcesRoot { get; set; }
 
-    public Uri DependencyLinkUri => Uri.TryCreate(DependencyLink, UriKind.RelativeOrAbsolute, out var uri) ? uri :
+    public Uri DependencyLinkUri =>
+        !string.IsNullOrEmpty(DependencyLink) && Uri.TryCreate(DependencyLink, UriKind.RelativeOrAbsolute, out var uri) ? uri :
         Uri.TryCreate("https://k2vr.tech", UriKind.RelativeOrAbsolute, out var uri1) ? uri1 : null;
 
     public Uri DependencySourceUri =>
-        Uri.TryCreate(DependencySource, UriKind.RelativeOrAbsolute, out var uri) ? uri :
+        !string.IsNullOrEmpty(DependencySource) && Uri.TryCreate(DependencySource, UriKind.RelativeOrAbsolute, out var uri) ? uri :
         Uri.TryCreate("https://k2vr.tech", UriKind.RelativeOrAbsolute, out var uri1) ? uri1 : null;
 
-    public Uri WebsiteUri => Uri.TryCreate(Website, UriKind.RelativeOrAbsolute, out var uri) ? uri :
+    public Uri WebsiteUri =>
+        !string.IsNullOrEmpty(Website) && Uri.TryCreate(Website, UriKind.RelativeOrAbsolute, out var uri) ? uri :
         Uri.TryCreate("https://k2vr.tech", UriKind.RelativeOrAbsolute, out var uri1) ? uri1 : null;
 
     public Version Version { get; init; } = new("0.0.0.0");

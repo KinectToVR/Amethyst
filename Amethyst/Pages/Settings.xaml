@@ -598,7 +598,7 @@
                                 Margin="0,2,15,0" Grid.Row="0">
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
                                    Text="{x:Bind RestartServiceNoteL1, Mode=OneWay}"
-                                   FontWeight="SemiBold"
+                                   FontWeight="SemiBold" 
                                    Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
                                    Text="{x:Bind RestartServiceNoteL2, Mode=OneWay}"
