@@ -39,6 +39,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 {
     private static string _calibratingDeviceGuid = "";
     private bool _autoCalibrationStillPending;
+    private bool _allowCameraPreviewHandling;
 
     private bool _calibrationPending;
     private bool _generalPageLoadedOnce;
@@ -48,8 +49,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
     private int _previousOffsetPageIndex;
     private bool _showSkeletonPrevious = true;
-    private bool _showCameraPrevious = false;
-
     private bool _skeletonDrawingCanvassLoadedOnce;
 
     public General()
@@ -172,6 +171,10 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Execute the handler
         Page_LoadedHandler();
+
+        _allowCameraPreviewHandling = true;
+        AppPlugins.BaseTrackingDevice.IsCameraEnabled =
+            AppData.Settings.CameraPreviewEnabled;
 
         // Mark as loaded
         _generalPageLoadedOnce = true;
@@ -412,10 +415,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
         AppData.Settings.SkeletonPreviewEnabled = true; // Change to show
         SetSkeletonVisibility(true); // Change to show
 
-        _showCameraPrevious = AppData.Settings.CameraPreviewEnabled; // Back up
-        AppData.Settings.CameraPreviewEnabled = true; // Change to show
-        SetCameraEnabled(true); // Change to show
-
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
 
@@ -606,10 +605,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         _autoCalibrationStillPending = false;
 
         AppData.Settings.SkeletonPreviewEnabled = _showSkeletonPrevious; // Change to whatever
-        AppData.Settings.CameraPreviewEnabled = _showCameraPrevious; // Change to whatever
-
         SetSkeletonVisibility(_showSkeletonPrevious); // Change to whatever
-        SetCameraEnabled(_showCameraPrevious); // Change to whatever
     }
 
     private void CalibrationPointsNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
@@ -651,10 +647,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             NoSkeletonTextNotice.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoSkeletonText");
 
             AppData.Settings.SkeletonPreviewEnabled = _showSkeletonPrevious; // Change to whatever
-            AppData.Settings.CameraPreviewEnabled = _showCameraPrevious; // Change to whatever
-
             SetSkeletonVisibility(_showSkeletonPrevious); // Change to whatever
-            SetCameraEnabled(_showCameraPrevious); // Change to whatever
         }
         // Begin abort
         else
@@ -735,10 +728,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
             AppData.Settings.SkeletonPreviewEnabled = true; // Change to show
             SetSkeletonVisibility(true); // Change to show
 
-            _showCameraPrevious = AppData.Settings.CameraPreviewEnabled; // Back up
-            AppData.Settings.CameraPreviewEnabled = true; // Change to show
-            SetCameraEnabled(true); // Change to show
-
             // Play a sound
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
 
@@ -802,10 +791,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
             _showSkeletonPrevious = AppData.Settings.SkeletonPreviewEnabled; // Back up
             AppData.Settings.SkeletonPreviewEnabled = true; // Change to show
             SetSkeletonVisibility(true); // Change to show
-
-            _showCameraPrevious = AppData.Settings.CameraPreviewEnabled; // Back up
-            AppData.Settings.CameraPreviewEnabled = true; // Change to show
-            SetCameraEnabled(true); // Change to show
 
             // Play a sound
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
@@ -1177,10 +1162,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 Canvas.SetTop(SkeletonDrawingCanvas, 0);
             }
 
-            // Reset camera source if currently in use
-            if (AppData.Settings.CameraPreviewEnabled)
-                CameraImage.Source = AppPlugins.BaseTrackingDevice.CameraImage;
-
             // If we've disabled the preview
             if (!AppData.Settings.SkeletonPreviewEnabled)
             {
@@ -1188,6 +1169,19 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 (SkeletonDrawingCanvas.Opacity, TrackingStateLabelsPanel.Opacity) = (0, 0);
                 (NoSkeletonNotice.Opacity, OutOfFocusNotice.Opacity) = (0, 0);
                 (DashboardClosedNotice.Opacity, PreviewDisabledNotice.Opacity) = (0, 1);
+
+                // Show/hide the camera preview if it's the only thing active
+                if (AppPlugins.CurrentServiceEndpoint.IsAmethystVisible && windowActive)
+                {
+                    (CameraImage.Opacity, AppPlugins.BaseTrackingDevice.IsCameraEnabled) =
+                        (AppData.Settings.CameraPreviewEnabled ? 1 : 0, AppData.Settings.CameraPreviewEnabled);
+                    HandleCameraImagePreview(); // Refresh
+                }
+                else
+                {
+                    (CameraImage.Opacity, AppPlugins.BaseTrackingDevice.IsCameraEnabled) = (0, false);
+                }
+
                 return; // Nothing more to do anyway
             }
 
@@ -1201,7 +1195,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
                     (SkeletonDrawingCanvas.Opacity, TrackingStateLabelsPanel.Opacity) = (0, 0);
                     (NoSkeletonNotice.Opacity, OutOfFocusNotice.Opacity) = (0, 0);
                     (DashboardClosedNotice.Opacity, PreviewDisabledNotice.Opacity) = (1, 0);
-                    CameraImage.Opacity = 0;
+                    (CameraImage.Opacity, AppPlugins.BaseTrackingDevice.IsCameraEnabled) = (0, false);
                     return; // Nothing more to do anyway
                 }
 
@@ -1212,10 +1206,13 @@ public sealed partial class General : Page, INotifyPropertyChanged
                     (SkeletonDrawingCanvas.Opacity, TrackingStateLabelsPanel.Opacity) = (0, 0);
                     (NoSkeletonNotice.Opacity, OutOfFocusNotice.Opacity) = (0, 1);
                     (DashboardClosedNotice.Opacity, PreviewDisabledNotice.Opacity) = (0, 0);
-                    CameraImage.Opacity = 0;
+                    (CameraImage.Opacity, AppPlugins.BaseTrackingDevice.IsCameraEnabled) = (0, false);
                     return; // Nothing more to do anyway
                 }
             }
+
+            // Finally handle everything
+            HandleCameraImagePreview();
 
             // Else hide the notices
             (DashboardClosedNotice.Opacity, PreviewDisabledNotice.Opacity,
@@ -1387,6 +1384,21 @@ public sealed partial class General : Page, INotifyPropertyChanged
             SkeletonToggleButton.IsChecked;
         ForceRenderText.Opacity =
             SkeletonToggleButton.IsChecked ? 1.0 : 0.5;
+    }
+
+    private void HandleCameraImagePreview()
+    {
+        if (_allowCameraPreviewHandling && AppData.Settings.CameraPreviewEnabled)
+        {
+            // Reset camera source if currently in use
+            AppPlugins.BaseTrackingDevice.IsCameraEnabled = true;
+            CameraImage.Source = AppPlugins.BaseTrackingDevice.CameraImage;
+        }
+        else
+        {
+            // Disable the requirement to save resources
+            AppPlugins.BaseTrackingDevice.IsCameraEnabled = false;
+        }
     }
 
     private void CameraToggleButton_Click(object sender, object args)
@@ -1891,10 +1903,10 @@ public sealed partial class General : Page, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
     }
 
-    private void SetSkeletonVisibility(bool visibility)
+    private void SetSkeletonVisibility(bool visibility, bool force = false)
     {
         // Don't even care if we're not set up yet
-        if (!Shared.General.GeneralTabSetupFinished) return;
+        if (!Shared.General.GeneralTabSetupFinished && !force) return;
 
         Shared.General.ForceRenderCheckBox.IsEnabled = visibility;
         Shared.General.SkeletonToggleButton.IsChecked = visibility;
@@ -1903,18 +1915,19 @@ public sealed partial class General : Page, INotifyPropertyChanged
             visibility ? "/GeneralPage/Buttons/Skeleton/Hide" : "/GeneralPage/Buttons/Skeleton/Show");
     }
 
-    private void SetCameraEnabled(bool visibility)
+    private void SetCameraEnabled(bool visibility, bool force = false)
     {
         // Don't even care if we're not set up yet
-        if (!Shared.General.GeneralTabSetupFinished) return;
+        if (!Shared.General.GeneralTabSetupFinished && !force) return;
 
         CameraToggleButton.IsChecked = visibility;
+        AppPlugins.BaseTrackingDevice.IsCameraEnabled = visibility;
     }
 
-    private void SetSkeletonForce(bool visibility)
+    private void SetSkeletonForce(bool visibility, bool force = false)
     {
         // Don't even care if we're not set up yet
-        if (!Shared.General.GeneralTabSetupFinished) return;
+        if (!Shared.General.GeneralTabSetupFinished && !force) return;
         Shared.General.ForceRenderCheckBox.IsChecked = visibility;
     }
 
@@ -1962,9 +1975,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
         Shared.General.GeneralTabSetupFinished = false;
 
         // Setup the preview button
-        SetSkeletonVisibility(AppData.Settings.SkeletonPreviewEnabled);
-        SetCameraEnabled(AppData.Settings.CameraPreviewEnabled);
-        SetSkeletonForce(AppData.Settings.ForceSkeletonPreview);
+        SetSkeletonVisibility(AppData.Settings.SkeletonPreviewEnabled, true);
+        SetCameraEnabled(AppData.Settings.CameraPreviewEnabled, true);
+        SetSkeletonForce(AppData.Settings.ForceSkeletonPreview, true);
 
         // Setup the freeze button
         ToggleFreezeButton.IsChecked = Interfacing.IsTrackingFrozen;
@@ -1998,6 +2011,12 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Setup end
         Shared.General.GeneralTabSetupFinished = true;
+    }
+
+    private void Page_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        _allowCameraPreviewHandling = false;
+        AppPlugins.BaseTrackingDevice.IsCameraEnabled = false;
     }
 }
 

@@ -10,7 +10,8 @@
 	xmlns:mvvm="using:Amethyst.MVVM" xmlns:classes="using:Amethyst.Classes"
 	xmlns:local="using:Amethyst.Pages" xmlns:util="using:Amethyst.Utils"
 	xmlns:media="using:CommunityToolkit.WinUI.UI.Media"
-	Loaded="Page_Loaded" NavigationCacheMode="Required"
+	Loaded="Page_Loaded" Unloaded="Page_OnUnloaded"
+	NavigationCacheMode="Required"
 	mc:Ignorable="d" Background="Transparent">
 
 	<Page.Resources>
@@ -1583,8 +1584,9 @@
 					</Grid.OpacityTransition>
 
 					<Grid.Background>
-						<media:BackdropBlurBrush Amount="25.0"/>
+						<media:BackdropBlurBrush Amount="25.0" />
 					</Grid.Background>
+
 					<StackPanel Opacity="1.0" HorizontalAlignment="Center" VerticalAlignment="Center"
 					            Margin="0,-10,0,0">
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -1603,22 +1605,28 @@
 			<!--Skeleton Disabled-->
 			<Viewbox Grid.Column="1" HorizontalAlignment="Stretch" Margin="20"
 			         VerticalAlignment="Stretch" Stretch="Uniform" StretchDirection="DownOnly">
-				<StackPanel Opacity="0.0" HorizontalAlignment="Center" VerticalAlignment="Center"
-				            x:Name="PreviewDisabledNotice" Margin="0,-10,0,0">
-					<StackPanel.OpacityTransition>
+				<Grid Padding="35, 20,35,23" CornerRadius="25" x:Name="PreviewDisabledNotice">
+					<Grid.OpacityTransition>
 						<ScalarTransition />
-					</StackPanel.OpacityTransition>
+					</Grid.OpacityTransition>
 
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-						<FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
-						<TextBlock Margin="10,0,0,7" FontSize="50" FontWeight="SemiBold" Foreground="White"
-						           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/Disabled'), Mode=OneWay}" />
+					<Grid.Background>
+						<media:BackdropBlurBrush Amount="25.0" />
+					</Grid.Background>
+
+					<StackPanel Opacity="1.0" HorizontalAlignment="Center" VerticalAlignment="Center"
+					            Margin="0,-10,0,0">
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+							<FontIcon Glyph="&#xE946;" FontSize="45" FontWeight="Bold" Foreground="White" />
+							<TextBlock Margin="10,0,0,7" FontSize="50" FontWeight="SemiBold" Foreground="White"
+							           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/Disabled'), Mode=OneWay}" />
+						</StackPanel>
+
+						<TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
+						           Foreground="White" HorizontalTextAlignment="Center"
+						           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/DisabledText'), Mode=OneWay}" />
 					</StackPanel>
-
-					<TextBlock Margin="0,-5,0,0" FontSize="25" FontWeight="Medium" HorizontalAlignment="Center"
-					           Foreground="White" HorizontalTextAlignment="Center"
-					           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Preview/DisabledText'), Mode=OneWay}" />
-				</StackPanel>
+				</Grid>
 			</Viewbox>
 
 			<!--Outta focus-->
