@@ -226,9 +226,10 @@ public class AppTracker : INotifyPropertyChanged
 
     [JsonIgnore]
     public Dictionary<InputActionEndpoint, bool> AvailableInputActions =>
-        AppPlugins.CurrentServiceEndpoint?.SupportedInputActions?.FirstOrDefault(x => x.Key == Role).Value?
-            .ToDictionary(x => new InputActionEndpoint { Tracker = Role, Action = x.Value.Guid },
-                x => InputActionsMap.Keys.Any(y => y.Tracker == Role && y.Action == x.Key && y.IsValid));
+        AppPlugins.CurrentServiceEndpoint?.SupportedInputActions?.TryGetValue(Role, out var actions) ?? false
+            ? actions.ToDictionary(x => new InputActionEndpoint { Tracker = Role, Action = x.Guid },
+                x => InputActionsMap.Keys.Any(y => y.Tracker == Role && y.Action == x.Guid && y.IsValid))
+            : [];
 
     [JsonIgnore] public bool OverridePhysics { get; set; }
 

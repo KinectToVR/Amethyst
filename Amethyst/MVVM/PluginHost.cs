@@ -276,18 +276,17 @@ public class PluginHost(string guid) : IAmethystHost
         });
     }
 
-
     // Process a key input action called from a single joint
     // The handler will check whether the action is used anywhere,
     // and trigger the linked output action if applicable
-    public void ReceiveKeyInput(KeyInputAction action, TrackedJoint joint = null)
+    public void ReceiveKeyInput<T>(KeyInputAction<T> action, T data)
     {
         try
         {
             // Invoke all linked input actions
             AppData.Settings.TrackersVector
-                .SelectMany(x => x.InputActionsMap.Where(y => y.Value.Action == action.Guid && (joint is null || y.Value.Tracker == joint.Role)))
-                .Select(x => x.Key.LinkedAction).ToList().ForEach(x => x?.Invoke(joint));
+                .SelectMany(x => x.InputActionsMap.Where(y => y.Value.Action == action.Guid))
+                .Select(x => x.Key.LinkedAction).ToList().ForEach(x => x?.Invoke(data));
         }
         catch (Exception e)
         {
@@ -1332,7 +1331,9 @@ public class InputActionEndpoint
             try
             {
                 return AppPlugins.CurrentServiceEndpoint?.SupportedInputActions?
-                    .First(x => x.Key == Tracker).Value?.First(x => x.Key == Action).Value;
+                    .TryGetValue(Tracker, out var actions) ?? false
+                    ? actions?.First(x => x.Guid == Action) // Find the action
+                    : null; // If there's no corresponding tracker - give up now
             }
             catch (Exception)
             {
@@ -1368,8 +1369,9 @@ public class InputActionSource
             try
             {
                 return AppPlugins.TrackingDevicesList.TryGetValue(Device, out var device)
-                    ? device?.TrackedJoints?.First(x => x.Role == Tracker && x.SupportedInputActions.ContainsKey(Action))
-                        .SupportedInputActions[Action]
+                    ? device?.TrackedJoints?.Where(x => x.Role == Tracker)
+                        .Select(x => x.SupportedInputActions.FirstOrDefault(y => y.Guid == Action, null))
+                        .FirstOrDefault(x => x is not null, null) // Return the first valid action
                     : null;
             }
             catch (Exception)

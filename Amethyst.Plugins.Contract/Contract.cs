@@ -282,7 +282,7 @@ public interface IServiceEndpoint
     ///     You will not be able to receive actions from unsupported TrackerType either
     /// </summary>
     [DefaultValue(null)]
-    public Dictionary<TrackerType, Dictionary<Guid, KeyInputAction>> SupportedInputActions { get; }
+    public Dictionary<TrackerType, SortedSet<KeyInputAction>> SupportedInputActions { get; }
 
     /// <summary>
     ///     Get the absolute pose of the HMD, calibrated against the play space
@@ -351,9 +351,9 @@ public interface IServiceEndpoint
 
     /// <summary>
     ///     Process a key input event sent by a device, that was assigned and found
-    ///     TrackerType may only be omitted if there are no duplicate actions
     /// </summary>
-    public Task ProcessKeyInput(KeyInputAction action, TrackerType? receiver = null, CancellationToken? token = null);
+    public Task ProcessKeyInput<T>(KeyInputAction<T> action, T? data, 
+        TrackerType? receiver, CancellationToken? token = null);
 }
 
 /// <summary>
@@ -485,13 +485,12 @@ public interface IAmethystHost
     ///     and trigger the linked output action if applicable
     /// </summary>
     /// <param name="action">
-    ///     Data of the key input action called
+    ///     Definition of the input action called
     /// </param>
-    /// <param name="joint">
-    ///     Reference to the joint that called the action
-    ///     May be null only if there are no duplicate actions
+    /// <param name="data">
+    ///     Data to be sent, involved with the action
     /// </param>
-    void ReceiveKeyInput(KeyInputAction action, TrackedJoint? joint = null);
+    void ReceiveKeyInput<T>(KeyInputAction<T> action, T? data);
 }
 
 /// <summary>

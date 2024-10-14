@@ -111,7 +111,7 @@ public class TrackedJoint
     /// </summary>
     [JsonIgnore]
     [IgnoreDataMember]
-    public Dictionary<Guid, KeyInputAction> SupportedInputActions { get; init; } = new();
+    public SortedSet<KeyInputAction> SupportedInputActions { get; init; } = new();
 }
 
 [DataContract]
@@ -254,55 +254,6 @@ public class InputActions
     ///     Leave null or empty to skip showing anything
     /// </summary>
     public string? SkeletonFlipActionContentString { get; set; }
-}
-
-// Input action declaration for key events
-public class KeyInputAction
-{
-    [SetsRequiredMembers]
-    public KeyInputAction()
-    {
-        Guid = Guid.NewGuid();
-        Name = "INVALID";
-    }
-
-    /// <summary>
-    ///     Identifies the action
-    /// </summary>
-    public required Guid Guid { get; init; }
-
-    /// <summary>
-    ///     Friendly name of the action
-    /// </summary>
-    public required string Name { get; init; }
-
-    /// <summary>
-    ///     Host import for Invoke() calls
-    /// </summary>
-    public IAmethystHost? Host { get; set; }
-
-    /// <summary>
-    ///     Action description for binding UI
-    /// </summary>
-    public string Description { get; set; } = string.Empty;
-
-    /// <summary>
-    ///     Action image for binding UI to be shown in info
-    ///     MUST BE OF TYPE Microsoft.UI.Xaml.Controls.Image
-    /// </summary>
-    /// <remarks>
-    ///     Make this a getter and return an Image constructed
-    ///     during OnLoad, expect COM-related crashes otherwise
-    /// </remarks>
-    public object? Image { get; set; } = null;
-
-    /// <summary>
-    ///     Invoke the action (shortcut)
-    /// </summary>
-    public void Invoke(TrackedJoint? parent)
-    {
-        Host?.ReceiveKeyInput(this, parent);
-    }
 }
 
 // Dependency installer progress helper class
