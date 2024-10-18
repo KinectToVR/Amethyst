@@ -65,6 +65,10 @@ public class ServiceEndpoint(string name, string guid, string path, Version vers
     // The mandatory ones are: waist, left foot, and right foot
     public SortedSet<TrackerType> AdditionalSupportedTrackerTypes => Service.AdditionalSupportedTrackerTypes;
 
+    // Keeps all supported input actions that may be received from ProcessKeyInput
+    // You will not be able to receive actions from unsupported TrackerType either
+    public Dictionary<TrackerType, SortedSet<KeyInputAction>> SupportedInputActions => Service.SupportedInputActions;
+
     // Mark as true to tell the user that they need to restart/
     // /in case they want to add more trackers after spawning
     // This is the case with OpenVR, where settings need to be reloaded

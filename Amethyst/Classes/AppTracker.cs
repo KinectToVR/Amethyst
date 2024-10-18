@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
+using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
@@ -19,15 +20,15 @@ public class AppTracker : INotifyPropertyChanged
 
     [JsonIgnore] private readonly Vector3 _predictedPosition = new(0);
 
+    // Internal filters' data
+    private Vector3 _euroPosition = new(0);
+
     // Is this tracker enabled?
     private bool _isActive;
     private bool _isOrientationOverridden;
 
     private bool _isPositionOverridden;
     private bool _isTrackerExpanderOpen;
-
-    // Internal filters' data
-    private Vector3 _euroPosition = new(0);
     private Vector3 _lastLerpPosition = new(0);
     private Quaternion _lastSlerpOrientation = new(0, 0, 0, 1);
     private Quaternion _lastSlerpSlowOrientation = new(0, 0, 0, 1);
@@ -56,6 +57,11 @@ public class AppTracker : INotifyPropertyChanged
 
     private Quaternion _slerpOrientation = new(0, 0, 0, 1);
     private Quaternion _slerpSlowOrientation = new(0, 0, 0, 1);
+
+    // Input actions: < SERVICE : < SERVICE ACTION DATA : DEVICE ACTION DATA > >
+    // For "disabled" actions InputActionSource is null, for "hidden" - nothing
+    // Use InputActionsMap for faster and easier data access, along with bindings
+    public SortedDictionary<string, Dictionary<InputActionEndpoint, InputActionSource>> InputActions = [];
     public Vector3 OrientationOffset = new(0, 0, 0);
 
     // Internal data offset
@@ -214,10 +220,20 @@ public class AppTracker : INotifyPropertyChanged
         Role is TrackerType.TrackerWaist or TrackerType.TrackerLeftFoot or TrackerType.TrackerRightFoot ||
         (AppPlugins.CurrentServiceEndpoint?.AdditionalSupportedTrackerTypes.Contains(Role) ?? false);
 
-    [JsonIgnore] public bool OverridePhysics { get; set; }
+    [JsonIgnore]
+    public Dictionary<InputActionEndpoint, InputActionSource> InputActionsMap =>
+        InputActions.TryGetValue(AppData.Settings.ServiceEndpointGuid, out var map) ? map : [];
 
     [JsonIgnore]
-    public string TrackerName => Interfacing.LocalizedJsonString($"/SharedStrings/Joints/Enum/{(int)Role}");
+    public Dictionary<InputActionEndpoint, bool> AvailableInputActions =>
+        AppPlugins.CurrentServiceEndpoint?.SupportedInputActions?.TryGetValue(Role, out var actions) ?? false
+            ? actions.ToDictionary(x => new InputActionEndpoint { Tracker = Role, Action = x.Guid },
+                x => InputActionsMap.Keys.Any(y => y.Tracker == Role && y.Action == x.Guid && y.IsValid))
+            : [];
+
+    [JsonIgnore] public bool OverridePhysics { get; set; }
+
+    [JsonIgnore] public string TrackerName => Interfacing.LocalizedJsonString($"/SharedStrings/Joints/Enum/{(int)Role}");
 
     [JsonIgnore]
     public int PositionTrackingDisplayOption

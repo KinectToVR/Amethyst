@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
+using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -24,6 +25,7 @@ using Amethyst.Utils;
 using AmethystSupport;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
+using Newtonsoft.Json;
 using RestSharp;
 using static Amethyst.Classes.Interfacing;
 
@@ -274,6 +276,24 @@ public class PluginHost(string guid) : IAmethystHost
         });
     }
 
+    // Process a key input action called from a single joint
+    // The handler will check whether the action is used anywhere,
+    // and trigger the linked output action if applicable
+    public void ReceiveKeyInput<T>(KeyInputAction<T> action, T data)
+    {
+        try
+        {
+            // Invoke all linked input actions
+            AppData.Settings.TrackersVector
+                .SelectMany(x => x.InputActionsMap.Where(y => y.Value.Action == action.Guid))
+                .Select(x => x.Key.LinkedAction).ToList().ForEach(x => x?.Invoke(data));
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(e);
+        }
+    }
+
     // INTERNAL: Available only via reflection, not defined in the Host interface
     // Return all devices added from plugins, INCLUDING forwarded ones
     public Dictionary<string, ITrackingDevice> TrackingDevices =>
@@ -410,14 +430,16 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
     public (LocalisationFileJson Root, string Directory) LocalizationResourcesRoot { get; set; }
 
-    public Uri DependencyLinkUri => Uri.TryCreate(DependencyLink, UriKind.RelativeOrAbsolute, out var uri) ? uri :
+    public Uri DependencyLinkUri =>
+        !string.IsNullOrEmpty(DependencyLink) && Uri.TryCreate(DependencyLink, UriKind.RelativeOrAbsolute, out var uri) ? uri :
         Uri.TryCreate("https://k2vr.tech", UriKind.RelativeOrAbsolute, out var uri1) ? uri1 : null;
 
     public Uri DependencySourceUri =>
-        Uri.TryCreate(DependencySource, UriKind.RelativeOrAbsolute, out var uri) ? uri :
+        !string.IsNullOrEmpty(DependencySource) && Uri.TryCreate(DependencySource, UriKind.RelativeOrAbsolute, out var uri) ? uri :
         Uri.TryCreate("https://k2vr.tech", UriKind.RelativeOrAbsolute, out var uri1) ? uri1 : null;
 
-    public Uri WebsiteUri => Uri.TryCreate(Website, UriKind.RelativeOrAbsolute, out var uri) ? uri :
+    public Uri WebsiteUri =>
+        !string.IsNullOrEmpty(Website) && Uri.TryCreate(Website, UriKind.RelativeOrAbsolute, out var uri) ? uri :
         Uri.TryCreate("https://k2vr.tech", UriKind.RelativeOrAbsolute, out var uri1) ? uri1 : null;
 
     public Version Version { get; init; } = new("0.0.0.0");
@@ -1291,4 +1313,75 @@ public static class CollectionExtensions
 
         return false; // Nah, not this time
     }
+}
+
+public class InputActionEndpoint
+{
+    // Action's container tracker
+    public TrackerType Tracker { get; set; }
+
+    // Action that should be called
+    public Guid Action { get; set; }
+
+    // MVVM Stuff
+    [JsonIgnore]
+    [IgnoreDataMember]
+    public KeyInputAction LinkedAction
+    {
+        get
+        {
+            try
+            {
+                return AppPlugins.CurrentServiceEndpoint?.SupportedInputActions?
+                    .TryGetValue(Tracker, out var actions) ?? false
+                    ? actions?.First(x => x.Guid == Action) // Find the action
+                    : null; // If there's no corresponding tracker - give up now
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+
+    [JsonIgnore] [IgnoreDataMember] public bool IsValid => LinkedAction is not null;
+}
+
+public class InputActionSource
+{
+    // The provider device's Guid
+    public string Device { get; set; }
+
+    // The action's friendly name (cached)
+    public string Name { get; set; }
+
+    // Action's container tracker
+    public TrackedJointType Tracker { get; set; }
+
+    // Action that should be called
+    public Guid Action { get; set; }
+
+    // MVVM Stuff
+    [JsonIgnore]
+    [IgnoreDataMember]
+    public KeyInputAction LinkedAction
+    {
+        get
+        {
+            try
+            {
+                return AppPlugins.TrackingDevicesList.TryGetValue(Device, out var device)
+                    ? device?.TrackedJoints?.Where(x => x.Role == Tracker)
+                        .Select(x => x.SupportedInputActions.FirstOrDefault(y => y.Guid == Action, null))
+                        .FirstOrDefault(x => x is not null, null) // Return the first valid action
+                    : null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+
+    [JsonIgnore] [IgnoreDataMember] public bool IsValid => LinkedAction is not null;
 }
