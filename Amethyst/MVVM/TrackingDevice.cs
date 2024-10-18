@@ -335,4 +335,21 @@ public class TrackingDevice : INotifyPropertyChanged
         //return (Left: result.Width / 1000.0f, Top: result.Height / 1000.0f);
         return (Left: result.Width, Top: result.Height);
     }
+
+    public bool MapCoordinate(Vector3 position, out (double Left, double Top) value)
+    {
+        var result = MapCoordinateDelegate?.Invoke(position) ?? Size.Empty;
+        //return (Left: result.Width / 1000.0f, Top: result.Height / 1000.0f);
+        value = (Left: result.Width, Top: result.Height);
+        return value.IsValid();
+    }
+}
+
+public static class MapperExtensions
+{
+    public static bool IsValid(this (double Left, double Top) values)
+    {
+        return double.IsNormal(values.Left) && double.IsNormal(values.Top) &&
+               values is not { Left: -1.0, Top: -1.0 };
+    }
 }

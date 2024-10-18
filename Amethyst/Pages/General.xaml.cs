@@ -1547,10 +1547,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
             sScaleH = matHeight / matHeightDefault;
 
         // Move the ellipse to the appropriate point
-        if (AppPlugins.BaseTrackingDevice.CameraImage is not null)
+        if (AppPlugins.BaseTrackingDevice.CameraImage is not null &&
+            AppPlugins.BaseTrackingDevice.MapCoordinate(joint.Position, out var mapped))
         {
-            var mapped = AppPlugins.BaseTrackingDevice.MapCoordinate(joint.Position);
-
             var actualWidth = Math.Max(CameraImage.ActualWidth, 640.0);
             var actualHeight = Math.Max(CameraImage.ActualHeight, 480.0);
 
@@ -1630,11 +1629,10 @@ public sealed partial class General : Page, INotifyPropertyChanged
             sScaleH = matHeight / matHeightDefault;
 
         // Move the line to the appropriate point
-        if (AppPlugins.BaseTrackingDevice.CameraImage is not null)
+        if (AppPlugins.BaseTrackingDevice.CameraImage is not null &&
+            AppPlugins.BaseTrackingDevice.MapCoordinate(fromJoint.Position, out var fromMapped) &&
+            AppPlugins.BaseTrackingDevice.MapCoordinate(toJoint.Position, out var toMapped))
         {
-            var fromMapped = AppPlugins.BaseTrackingDevice.MapCoordinate(fromJoint.Position);
-            var toMapped = AppPlugins.BaseTrackingDevice.MapCoordinate(toJoint.Position);
-
             var actualWidth = Math.Max(CameraImage.ActualWidth, 640.0);
             var actualHeight = Math.Max(CameraImage.ActualHeight, 480.0);
 
