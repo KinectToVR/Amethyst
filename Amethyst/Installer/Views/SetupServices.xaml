@@ -31,6 +31,7 @@
                               Width="250" Height="320" Opacity="{x:Bind BoolToOpacity(IsEnabled)}">
 
                             <TextBlock HorizontalAlignment="Center" Text="{x:Bind Name}"
+                                       HorizontalTextAlignment="Center"
                                        Style="{ThemeResource SubtitleTextBlockStyle}" />
 
                             <Viewbox Child="{x:Bind Icon}" Margin="40,90"
