@@ -199,6 +199,7 @@
                     <Run xml:space="preserve">m1nt_ (Rubber Duck Shobe)    </Run>
                     <Run xml:space="preserve">Stiggimy    </Run>
                     <Run xml:space="preserve">bijavix    </Run>
+                    <Run xml:space="preserve">FiresonZ    </Run>
                 </TextBlock>
 
                 <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource ControlDisplayTextBrush}"
