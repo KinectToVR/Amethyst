@@ -29,9 +29,6 @@ public class TrackingDevice : INotifyPropertyChanged
         Device = device;
 
         // Setup optional camera streams
-        if (guid is not "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1"
-            and not "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2") return;
-
         var cameraImageProperty = device.GetType().GetProperty("GetCameraImage");
         var cameraMapperProperty = device.GetType().GetProperty("MapCoordinateDelegate");
         var cameraEnabledProperty = device.GetType().GetProperty("GetIsCameraEnabled");
@@ -47,6 +44,7 @@ public class TrackingDevice : INotifyPropertyChanged
         GetIsCameraEnabled = cameraEnabledProperty.GetValue(device) as Func<bool>;
         SetIsCameraEnabled = cameraEnabledSetter.GetValue(device) as Action<bool>;
         MapCoordinateDelegate = cameraMapperProperty.GetValue(device) as Func<Vector3, Size>;
+        IsCameraSupported = true; // Mark as OK
     }
 
     // Extensions: is this device set as base?
@@ -172,6 +170,8 @@ public class TrackingDevice : INotifyPropertyChanged
     private Func<Vector3, Size> MapCoordinateDelegate { get; }
 
     public BitmapSource CameraImage => GetCameraImage?.Invoke();
+
+    public bool IsCameraSupported { get; init; }
 
     public bool IsCameraEnabled
     {
