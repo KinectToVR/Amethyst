@@ -1084,8 +1084,17 @@ public sealed partial class General : Page, INotifyPropertyChanged
             !AppData.Settings.CameraPreviewEnabled)
         {
             // If no image, keep the Canvas at its default size
-            SkeletonDrawingCanvas.Width = 640;
-            SkeletonDrawingCanvas.Height = 480;
+            if (AppPlugins.BaseTrackingDevice.Guid is "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2")
+            {
+                SkeletonDrawingCanvas.Width = 1920;
+                SkeletonDrawingCanvas.Height = 1080;
+            }
+            else
+            {
+                SkeletonDrawingCanvas.Width = 640;
+                SkeletonDrawingCanvas.Height = 480;
+            }
+
             Canvas.SetLeft(SkeletonDrawingCanvas, 0);
             Canvas.SetTop(SkeletonDrawingCanvas, 0);
             return;
@@ -1153,8 +1162,17 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 !AppData.Settings.CameraPreviewEnabled)
             {
                 // If no image, keep the Canvas at its default size
-                SkeletonDrawingCanvas.Width = 640;
-                SkeletonDrawingCanvas.Height = 480;
+                if (AppPlugins.BaseTrackingDevice.Guid is "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV2")
+                {
+                    SkeletonDrawingCanvas.Width = 1920;
+                    SkeletonDrawingCanvas.Height = 1080;
+                }
+                else
+                {
+                    SkeletonDrawingCanvas.Width = 640;
+                    SkeletonDrawingCanvas.Height = 480;
+                }
+
                 Canvas.SetLeft(SkeletonDrawingCanvas, 0);
                 Canvas.SetTop(SkeletonDrawingCanvas, 0);
             }
@@ -1491,7 +1509,16 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (matHeight < 1) matHeight = matHeightDefault;
 
         // Where to scale by 1.0 in perspective
-        const double normalDistance = 3, normalEllipseStrokeSize = 2, normalEllipseSize = 8;
+        const double normalDistance = 3;
+
+        double normalEllipseStrokeSize = 2, normalEllipseSize = 8;
+        if (AppPlugins.BaseTrackingDevice.CameraImage is not null)
+        {
+            var actualHeight = Math.Max(CameraImage.ActualHeight, 480.0);
+
+            normalEllipseStrokeSize *= actualHeight / 480.0;
+            normalEllipseSize *= actualHeight / 480.0;
+        }
 
         // Compose perspective constants, make it 70%
         var multiply = .7 * (normalDistance /
@@ -1538,40 +1565,24 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Move the ellipse to the appropriate point
         if (AppPlugins.BaseTrackingDevice.CameraImage is not null &&
             AppPlugins.BaseTrackingDevice.MapCoordinate(joint.Position, out var mapped))
-        {
-            var actualWidth = Math.Max(CameraImage.ActualWidth, 640.0);
-            var actualHeight = Math.Max(CameraImage.ActualHeight, 480.0);
-
             ellipse.Margin = new Thickness(
-                // Left
-                mapped.Left * actualWidth / 640.0f -
-                (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
-
-                // Top
-                mapped.Top * actualHeight / 480.0f -
-                (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
-
-                // Not used
+                mapped.Left - (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
+                mapped.Top - (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
                 0, 0
             );
-        }
         else
-        {
             ellipse.Margin = new Thickness(
                 // Left
                 joint.Position.X * 300.0 *
                 Math.Min(sScaleW, sScaleH) * multiply +
                 matWidth / 2.0 - (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
-
                 // Top
                 joint.Position.Y * -300.0 *
                 Math.Min(sScaleW, sScaleH) * multiply +
                 matHeight / 3.0 - (normalEllipseSize + normalEllipseStrokeSize) / 2.0,
-
                 // Not used
                 0, 0
             );
-        }
 
         ellipse.Visibility = Visibility.Visible;
     }
@@ -1594,7 +1605,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
         if (matHeight < 1) matHeight = matHeightDefault;
 
         // Where to scale by 1.0 in perspective
-        const double normalDistance = 3, normalLineStrokeSize = 4;
+        const double normalDistance = 3;
+
+        double normalLineStrokeSize = 4;
+        if (AppPlugins.BaseTrackingDevice.CameraImage is not null)
+            normalLineStrokeSize *= Math.Max(CameraImage.ActualHeight, 480.0) / 480.0;
 
         // Compose perspective constants, make it 70%
         var fromMultiply = .7 * (normalDistance /
@@ -1622,13 +1637,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
             AppPlugins.BaseTrackingDevice.MapCoordinate(fromJoint.Position, out var fromMapped) &&
             AppPlugins.BaseTrackingDevice.MapCoordinate(toJoint.Position, out var toMapped))
         {
-            var actualWidth = Math.Max(CameraImage.ActualWidth, 640.0);
-            var actualHeight = Math.Max(CameraImage.ActualHeight, 480.0);
-
-            (line.X1, line.Y1) = (fromMapped.Left * actualWidth / 640.0f,
-                fromMapped.Top * actualHeight / 480.0f);
-            (line.X2, line.Y2) = (toMapped.Left * actualWidth / 640.0f,
-                toMapped.Top * actualHeight / 480.0f);
+            (line.X1, line.Y1) = (fromMapped.Left, fromMapped.Top);
+            (line.X2, line.Y2) = (toMapped.Left, toMapped.Top);
         }
         else
         {
