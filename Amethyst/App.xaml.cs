@@ -494,55 +494,12 @@ public partial class App : Application
                 }
                 case "localize":
                 {
-                    try
-                    {
-                        var stringsFolder = await Interfacing.LocalFolder
-                            .CreateFolderAsync("Strings", CreationCollisionOption.OpenIfExists);
-
-                        var appStringsFolder = await stringsFolder.CreateFolderAsync(
-                            "Amethyst", CreationCollisionOption.OpenIfExists);
-
-                        var pluginStringsFolders = new SortedDictionary<string, string>();
-
-                        // Copy all app and plugin strings to a shared folder
-                        new DirectoryInfo(Path.Join(Interfacing.ProgramLocation.DirectoryName!, "Assets", "Strings"))
-                            .CopyToFolder(appStringsFolder.Path);
-
-                        var localPluginsFolder = Path.Combine(Interfacing.ProgramLocation.DirectoryName!, "Plugins");
-                        if (Directory.Exists(localPluginsFolder))
-                            foreach (var pluginFolder in Directory.EnumerateDirectories(
-                                             localPluginsFolder, "*", SearchOption.TopDirectoryOnly)
-                                         .Where(x => Directory.Exists(Path.Join(x, "Assets", "Strings"))).ToList())
-                            {
-                                // Copy to the shared folder, creating a random name
-                                var outputFolder = await stringsFolder.CreateFolderAsync(
-                                    new DirectoryInfo(pluginFolder).Name,
-                                    CreationCollisionOption.OpenIfExists);
-
-                                new DirectoryInfo(Path.Join(pluginFolder, "Assets", "Strings"))
-                                    .CopyToFolder(outputFolder.Path);
-
-                                pluginStringsFolders.Add(Path.Join(pluginFolder, "Assets", "Strings"),
-                                    outputFolder.Path);
-                            }
-
-                        // Create a new localization config
-                        await File.WriteAllTextAsync(Interfacing.GetAppDataFilePath("Localization.json"),
-                            JsonConvert.SerializeObject(new LocalizationSettings
-                            {
-                                AmethystStringsFolder = appStringsFolder.Path,
-                                PluginStringFolders = pluginStringsFolders
-                            }, Formatting.Indented));
-
-                        SystemShell.OpenFolderAndSelectItem(stringsFolder.Path);
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e);
-                    }
-
-                    Logger.Info("That's all! Shutting down now...");
-                    Environment.Exit(0); // Cancel further application startup
+                    await SetupLocalizationResources();
+                    break;
+                }
+                case "localize-force":
+                {
+                    await SetupLocalizationResources(true);
                     break;
                 }
                 case "apply-fix":
@@ -578,6 +535,9 @@ public partial class App : Application
                         pluginDirectoryList.AddRange(Directory.EnumerateDirectories(
                             (await Interfacing.GetAppDataPluginFolder("")).Path,
                             "*", SearchOption.TopDirectoryOnly));
+
+                        pluginDirectoryList.RemoveAll(x => Path
+                            .GetFileName(x)?.StartsWith("_IGNORE_") ?? false);
 
                         // Add the current assembly to support invoke method exports
                         AssemblyLoadContext.Default.LoadFromAssemblyPath(
@@ -940,6 +900,9 @@ public partial class App : Application
                 (await Interfacing.GetAppDataPluginFolder("")).Path,
                 "*", SearchOption.TopDirectoryOnly));
 
+            pluginDirectoryList.RemoveAll(x => Path
+                .GetFileName(x)?.StartsWith("_IGNORE_") ?? false);
+
             // Add the current assembly to support invoke method exports
             AssemblyLoadContext.Default.LoadFromAssemblyPath(
                 Assembly.GetAssembly(typeof(ITrackingDevice))!.Location);
@@ -1097,6 +1060,59 @@ public partial class App : Application
         Logger.Info("Closing all other views now...");
         _canCloseViews = true; // Tell other views they can close
         _views.ForEach(x => x.Close()); // Try closing each
+    }
+
+    private async Task SetupLocalizationResources(bool overwrite = false)
+    {
+        try
+        {
+            var stringsFolder = await Interfacing.LocalFolder
+                .CreateFolderAsync("Strings", CreationCollisionOption.OpenIfExists);
+
+            var appStringsFolder = await stringsFolder.CreateFolderAsync(
+                "Amethyst", CreationCollisionOption.OpenIfExists);
+
+            var pluginStringsFolders = new SortedDictionary<string, string>();
+
+            // Copy all app and plugin strings to a shared folder
+            new DirectoryInfo(Path.Join(Interfacing.ProgramLocation.DirectoryName!, "Assets", "Strings"))
+                .CopyToFolder(appStringsFolder.Path, overwrite: overwrite);
+
+            var localPluginsFolder = Path.Combine(Interfacing.ProgramLocation.DirectoryName!, "Plugins");
+            if (Directory.Exists(localPluginsFolder))
+                foreach (var pluginFolder in Directory.EnumerateDirectories(
+                                 localPluginsFolder, "*", SearchOption.TopDirectoryOnly)
+                             .Where(x => Directory.Exists(Path.Join(x, "Assets", "Strings"))).ToList())
+                {
+                    // Copy to the shared folder, creating a random name
+                    var outputFolder = await stringsFolder.CreateFolderAsync(
+                        new DirectoryInfo(pluginFolder).Name,
+                        CreationCollisionOption.OpenIfExists);
+
+                    new DirectoryInfo(Path.Join(pluginFolder, "Assets", "Strings"))
+                        .CopyToFolder(outputFolder.Path, overwrite: overwrite);
+
+                    pluginStringsFolders.Add(Path.Join(pluginFolder, "Assets", "Strings"),
+                        outputFolder.Path);
+                }
+
+            // Create a new localization config
+            await File.WriteAllTextAsync(Interfacing.GetAppDataFilePath("Localization.json"),
+                JsonConvert.SerializeObject(new LocalizationSettings
+                {
+                    AmethystStringsFolder = appStringsFolder.Path,
+                    PluginStringFolders = pluginStringsFolders
+                }, Formatting.Indented));
+
+            SystemShell.OpenFolderAndSelectItem(stringsFolder.Path);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+
+        Logger.Info("That's all! Shutting down now...");
+        Environment.Exit(0); // Cancel further application startup
     }
 
     // Send a non-dismissible tip about reloading the app

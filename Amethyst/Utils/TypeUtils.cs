@@ -430,7 +430,7 @@ public static class StringExtensions
 
 public static class StorageExtensions
 {
-    public static void CopyToFolder(this DirectoryInfo source, string destination, bool inside = false)
+    public static void CopyToFolder(this DirectoryInfo source, string destination, bool inside = false, bool overwrite = true)
     {
         // Create the base directory (if needed)
         if (inside) destination = Path.Join(destination, source.Name);
@@ -446,7 +446,7 @@ public static class StorageExtensions
         foreach (var newPath in source.GetFiles("*.*", SearchOption.AllDirectories))
         {
             Logger.Info($"Copying file {source} to {destination}\\");
-            newPath.CopyTo(newPath.FullName.Replace(source.FullName, destination), true);
+            newPath.CopyTo(newPath.FullName.Replace(source.FullName, destination), overwrite);
         }
     }
 }

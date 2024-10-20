@@ -660,6 +660,46 @@ public static class Interfacing
         }
     }
 
+    // Get a list of all available languages <code: name>
+    public static Dictionary<string, string> GetAvailableResourceLanguages(Action<string> entryProcessor = null)
+    {
+        var stringsFolder = Path.Join(ProgramLocation.DirectoryName, "Assets", "Strings");
+        if (File.Exists(GetAppDataFilePath("Localization.json")))
+            try
+            {
+                // Parse the loaded json
+                var defaults = JsonConvert.DeserializeObject<LocalizationSettings>(
+                                   File.ReadAllText(GetAppDataFilePath("Localization.json"))) ??
+                               new LocalizationSettings();
+
+                if (defaults.AmethystStringsFolder is not null &&
+                    Directory.Exists(defaults.AmethystStringsFolder))
+                    stringsFolder = defaults.AmethystStringsFolder;
+            }
+            catch (Exception e)
+            {
+                Logger.Info($"Localization settings checkout failed! Message: {e.Message}");
+            }
+        else Logger.Info("No default localization settings found! [Localization.json]");
+
+        if (!Directory.Exists(stringsFolder)) return [];
+
+        // Push all the found languages
+        var result = new Dictionary<string, string>();
+        foreach (var entry in Directory.EnumerateFiles(stringsFolder))
+        {
+            if (Path.GetFileNameWithoutExtension(entry) == "locales") continue;
+
+            result[Path.GetFileNameWithoutExtension(entry)] =
+                GetLocalizedLanguageName(Path.GetFileNameWithoutExtension(entry));
+
+            entryProcessor?.Invoke(entry); // Custom processing
+        }
+
+        // Finally return
+        return result;
+    }
+
     // Load the current desired resource JSON into app memory
     public static void LoadJsonStringResourcesEnglish()
     {

@@ -86,21 +86,18 @@ public sealed partial class SetupError : Page, INotifyPropertyChanged
         // Clear available languages' list
         _pageSetupFinished = false;
         LanguageOptionBox.Items.Clear();
+        _languageList.Clear();
 
         // Push all the found languages
-        if (!Directory.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings"))) return;
-        foreach (var entry in Directory.EnumerateFiles(
-                     Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings")))
-        {
-            if (Path.GetFileNameWithoutExtension(entry) == "locales") continue;
+        if (Interfacing.GetAvailableResourceLanguages(entry =>
+            {
+                _languageList.Add(Path.GetFileNameWithoutExtension(entry));
+                LanguageOptionBox.Items.Add(Interfacing.GetLocalizedLanguageName(
+                    Path.GetFileNameWithoutExtension(entry)));
 
-            _languageList.Add(Path.GetFileNameWithoutExtension(entry));
-            LanguageOptionBox.Items.Add(Interfacing.GetLocalizedLanguageName(
-                Path.GetFileNameWithoutExtension(entry)));
-
-            if (Path.GetFileNameWithoutExtension(entry) == AppData.Settings.AppLanguage)
-                LanguageOptionBox.SelectedIndex = LanguageOptionBox.Items.Count - 1;
-        }
+                if (Path.GetFileNameWithoutExtension(entry) == AppData.Settings.AppLanguage)
+                    LanguageOptionBox.SelectedIndex = LanguageOptionBox.Items.Count - 1;
+            }).Count <= 0) return;
 
         // Mark as ready to go
         LanguageComboFlyout.Hide();
