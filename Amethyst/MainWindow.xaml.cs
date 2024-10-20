@@ -230,6 +230,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             (await Interfacing.GetAppDataPluginFolder("")).Path,
             "*", SearchOption.TopDirectoryOnly));
 
+        pluginDirectoryList.RemoveAll(x => Path
+            .GetFileName(x)?.StartsWith("_IGNORE_") ?? false);
+
         // Add the current assembly to support invoke method exports
         AssemblyLoadContext.Default.LoadFromAssemblyPath(
             Assembly.GetAssembly(typeof(ITrackingDevice))!.Location);

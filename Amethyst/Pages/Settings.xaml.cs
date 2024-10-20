@@ -230,21 +230,18 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
         // Clear available languages' list
         LanguageOptionBox.Items.Clear();
+        _languageList.Clear();
 
         // Push all the found languages
-        if (Directory.Exists(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings")))
-            foreach (var entry in Directory.EnumerateFiles(
-                         Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings")))
+        if (Interfacing.GetAvailableResourceLanguages(entry =>
             {
-                if (Path.GetFileNameWithoutExtension(entry) == "locales") continue;
-
                 _languageList.Add(Path.GetFileNameWithoutExtension(entry));
                 LanguageOptionBox.Items.Add(Interfacing.GetLocalizedLanguageName(
                     Path.GetFileNameWithoutExtension(entry)));
 
                 if (Path.GetFileNameWithoutExtension(entry) == AppData.Settings.AppLanguage)
                     LanguageOptionBox.SelectedIndex = LanguageOptionBox.Items.Count - 1;
-            }
+            }).Count <= 0) return;
 
         // Clear available themes' list
         AppThemeOptionBox.Items.Clear();
