@@ -531,8 +531,7 @@ public static class Interfacing
         {
             // Load the locales.json from Assets/Strings/
             var resourcePath = Path.Join(
-                ProgramLocation.DirectoryName,
-                "Assets", "Strings", "locales.json");
+                AppDirectoryName, "Assets", "Strings", "locales.json");
 
             if (File.Exists(GetAppDataFilePath("Localization.json")))
                 try
@@ -600,8 +599,7 @@ public static class Interfacing
             Logger.Info($"Searching for language resources with key \"{languageKey}\"...");
 
             var resourcePath = Path.Join(
-                ProgramLocation.DirectoryName,
-                "Assets", "Strings", languageKey + ".json");
+                AppDirectoryName, "Assets", "Strings", languageKey + ".json");
 
             if (File.Exists(GetAppDataFilePath("Localization.json")))
                 try
@@ -660,10 +658,33 @@ public static class Interfacing
         }
     }
 
-    // Get a list of all available languages <code: name>
+    public static string AppDirectoryName
+    {
+        get
+        {
+#if DEBUG
+            try
+            {
+                // DirectoryName -> REPO_ROOT\Amethyst\bin\x64\Debug\net7.0\win10-x64\AppX
+                if (!Debugger.IsAttached) return ProgramLocation.DirectoryName;
+                var result = Directory.GetParent(ProgramLocation.DirectoryName!)!
+                    .Parent!.Parent!.Parent!.Parent!.Parent!.FullName;
+                return Directory.Exists(result) ? result : ProgramLocation.DirectoryName;
+            }
+            catch (Exception)
+            {
+                return ProgramLocation.DirectoryName;
+            }
+#else
+            return ProgramLocation.DirectoryName;
+#endif
+        }
+    }
+
+// Get a list of all available languages <code: name>
     public static Dictionary<string, string> GetAvailableResourceLanguages(Action<string> entryProcessor = null)
     {
-        var stringsFolder = Path.Join(ProgramLocation.DirectoryName, "Assets", "Strings");
+        var stringsFolder = Path.Join(AppDirectoryName, "Assets", "Strings");
         if (File.Exists(GetAppDataFilePath("Localization.json")))
             try
             {
@@ -700,7 +721,7 @@ public static class Interfacing
         return result;
     }
 
-    // Load the current desired resource JSON into app memory
+// Load the current desired resource JSON into app memory
     public static void LoadJsonStringResourcesEnglish()
     {
         try
@@ -708,8 +729,7 @@ public static class Interfacing
             Logger.Info("Searching for shared (English) language resources...");
 
             var resourcePath = Path.Join(
-                ProgramLocation.DirectoryName,
-                "Assets", "Strings", "en.json");
+                AppDirectoryName, "Assets", "Strings", "en.json");
 
             if (File.Exists(GetAppDataFilePath("Localization.json")))
                 try
@@ -760,7 +780,7 @@ public static class Interfacing
         }
     }
 
-    // Get a string from runtime JSON resources, language from settings
+// Get a string from runtime JSON resources, language from settings
     public static string LocalizedJsonString(string resourceKey,
         [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
         [CallerMemberName] string memberName = "")
@@ -786,7 +806,7 @@ public static class Interfacing
         }
     }
 
-    // Get a string from runtime JSON resources, language from settings
+// Get a string from runtime JSON resources, language from settings
     public static string EnglishJsonString(string resourceKey,
         [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
         [CallerMemberName] string memberName = "")
@@ -811,7 +831,7 @@ public static class Interfacing
         }
     }
 
-    // Restart Amethyst
+// Restart Amethyst
     public static async Task ExecuteAppRestart(bool handleExit = true, string parameters = "", bool admin = false)
     {
         Logger.Info("Restart requested: trying to restart the app...");

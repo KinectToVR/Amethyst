@@ -140,8 +140,18 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         ServiceSupportsSettings ? new CornerRadius(0) : new CornerRadius(0, 0, 4, 4);
 
     // MVVM stuff: bound strings with placeholders
-    private string RestartServiceText => Interfacing.LocalizedJsonString(
-        "/SettingsPage/Buttons/RestartService").Format(AppPlugins.CurrentServiceEndpoint.Name);
+    private string RestartServiceText
+    {
+        get
+        {
+            var result = Interfacing.LocalizedJsonString(
+                "/SettingsPage/Buttons/RestartService").Format(AppPlugins.CurrentServiceEndpoint.Name);
+            return result.Length <= 20
+                ? result
+                : Interfacing.LocalizedJsonString(
+                    "/SettingsPage/Buttons/RestartService").Format("").Trim();
+        }
+    }
 
     private string RestartServiceNoteL1 => Interfacing.LocalizedJsonString(
         "/SettingsPage/Captions/TrackersRestart/Line1").Format(AppPlugins.CurrentServiceEndpoint.Name);

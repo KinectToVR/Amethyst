@@ -1110,18 +1110,6 @@
             "translation": "Left Foot"
         },
         {
-            "id": "/SharedStrings/Joints/Enum/10",
-            "translation": "Chest"
-        },
-        {
-            "id": "/SharedStrings/Joints/Enum/11",
-            "translation": "Camera"
-        },
-        {
-            "id": "/SharedStrings/Joints/Enum/12",
-            "translation": "Keyboard"
-        },
-        {
             "id": "/SharedStrings/Joints/Enum/2",
             "translation": "Right Foot"
         },
@@ -1152,6 +1140,30 @@
         {
             "id": "/SharedStrings/Joints/Enum/9",
             "translation": "Waist"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/10",
+            "translation": "Chest"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/11",
+            "translation": "Camera"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/12",
+            "translation": "Keyboard"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/13",
+            "translation": "Head"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/14",
+            "translation": "Left Hand"
+        },
+        {
+            "id": "/SharedStrings/Joints/Enum/15",
+            "translation": "Right Hand"
         },
         {
             "id": "/SharedStrings/Joints/Pairs/1",

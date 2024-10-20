@@ -206,7 +206,7 @@ public partial class App : Application
             }
         });
 
-        var stringsFolder = Path.Join(Interfacing.ProgramLocation.DirectoryName, "Assets", "Strings");
+        var stringsFolder = Path.Join(Interfacing.AppDirectoryName, "Assets", "Strings");
         if (File.Exists(Interfacing.GetAppDataFilePath("Localization.json")))
             try
             {
