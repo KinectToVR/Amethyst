@@ -20,6 +20,7 @@ using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using Windows.Devices.Geolocation;
 
 namespace Amethyst.Utils;
 
@@ -450,7 +451,7 @@ public static class StorageExtensions
         // Create the base directory (if needed)
         if (inside) destination = Path.Join(destination, source.Name);
 
-        // Now Create all of the directories
+        // Now Create all the directories
         foreach (var dirPath in source.GetDirectories("*", SearchOption.AllDirectories))
         {
             Logger.Info($"Creating folder {source} in {destination}\\");
@@ -458,7 +459,8 @@ public static class StorageExtensions
         }
 
         // Copy all the files & Replaces any files with the same name
-        foreach (var newPath in source.GetFiles("*.*", SearchOption.AllDirectories))
+        foreach (var newPath in source.GetFiles("*.*", SearchOption.AllDirectories)
+                     .Where(x => overwrite || !File.Exists(x.FullName.Replace(source.FullName, destination))))
         {
             Logger.Info($"Copying file {source} to {destination}\\");
             newPath.CopyTo(newPath.FullName.Replace(source.FullName, destination), overwrite);

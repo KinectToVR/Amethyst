@@ -74,7 +74,7 @@
                         The more languages Amethyst is available in, the more people can actually access and use it.
                     </TextBlock>
                     <HyperlinkButton Content="You can help us with that here."
-                                     NavigateUri="https://github.com/KinectToVR/Amethyst-Releases/wiki/Localizing-Amethyst"
+                                     NavigateUri="https://docs.k2vr.tech/en/dev/localization"
                                      VerticalAlignment="Bottom" HorizontalAlignment="Right" />
                 </Grid>
 
