@@ -62,6 +62,13 @@ public class PluginHost(string guid) : IAmethystHost
         return AppPlugins.BaseTrackingDevice.TrackedJoints.Exists(x => x.Role == jointType);
     }
 
+    // Check if a tracker with the specified role is enabled and active
+    public bool IsTrackerEnabled(TrackerType trackerType)
+    {
+        return AppData.Settings.TrackersVector
+            .Any(x => x.Role == trackerType && x.IsActive);
+    }
+
     // Lock the main update loop while in scope with [lock (UpdateThreadLock) { }]
     public object UpdateThreadLock => UpdateLock;
 
@@ -279,19 +286,28 @@ public class PluginHost(string guid) : IAmethystHost
     // Process a key input action called from a single joint
     // The handler will check whether the action is used anywhere,
     // and trigger the linked output action if applicable
-    public void ReceiveKeyInput<T>(KeyInputAction<T> action, T data)
+    public void ReceiveKeyInput(IKeyInputAction action, object data)
     {
         try
         {
             // Invoke all linked input actions
             AppData.Settings.TrackersVector
-                .SelectMany(x => x.InputActionsMap.Where(y => y.Value.Action == action.Guid))
-                .Select(x => x.Key.LinkedAction).ToList().ForEach(x => x?.Invoke(data));
+                .SelectMany(x => x.InputActionsMap.Where(y => y.Value?.Guid == action.Guid)
+                    .Select(y => (Tracker: x.Role, Action: y.Key.LinkedAction))).ToList()
+                .ForEach(x => AppPlugins.CurrentServiceEndpoint.ProcessKeyInput(x.Action, data, x.Tracker));
         }
         catch (Exception e)
         {
             Logger.Warn(e);
         }
+    }
+
+    // Check whether a KeyInputAction is used for anything
+    // Devices may use this to skip updating unused actions
+    public bool CheckInputActionIsUsed(IKeyInputAction action)
+    {
+        return AppData.Settings.TrackersVector
+            .Any(x => x.InputActionsMap.Any(y => y.Value?.Guid == action.Guid));
     }
 
     // INTERNAL: Available only via reflection, not defined in the Host interface
@@ -1101,6 +1117,29 @@ public class AppTrackerEntry
     public bool IsEnabled => AppData.Settings.TrackersVector.Any(x => x.Role == TrackerRole);
 }
 
+public class InputActionEntry
+{
+    public InputActionEndpoint Action { get; set; }
+    public bool IsEnabled { get; set; }
+    public string Name => Action?.LinkedAction?.Name ?? "INVALID";
+}
+
+public class InputActionBindingEntry
+{
+    public InputActionEndpoint Action { get; set; }
+    public InputActionSource Source { get; set; }
+
+    public string ActionName => Action?.LinkedAction?.Name ?? "INVALID";
+    public string SourceName => Source?.LinkedAction?.Name ?? Source?.Name ?? "Disabled"; // TODO translator, also INVALID->Unavailable
+    public string ActionNameFormatted => $"{ActionName}:";
+    public string ActionDescription => Action?.LinkedAction?.Description;
+    public string SourceDescription => Source?.LinkedAction?.Description;
+
+    public bool IsEnabled => Source is not null;
+    public bool IsValid => !IsEnabled || Source?.LinkedAction is not null;
+    public bool IsInvalid => !IsValid;
+}
+
 public static class CollectionExtensions
 {
     public static bool AddPlugin<T>(this ICollection<T> collection, DirectoryInfo item) where T : ComposablePartCatalog
@@ -1315,18 +1354,19 @@ public static class CollectionExtensions
     }
 }
 
+[Serializable]
 public class InputActionEndpoint
 {
     // Action's container tracker
-    public TrackerType Tracker { get; set; }
+    [JsonProperty] public TrackerType Tracker { get; set; }
 
     // Action that should be called
-    public Guid Action { get; set; }
+    [JsonProperty] public string Guid { get; set; }
 
     // MVVM Stuff
     [JsonIgnore]
     [IgnoreDataMember]
-    public KeyInputAction LinkedAction
+    public IKeyInputAction LinkedAction
     {
         get
         {
@@ -1334,7 +1374,7 @@ public class InputActionEndpoint
             {
                 return AppPlugins.CurrentServiceEndpoint?.SupportedInputActions?
                     .TryGetValue(Tracker, out var actions) ?? false
-                    ? actions?.First(x => x.Guid == Action) // Find the action
+                    ? actions?.First(x => x.Guid == Guid) // Find the action
                     : null; // If there's no corresponding tracker - give up now
             }
             catch (Exception)
@@ -1347,24 +1387,25 @@ public class InputActionEndpoint
     [JsonIgnore] [IgnoreDataMember] public bool IsValid => LinkedAction is not null;
 }
 
+[Serializable]
 public class InputActionSource
 {
     // The provider device's Guid
-    public string Device { get; set; }
+    [JsonProperty] public string Device { get; set; }
 
     // The action's friendly name (cached)
-    public string Name { get; set; }
+    [JsonProperty] public string Name { get; set; }
 
     // Action's container tracker
-    public TrackedJointType Tracker { get; set; }
+    [JsonProperty] public TrackedJointType Tracker { get; set; }
 
     // Action that should be called
-    public Guid Action { get; set; }
+    [JsonProperty] public string Guid { get; set; }
 
     // MVVM Stuff
     [JsonIgnore]
     [IgnoreDataMember]
-    public KeyInputAction LinkedAction
+    public IKeyInputAction LinkedAction
     {
         get
         {
@@ -1372,7 +1413,7 @@ public class InputActionSource
             {
                 return AppPlugins.TrackingDevicesList.TryGetValue(Device, out var device)
                     ? device?.TrackedJoints?.Where(x => x.Role == Tracker)
-                        .Select(x => x.SupportedInputActions.FirstOrDefault(y => y.Guid == Action, null))
+                        .Select(x => x.SupportedInputActions.FirstOrDefault(y => y.Guid == Guid, null))
                         .FirstOrDefault(x => x is not null, null) // Return the first valid action
                     : null;
             }

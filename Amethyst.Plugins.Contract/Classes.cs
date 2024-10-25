@@ -111,7 +111,7 @@ public class TrackedJoint
     /// </summary>
     [JsonIgnore]
     [IgnoreDataMember]
-    public SortedSet<KeyInputAction> SupportedInputActions { get; init; } = new();
+    public SortedSet<IKeyInputAction> SupportedInputActions { get; init; } = new();
 }
 
 [DataContract]

@@ -67,7 +67,7 @@ public class ServiceEndpoint(string name, string guid, string path, Version vers
 
     // Keeps all supported input actions that may be received from ProcessKeyInput
     // You will not be able to receive actions from unsupported TrackerType either
-    public Dictionary<TrackerType, SortedSet<KeyInputAction>> SupportedInputActions => Service.SupportedInputActions;
+    public Dictionary<TrackerType, SortedSet<IKeyInputAction>> SupportedInputActions => Service.SupportedInputActions;
 
     // Mark as true to tell the user that they need to restart/
     // /in case they want to add more trackers after spawning
@@ -163,6 +163,13 @@ public class ServiceEndpoint(string name, string guid, string path, Version vers
         IEnumerable<TrackerBase> trackerBases, bool wantReply = true, CancellationToken? token = null)
     {
         return Service.UpdateTrackerPoses(trackerBases, wantReply, token);
+    }
+
+    // Process a key input event sent by a device, that was assigned and found
+    public Task ProcessKeyInput<T>(IKeyInputAction action, T data,
+        TrackerType? receiver, CancellationToken? token = null)
+    {
+        return Service.ProcessKeyInput(action, data, receiver, token);
     }
 
     // This is called after the app loads the plugin

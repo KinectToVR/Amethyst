@@ -3,9 +3,12 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Amethyst.Classes;
+using Amethyst.MVVM;
+using Amethyst.Pages;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
@@ -57,6 +60,8 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
     private bool IsActive => Trackers.All(x => x.IsActive);
 
     private bool IsSupported => Trackers.All(x => x.IsSupported);
+
+    private bool ShowBindingsSection => Trackers.Any(x => x.AvailableInputActions.Count > 0);
 
     private bool IsActiveEnabled
     {
@@ -264,5 +269,173 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
     {
         if ((sender as ComboBox)!.SelectedIndex < 0)
             (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];
+    }
+
+    private void ActionConfigButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        // ignored
+    }
+
+    private void InputActionToggle_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not ToggleMenuFlyoutItem { DataContext: InputActionEntry entry, Parent: ItemsRepeater parent } item ||
+            parent.GetValue(AttachedObject.AttachedObjectProperty) is not AppTracker tracker) return;
+
+        if (!tracker.InputActions.ContainsKey(AppData.Settings.ServiceEndpointGuid))
+            tracker.InputActions[AppData.Settings.ServiceEndpointGuid] = [];
+
+        // Set up the binding placeholder now
+        if (item.IsChecked)
+            tracker.InputActions[AppData.Settings.ServiceEndpointGuid][entry.Action] = null;
+        else
+            tracker.InputActions[AppData.Settings.ServiceEndpointGuid].Remove(
+                tracker.InputActions[AppData.Settings.ServiceEndpointGuid]
+                    .FirstOrDefault(x => x.Key.Guid == entry.Action.Guid).Key ?? entry.Action);
+
+        // Refresh everything
+        _blockPropertyToggleSignals = true;
+        OnPropertyChanged(); // Refresh UI
+        Trackers.ForEach(x =>
+        {
+            x.OnPropertyChanged("InputActionEntries");
+            x.OnPropertyChanged("InputActionBindingEntries");
+        });
+        _blockPropertyToggleSignals = false;
+
+        // Hide and save
+        if (((parent.Parent as StackPanel)?.Parent as FlyoutPresenter)?
+            .Parent is Microsoft.UI.Xaml.Controls.Primitives.Popup popup)
+            popup.IsOpen = false;
+
+        AppData.Settings.SaveSettings();
+    }
+
+    private void BindingFlyoutItem_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuFlyoutItem { DataContext: InputActionBindingEntry entry } item ||
+            item.GetValue(AttachedString.AttachedStringProperty) is not string command) return;
+
+        var tracker = Trackers.FirstOrDefault(x => x.Role == entry.Action.Tracker);
+        if (tracker is null) return; // Not related to the updated selection
+
+        switch (command)
+        {
+            case "HIDE":
+                // Remove the action from our bindings
+                tracker.InputActions[AppData.Settings.ServiceEndpointGuid].Remove(
+                    tracker.InputActions[AppData.Settings.ServiceEndpointGuid]
+                        .FirstOrDefault(x => x.Key.Guid == entry.Action.Guid).Key ?? entry.Action);
+                break;
+            case "DISABLE":
+                // Set up the command as "null" so it's shown but disabled
+                tracker.InputActions[AppData.Settings.ServiceEndpointGuid][entry.Action] = null;
+                break;
+            default:
+                return;
+        }
+
+        // Refresh everything
+        _blockPropertyToggleSignals = true;
+        OnPropertyChanged(); // Refresh UI
+        Trackers.ForEach(x =>
+        {
+            x.OnPropertyChanged("InputActionEntries");
+            x.OnPropertyChanged("InputActionBindingEntries");
+        });
+        _blockPropertyToggleSignals = false;
+
+        // Hide and save
+        AppData.Settings.SaveSettings();
+    }
+
+    private void BindingsFlyout_OnOpening(object sender, object e)
+    {
+        if (sender is not MenuFlyout flyout) return;
+        if (flyout.Items.LastOrDefault()?.DataContext is not InputActionBindingEntry entry) return;
+
+        var tracker = Trackers.FirstOrDefault(x => x.Role == entry.Action.Tracker);
+        if (tracker is null) return; // Not related to the updated selection
+
+        if (flyout.Items.Count > 4) // Remove the sources
+            flyout.Items.Take(flyout.Items.Count - 4)
+                .ToList().ForEach(x => flyout.Items.Remove(x));
+
+        // Loop over all devices that have accessible actions and add them to the flyout
+        // Group by Device>Joint>Action(Selectable)
+        foreach (var device in AppPlugins.TrackingDevicesList.Values
+                     .Where(x => x.TrackedJoints.Any(y => y.SupportedInputActions.Any()))
+                     .OrderByDescending(x => x.Name))
+        {
+            var deviceItem = new MenuFlyoutSubItem { Text = device.Name };
+            foreach (var joint in device.TrackedJoints
+                         .Where(x => x.SupportedInputActions.Any()))
+            {
+                var jointItem = new MenuFlyoutSubItem { Text = joint.Name };
+                foreach (var action in joint.SupportedInputActions.OrderBy(action => action.Name))
+                {
+                    var actionItem = new ToggleMenuFlyoutItem
+                    {
+                        Text = action.Name,
+                        IsChecked = entry.Source?.LinkedAction?.Guid == action.Guid,
+                        IsEnabled = entry.Action?.LinkedAction?.DataType == action.DataType
+                    };
+
+                    ToolTipService.SetToolTip(actionItem,
+                        new ToolTip { Content = action.Description });
+
+                    actionItem.Click += (_, _) =>
+                    {
+                        // Set up the command binding
+                        tracker.InputActions[AppData.Settings.ServiceEndpointGuid]
+                            [entry.Action] = new InputActionSource
+                        {
+                            Device = device.Guid,
+                            Guid = action.Guid,
+                            Name = action.Name,
+                            Tracker = joint.Role
+                        };
+
+                        // Refresh everything
+                        _blockPropertyToggleSignals = true;
+                        OnPropertyChanged(); // Refresh UI
+                        Trackers.ForEach(x =>
+                        {
+                            x.OnPropertyChanged("InputActionEntries");
+                            x.OnPropertyChanged("InputActionBindingEntries");
+                        });
+                        _blockPropertyToggleSignals = false;
+
+                        AppData.Settings.SaveSettings(); // Save and signal
+                        device.SignalJoint(device.TrackedJoints.IndexOf(joint));
+                    };
+                    jointItem.Items.Add(actionItem);
+                }
+
+                deviceItem.Items.Add(jointItem);
+            }
+
+            flyout.Items.Insert(0, deviceItem);
+        }
+    }
+}
+
+public class AttachedObject : DependencyObject
+{
+    public static readonly DependencyProperty AttachedObjectProperty =
+        DependencyProperty.RegisterAttached(
+            "AttachedObject",
+            typeof(object),
+            typeof(AttachedObject),
+            new PropertyMetadata(false)
+        );
+
+    public static void SetAttachedObject(UIElement element, object value)
+    {
+        element.SetValue(AttachedObjectProperty, value);
+    }
+
+    public static object GetAttachedObject(UIElement element)
+    {
+        return element.GetValue(AttachedObjectProperty);
     }
 }

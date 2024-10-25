@@ -732,11 +732,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
             // If auto-calibration is not supported, proceed straight to manual
             // Test: supports if the device provides a head joint / otherwise not
-            if (trackingDevice.TrackedJoints.Any(x => x.Role == TrackedJointType.JointHead))
+            if (trackingDevice.TrackedJoints.Any(x => x.Role == TrackedJointType.JointHead) &&
+                AppPlugins.CurrentServiceEndpoint.HeadsetPose != null)
             {
                 // If manual calibration is not supported, proceed straight to automatic
-                if (AppPlugins.CurrentServiceEndpoint.HeadsetPose != null &&
-                    AppPlugins.CurrentServiceEndpoint.ControllerInputActions is null) ExecuteAutomaticCalibration();
+                if (AppPlugins.CurrentServiceEndpoint.ControllerInputActions is null) ExecuteAutomaticCalibration();
                 return; // Else open the selection pane
             }
 

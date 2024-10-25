@@ -7,7 +7,7 @@
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>Amethyst Device Plugin API (Contract)</Title>
 		<FileVersion></FileVersion>
-		<Version>0.3.27-alpha</Version>
+		<Version>0.3.32-alpha</Version>
 		<Platforms>x64</Platforms>
 	</PropertyGroup>
 

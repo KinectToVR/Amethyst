@@ -282,7 +282,7 @@ public interface IServiceEndpoint
     ///     You will not be able to receive actions from unsupported TrackerType either
     /// </summary>
     [DefaultValue(null)]
-    public Dictionary<TrackerType, SortedSet<KeyInputAction>> SupportedInputActions { get; }
+    public Dictionary<TrackerType, SortedSet<IKeyInputAction>> SupportedInputActions { get; }
 
     /// <summary>
     ///     Get the absolute pose of the HMD, calibrated against the play space
@@ -352,7 +352,7 @@ public interface IServiceEndpoint
     /// <summary>
     ///     Process a key input event sent by a device, that was assigned and found
     /// </summary>
-    public Task ProcessKeyInput<T>(KeyInputAction<T> action, T? data, 
+    public Task ProcessKeyInput(IKeyInputAction action, object? data, 
         TrackerType? receiver, CancellationToken? token = null);
 }
 
@@ -426,6 +426,11 @@ public interface IAmethystHost
     bool IsTrackedJointValid(TrackedJointType jointType);
 
     /// <summary>
+    ///     Check if a tracker with the specified role is enabled and active
+    /// </summary>
+    bool IsTrackerEnabled(TrackerType trackerType);
+
+    /// <summary>
     ///     Lock the main update loop while in scope with [lock (UpdateThreadLock) { }]
     ///     This will block AME from updating while locked, and also wait for when the/
     ///     / lock is available => multiple plugins can never lock it at the same time!
@@ -490,7 +495,16 @@ public interface IAmethystHost
     /// <param name="data">
     ///     Data to be sent, involved with the action
     /// </param>
-    void ReceiveKeyInput<T>(KeyInputAction<T> action, T? data);
+    void ReceiveKeyInput(IKeyInputAction action, object? data);
+
+    /// <summary>
+    ///     Check whether a KeyInputAction is used for anything
+    ///     Devices may use this to skip updating unused actions
+    /// </summary>
+    /// <param name="action">
+    ///     Definition of the input action to validate
+    /// </param>
+    bool CheckInputActionIsUsed(IKeyInputAction action);
 }
 
 /// <summary>
@@ -498,7 +512,7 @@ public interface IAmethystHost
 ///     under "DependencyInstaller" for dependency installation functionality
 ///     Note: you should only use basic/local functionality, as it is unknown
 ///     whether the load context will contain any external libraries you may
-///     be relying on - like framework or device proprietary SDKs and such, etc
+///     be relying on - like framework or device proprietary SDKs and such, etc.
 /// </summary>
 public interface IDependencyInstaller
 {
