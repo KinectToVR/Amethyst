@@ -427,7 +427,7 @@ public class AppSettings : INotifyPropertyChanged
         if (AppData.Settings.TrackersVector[1].OrientationTrackingOption is
                 JointRotationTrackingOption.SoftwareCalculatedRotation or
                 JointRotationTrackingOption.SoftwareCalculatedRotationV2 &&
-            trackingDevice.IsAppOrientationSupported)
+            !trackingDevice.IsAppOrientationSupported)
             AppData.Settings.TrackersVector[1].OrientationTrackingOption =
                 JointRotationTrackingOption.DeviceInferredRotation;
 
@@ -436,7 +436,7 @@ public class AppSettings : INotifyPropertyChanged
         if (AppData.Settings.TrackersVector[2].OrientationTrackingOption is
                 JointRotationTrackingOption.SoftwareCalculatedRotation or
                 JointRotationTrackingOption.SoftwareCalculatedRotationV2 &&
-            trackingDevice.IsAppOrientationSupported)
+            !trackingDevice.IsAppOrientationSupported)
             AppData.Settings.TrackersVector[2].OrientationTrackingOption =
                 JointRotationTrackingOption.DeviceInferredRotation;
 
