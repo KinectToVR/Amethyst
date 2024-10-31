@@ -80,6 +80,18 @@ public static class AppPlugins
         return (ServiceEndpointsList.TryGetValue(guid, out var service), service);
     }
 
+    // Get a <exists, tracking device> by guid
+    public static bool GetDevice(string guid, out TrackingDevice device)
+    {
+        return TrackingDevicesList.TryGetValue(guid, out device);
+    }
+
+    // Get a <exists, tracking device> by guid
+    public static bool GetService(string guid, out ServiceEndpoint service)
+    {
+        return ServiceEndpointsList.TryGetValue(guid, out service);
+    }
+
     public static void UpdateTrackingDevicesInterface()
     {
         if (TrackingDevicesList.Count < 1) return; // Just give up

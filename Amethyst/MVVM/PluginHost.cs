@@ -1130,10 +1130,20 @@ public class InputActionBindingEntry
     public InputActionSource Source { get; set; }
 
     public string ActionName => Action?.LinkedAction?.Name ?? "INVALID";
-    public string SourceName => Source?.LinkedAction?.Name ?? Source?.Name ?? "Disabled"; // TODO translator, also INVALID->Unavailable
+    public string SourceName => Source?.LinkedAction?.Name ?? Source?.Name ?? "Disabled";
     public string ActionNameFormatted => $"{ActionName}:";
     public string ActionDescription => Action?.LinkedAction?.Description;
     public string SourceDescription => Source?.LinkedAction?.Description;
+
+    public string SourceTracker => AppPlugins.GetDevice(Source?.Device, out var device)
+        ? device.TrackedJoints.FirstOrDefault(x => x.Role == Source?.Tracker, null)?
+            .Role.ToString() ?? (Source?.Tracker.ToString() ?? string.Empty)
+        : Source?.Tracker.ToString() ?? string.Empty;
+
+    public string SourceDevice => AppPlugins.GetDevice(Source?.Device, out var device) ? device.Name : string.Empty;
+
+    public string SourcePath => (string.IsNullOrEmpty(SourceDevice) ? "" : $"{SourceDevice} > ") +
+                                (string.IsNullOrEmpty(SourceTracker) ? "" : $"{SourceTracker} > ") + SourceName;
 
     public bool IsEnabled => Source is not null;
     public bool IsValid => !IsEnabled || Source?.LinkedAction is not null;

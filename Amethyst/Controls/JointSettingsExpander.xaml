@@ -153,6 +153,7 @@
 													           Margin="0,0,20,0" Grid.Column="0" Grid.Row="0" />
 
 													<Button Grid.Column="1" Height="65" Width="350"
+													        ToolTipService.ToolTip="{x:Bind SourcePath, Mode=OneWay}"
 													        HorizontalAlignment="Right" VerticalAlignment="Center"
 													        HorizontalContentAlignment="Stretch">
 														<Button.Content>
