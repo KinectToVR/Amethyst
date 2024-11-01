@@ -13,7 +13,6 @@
 	xmlns:icons="using:WinUI.Fluent.Icons"
 	xmlns:controls="using:Amethyst.Controls"
 	xmlns:pages="using:Amethyst.Pages"
-	xmlns:generic="using:System.Collections.Generic"
 	Visibility="{x:Bind Show, Mode=OneWay}"
 	mc:Ignorable="d">
 
@@ -169,40 +168,111 @@
 														</Button.Content>
 
 														<Button.Flyout>
-															<MenuFlyout Placement="BottomEdgeAlignedRight" Opening="BindingsFlyout_OnOpening">
-																<MenuFlyoutSeparator />
-																<MenuFlyoutItem Text="Disabled" DataContext="{x:Bind}"
-																	pages:AttachedString.AttachedString="DISABLE"
-																	Click="BindingFlyoutItem_OnClick" />
-																<MenuFlyoutSeparator />
-																<MenuFlyoutItem Text="Hidden" DataContext="{x:Bind}"
-																	pages:AttachedString.AttachedString="HIDE"
-																	Click="BindingFlyoutItem_OnClick" />
-															</MenuFlyout>
+															<Flyout Placement="Full"
+															        Opening="ButtonFlyout_Opening"
+															        Closing="ButtonFlyout_Closing">
+
+																<Flyout.FlyoutPresenterStyle>
+																	<Style TargetType="FlyoutPresenter">
+																		<Setter Property="MaxHeight" Value="500" />
+																		<Setter Property="MaxWidth" Value="820" />
+																		<Setter Property="MinWidth" Value="820" />
+																		<Setter Property="Margin" Value="30,15,0,0" />
+																		<Setter Property="CornerRadius" Value="8" />
+																		<Setter Property="Background"
+																			Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+																	</Style>
+																</Flyout.FlyoutPresenterStyle>
+
+																<!--Outer grid-->
+																<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+																      MaxWidth="790" MinWidth="790" MaxHeight="475" MinHeight="475"
+																      DataContext="{x:Bind}">
+
+																	<!--Inner grid-->
+																	<Grid VerticalAlignment="Stretch" MaxWidth="790" MinWidth="790"
+																	      MaxHeight="475" MinHeight="475" Padding="0,6"
+																	      ColumnDefinitions="170,40,*" DataContext="{x:Bind}">
+																		<Grid.Transitions>
+																			<TransitionCollection>
+																				<EntranceThemeTransition />
+																			</TransitionCollection>
+																		</Grid.Transitions>
+
+																		<!--The selector part-->
+																		<Grid Grid.Column="0" RowDefinitions="*,Auto" Margin="-20"
+																		      Style="{ThemeResource GridCardSingleStyle}" CornerRadius="0">
+
+																			<ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+																				VerticalScrollBarVisibility="Visible" Grid.Row="0"
+																				Padding="20,0" Margin="-20,0">
+																				<TreeView CanDragItems="False" CanReorderItems="False" />
+																			</ScrollViewer>
+
+																			<StackPanel Orientation="Vertical" Grid.Row="1">
+																				<MenuFlyoutItem Text="Disabled" DataContext="{x:Bind}"
+																					pages:AttachedString.AttachedString="DISABLE"
+																					Click="BindingFlyoutItem_OnClick" />
+																				<MenuFlyoutItem Text="Hidden" DataContext="{x:Bind}"
+																					pages:AttachedString.AttachedString="HIDE"
+																					Click="BindingFlyoutItem_OnClick" />
+																			</StackPanel>
+																		</Grid>
+
+																		<!--The preview part-->
+																		<Grid Grid.Column="2" RowDefinitions="Auto,Auto,*">
+																			<TextBlock FontWeight="SemiBold" Text="{x:Bind SelectedActionName, Mode=OneWay}"
+																				VerticalAlignment="Top" HorizontalAlignment="Left"
+																				FontSize="26" Margin="0,-7,0,0" />
+
+																			<ToggleSplitButton Style="{ThemeResource AccentButtonStyle}"
+																				IsEnabled="{x:Bind SelectedActionValid, Mode=OneWay}"
+																				Content="Use"
+																				IsChecked="{x:Bind SelectedActionValid, Mode=OneWay}"
+																				Click="SplitButton_OnClick"
+																				HorizontalAlignment="Right" VerticalAlignment="Top"
+																				controls:AttachedObject.AttachedObject="{x:Bind}"
+																				Grid.Row="0" Margin="0,-2,0,0">
+																				<ToggleSplitButton.Flyout>
+																					<Flyout Placement="BottomEdgeAlignedRight">
+																						<Grid>
+																							<StackPanel Orientation="Horizontal">
+																								<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+																									Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Device/Status'), Mode=OneWay}"
+																									Margin="0,0,0,0" Foreground="{ThemeResource SystemFillColorNeutralBrush}" />
+																								<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+																									Text="{x:Bind TestingValue}" Margin="5,0,0,0" />
+																							</StackPanel>
+																						</Grid>
+																					</Flyout>
+																				</ToggleSplitButton.Flyout>
+																			</ToggleSplitButton>
+
+																			<Grid Grid.Row="2" Opacity="0.75">
+																				<Grid.ColumnDefinitions>
+																					<ColumnDefinition Width="*" />
+																					<ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
+																					<ColumnDefinition Width="*" />
+																				</Grid.ColumnDefinitions>
+																				<StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center"
+																					HorizontalAlignment="Center" Margin="0,-35,0,0">
+																					<FontIcon FontSize="120" Margin="0,0,0,25" Glyph="&#xE707;" />
+																					<TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+																						FontSize="14"
+																						HorizontalTextAlignment="Center"
+																						TextTrimming="CharacterEllipsis"
+																						Text="Click on supported devices and joints to expand their action lists, &#x0a;and select an action to preview its description, test, or use it." />
+																				</StackPanel>
+																				<Grid.OpacityTransition>
+																					<ScalarTransition />
+																				</Grid.OpacityTransition>
+																			</Grid>
+																		</Grid>
+																	</Grid>
+																</Grid>
+															</Flyout>
 														</Button.Flyout>
 													</Button>
-
-													<!--<ComboBox HorizontalAlignment="Right" VerticalAlignment="Center"
-													          DataContext="{x:Bind}" x:Name="PositionFilterComboBox"
-													          SelectedIndex="{x:Bind PositionTrackingDisplayOption, Mode=TwoWay}"
-													          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-													          PlaceholderText="{x:Bind ManagingDevicePlaceholder, Mode=OneWay}"
-													          IsEnabled="{x:Bind InvertBool(NoPositionFilteringRequested), Mode=OneWay}"
-													          SelectionChanged="PositionFilterComboBox_SelectionChanged"
-													          DropDownOpened="TrackerCombo_OnDropDownOpened"
-													          DropDownClosed="TrackerCombo_OnDropDownClosed"
-													          Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-														<ComboBoxItem
-															Content="{x:Bind util:Translator.Get.String('/SettingsPage/Filters/Position/LERP'), Mode=OneWay}" />
-														<ComboBoxItem
-															Content="{x:Bind util:Translator.Get.String('/SettingsPage/Filters/Position/LowPass'), Mode=OneWay}" />
-														<ComboBoxItem
-															Content="{x:Bind util:Translator.Get.String('/SettingsPage/Filters/Position/Kalman'), Mode=OneWay}" />
-														<ComboBoxItem Visibility="Collapsed"
-														              Content="{x:Bind util:Translator.Get.String('/SettingsPage/Filters/Position/Prediction'), Mode=OneWay}" />
-														<ComboBoxItem
-															Content="{x:Bind util:Translator.Get.String('/SettingsPage/Filters/Position/Off'), Mode=OneWay}" />
-													</ComboBox>-->
 												</Grid>
 											</DataTemplate>
 										</ItemsRepeater.ItemTemplate>

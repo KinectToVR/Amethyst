@@ -83,13 +83,21 @@ public static class AppPlugins
     // Get a <exists, tracking device> by guid
     public static bool GetDevice(string guid, out TrackingDevice device)
     {
-        return TrackingDevicesList.TryGetValue(guid, out device);
+        if (!string.IsNullOrEmpty(guid))
+            return TrackingDevicesList.TryGetValue(guid, out device);
+
+        device = null;
+        return false;
     }
 
     // Get a <exists, tracking device> by guid
     public static bool GetService(string guid, out ServiceEndpoint service)
     {
-        return ServiceEndpointsList.TryGetValue(guid, out service);
+        if (!string.IsNullOrEmpty(guid))
+            return ServiceEndpointsList.TryGetValue(guid, out service);
+
+        service = null;
+        return false;
     }
 
     public static void UpdateTrackingDevicesInterface()

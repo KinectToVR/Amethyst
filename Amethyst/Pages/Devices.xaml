@@ -72,7 +72,7 @@
 							</icons:FluentSymbolIcon>
 						</Button.Content>
 						<Button.Flyout>
-							<Flyout Placement="Full" x:Name="LicensesFlyout"
+							<Flyout Placement="Full"
 							        Opening="ButtonFlyout_Opening"
 							        Closing="ButtonFlyout_Closing">
 

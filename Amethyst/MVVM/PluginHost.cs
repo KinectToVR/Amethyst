@@ -295,6 +295,12 @@ public class PluginHost(string guid) : IAmethystHost
                 .SelectMany(x => x.InputActionsMap.Where(y => y.Value?.Guid == action.Guid)
                     .Select(y => (Tracker: x.Role, Action: y.Key.LinkedAction))).ToList()
                 .ForEach(x => AppPlugins.CurrentServiceEndpoint.ProcessKeyInput(x.Action, data, x.Tracker));
+
+            // Update testing input if available
+            if (InputActionBindingEntry.TreeCurrentAction is not null &&
+                InputActionBindingEntry.TreeCurrentAction.Device == Guid &&
+                InputActionBindingEntry.TreeCurrentAction.Guid == action.Guid)
+                InputActionBindingEntry.TreeCurrentAction.TestValue = data?.ToString();
         }
         catch (Exception e)
         {
@@ -1124,8 +1130,9 @@ public class InputActionEntry
     public string Name => Action?.LinkedAction?.Name ?? "INVALID";
 }
 
-public class InputActionBindingEntry
+public class InputActionBindingEntry : INotifyPropertyChanged
 {
+    private InputActionSource _treeSelectedAction;
     public InputActionEndpoint Action { get; set; }
     public InputActionSource Source { get; set; }
 
@@ -1148,6 +1155,31 @@ public class InputActionBindingEntry
     public bool IsEnabled => Source is not null;
     public bool IsValid => !IsEnabled || Source?.LinkedAction is not null;
     public bool IsInvalid => !IsValid;
+
+    public InputActionSource TreeSelectedAction
+    {
+        get => _treeSelectedAction;
+        set
+        {
+            if (Equals(value, _treeSelectedAction)) return;
+            _treeSelectedAction = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string SelectedActionName => TreeSelectedAction?.Name ?? "No selection"; // TODO
+    public bool SelectedActionValid => TreeSelectedAction is not null;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    public string TestingValue => string.IsNullOrEmpty(TreeCurrentAction?.TestValue) ? "No data" : TreeCurrentAction.TestValue; // TODO
+
+    public static InputActionSource TreeCurrentAction { get; set; }
 }
 
 public static class CollectionExtensions
@@ -1435,4 +1467,5 @@ public class InputActionSource
     }
 
     [JsonIgnore] [IgnoreDataMember] public bool IsValid => LinkedAction is not null;
+    [JsonIgnore] [IgnoreDataMember] public string TestValue = string.Empty;
 }

@@ -172,6 +172,7 @@ public class TrackingDevice : INotifyPropertyChanged
     public BitmapSource CameraImage => GetCameraImage?.Invoke();
 
     public bool IsCameraSupported { get; init; }
+
     public bool IsCameraEnabled
     {
         get => GetIsCameraEnabled?.Invoke() ?? false;
