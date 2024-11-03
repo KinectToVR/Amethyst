@@ -440,10 +440,9 @@ public sealed partial class CrashWindow : Window
             // Chad Windows 11
 
             appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-            appWindow.TitleBar.SetDragRectangles(new RectInt32[]
-            {
+            appWindow.TitleBar.SetDragRectangles([
                 new(0, 0, 10000000, 30)
-            });
+            ]);
 
             appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
             appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;

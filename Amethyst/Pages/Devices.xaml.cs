@@ -133,7 +133,7 @@ public sealed partial class Devices : Page, INotifyPropertyChanged
     // Everything else
     public List<AppTracker> AdditionalTrackers => AppData.Settings.TrackersVector.Count > 6
         ? AppData.Settings.TrackersVector.ToArray()[7..].ToList()
-        : new List<AppTracker>(); // Dummy list with no items (at least not null)
+        : []; // Dummy list with no items (at least not null)
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;

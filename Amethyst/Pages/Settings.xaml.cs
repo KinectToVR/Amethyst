@@ -32,7 +32,7 @@ namespace Amethyst.Pages;
 /// </summary>
 public sealed partial class Settings : Page, INotifyPropertyChanged
 {
-    private readonly List<string> _languageList = new();
+    private readonly List<string> _languageList = [];
     private bool _settingsPageLoadedOnce;
 
     public Settings()
@@ -61,7 +61,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
         {
             tracker.SettingsExpanderTransitions =
-                new TransitionCollection { new RepositionThemeTransition() };
+                [new RepositionThemeTransition()];
             tracker.OnPropertyChanged(); // Refresh the transition
         });
 
@@ -104,10 +104,10 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         .Select(x => new AppTrackerEntry { TrackerRole = x }).ToList();
 
     // MVVM stuff: service settings and its status
-    private IEnumerable<Page> ServiceSettingsPage => new[]
-    {
+    private IEnumerable<Page> ServiceSettingsPage =>
+    [
         AppPlugins.CurrentServiceEndpoint.SettingsInterfaceRoot as Page
-    };
+    ];
 
     private IEnumerable<string> LoadedServiceNames =>
         AppPlugins.ServiceEndpointsList.Values.Select(service => service.Name);
@@ -128,7 +128,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         {
             var message = StringUtils.SplitStatusString(AppPlugins.CurrentServiceEndpoint.ServiceStatusString);
             return message is null || message.Length < 3
-                ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" }
+                ? ["The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA"]
                 : message; // If everything is all right this time
         }
     }
@@ -202,7 +202,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
                 AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
                 {
                     tracker.SettingsExpanderTransitions =
-                        new TransitionCollection { new ContentThemeTransition() };
+                        [new ContentThemeTransition()];
                     tracker.OnPropertyChanged(); // Refresh the transition
                 });
 
@@ -213,7 +213,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
                 AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
                 {
                     tracker.SettingsExpanderTransitions =
-                        new TransitionCollection { new RepositionThemeTransition() };
+                        [new RepositionThemeTransition()];
                     tracker.OnPropertyChanged(); // Refresh the transition
                 });
             });
@@ -481,6 +481,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
     private void ToggleFlipTeachingTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
     {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
         Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = false;
     }
 
@@ -774,7 +776,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
                 trackerBase.ConnectionState = false;
 
                 for (var i = 0; i < 3; i++) // Try 3 times to be extra sure
-                    await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
+                    await AppPlugins.CurrentServiceEndpoint.SetTrackerStates([trackerBase]);
             }
 
             await Task.Delay(20);

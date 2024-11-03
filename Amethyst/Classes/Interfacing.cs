@@ -368,7 +368,7 @@ public static class Interfacing
             Logger.Info("[Interfacing] Spawning all active-supported trackers now...");
 
             // Helper bool array
-            List<bool> spawned = new();
+            List<bool> spawned = [];
 
             // Try 3 times (cause why not)
             if (AppData.Settings.TrackersVector.Count(x => x.IsActive) > 0)
@@ -377,7 +377,7 @@ public static class Interfacing
                     // Update tracker statuses in the server
                     spawned.AddRange((await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(
                             AppData.Settings.TrackersVector.Where(x => x.IsActive).Select(x => x.GetTrackerBase())))
-                        ?.Select(x => x.Success) ?? new[] { false }); // Check if the request was actually okay
+                        ?.Select(x => x.Success) ?? [false]); // Check if the request was actually okay
                     await Task.Delay(15);
                 }
 

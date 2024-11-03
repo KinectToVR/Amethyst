@@ -189,10 +189,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         {
             // Chad Windows 11
             Shared.Main.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-            Shared.Main.AppWindow.TitleBar.SetDragRectangles(new RectInt32[]
-            {
+            Shared.Main.AppWindow.TitleBar.SetDragRectangles([
                 new(0, 0, 10000000, 30)
-            });
+            ]);
 
             Shared.Main.AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
             Shared.Main.AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
@@ -221,7 +220,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         var pluginDirectoryList = Directory.Exists(localPluginsFolder)
             ? Directory.EnumerateDirectories(localPluginsFolder, "*", SearchOption.TopDirectoryOnly).ToList()
-            : new List<string>(); // In case the folder doesn't exists, create an empty directory list
+            : []; // In case the folder doesn't exists, create an empty directory list
 
         // Search the "Plugins" AppData directory for assemblies that match the imports.
         // Iterate over all directories in Plugins dir and add all * dirs to catalogs
@@ -848,14 +847,14 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         });
 
         Logger.Info("Pushing control pages the global collection...");
-        Shared.Main.Pages = new List<(string Tag, Type Page)>
-        {
+        Shared.Main.Pages =
+        [
             ("general", typeof(General)),
             ("settings", typeof(Settings)),
             ("devices", typeof(Devices)),
             ("info", typeof(Info)),
             ("plugins", typeof(Pages.Plugins))
-        };
+        ];
 
         Logger.Info("Registering a detached binary semaphore " +
                     $"reload handler for '{GetType().FullName}'...");
@@ -1027,6 +1026,16 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Request page reloads
         Shared.Events.RequestInterfaceReload();
+
+        // Reload everything we can
+        Shared.Devices.DevicesJointsValid = false;
+
+        // Reload plugins' interfaces
+        AppPlugins.TrackingDevicesList.Values.ToList().ForEach(x => x.OnLoad());
+        AppPlugins.ServiceEndpointsList.Values.ToList().ForEach(x => x.OnLoad());
+
+        // We're done with our changes now!
+        Shared.Devices.DevicesJointsValid = true;
 
         OnPropertyChanged(); // Reload all
         ReloadNavigationIcons();

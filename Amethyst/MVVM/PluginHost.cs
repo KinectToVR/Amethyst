@@ -243,6 +243,8 @@ public class PluginHost(string guid) : IAmethystHost
     // Get Amethyst Docs (web) language
     public string DocsLanguageCode => Interfacing.DocsLanguageCode;
 
+    public bool IsDarkMode => ActualTheme == ElementTheme.Dark;
+
     // Request a string from AME resources, empty for no match
     // Warning: The primarily searched resource is the device-provided one!
     public string RequestLocalizedString(string key)
@@ -507,7 +509,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             if (AppPlugins.TrackingDevicesList.ContainsKey(Guid) &&
                 AppData.Settings.DisabledPluginsGuidSet.Contains(Guid))
             {
-                SortedSet<string> loadedDeviceSet = new();
+                SortedSet<string> loadedDeviceSet = [];
 
                 // Check which devices are loaded : device plugin
                 if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1"))
@@ -535,7 +537,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             else if (AppPlugins.ServiceEndpointsList.ContainsKey(Guid) &&
                      AppData.Settings.DisabledPluginsGuidSet.Contains(Guid))
             {
-                SortedSet<string> loadedServiceSet = new();
+                SortedSet<string> loadedServiceSet = [];
 
                 // Check which services are loaded
                 if (AppPlugins.ServiceEndpointsList.ContainsKey("K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR"))
@@ -1137,7 +1139,7 @@ public class InputActionBindingEntry : INotifyPropertyChanged
     public InputActionSource Source { get; set; }
 
     public string ActionName => Action?.LinkedAction?.Name ?? "INVALID";
-    public string SourceName => Source?.LinkedAction?.Name ?? Source?.Name ?? "Disabled";
+    public string SourceName => Source?.LinkedAction?.Name ?? Source?.Name ?? LocalizedJsonString("/InputActions/Picker/Options/Disabled");
     public string ActionNameFormatted => $"{ActionName}:";
     public string ActionDescription => Action?.LinkedAction?.Description;
     public string SourceDescription => Source?.LinkedAction?.Description;
@@ -1167,8 +1169,13 @@ public class InputActionBindingEntry : INotifyPropertyChanged
         }
     }
 
-    public string SelectedActionName => TreeSelectedAction?.Name ?? "No selection"; // TODO
+    public string SelectedActionName => TreeSelectedAction?.Name ?? LocalizedJsonString("/InputActions/Picker/NoSelectionHeader");
+    public string SelectedActionDescription => TreeSelectedAction?.LinkedAction?.Description;
     public bool SelectedActionValid => TreeSelectedAction is not null;
+    public bool SelectedActionInvalid => TreeSelectedAction is null;
+    public UIElement SelectedActionImage => TreeSelectedAction?.LinkedAction?.Image as UIElement;
+    public bool SelectedActionImageValid => TreeSelectedAction?.LinkedAction?.Image is UIElement;
+    public bool SelectedActionImageInvalid => TreeSelectedAction?.LinkedAction?.Image is not UIElement;
 
     public event PropertyChangedEventHandler PropertyChanged;
 

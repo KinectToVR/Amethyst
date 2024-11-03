@@ -35,7 +35,7 @@ public static class StartupController
     {
         // Vector of actions Amethyst should do upon a graceful shutdown
         // This will not be run when quitting due to runtime failures
-        public ObservableCollection<StartupTask> StartupTasks { get; private set; } = new();
+        public ObservableCollection<StartupTask> StartupTasks { get; private set; } = [];
 
         // For updating the plugins, i.e. clean and unpack a downloaded plugin zip
         public IEnumerable<StartupUpdateTask> UpdateTasks => StartupTasks.OfType<StartupUpdateTask>();
@@ -68,12 +68,12 @@ public static class StartupController
                 StartupTasks = JsonConvert.DeserializeObject<ObservableCollection<StartupTask>>
                                (File.ReadAllText(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Startup.json")),
                                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }) ??
-                               new ObservableCollection<StartupTask>();
+                               [];
             }
             catch (Exception e)
             {
                 Logger.Error($"Error reading scheduled startup tasks! Message: {e.Message}");
-                StartupTasks = new ObservableCollection<StartupTask>(); // Reset if null
+                StartupTasks = []; // Reset if null
             }
 
             StartupTasks.CollectionChanged += (_, _) =>

@@ -205,15 +205,19 @@
 
 																			<ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
 																				VerticalScrollBarVisibility="Visible" Grid.Row="0"
-																				Padding="20,0" Margin="-20,0">
+																				Padding="20,0, 13, 0" Margin="-20,0, -15, 0">
 																				<TreeView CanDragItems="False" CanReorderItems="False" />
 																			</ScrollViewer>
 
 																			<StackPanel Orientation="Vertical" Grid.Row="1">
-																				<MenuFlyoutItem Text="Disabled" DataContext="{x:Bind}"
+																				<MenuFlyoutItem
+																					Text="{x:Bind util:Translator.Get.String('/InputActions/Picker/Options/Hidden'), Mode=OneWay}"
+																					DataContext="{x:Bind}"
 																					pages:AttachedString.AttachedString="DISABLE"
 																					Click="BindingFlyoutItem_OnClick" />
-																				<MenuFlyoutItem Text="Hidden" DataContext="{x:Bind}"
+																				<MenuFlyoutItem
+																					Text="{x:Bind util:Translator.Get.String('/InputActions/Picker/Options/Disabled'), Mode=OneWay}"
+																					DataContext="{x:Bind}"
 																					pages:AttachedString.AttachedString="HIDE"
 																					Click="BindingFlyoutItem_OnClick" />
 																			</StackPanel>
@@ -227,7 +231,7 @@
 
 																			<ToggleSplitButton Style="{ThemeResource AccentButtonStyle}"
 																				IsEnabled="{x:Bind SelectedActionValid, Mode=OneWay}"
-																				Content="Use"
+																				Content="{x:Bind util:Translator.Get.String('/InputActions/Picker/Use'), Mode=OneWay}"
 																				IsChecked="{x:Bind SelectedActionValid, Mode=OneWay}"
 																				Click="SplitButton_OnClick"
 																				HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -248,7 +252,8 @@
 																				</ToggleSplitButton.Flyout>
 																			</ToggleSplitButton>
 
-																			<Grid Grid.Row="2" Opacity="0.75">
+																			<!--"Select to preview" grid-->
+																			<Grid Grid.Row="2" Opacity="0.75" Visibility="{x:Bind SelectedActionInvalid, Mode=OneWay}">
 																				<Grid.ColumnDefinitions>
 																					<ColumnDefinition Width="*" />
 																					<ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
@@ -261,11 +266,43 @@
 																						FontSize="14"
 																						HorizontalTextAlignment="Center"
 																						TextTrimming="CharacterEllipsis"
-																						Text="Click on supported devices and joints to expand their action lists, &#x0a;and select an action to preview its description, test, or use it." />
+																						Text="{x:Bind util:Translator.Get.String('/InputActions/Picker/NoSelection'), Mode=OneWay}" />
 																				</StackPanel>
 																				<Grid.OpacityTransition>
 																					<ScalarTransition />
 																				</Grid.OpacityTransition>
+																			</Grid>
+
+																			<!--Actual preview data-->
+																			<Grid Grid.Row="2" RowDefinitions="Auto, *"
+																				Visibility="{x:Bind SelectedActionValid, Mode=OneWay}">
+
+																				<TextBlock HorizontalAlignment="Left" TextWrapping="WrapWholeWords"
+																					FontSize="14" Grid.Row="0" HorizontalTextAlignment="Left"
+																					Text="{x:Bind SelectedActionDescription, Mode=OneWay}" Opacity="0.75" />
+
+																				<ContentPresenter Visibility="{x:Bind SelectedActionImageValid, Mode=OneWay}"
+																					Content="{x:Bind SelectedActionImage, Mode=OneWay}" Grid.Row="2" Margin="10,15,10,10" />
+
+																				<Grid Grid.Row="2" Opacity="0.75" Visibility="{x:Bind SelectedActionImageInvalid, Mode=OneWay}">
+																					<Grid.ColumnDefinitions>
+																						<ColumnDefinition Width="*" />
+																						<ColumnDefinition Width="8*" MinWidth="250" MaxWidth="500" />
+																						<ColumnDefinition Width="*" />
+																					</Grid.ColumnDefinitions>
+																					<StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center"
+																						HorizontalAlignment="Center" Margin="0,-35,0,0">
+																						<FontIcon FontSize="100" Margin="0,0,0,25" Glyph="&#xE9CE;" />
+																						<TextBlock HorizontalAlignment="Center" TextWrapping="WrapWholeWords"
+																							FontSize="14"
+																							HorizontalTextAlignment="Center"
+																							TextTrimming="CharacterEllipsis"
+																							Text="{x:Bind util:Translator.Get.String('/InputActions/Picker/NoImage'), Mode=OneWay}" />
+																					</StackPanel>
+																					<Grid.OpacityTransition>
+																						<ScalarTransition />
+																					</Grid.OpacityTransition>
+																				</Grid>
 																			</Grid>
 																		</Grid>
 																	</Grid>

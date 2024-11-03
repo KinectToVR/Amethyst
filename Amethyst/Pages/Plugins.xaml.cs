@@ -101,7 +101,7 @@ public sealed partial class Plugins : Page, INotifyPropertyChanged
 
     private RestClient GithubClient { get; } = new("https://github.com");
 
-    public ObservableCollection<StorePlugin> FoundStorePluginsList { get; set; } = new();
+    public ObservableCollection<StorePlugin> FoundStorePluginsList { get; set; } = [];
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;

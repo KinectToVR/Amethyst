@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System;
@@ -27,6 +27,7 @@ using Amethyst.Plugins.Contract;
 using Amethyst.Popups;
 using Amethyst.Schedulers;
 using Amethyst.Utils;
+using CommunityToolkit.WinUI.Helpers;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -46,7 +47,7 @@ namespace Amethyst;
 /// </summary>
 public partial class App : Application
 {
-    private readonly List<Host> _views = new();
+    private readonly List<Host> _views = [];
     private bool _canCloseViews;
     private CrashWindow _crashWindow;
     private Host _mHostWindow;
@@ -72,11 +73,11 @@ public partial class App : Application
             Interfacing.Fail(msg != "/CrashHandler/Content/Crash/UnknownStack" ? msg : stc);
 
             // Make App Center send the whole log when crashed
-            Crashes.GetErrorAttachments = _ => new[]
-            {
+            Crashes.GetErrorAttachments = _ =>
+            [
                 ErrorAttachmentLog.AttachmentWithText(
                     File.ReadAllText(Logger.LogFilePath), new FileInfo(Logger.LogFilePath).Name)
-            };
+            ];
 
             Crashes.TrackError(e.Exception); // Log the crash reason
             Environment.Exit(0); // Simulate a standard application exit
@@ -95,11 +96,11 @@ public partial class App : Application
             Interfacing.Fail(msg != "/CrashHandler/Content/Crash/UnknownStack" ? msg : stc);
 
             // Make App Center send the whole log when crashed
-            Crashes.GetErrorAttachments = _ => new[]
-            {
+            Crashes.GetErrorAttachments = _ =>
+            [
                 ErrorAttachmentLog.AttachmentWithText(
                     File.ReadAllText(Logger.LogFilePath), new FileInfo(Logger.LogFilePath).Name)
-            };
+            ];
 
             Crashes.TrackError((Exception)e.ExceptionObject); // Log the crash reason
             Environment.Exit(0); // Simulate a standard application exit
@@ -171,11 +172,11 @@ public partial class App : Application
                 GlobalizationPreferences.Languages[0]).LanguageTag[3..]);
 
             // Make App Center send the whole log when crashed
-            Crashes.GetErrorAttachments = _ => new[]
-            {
+            Crashes.GetErrorAttachments = _ =>
+            [
                 ErrorAttachmentLog.AttachmentWithText(
                     File.ReadAllText(Logger.LogFilePath), new FileInfo(Logger.LogFilePath).Name)
-            };
+            ];
         }
         catch (Exception e)
         {
@@ -502,6 +503,11 @@ public partial class App : Application
                     await SetupLocalizationResources(true);
                     break;
                 }
+                case "localize-tidy":
+                {
+                    await CleanupLocalizationResources();
+                    break;
+                }
                 case "apply-fix":
                 {
                     try
@@ -527,7 +533,7 @@ public partial class App : Application
 
                         var pluginDirectoryList = Directory.Exists(localPluginsFolder)
                             ? Directory.EnumerateDirectories(localPluginsFolder, "*", SearchOption.TopDirectoryOnly).ToList()
-                            : new List<string>(); // In case the folder doesn't exist, create an empty directory list
+                            : []; // In case the folder doesn't exist, create an empty directory list
 
                         // Search the "Plugins" AppData directory for assemblies that match the imports.
                         // Iterate over all directories in Plugins dir and add all * dirs to catalogs
@@ -891,7 +897,7 @@ public partial class App : Application
 
             var pluginDirectoryList = Directory.Exists(localPluginsFolder)
                 ? Directory.EnumerateDirectories(localPluginsFolder, "*", SearchOption.TopDirectoryOnly).ToList()
-                : new List<string>(); // In case the folder doesn't exist, create an empty directory list
+                : []; // In case the folder doesn't exist, create an empty directory list
 
             // Search the "Plugins" AppData directory for assemblies that match the imports.
             // Iterate over all directories in Plugins dir and add all * dirs to catalogs
@@ -1069,6 +1075,15 @@ public partial class App : Application
             var stringsFolder = await Interfacing.LocalFolder
                 .CreateFolderAsync("Strings", CreationCollisionOption.OpenIfExists);
 
+            /* Copy everything to the backup folder */
+            var backupFolder = await (await Interfacing.LocalFolder
+                    .CreateFolderAsync("StringsBackup", CreationCollisionOption.OpenIfExists))
+                .CreateFolderAsync(DateTime.Now.ToString("dd　MM　yyyy　HH：mm：ss"),
+                    CreationCollisionOption.OpenIfExists);
+
+            new DirectoryInfo(stringsFolder.Path).CopyToFolder(backupFolder.Path);
+
+            /* Continue execution */
             var appStringsFolder = await stringsFolder.CreateFolderAsync(
                 "Amethyst", CreationCollisionOption.OpenIfExists);
 
@@ -1104,6 +1119,84 @@ public partial class App : Application
                     PluginStringFolders = pluginStringsFolders
                 }, Formatting.Indented));
 
+            SystemShell.OpenFolderAndSelectItem(stringsFolder.Path);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+
+        Logger.Info("That's all! Shutting down now...");
+        Environment.Exit(0); // Cancel further application startup
+    }
+
+    // Move everything to a new backup (date) folder,
+    // then sync everything with english strings,
+    // read and re-write all files to reorder strings
+    private async Task CleanupLocalizationResources()
+    {
+        try
+        {
+            /* Folder definitions - root, app, plugins */
+            var stringsFolder = await Interfacing.LocalFolder
+                .CreateFolderAsync("Strings", CreationCollisionOption.OpenIfExists);
+
+            /* Copy everything to the backup folder */
+            var backupFolder = await (await Interfacing.LocalFolder
+                    .CreateFolderAsync("StringsBackup", CreationCollisionOption.OpenIfExists))
+                .CreateFolderAsync(DateTime.Now.ToString("dd　MM　yyyy　HH：mm：ss"),
+                    CreationCollisionOption.OpenIfExists);
+
+            new DirectoryInfo(stringsFolder.Path).CopyToFolder(backupFolder.Path);
+
+            /* Go over all subfolders in the strings folder, sync */
+            foreach (var folder in await stringsFolder.GetFoldersAsync())
+                try
+                {
+                    var hasEnglishResources = await folder.FileExistsAsync("en.json");
+                    if (!hasEnglishResources) Logger.Warn($"{folder.Path} doesn't contain en.json, skipping synchronization!");
+
+                    var englishResources = hasEnglishResources
+                        ? JsonConvert.DeserializeObject<LocalisationFileJson>(
+                            await File.ReadAllTextAsync((await folder.GetFileAsync("en.json")).Path))
+                        : null;
+
+                    // Go over all localizable string folders we have
+                    foreach (var file in await folder.GetFilesAsync())
+                        try
+                        {
+                            if (file.Name is "locales.json") continue; // Don't touch our localization enum
+                            var resourceJson = JsonConvert.DeserializeObject<LocalisationFileJson>(await File.ReadAllTextAsync(file.Path));
+
+                            if (file.Name is not "en.json" and not "locales.json")
+                            {
+                                englishResources?.Messages.Where(x => resourceJson.Messages.All(message => message.Id != x.Id)).ToList()
+                                    .ForEach(message => resourceJson.Messages.Add(new LocalizedMessage
+                                    {
+                                        Comment = message.Comment,
+                                        Id = message.Id,
+                                        Translation = $"TODO: {message.Translation}"
+                                    })); // Synchronize by pulling missing strings from the EN json file
+
+                                if (englishResources?.Messages.Any() ?? false)
+                                    resourceJson?.Messages.Where(x => englishResources.Messages.All(message => message.Id != x.Id)).ToList()
+                                        .ForEach(message => resourceJson.Messages.Remove(message)); // Remove any stale ones
+                            }
+
+                            // Write to reorder messages and (if applicable) add synchronized english JSON messages
+                            await File.WriteAllTextAsync(file.Path, JsonConvert.SerializeObject(resourceJson, Formatting.Indented));
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex);
+                        }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+
+            // And we're done - open the tidied up string folder
             SystemShell.OpenFolderAndSelectItem(stringsFolder.Path);
         }
         catch (Exception e)
@@ -1163,5 +1256,27 @@ public partial class App : Application
             // We're done with our changes now!
             Shared.Devices.DevicesJointsValid = true;
         });
+    }
+}
+
+public static class ExtensionMethods
+{
+    public static async Task<Dictionary<TKey, TValue>> ToDictionaryAsync<TInput, TKey, TValue>(
+        this IEnumerable<TInput> enumerable,
+        Func<TInput, TKey> syncKeySelector,
+        Func<TInput, Task<TValue>> asyncValueSelector)
+    {
+        var dictionary = new Dictionary<TKey, TValue>();
+
+        foreach (var item in enumerable)
+        {
+            var key = syncKeySelector(item);
+
+            var value = await asyncValueSelector(item);
+
+            dictionary.Add(key, value);
+        }
+
+        return dictionary;
     }
 }

@@ -225,7 +225,7 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
                         var trackerBase = tracker.GetTrackerBase();
                         trackerBase.ConnectionState = (sender as ToggleSwitch)!.IsOn;
 
-                        await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
+                        await AppPlugins.CurrentServiceEndpoint.SetTrackerStates([trackerBase]);
                         await Task.Delay(20);
                     }
 
@@ -392,7 +392,6 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
         if (args.InvokedItem is not TreeViewNodeEx { HasData: true } node)
         {
             sender.SelectionMode = TreeViewSelectionMode.None;
-            // AppSounds.PlayAppSound(AppSounds.AppSoundType.Focus);
 
             if (args.InvokedItem is not
                 TreeViewNodeEx { HasData: false, Entry: not null } node1) return;
@@ -400,11 +399,13 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
             var shouldAnimate1 = node1.Entry.TreeSelectedAction != node1.Source;
             node1.Entry.TreeSelectedAction = node1.Source;
 
-            if (shouldAnimate1) await Tree_LaunchTransition(sender);
+            if (!shouldAnimate1) return;
+            await Tree_LaunchTransition(sender); 
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Focus);
+
             return; // Give up now...
         }
 
-        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         sender.SelectionMode = TreeViewSelectionMode.Single;
         sender.SelectedNode = node;
 
@@ -412,7 +413,9 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
         node.Entry.TreeSelectedAction = node.Source;
         InputActionBindingEntry.TreeCurrentAction = node.Source;
 
-        if (shouldAnimate) await Tree_LaunchTransition(sender);
+        if (!shouldAnimate) return;
+        await Tree_LaunchTransition(sender);
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
     }
 
     private async Task Tree_LaunchTransition(TreeView tree)

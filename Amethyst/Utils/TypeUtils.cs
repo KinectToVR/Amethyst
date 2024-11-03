@@ -176,8 +176,8 @@ public static class TypeUtils
         { TrackedJointType.JointManual, TrackedJointType.JointManual }
     };
 
-    public static SortedSet<string> ProtectedPluginGuidSet = new()
-    {
+    public static SortedSet<string> ProtectedPluginGuidSet =
+    [
         "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1",
         "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1:SETUP",
         "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1:INSTALLER",
@@ -196,7 +196,7 @@ public static class TypeUtils
         "K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC",
         "K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC:SETUP",
         "K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC:INSTALLER"
-    };
+    ];
 
     public static TrackedJointType FlipJointType(TrackedJointType joint, bool flip)
     {

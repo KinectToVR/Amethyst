@@ -45,7 +45,7 @@ namespace Amethyst.Utils
             SHParseDisplayName(Path.Combine(folderPath, file), IntPtr.Zero, out var nativeFile, 0, out _);
 
             // Open the folder without the file selected if we can't find the file
-            var fileArray = nativeFile == IntPtr.Zero ? new[] { nativeFolder } : new[] { nativeFile };
+            var fileArray = nativeFile == IntPtr.Zero ? [nativeFolder] : new[] { nativeFile };
             SHOpenFolderAndSelectItems(nativeFolder, (uint)fileArray.Length, fileArray, 0);
 
             Marshal.FreeCoTaskMem(nativeFolder);

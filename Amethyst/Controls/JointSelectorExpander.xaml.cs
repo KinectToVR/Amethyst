@@ -19,7 +19,7 @@ namespace Amethyst.Controls;
 public sealed partial class JointSelectorExpander : UserControl, INotifyPropertyChanged
 {
     private bool _areChangesValid;
-    private List<AppTracker> _trackers = new();
+    private List<AppTracker> _trackers = [];
 
     public JointSelectorExpander()
     {

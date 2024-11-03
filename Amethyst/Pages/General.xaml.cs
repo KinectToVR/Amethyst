@@ -9,6 +9,7 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Core;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 using Amethyst.Classes;
 using Amethyst.MVVM;
@@ -26,6 +27,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Shapes;
 using static Amethyst.Classes.Shared.TeachingTips;
 using Path = System.IO.Path;
+using WinRT;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -46,7 +48,9 @@ public sealed partial class General : Page, INotifyPropertyChanged
     private bool _isCurrentWindowActiveBackup;
     private bool _isSpawningBlocked;
     private bool _offsetsPageNavigated;
+    private bool _captureToggleEnabled = true;
 
+    private int _captureModeClicksCount;
     private int _previousOffsetPageIndex;
     private bool _showSkeletonPrevious = true;
     private bool _skeletonDrawingCanvassLoadedOnce;
@@ -142,6 +146,28 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
     private bool DeviceSupportsCamera => AppPlugins.BaseTrackingDevice.IsCameraSupported;
 
+    private SolidColorBrush CaptureToggleOnBrush => new(_captureToggleEnabled ? Colors.Black : Colors.White);
+
+    private bool CaptureModeAutomatic
+    {
+        get => AppData.Settings.PoseCaptureAutomatic;
+        set
+        {
+            AppData.Settings.PoseCaptureAutomatic = value;
+            AppData.Settings.SaveSettings();
+            OnPropertyChanged("CaptureModeAutomatic");
+            OnPropertyChanged("CaptureModeManual");
+            OnPropertyChanged("CaptureModeAutomaticOpacity");
+            OnPropertyChanged("CaptureModeManualOpacity");
+        }
+    }
+
+    private bool CaptureModeManual => !CaptureModeAutomatic;
+
+    private double CaptureModeAutomaticOpacity => CaptureModeAutomatic ? 1.0 : 0.0;
+
+    private double CaptureModeManualOpacity => CaptureModeAutomatic ? 0.0 : 1.0;
+
     private IEnumerable<TrackingDevice> SelectedDevices => new List<TrackingDevice>()
         .Append(AppPlugins.BaseTrackingDevice).Concat(
             AppData.Settings.OverrideDevicesGuidMap.Select(overrideGuid =>
@@ -156,7 +182,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         {
             var message = StringUtils.SplitStatusString(AppPlugins.CurrentServiceEndpoint.ServiceStatusString);
             return message is null || message.Length < 3
-                ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" }
+                ? ["The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA"]
                 : message; // If everything is all right this time
         }
     }
@@ -447,7 +473,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
     private async void StartAutoCalibrationButton_Click(object sender, RoutedEventArgs e)
     {
-        // Setup the calibration image : start
+        // Set up the calibration image : start
         CalibrationPreviewMediaElement.MediaPlayer.Play();
 
         // Set the [calibration pending] bool
@@ -456,6 +482,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         // Play a nice sound - starting
         AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationStart);
+        CalibrationCaptureModeToggleButton.IsEnabled = false;
+        CalibrationCaptureModeToggleButton.BorderThickness = new Thickness(0);
+
+        _captureToggleEnabled = false;
+        OnPropertyChanged("CaptureToggleOnBrush");
 
         // Disable the start button and change [cancel]'s text
         StartAutoCalibrationButton.IsEnabled = false;
@@ -468,7 +499,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
         AppData.Settings.DeviceCalibrationOrigins[_calibratingDeviceGuid] = Vector3.Zero;
 
         // Setup helper variables
-        List<Vector3> hmdPositions = new(), headPositions = new();
+        List<Vector3> hmdPositions = [], headPositions = [];
         await Task.Delay(1000);
 
         // Loop over total 3 points (by default)
@@ -479,54 +510,148 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Move")
                     .Format(point + 1, AppData.Settings.CalibrationPointsNumber);
 
-            for (var i = 3; i >= 0; i--)
+            if (AppData.Settings.PoseCaptureAutomatic)
             {
-                if (!_calibrationPending) break; // Check for exiting
+                // Stability capture mode - wait until moved at least 0.5m
+                var signaledStabilityOnce = false;
+                var moveController = new JointStabilityDetector
+                {
+                    Target = Interfacing.DeviceHookJointPosition.ValueOr(_calibratingDeviceGuid).Position
+                };
 
-                // Update the countdown label
-                CalibrationCountdownLabel.Text = i.ToString();
+                while (_calibrationPending)
+                {
+                    var neutralBrush = Application.Current
+                        .Resources["NoThemeColorSolidColorBrushOpposite"].As<SolidColorBrush>();
+                    var accentBrush = Application.Current
+                        .Resources["SystemFillColorAttentionBrush"].As<SolidColorBrush>();
+                    var stability = moveController.Update(Interfacing
+                        .DeviceHookJointPosition.ValueOr(_calibratingDeviceGuid).Position);
 
-                // Exit if aborted
-                if (!_calibrationPending) break;
+                    PointCaptureStabilityBorder.BorderThickness = new Thickness(
+                        stability.Map(0.0, 0.9, 4.0, 20.0));
+                    PointCaptureStabilityBorder.BorderBrush = neutralBrush
+                        .Blend(accentBrush, stability); // Make the border more colorful too
 
-                // Play a nice sound - tick / move
-                if (i > 0) // Don't play the last one!
-                    AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
+                    switch (stability)
+                    {
+                        case > 0.9 when !signaledStabilityOnce:
+                            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
+                            signaledStabilityOnce = true;
+                            break;
+                        case < 0.3 when signaledStabilityOnce:
+                            signaledStabilityOnce = false;
+                            break;
+                    }
 
-                await Task.Delay(1000);
-                if (!_calibrationPending) break; // Check for exiting
+                    if (stability > 0.95)
+                        break; // End the loop
+
+                    await Task.Delay(100);
+                }
+            }
+            else
+            {
+                // Standard capture mode - wait 3 seconds
+                for (var i = 3; i >= 0; i--)
+                {
+                    if (!_calibrationPending) break; // Check for exiting
+
+                    // Update the countdown label
+                    CalibrationCountdownLabel.Text = i.ToString();
+
+                    // Exit if aborted
+                    if (!_calibrationPending) break;
+
+                    // Play a nice sound - tick / move
+                    if (i > 0) // Don't play the last one!
+                        AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
+
+                    await Task.Delay(1000);
+                    if (!_calibrationPending) break; // Check for exiting
+                }
             }
 
             CalibrationInstructionsLabel.Text =
                 Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Stand")
                     .Format(point + 1, AppData.Settings.CalibrationPointsNumber);
 
-            for (var i = 3; i >= 0; i--)
+            if (AppData.Settings.PoseCaptureAutomatic)
             {
-                if (!_calibrationPending) break; // Check for exiting
+                // Stability capture mode - wait until moved at least 0.5m
+                var signaledStabilityOnce = false;
+                var moveController = new JointStabilityDetector();
 
-                // Update the countdown label
-                CalibrationCountdownLabel.Text = i.ToString();
-
-                switch (i)
+                while (_calibrationPending)
                 {
-                    // Play a nice sound - tick / stand (w/o the last one!)
-                    case > 0:
-                        AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
-                        break;
+                    var neutralBrush = Application.Current
+                        .Resources["NoThemeColorSolidColorBrushOpposite"].As<SolidColorBrush>();
+                    var accentBrush = Application.Current
+                        .Resources["SystemFillColorAttentionBrush"].As<SolidColorBrush>();
+                    var stability = moveController.Update(Interfacing
+                        .DeviceHookJointPosition.ValueOr(_calibratingDeviceGuid).Position);
 
-                    // Capture user's position at t_end-1, update the label text
-                    case 0:
+                    PointCaptureStabilityBorder.BorderThickness = new Thickness(
+                        stability.Map(0.0, 0.9, 4.0, 20.0));
+                    PointCaptureStabilityBorder.BorderBrush = neutralBrush
+                        .Blend(accentBrush, stability); // Make the border more colorful too
+
+                    switch (stability)
+                    {
+                        case > 0.9 when !signaledStabilityOnce:
+                            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
+                            signaledStabilityOnce = true;
+                            break;
+                        case < 0.3 when signaledStabilityOnce:
+                            signaledStabilityOnce = false;
+                            break;
+                    }
+
+                    if (stability > 0.95)
+                    {
+                        // Add the position and break the loop
                         hmdPositions.Add(Interfacing.Plugins.GetHmdPose.Position);
                         headPositions.Add(Interfacing.DeviceHookJointPosition.ValueOr(_calibratingDeviceGuid).Position);
 
                         CalibrationInstructionsLabel.Text = Interfacing.LocalizedJsonString(
                             "/GeneralPage/Calibration/Captions/Captured");
-                        break;
-                }
 
-                await Task.Delay(1000);
-                if (!_calibrationPending) break; // Check for exiting
+                        break;
+                    }
+
+                    await Task.Delay(100);
+                }
+            }
+            else
+            {
+                // Standard capture mode - wait 3 seconds
+                for (var i = 3; i >= 0; i--)
+                {
+                    if (!_calibrationPending) break; // Check for exiting
+
+                    // Update the countdown label
+                    CalibrationCountdownLabel.Text = i.ToString();
+
+                    switch (i)
+                    {
+                        // Play a nice sound - tick / stand (w/o the last one!)
+                        case > 0:
+                            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
+                            break;
+
+                        // Capture user's position at t_end-1, update the label text
+                        case 0:
+                            hmdPositions.Add(Interfacing.Plugins.GetHmdPose.Position);
+                            headPositions.Add(Interfacing.DeviceHookJointPosition.ValueOr(_calibratingDeviceGuid).Position);
+
+                            CalibrationInstructionsLabel.Text = Interfacing.LocalizedJsonString(
+                                "/GeneralPage/Calibration/Captions/Captured");
+                            break;
+                    }
+
+                    await Task.Delay(1000);
+                    if (!_calibrationPending) break; // Check for exiting
+                }
             }
 
             // Exit if aborted
@@ -538,6 +663,12 @@ public sealed partial class General : Page, INotifyPropertyChanged
             await Task.Delay(1000);
             if (!_calibrationPending) break; // Check for exiting
         }
+
+        // Bring back the standard stability border (optional)
+        PointCaptureStabilityBorder.BorderThickness = new Thickness(_calibrationPending ? 20 : 4);
+        PointCaptureStabilityBorder.BorderBrush = _calibrationPending
+            ? Application.Current.Resources["SystemFillColorAttentionBrush"].As<SolidColorBrush>()
+            : new SolidColorBrush(Application.Current.Resources["SystemFillColorCritical"].As<Color>());
 
         // Do the actual calibration after capturing points
         if (_calibrationPending)
@@ -1699,6 +1830,11 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
         CalibrationRunningView.DisplayMode = SplitViewDisplayMode.Inline;
         CalibrationRunningView.IsPaneOpen = true;
+        CalibrationCaptureModeToggleButton.IsEnabled = true;
+        CalibrationCaptureModeToggleButton.BorderThickness = new Thickness(1);
+
+        _captureToggleEnabled = true;
+        OnPropertyChanged("CaptureToggleOnBrush");
 
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
@@ -1716,6 +1852,28 @@ public sealed partial class General : Page, INotifyPropertyChanged
             "/GeneralPage/Buttons/Cancel");
 
         CalibrationCountdownLabel.Text = "~";
+        _captureModeClicksCount = 0; // Reset the counter
+
+        PointCaptureStabilityBorder.BorderThickness = new Thickness(4);
+        PointCaptureStabilityBorder.BorderBrush = Application.Current
+            .Resources["NoThemeColorSolidColorBrushOpposite"].As<SolidColorBrush>();
+
+        if (AppData.Settings.PoseCaptureTipShown) return;
+        CaptureModeTeachingTip.DispatcherQueue.TryEnqueue(async () =>
+        {
+            await Task.Delay(500);
+
+            // Show the 'calibration capture mode' teaching tip
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+
+            //CaptureModeTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+
+            Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
+            CaptureModeTeachingTip.IsOpen = true;
+            AppData.Settings.PoseCaptureTipShown = true;
+
+            AppData.Settings.SaveSettings();
+        });
     }
 
     private async Task ExecuteManualCalibration()
@@ -2016,6 +2174,49 @@ public sealed partial class General : Page, INotifyPropertyChanged
     {
         _allowCameraPreviewHandling = false;
         AppPlugins.BaseTrackingDevice.IsCameraEnabled = false;
+    }
+
+    private void CaptureModeTeachingTip_OnClosing(TeachingTip sender, TeachingTipClosingEventArgs args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = false;
+    }
+
+    private void CalibrationCaptureModeToggleButton_OnChecked(object sender, RoutedEventArgs e)
+    {
+        // Don't even care if we're not set up yet
+        if (!((sender as ToggleButton)?.IsLoaded ?? false)) return;
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.ToggleOn);
+
+        // Show the 'calibration capture mode' teaching tip
+        if (_captureModeClicksCount++ < 5) return;
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+
+        //CaptureModeTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        _captureModeClicksCount = 2; // Reset the counter (a bit...)
+
+        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
+        CaptureModeTeachingTip.IsOpen = true;
+        AppData.Settings.PoseCaptureTipShown = true;
+    }
+
+    private void CalibrationCaptureModeToggleButton_OnUnchecked(object sender, RoutedEventArgs e)
+    {
+        // Don't even care if we're not set up yet
+        if (!((sender as ToggleButton)?.IsLoaded ?? false)) return;
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.ToggleOff);
+
+        // Show the 'calibration capture mode' teaching tip
+        if (_captureModeClicksCount++ < 5) return;
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+
+        //CaptureModeTeachingTip.TailVisibility = TeachingTipTailVisibility.Collapsed;
+        _captureModeClicksCount = 2; // Reset the counter (a bit...)
+
+        Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = true;
+        CaptureModeTeachingTip.IsOpen = true;
+        AppData.Settings.PoseCaptureTipShown = true;
     }
 }
 

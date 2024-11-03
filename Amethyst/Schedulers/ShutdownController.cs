@@ -20,7 +20,7 @@ public static class ShutdownController
 {
     // Vector of actions Amethyst should do upon a graceful shutdown
     // This will not be run when quitting due to runtime failures
-    public static List<ShutdownTask> ShutdownTasks { get; } = new();
+    public static List<ShutdownTask> ShutdownTasks { get; } = [];
 
     // Execute all shutdown tasks with proper logging
     public static async Task ExecuteAllTasks()

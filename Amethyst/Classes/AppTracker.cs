@@ -492,7 +492,7 @@ public class AppTracker : INotifyPropertyChanged
             $"{AppPlugins.GetDevice(ManagingDeviceGuid).Device?.Name ?? "INVALID"} (GUID: {ManagingDeviceGuid})");
 
     // MVVM: a connection of the transitions each tracker expander should animate
-    [JsonIgnore] public TransitionCollection SettingsExpanderTransitions { get; set; } = new();
+    [JsonIgnore] public TransitionCollection SettingsExpanderTransitions { get; set; } = [];
 
     [JsonIgnore]
     public List<string> BaseDeviceJointsList =>
@@ -504,11 +504,11 @@ public class AppTracker : INotifyPropertyChanged
         get
         {
             if (string.IsNullOrEmpty(AppData.Settings.SelectedTrackingDeviceGuid))
-                return new List<string>
-                {
+                return
+                [
                     Interfacing.LocalizedJsonString(
                         "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText")
-                };
+                ];
 
             var jointsList = AppPlugins.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid)
                 .Device.TrackedJoints.Select(x => x.Name).ToList();

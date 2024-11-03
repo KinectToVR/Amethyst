@@ -51,10 +51,10 @@ public static class AppPlugins
     public static readonly SortedDictionary<string, ServiceEndpoint> InstallerList = new();
 
     // Written to at the first plugin load
-    public static readonly ObservableCollection<LoadAttemptedPlugin> LoadAttemptedPluginsList = new();
+    public static readonly ObservableCollection<LoadAttemptedPlugin> LoadAttemptedPluginsList = [];
 
     // Used by the installer module - device plugins
-    public static readonly ObservableCollection<SetupPlugin> InstallerPluginsList = new();
+    public static readonly ObservableCollection<SetupPlugin> InstallerPluginsList = [];
 
     public static IEnumerable<LoadAttemptedPlugin> LoadedPluginsList => LoadAttemptedPluginsList.Where(x => x.IsLoaded);
     public static IEnumerable<LoadAttemptedPlugin> ErrorPluginsList => LoadAttemptedPluginsList.Where(x => !x.IsLoaded);
@@ -166,7 +166,7 @@ public static class AppPlugins
             // Split status and message by \n
             var message = StringUtils.SplitStatusString(currentDevice.DeviceStatusString);
             if (message is null || message.Length < 3)
-                message = new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" };
+                message = ["The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA"];
 
             General.DeviceNameLabel.Text = currentDevice.Name;
             General.DeviceStatusLabel.Text = message[0];
@@ -251,7 +251,7 @@ public static class AppPlugins
         // Update the device
         var message = StringUtils.SplitStatusString(currentDevice.Device.DeviceStatusString);
         if (message is null || message.Length < 3)
-            message = new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" };
+            message = ["The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA"];
 
         Devices.DeviceNameLabel.Text = currentDevice.Device.Name;
         Devices.DeviceStatusLabel.Text = message[0];

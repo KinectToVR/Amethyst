@@ -1862,6 +1862,14 @@
             "translation": "Amethyst took a while to make and get it to where it's at now.\nSo, you better go have fun.\n\n14 of 14"
         },
         {
+            "id": "/NUX/CaptureTip/Title",
+            "translation": "Tired of waiting?"
+        },
+        {
+            "id": "/NUX/CaptureTip/Content",
+            "translation": "Amethyst can now automatically capture positions when you're standing still, and move forward on its own. Toggle this and try it!"
+        },
+        {
             "id": "/Installer/Views/SetupError/Continue",
             "translation": "Continue with limited setup"
         },
@@ -2000,6 +2008,34 @@
         {
             "id": "/GeneralPage/Titles/Relay",
             "translation": "Tracking Relay"
+        },
+        {
+            "id": "/InputActions/Picker/NoSelection",
+            "translation": "Click on supported devices and joints to expand their action lists,\nand select an action to preview its description, test, or use it."
+        },
+        {
+            "id": "/InputActions/Picker/NoImage",
+            "translation": "The selected action doesn't provide any image or other custom settings,\nmake sure you understand its description and how to use it."
+        },
+        {
+            "id": "/InputActions/Picker/Use",
+            "translation": "Use"
+        },
+        {
+            "id": "/InputActions/Picker/NoSelectionHeader",
+            "translation": "No selection"
+        },
+        {
+            "id": "/InputActions/Picker/Testing/NoData",
+            "translation": "No data"
+        },
+        {
+            "id": "/InputActions/Picker/Options/Hidden",
+            "translation": "Hidden"
+        },
+        {
+            "id": "/InputActions/Picker/Options/Disabled",
+            "translation": "Disabled"
         }
     ]
 }

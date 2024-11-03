@@ -27,7 +27,7 @@ namespace Amethyst.Installer.Views;
 /// </summary>
 public sealed partial class SetupServices : Page, INotifyPropertyChanged
 {
-    private readonly List<string> _languageList = new();
+    private readonly List<string> _languageList = [];
 
     private bool _blockHiddenSoundOnce, _blockSelectionOnce;
     private bool _pageSetupFinished, _pageLoadedOnce;
@@ -311,7 +311,7 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
         service.Item.OnPropertyChanged();
 
         // Loop over all dependencies and install them
-        foreach (var dependency in DependenciesToInstall ?? new List<IDependency>())
+        foreach (var dependency in DependenciesToInstall ?? [])
         {
             eula:
             if (!string.IsNullOrEmpty(dependency.InstallerEula))
@@ -346,7 +346,7 @@ public sealed partial class SetupServices : Page, INotifyPropertyChanged
         }
 
         // Loop over all fixes and apply them
-        foreach (var fix in FixesToApply ?? new List<IFix>())
+        foreach (var fix in FixesToApply ?? [])
 		{
 	        eula:
 	        if (!string.IsNullOrEmpty(fix.InstallerEula))
