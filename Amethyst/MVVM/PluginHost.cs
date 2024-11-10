@@ -28,6 +28,8 @@ using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 using RestSharp;
 using static Amethyst.Classes.Interfacing;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace Amethyst.MVVM;
 
@@ -344,6 +346,14 @@ public class PluginHost(string guid) : IAmethystHost
     {
         RelayBarOverride = infoBarData;
         Shared.Events.RefreshMainWindowEvent?.Set();
+    }
+
+    public string Eval(string code)
+    {
+        // Exit with a custom message to be shown by the crash handler
+        Logger.Info($"Trying to evaluate expression \"{code.Trim()}\"...");
+        return CSharpScript.EvaluateAsync(code.Trim(), ScriptOptions.Default.WithImports("Amethyst.Classes")
+            .WithReferences(typeof(Interfacing).Assembly).AddImports("System.Linq")).GetAwaiter().GetResult().ToString();
     }
 }
 

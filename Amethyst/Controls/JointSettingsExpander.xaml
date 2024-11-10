@@ -229,8 +229,12 @@
 																				VerticalAlignment="Top" HorizontalAlignment="Left"
 																				FontSize="26" Margin="0,-7,0,0" />
 
-																			<ToggleSplitButton Style="{ThemeResource AccentButtonStyle}"
-																				IsEnabled="{x:Bind SelectedActionValid, Mode=OneWay}"
+																			<ToggleSplitButton IsEnabled="{x:Bind SelectedActionValid, Mode=OneWay}"
+																				Foreground="{ThemeResource AccentButtonForeground}"
+																				Background="{ThemeResource AccentButtonBackground}"
+																				BackgroundSizing="OuterBorderEdge"
+																				BorderBrush="{ThemeResource AccentButtonBorderBrush}"
+																				CornerRadius="{ThemeResource ControlCornerRadius}"
 																				Content="{x:Bind util:Translator.Get.String('/InputActions/Picker/Use'), Mode=OneWay}"
 																				IsChecked="{x:Bind SelectedActionValid, Mode=OneWay}"
 																				Click="SplitButton_OnClick"
