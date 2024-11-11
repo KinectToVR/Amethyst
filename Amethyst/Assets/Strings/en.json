@@ -962,6 +962,10 @@
             "translation": "Translators:"
         },
         {
+            "id": "/InfoPage/Credits/Special/Title",
+            "translation": "Special Thanks:"
+        },
+        {
             "id": "/InfoPage/Telemetry/Header",
             "translation": "Collected data and privacy policy"
         },
