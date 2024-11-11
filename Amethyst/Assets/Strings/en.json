@@ -886,6 +886,14 @@
             "translation": "This plugin doesn't seem to be valid for some reason...."
         },
         {
+            "id": "/DevicesPage/Devices/Manager/Labels/Contract",
+            "translation": "This plugin uses too old contract version, please ask its developer to update it..."
+        },
+        {
+            "id": "/DevicesPage/Devices/Manager/Messages/MissingLibrary",
+            "translation": "Dependency scan for {0} has shown that it could not be loaded due to one or more missing dependencies: {1}."
+        },
+        {
             "id": "/DevicesPage/Devices/Manager/Buttons/Update",
             "translation": "Update and relaunch"
         },

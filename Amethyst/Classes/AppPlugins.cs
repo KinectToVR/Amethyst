@@ -31,7 +31,8 @@ public static class AppPlugins
         PluginDllLinkError, // Could not link for some reason
         BadOrDuplicateGuid, // Empty/Bad/Duplicate device GUID
         InvalidFactory, // Device factory just gave up, now cry
-        Other // Check logs, MEF probably gave us up again...
+        Other, // Check logs, MEF probably gave us up again...
+        Contract // Known errors due to too old plugin contract
     }
 
     public enum PluginType

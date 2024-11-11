@@ -30,6 +30,8 @@ using RestSharp;
 using static Amethyst.Classes.Interfacing;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace Amethyst.MVVM;
 
@@ -1199,7 +1201,7 @@ public class InputActionBindingEntry : INotifyPropertyChanged
     public static InputActionSource TreeCurrentAction { get; set; }
 }
 
-public static class CollectionExtensions
+public static partial class CollectionExtensions
 {
     public static bool AddPlugin<T>(this ICollection<T> collection, DirectoryInfo item) where T : ComposablePartCatalog
     {
@@ -1297,13 +1299,66 @@ public static class CollectionExtensions
             }
             catch (Exception e)
             {
-                if ((e as ReflectionTypeLoadException)?.LoaderExceptions.First() is not
+                if ((e as ReflectionTypeLoadException)?.LoaderExceptions.FirstOrDefault() is not
                     FileNotFoundException) Crashes.TrackError(e); // Only send unknown exceptions
 
                 if (fileInfo.Name.StartsWith("plugin"))
                 {
+                    List<string> dependencies = [];
                     Logger.Error($"Loading {fileInfo} failed with an exception: Message: {e.Message} " +
                                  "Probably some assembly referenced by this plugin is missing.");
+
+                    try
+                    {
+                        var failedDependency = ((e as ReflectionTypeLoadException)?.LoaderExceptions
+                            .FirstOrDefault()?.InnerException as FileNotFoundException)?.FileName;
+
+                        if (!string.IsNullOrEmpty(failedDependency) && File.Exists(failedDependency))
+                        {
+                            var walkerPath = Path.Join(ProgramLocation.DirectoryName,
+                                "Assets", "Utils", "Dependencies", "Dependencies.exe");
+
+                            Logger.Info($"One of {failedDependency}'s (which itself was attempted to be " +
+                                        $"loaded by {fileInfo}) unmanaged dependencies was not found! " +
+                                        $"Trying to find out what caused that, using dependencies.exe...");
+
+                            // Don't care any longer if it's not found in our files
+                            if (!File.Exists(walkerPath))
+                            {
+                                Logger.Warn("The dependency walker was not found!");
+                                throw new FileNotFoundException(walkerPath);
+                            }
+
+                            var process = new Process
+                            {
+                                StartInfo = new ProcessStartInfo
+                                {
+                                    FileName = walkerPath,
+                                    Arguments = $"-chain {failedDependency} -depth 1",
+                                    UseShellExecute = false,
+                                    RedirectStandardOutput = true,
+                                    RedirectStandardError = true,
+                                    CreateNoWindow = true
+                                }
+                            };
+
+                            Logger.Info($"Trying to start {walkerPath} for {failedDependency}...");
+                            process.Start();
+
+                            Logger.Info("Waiting for the process to exit... (<500ms)");
+                            var output = process.StandardOutput.ReadToEnd().Replace("Ã", "―");
+                            process.WaitForExit(500);
+
+                            Logger.Info($"Received dependency graph (depth=1):\n{output}");
+                            dependencies = output.Split('\n').SelectMany(x =>
+                                MissingDllRegex().Matches(x).Select(y => y.Value)).ToList();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(e);
+                        Logger.Error(ex);
+                    }
 
                     try
                     {
@@ -1346,9 +1401,14 @@ public static class CollectionExtensions
                         {
                             Name = result?.GetMetadata("Name", $"{item.Name}/{fileInfo.Name}"),
                             Guid = $"{result.GetMetadata("Guid", $"{placeholderGuid}")}:INSTALLER",
-                            Error = $"{e.Message}\n\n{e.StackTrace}",
+                            Error = $"{(dependencies.Any() ? $"{LocalizedJsonString("/DevicesPage/Devices/Manager/Messages/MissingLibrary")
+                                .Format(fileInfo.Name, string.Join(", ", dependencies))}\n\n" : "")}{e.Message}\n\n{e.StackTrace}",
                             Folder = item.FullName,
-                            Status = AppPlugins.PluginLoadError.NoPluginDll,
+                            Status = dependencies.Any()
+                                ? AppPlugins.PluginLoadError.NoPluginDependencyDll
+                                : e.Message.Contains("get_SupportedInputActions")
+                                    ? AppPlugins.PluginLoadError.Contract
+                                    : AppPlugins.PluginLoadError.NoPluginDll,
 
                             DependencyLink = result?.GetMetadata("DependencyLink", string.Empty)
                                 ?.Format(DocsLanguageCode),
@@ -1411,6 +1471,9 @@ public static class CollectionExtensions
 
         return false; // Nah, not this time
     }
+
+    [GeneratedRegex(@"(?<=\|  ― ).*?(?= \(NOT_FOUND\) :)", RegexOptions.IgnoreCase)]
+    private static partial Regex MissingDllRegex();
 }
 
 [Serializable]
