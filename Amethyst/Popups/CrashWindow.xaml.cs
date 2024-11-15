@@ -32,7 +32,8 @@ public sealed partial class CrashWindow : Window
         None,
         AlreadyRunning,
         RunningElevated,
-        CrashMessage
+        CrashMessage,
+        Notification
     }
 
     [Flags]
@@ -218,6 +219,7 @@ public sealed partial class CrashWindow : Window
                 "crash-vr-elevated" => HandlerMode.RunningElevated,
                 "crash-message" => HandlerMode.CrashMessage,
                 "crash-watchdog" => HandlerMode.CrashWatchdog,
+                "crash-notification" => HandlerMode.Notification,
                 _ => CrashHandlerMode // In any other case
             };
 
@@ -400,6 +402,17 @@ public sealed partial class CrashWindow : Window
                 break;
             }
 
+            case HandlerMode.Notification:
+            {
+                Interfacing.SetupNotificationManager();
+                Interfacing.ShowToast(
+                    HttpUtility.UrlDecode(activationUri?.Fragment.TrimStart('#').Split('+').FirstOrDefault()),
+                    HttpUtility.UrlDecode(activationUri?.Fragment.TrimStart('#').Split('+').LastOrDefault()));
+
+                Environment.Exit(0); // Exit
+                return; // Don't care anymore
+            }
+
             case HandlerMode.None:
             default:
             {
@@ -441,7 +454,7 @@ public sealed partial class CrashWindow : Window
 
             appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
             appWindow.TitleBar.SetDragRectangles([
-                new(0, 0, 10000000, 30)
+                new RectInt32(0, 0, 10000000, 30)
             ]);
 
             appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;

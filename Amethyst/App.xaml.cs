@@ -512,14 +512,25 @@ public partial class App : Application
                 {
                     try
                     {
-                        // Read the query string
-                        var queryDictionary = HttpUtility
-                            .ParseQueryString(activationUri!.Query.TrimStart('?'));
+                        string pluginGuid, fixName, param;
+                        if (!string.IsNullOrEmpty(activationUri!.Fragment.TrimStart('#')))
+                        {
+                            // "amethyst-app:apply-fix#GuidK2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1FixNameNotPoweredFixParam0End"
+                            pluginGuid = activationUri.Fragment.Substring("Guid", "FixName");
+                            fixName = activationUri.Fragment.Substring("FixName", "Param");
+                            param = activationUri.Fragment.Substring("Param", "End");
+                        }
+                        else
+                        {
+                            // Read the query string
+                            var queryDictionary = HttpUtility
+                                .ParseQueryString(activationUri!.Query.TrimStart('?'));
 
-                        // Read all needed query parameters
-                        var pluginGuid = queryDictionary["Guid"];
-                        var fixName = queryDictionary["FixName"];
-                        var param = queryDictionary["Param"];
+                            // Read all needed query parameters
+                            pluginGuid = queryDictionary["Guid"];
+                            fixName = queryDictionary["FixName"];
+                            param = queryDictionary["Param"];
+                        }
 
                         Logger.Info($"Received fix application request: " +
                                     $"Plugin{{{pluginGuid}}}, Fix Name{{{fixName}}}, Param{{{param}}}");
@@ -594,18 +605,22 @@ public partial class App : Application
                         var tokenSource = new CancellationTokenSource();
                         tokenSource.CancelAfter(TimeSpan.FromMinutes(1));
 
+                        if (!FileUtils.IsCurrentProcessElevated() && pluginGuid is "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1")
+                        {
+                            // "amethyst-app:apply-fix#GuidK2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1FixNameNotPoweredFixParam0End"
+                            Logger.Warn("Amethyst is not elevated, but the fix will likely require administrative privileges! Restarting...");
+                            await Interfacing.ExecuteAppRestart(admin: true, filenameOverride: "powershell.exe",
+                                parameters: $"-command \"Start-Process -FilePath 'amethyst-app:apply-fix#Guid{pluginGuid}FixName{fixName}Param{param}End'\"");
+                        }
+
                         // Loop over all dependencies and install them, give up on failures
                         try
                         {
                             // Prepare the progress update handler
                             var progress = new Progress<InstallationProgress>();
                             progress.ProgressChanged += (_, installationProgress) =>
-                                Shared.Main.DispatcherQueue.TryEnqueue(() =>
-                                {
-                                    // Update our progress here
-                                    Logger.Info($"Applying fix \"{fixName}\" from {{{pluginGuid}}}: " +
-                                                $"{installationProgress.StageTitle} - {installationProgress.OverallProgress}");
-                                });
+                                Logger.Info($"Applying fix \"{fixName}\" from {{{pluginGuid}}}: " +
+                                            $"{installationProgress.StageTitle} - {installationProgress.OverallProgress}");
 
                             // Capture the installation thread
                             var installationWorker = fix.Apply(progress, tokenSource.Token, param);
@@ -1278,5 +1293,35 @@ public static class ExtensionMethods
         }
 
         return dictionary;
+    }
+}
+
+public static class StringExtensions
+{
+    /// <summary>
+    /// takes a substring between two anchor strings (or the end of the string if that anchor is null)
+    /// </summary>
+    /// <param name="this">a string</param>
+    /// <param name="from">an optional string to search after</param>
+    /// <param name="until">an optional string to search before</param>
+    /// <param name="comparison">an optional comparison for the search</param>
+    /// <returns>a substring based on the search</returns>
+    public static string Substring(this string @this, string from = null, string until = null, StringComparison comparison = StringComparison.InvariantCulture)
+    {
+        var fromLength = (from ?? string.Empty).Length;
+        var startIndex = !string.IsNullOrEmpty(from)
+            ? @this.IndexOf(from, comparison) + fromLength
+            : 0;
+
+        if (startIndex < fromLength) throw new ArgumentException("from: Failed to find an instance of the first anchor");
+
+        var endIndex = !string.IsNullOrEmpty(until)
+            ? @this.IndexOf(until, startIndex, comparison)
+            : @this.Length;
+
+        if (endIndex < 0) throw new ArgumentException("until: Failed to find an instance of the last anchor");
+
+        var subString = @this.Substring(startIndex, endIndex - startIndex);
+        return subString;
     }
 }
