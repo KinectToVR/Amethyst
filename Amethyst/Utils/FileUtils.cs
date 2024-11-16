@@ -60,7 +60,7 @@ internal static class FileUtils
             if (!Directory.Exists(path))
             {
                 Logger.Info($"The path provided ('{path}') is invalid!");
-                return new List<Process>(); // Return an empty list, don't care
+                return []; // Return an empty list, don't care
             }
 
             Logger.Info($"Searching for files in the provided path ('{path}') now...");
@@ -69,7 +69,7 @@ internal static class FileUtils
         }
 
         var key = Guid.NewGuid().ToString();
-        List<Process> processes = new();
+        List<Process> processes = [];
 
         var res = RmStartSession(out var handle, 0, key);
         if (res != 0) throw new Exception("Could not begin restart session.  Unable to determine file locker.");

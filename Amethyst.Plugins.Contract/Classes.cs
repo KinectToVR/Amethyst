@@ -1,6 +1,8 @@
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Amethyst.Plugins.Contract;
 
@@ -103,6 +105,13 @@ public class TrackedJoint
     ///     Auto-computed on each pose [position] change
     /// </summary>
     public long PreviousPoseTimestamp { get; private set; }
+
+    /// <summary>
+    ///     Supported key input actions that can be used by Amethyst
+    /// </summary>
+    [JsonIgnore]
+    [IgnoreDataMember]
+    public SortedSet<IKeyInputAction> SupportedInputActions { get; init; } = new();
 }
 
 [DataContract]

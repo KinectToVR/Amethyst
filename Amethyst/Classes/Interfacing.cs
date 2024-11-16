@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,6 +18,7 @@ using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using Newtonsoft.Json;
 using System.Threading;
+using static Amethyst.Classes.Shared;
 
 namespace Amethyst.Classes;
 
@@ -203,23 +204,44 @@ public static class Interfacing
     public static void ShowToast(string header, string text,
         bool highPriority = false, string action = "none")
     {
-        var payload =
-            $"<toast launch=\"action={action}&amp;actionId=00000\">" +
-            "<visual><binding template = \"ToastGeneric\">" +
-            (string.IsNullOrEmpty(header) ? "" : $"<text>{header}</text>") +
-            (string.IsNullOrEmpty(text) ? "" : $"<text>{text}</text>") +
-            "</binding></visual></toast>";
-
-        AppNotification toast = new(payload)
+        if (!FileUtils.IsCurrentProcessElevated())
         {
-            Tag = "Tag_AmethystNotifications",
-            Group = "Group_AmethystNotifications",
-            Priority = highPriority
-                ? AppNotificationPriority.High
-                : AppNotificationPriority.Default
-        };
+            var payload =
+                $"<toast launch=\"action={action}&amp;actionId=00000\">" +
+                "<visual><binding template = \"ToastGeneric\">" +
+                (string.IsNullOrEmpty(header) ? "" : $"<text>{header}</text>") +
+                (string.IsNullOrEmpty(text) ? "" : $"<text>{text}</text>") +
+                "</binding></visual></toast>";
 
-        Shared.Main.NotificationManager?.Show(toast);
+            AppNotification toast = new(payload)
+            {
+                Tag = "Tag_AmethystNotifications",
+                Group = "Group_AmethystNotifications",
+                Priority = highPriority
+                    ? AppNotificationPriority.High
+                    : AppNotificationPriority.Default
+            };
+
+            Shared.Main.NotificationManager?.Show(toast);
+        }
+        else if (File.Exists(ProgramLocation.FullName))
+        {
+            // Log the caller
+            Logger.Info($"The current caller process is: {ProgramLocation.FullName}");
+
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    Arguments = $"amethyst-app:crash-notification#{header}+{text}",
+                    FileName = "explorer.exe"
+                });
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+        }
     }
 
     [DllImport("user32.dll")]
@@ -249,14 +271,14 @@ public static class Interfacing
                         await Task.Delay(500);
                     }
 
-                    Shared.Settings.PageMainScrollViewer.UpdateLayout();
-                    Shared.Settings.PageMainScrollViewer.ChangeView(null,
-                        Shared.Settings.PageMainScrollViewer.ExtentHeight / 2.0, null);
+                    Settings.PageMainScrollViewer.UpdateLayout();
+                    Settings.PageMainScrollViewer.ChangeView(null,
+                        Settings.PageMainScrollViewer.ExtentHeight / 2.0, null);
 
                     await Task.Delay(500);
 
                     // Focus on the restart button
-                    Shared.Settings.CheckOverlapsCheckBox.Focus(FocusState.Keyboard);
+                    Settings.CheckOverlapsCheckBox.Focus(FocusState.Keyboard);
                 });
 
         // When you need to restart OpenVR
@@ -279,14 +301,14 @@ public static class Interfacing
                         await Task.Delay(500);
                     }
 
-                    Shared.Settings.PageMainScrollViewer.UpdateLayout();
-                    Shared.Settings.PageMainScrollViewer.ChangeView(null,
-                        Shared.Settings.PageMainScrollViewer.ExtentHeight, null);
+                    Settings.PageMainScrollViewer.UpdateLayout();
+                    Settings.PageMainScrollViewer.ChangeView(null,
+                        Settings.PageMainScrollViewer.ExtentHeight, null);
 
                     await Task.Delay(500);
 
                     // Focus on the restart button
-                    Shared.Settings.RestartButton.Focus(FocusState.Keyboard);
+                    Settings.RestartButton.Focus(FocusState.Keyboard);
                 });
 
         // Else no click action requested ("none")
@@ -368,7 +390,7 @@ public static class Interfacing
             Logger.Info("[Interfacing] Spawning all active-supported trackers now...");
 
             // Helper bool array
-            List<bool> spawned = new();
+            List<bool> spawned = [];
 
             // Try 3 times (cause why not)
             if (AppData.Settings.TrackersVector.Count(x => x.IsActive) > 0)
@@ -377,7 +399,7 @@ public static class Interfacing
                     // Update tracker statuses in the server
                     spawned.AddRange((await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(
                             AppData.Settings.TrackersVector.Where(x => x.IsActive).Select(x => x.GetTrackerBase())))
-                        ?.Select(x => x.Success) ?? new[] { false }); // Check if the request was actually okay
+                        ?.Select(x => x.Success) ?? [false]); // Check if the request was actually okay
                     await Task.Delay(15);
                 }
 
@@ -471,8 +493,8 @@ public static class Interfacing
                 // Sleep a bit before checking
                 await Task.Delay(1000);
 
-                if (Shared.General.ErrorWhatText is not null &&
-                    Shared.General.ErrorWhatText.Visibility == Visibility.Visible)
+                if (General.ErrorWhatText is not null &&
+                    General.ErrorWhatText.Visibility == Visibility.Visible)
                     AppSounds.PlayAppSound(AppSounds.AppSoundType.Error);
             });
 
@@ -494,19 +516,19 @@ public static class Interfacing
     public static void UpdateServerStatus()
     {
         // Block some things if server isn't working properly
-        if (Shared.General.ErrorWhatText is null || IsServiceEndpointPresent) return;
+        if (General.ErrorWhatText is null || IsServiceEndpointPresent) return;
         Logger.Info("[Server Error] Entering the server error state...");
 
         // Hide device error labels (if any)
-        Shared.General.ErrorWhatText.Visibility = Visibility.Collapsed;
-        Shared.General.ErrorWhatGrid.Visibility = Visibility.Collapsed;
-        Shared.General.ErrorButtonsGrid.Visibility = Visibility.Collapsed;
-        Shared.General.TrackingDeviceErrorLabel.Visibility = Visibility.Collapsed;
+        General.ErrorWhatText.Visibility = Visibility.Collapsed;
+        General.ErrorWhatGrid.Visibility = Visibility.Collapsed;
+        General.ErrorButtonsGrid.Visibility = Visibility.Collapsed;
+        General.TrackingDeviceErrorLabel.Visibility = Visibility.Collapsed;
 
         // Block spawn|offsets|calibration buttons
-        Shared.General.ToggleTrackersButton.IsEnabled = false;
-        Shared.General.CalibrationButton.IsEnabled = false;
-        Shared.General.OffsetsButton.IsEnabled = false;
+        General.ToggleTrackersButton.IsEnabled = false;
+        General.CalibrationButton.IsEnabled = false;
+        General.OffsetsButton.IsEnabled = false;
     }
 
     [DllImport("user32.dll")]
@@ -531,8 +553,7 @@ public static class Interfacing
         {
             // Load the locales.json from Assets/Strings/
             var resourcePath = Path.Join(
-                ProgramLocation.DirectoryName,
-                "Assets", "Strings", "locales.json");
+                AppDirectoryName, "Assets", "Strings", "locales.json");
 
             if (File.Exists(GetAppDataFilePath("Localization.json")))
                 try
@@ -600,8 +621,7 @@ public static class Interfacing
             Logger.Info($"Searching for language resources with key \"{languageKey}\"...");
 
             var resourcePath = Path.Join(
-                ProgramLocation.DirectoryName,
-                "Assets", "Strings", languageKey + ".json");
+                AppDirectoryName, "Assets", "Strings", languageKey + ".json");
 
             if (File.Exists(GetAppDataFilePath("Localization.json")))
                 try
@@ -660,10 +680,33 @@ public static class Interfacing
         }
     }
 
-    // Get a list of all available languages <code: name>
+    public static string AppDirectoryName
+    {
+        get
+        {
+#if DEBUG
+            try
+            {
+                // DirectoryName -> REPO_ROOT\Amethyst\bin\x64\Debug\net7.0\win10-x64\AppX
+                if (!Debugger.IsAttached) return ProgramLocation.DirectoryName;
+                var result = Directory.GetParent(ProgramLocation.DirectoryName!)!
+                    .Parent!.Parent!.Parent!.Parent!.Parent!.FullName;
+                return Directory.Exists(result) ? result : ProgramLocation.DirectoryName;
+            }
+            catch (Exception)
+            {
+                return ProgramLocation.DirectoryName;
+            }
+#else
+            return ProgramLocation.DirectoryName;
+#endif
+        }
+    }
+
+// Get a list of all available languages <code: name>
     public static Dictionary<string, string> GetAvailableResourceLanguages(Action<string> entryProcessor = null)
     {
-        var stringsFolder = Path.Join(ProgramLocation.DirectoryName, "Assets", "Strings");
+        var stringsFolder = Path.Join(AppDirectoryName, "Assets", "Strings");
         if (File.Exists(GetAppDataFilePath("Localization.json")))
             try
             {
@@ -700,7 +743,7 @@ public static class Interfacing
         return result;
     }
 
-    // Load the current desired resource JSON into app memory
+// Load the current desired resource JSON into app memory
     public static void LoadJsonStringResourcesEnglish()
     {
         try
@@ -708,8 +751,7 @@ public static class Interfacing
             Logger.Info("Searching for shared (English) language resources...");
 
             var resourcePath = Path.Join(
-                ProgramLocation.DirectoryName,
-                "Assets", "Strings", "en.json");
+                AppDirectoryName, "Assets", "Strings", "en.json");
 
             if (File.Exists(GetAppDataFilePath("Localization.json")))
                 try
@@ -760,7 +802,7 @@ public static class Interfacing
         }
     }
 
-    // Get a string from runtime JSON resources, language from settings
+// Get a string from runtime JSON resources, language from settings
     public static string LocalizedJsonString(string resourceKey,
         [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
         [CallerMemberName] string memberName = "")
@@ -786,7 +828,7 @@ public static class Interfacing
         }
     }
 
-    // Get a string from runtime JSON resources, language from settings
+// Get a string from runtime JSON resources, language from settings
     public static string EnglishJsonString(string resourceKey,
         [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
         [CallerMemberName] string memberName = "")
@@ -811,8 +853,9 @@ public static class Interfacing
         }
     }
 
-    // Restart Amethyst
-    public static async Task ExecuteAppRestart(bool handleExit = true, string parameters = "", bool admin = false)
+// Restart Amethyst
+    public static async Task ExecuteAppRestart(bool handleExit = true,
+        string parameters = "", bool admin = false, string filenameOverride = null)
     {
         Logger.Info("Restart requested: trying to restart the app...");
 
@@ -833,7 +876,7 @@ public static class Interfacing
 
             var info = new ProcessStartInfo
             {
-                FileName = ProgramLocation.FullName.Replace(".dll", ".exe"),
+                FileName = filenameOverride ?? ProgramLocation.FullName.Replace(".dll", ".exe"),
                 Arguments = parameters // Pass same args
             };
 
@@ -1176,7 +1219,7 @@ public static class Interfacing
             Shared.Main.DispatcherQueue.TryEnqueue(() =>
             {
                 // Force refresh all the valid pages
-                Shared.Events.RequestInterfaceReload(false);
+                Events.RequestInterfaceReload(false);
 
                 // Optionally hide other status errors
                 UpdateServerStatus();
@@ -1186,6 +1229,8 @@ public static class Interfacing
 
     public static void SetupNotificationManager()
     {
+        if (FileUtils.IsCurrentProcessElevated()) return;
+
         try
         {
             Logger.Info("Registering for NotificationInvoked WinRT event...");

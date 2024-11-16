@@ -32,7 +32,7 @@ namespace Amethyst.Pages;
 /// </summary>
 public sealed partial class Settings : Page, INotifyPropertyChanged
 {
-    private readonly List<string> _languageList = new();
+    private readonly List<string> _languageList = [];
     private bool _settingsPageLoadedOnce;
 
     public Settings()
@@ -61,7 +61,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
         {
             tracker.SettingsExpanderTransitions =
-                new TransitionCollection { new RepositionThemeTransition() };
+                [new RepositionThemeTransition()];
             tracker.OnPropertyChanged(); // Refresh the transition
         });
 
@@ -104,10 +104,10 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         .Select(x => new AppTrackerEntry { TrackerRole = x }).ToList();
 
     // MVVM stuff: service settings and its status
-    private IEnumerable<Page> ServiceSettingsPage => new[]
-    {
+    private IEnumerable<Page> ServiceSettingsPage =>
+    [
         AppPlugins.CurrentServiceEndpoint.SettingsInterfaceRoot as Page
-    };
+    ];
 
     private IEnumerable<string> LoadedServiceNames =>
         AppPlugins.ServiceEndpointsList.Values.Select(service => service.Name);
@@ -128,7 +128,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         {
             var message = StringUtils.SplitStatusString(AppPlugins.CurrentServiceEndpoint.ServiceStatusString);
             return message is null || message.Length < 3
-                ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" }
+                ? ["The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA"]
                 : message; // If everything is all right this time
         }
     }
@@ -140,8 +140,18 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
         ServiceSupportsSettings ? new CornerRadius(0) : new CornerRadius(0, 0, 4, 4);
 
     // MVVM stuff: bound strings with placeholders
-    private string RestartServiceText => Interfacing.LocalizedJsonString(
-        "/SettingsPage/Buttons/RestartService").Format(AppPlugins.CurrentServiceEndpoint.Name);
+    private string RestartServiceText
+    {
+        get
+        {
+            var result = Interfacing.LocalizedJsonString(
+                "/SettingsPage/Buttons/RestartService").Format(AppPlugins.CurrentServiceEndpoint.Name);
+            return result.Length <= 20
+                ? result
+                : Interfacing.LocalizedJsonString(
+                    "/SettingsPage/Buttons/RestartService").Format("").Trim();
+        }
+    }
 
     private string RestartServiceNoteL1 => Interfacing.LocalizedJsonString(
         "/SettingsPage/Captions/TrackersRestart/Line1").Format(AppPlugins.CurrentServiceEndpoint.Name);
@@ -192,7 +202,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
                 AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
                 {
                     tracker.SettingsExpanderTransitions =
-                        new TransitionCollection { new ContentThemeTransition() };
+                        [new ContentThemeTransition()];
                     tracker.OnPropertyChanged(); // Refresh the transition
                 });
 
@@ -203,7 +213,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
                 AppData.Settings.TrackersVector.ToList().ForEach(tracker =>
                 {
                     tracker.SettingsExpanderTransitions =
-                        new TransitionCollection { new RepositionThemeTransition() };
+                        [new RepositionThemeTransition()];
                     tracker.OnPropertyChanged(); // Refresh the transition
                 });
             });
@@ -471,6 +481,8 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
 
     private void ToggleFlipTeachingTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
     {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
         Shared.Main.InterfaceBlockerGrid.IsHitTestVisible = false;
     }
 
@@ -764,7 +776,7 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
                 trackerBase.ConnectionState = false;
 
                 for (var i = 0; i < 3; i++) // Try 3 times to be extra sure
-                    await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
+                    await AppPlugins.CurrentServiceEndpoint.SetTrackerStates([trackerBase]);
             }
 
             await Task.Delay(20);

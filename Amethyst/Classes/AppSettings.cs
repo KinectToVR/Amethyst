@@ -19,7 +19,10 @@ namespace Amethyst.Classes;
 public class AppSettings : INotifyPropertyChanged
 {
     // Disabled (by the user) plugins set
-    public readonly SortedSet<string> DisabledPluginsGuidSet = new();
+    public readonly SortedSet<string> DisabledPluginsGuidSet = 
+    [
+        "K2VRTEAM-AME2-APII-SNDP-SENDPTOVREMU"
+    ];
 
     // App sounds' volume and *nice* is the default
     private uint _appSoundsVolume = 69; // Always 0<x<100
@@ -72,7 +75,7 @@ public class AppSettings : INotifyPropertyChanged
     public uint AppTheme { get; set; }
 
     // Current joints
-    public ObservableCollection<AppTracker> TrackersVector { get; set; } = new();
+    public ObservableCollection<AppTracker> TrackersVector { get; set; } = [];
 
     public bool UseTrackerPairs { get; set; } = true; // Pair feet, elbows and knees
 
@@ -89,7 +92,7 @@ public class AppSettings : INotifyPropertyChanged
 
     public string ServiceEndpointGuid { get; set; } = ""; // -> Always set
     public string TrackingDeviceGuid { get; set; } = ""; // -> Always set
-    public SortedSet<string> OverrideDevicesGuidMap { get; set; } = new();
+    public SortedSet<string> OverrideDevicesGuidMap { get; set; } = [];
 
     public bool IsFlipEnabled
     {
@@ -162,6 +165,12 @@ public class AppSettings : INotifyPropertyChanged
 
     // Save the camera preview state
     public bool CameraPreviewEnabled { get; set; } = false;
+
+    // Save the calibration mode type
+    public bool PoseCaptureAutomatic { get; set; } = false;
+
+    // Save the calibration mode type tip state
+    public bool PoseCaptureTipShown { get; set; } = false;
 
     // If we wanna dismiss all warnings during the preview
     public bool ForceSkeletonPreview { get; set; } = false;

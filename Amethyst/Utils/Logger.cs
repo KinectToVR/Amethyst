@@ -156,7 +156,7 @@ public static partial class Logger
 
         try
         {
-            File.AppendAllLines(LogFilePath, new[] { message });
+            File.AppendAllLines(LogFilePath, [message]);
         }
         catch (Exception)
         {
@@ -177,7 +177,7 @@ public static partial class Logger
 
         try
         {
-            File.AppendAllLines(LogFilePath, new[] { message });
+            File.AppendAllLines(LogFilePath, [message]);
         }
         catch (Exception)
         {
@@ -198,7 +198,7 @@ public static partial class Logger
 
         try
         {
-            File.AppendAllLines(LogFilePath, new[] { message });
+            File.AppendAllLines(LogFilePath, [message]);
         }
         catch (Exception)
         {

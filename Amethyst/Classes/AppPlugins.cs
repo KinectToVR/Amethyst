@@ -31,7 +31,8 @@ public static class AppPlugins
         PluginDllLinkError, // Could not link for some reason
         BadOrDuplicateGuid, // Empty/Bad/Duplicate device GUID
         InvalidFactory, // Device factory just gave up, now cry
-        Other // Check logs, MEF probably gave us up again...
+        Other, // Check logs, MEF probably gave us up again...
+        Contract // Known errors due to too old plugin contract
     }
 
     public enum PluginType
@@ -51,10 +52,10 @@ public static class AppPlugins
     public static readonly SortedDictionary<string, ServiceEndpoint> InstallerList = new();
 
     // Written to at the first plugin load
-    public static readonly ObservableCollection<LoadAttemptedPlugin> LoadAttemptedPluginsList = new();
+    public static readonly ObservableCollection<LoadAttemptedPlugin> LoadAttemptedPluginsList = [];
 
     // Used by the installer module - device plugins
-    public static readonly ObservableCollection<SetupPlugin> InstallerPluginsList = new();
+    public static readonly ObservableCollection<SetupPlugin> InstallerPluginsList = [];
 
     public static IEnumerable<LoadAttemptedPlugin> LoadedPluginsList => LoadAttemptedPluginsList.Where(x => x.IsLoaded);
     public static IEnumerable<LoadAttemptedPlugin> ErrorPluginsList => LoadAttemptedPluginsList.Where(x => !x.IsLoaded);
@@ -78,6 +79,26 @@ public static class AppPlugins
     public static (bool Exists, ServiceEndpoint Service) GetService(string guid)
     {
         return (ServiceEndpointsList.TryGetValue(guid, out var service), service);
+    }
+
+    // Get a <exists, tracking device> by guid
+    public static bool GetDevice(string guid, out TrackingDevice device)
+    {
+        if (!string.IsNullOrEmpty(guid))
+            return TrackingDevicesList.TryGetValue(guid, out device);
+
+        device = null;
+        return false;
+    }
+
+    // Get a <exists, tracking device> by guid
+    public static bool GetService(string guid, out ServiceEndpoint service)
+    {
+        if (!string.IsNullOrEmpty(guid))
+            return ServiceEndpointsList.TryGetValue(guid, out service);
+
+        service = null;
+        return false;
     }
 
     public static void UpdateTrackingDevicesInterface()
@@ -146,7 +167,7 @@ public static class AppPlugins
             // Split status and message by \n
             var message = StringUtils.SplitStatusString(currentDevice.DeviceStatusString);
             if (message is null || message.Length < 3)
-                message = new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" };
+                message = ["The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA"];
 
             General.DeviceNameLabel.Text = currentDevice.Name;
             General.DeviceStatusLabel.Text = message[0];
@@ -231,7 +252,7 @@ public static class AppPlugins
         // Update the device
         var message = StringUtils.SplitStatusString(currentDevice.Device.DeviceStatusString);
         if (message is null || message.Length < 3)
-            message = new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" };
+            message = ["The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA"];
 
         Devices.DeviceNameLabel.Text = currentDevice.Device.Name;
         Devices.DeviceStatusLabel.Text = message[0];

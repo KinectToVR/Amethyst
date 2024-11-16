@@ -1,37 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>Amethyst Device Plugin API (Contract)</Title>
-    <FileVersion></FileVersion>
-    <Version>0.2.13</Version>
-    <Platforms>x64</Platforms>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>Amethyst Device Plugin API (Contract)</Title>
+		<FileVersion></FileVersion>
+		<Version>0.3.33</Version>
+		<Platforms>x64</Platforms>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <PackageId>Amethyst.Plugins.Contract</PackageId>
-    <Version>0.2.25</Version>
-    <Authors>K2VR</Authors>
-    <Company>K2VR</Company>
-    <PackageTags>Amethyst;K2VR;KinectToVR;VR;OpenVR;Fullbody Tracking</PackageTags>
-    <Description>
-      This client class library lets you export your plugin library for Amethyst with MEF.
-      Compatible with C# (with XAML via WinUI/WinRT), C++/CLI, and custom WinRT projections.
-      Contains additional functions and helper classes to make plugin developmnet easier.
-    </Description>
-    <PackageIcon>ktvr.png</PackageIcon>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RequireLicenseAcceptance>true</RequireLicenseAcceptance>
-    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-  </PropertyGroup>
+	<PropertyGroup>
+		<PackageId>Amethyst.Plugins.Contract</PackageId>
+		<Authors>K2VR</Authors>
+		<Company>K2VR</Company>
+		<PackageTags>Amethyst;K2VR;KinectToVR;VR;OpenVR;Fullbody Tracking</PackageTags>
+		<Description>
+			This client class library lets you export your plugin library for Amethyst with MEF.
+			Compatible with C# (with XAML via WinUI/WinRT), C++/CLI, and custom WinRT projections.
+			Contains additional functions and helper classes to make plugin developmnet easier.
+		</Description>
+		<PackageIcon>ktvr.png</PackageIcon>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RequireLicenseAcceptance>true</RequireLicenseAcceptance>
+		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="Assets\ktvr.png" Pack="true" PackagePath="\" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="Assets\ktvr.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
 </Project>

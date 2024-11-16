@@ -20,7 +20,7 @@ namespace Amethyst.Installer.Views;
 /// </summary>
 public sealed partial class SetupSplash : Page, INotifyPropertyChanged
 {
-    private readonly List<string> _languageList = new();
+    private readonly List<string> _languageList = [];
 
     private bool _blockHiddenSoundOnce;
     private bool _pageSetupFinished, _pageLoadedOnce;

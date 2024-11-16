@@ -58,10 +58,9 @@ public sealed partial class Host : Window
         {
             // Chad Windows 11
             AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-            AppWindow.TitleBar.SetDragRectangles(new RectInt32[]
-            {
+            AppWindow.TitleBar.SetDragRectangles([
                 new(0, 0, 10000000, 30)
-            });
+            ]);
 
             AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
             AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;

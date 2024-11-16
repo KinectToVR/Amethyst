@@ -18,7 +18,7 @@ namespace Amethyst.Controls;
 
 public sealed partial class OverrideExpander : UserControl, INotifyPropertyChanged
 {
-    private List<AppTracker> _trackers = new();
+    private List<AppTracker> _trackers = [];
 
     public OverrideExpander()
     {
@@ -69,11 +69,11 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     private static List<string> GetManagingDeviceJointsList(string guid)
     {
         if (string.IsNullOrEmpty(guid))
-            return new List<string>
-            {
+            return
+            [
                 Interfacing.LocalizedJsonString(
                     "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText")
-            };
+            ];
 
         var jointsList = AppPlugins.GetDevice(guid).Device.TrackedJoints
             .Select(x => x.Name).ToList();

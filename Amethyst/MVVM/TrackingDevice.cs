@@ -153,7 +153,7 @@ public class TrackingDevice : INotifyPropertyChanged
         {
             // Split status and message by \n
             var message = StringUtils.SplitStatusString(DeviceStatusString);
-            return message is null || message.Length < 3 ? new[] { "The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA" } : message;
+            return message is null || message.Length < 3 ? ["The status message was broken!", "E_FIX_YOUR_SHIT", "AAAAA"] : message;
         }
     }
 

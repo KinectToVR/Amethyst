@@ -278,6 +278,13 @@ public interface IServiceEndpoint
     public Uri ErrorDocsUri { get; }
 
     /// <summary>
+    ///     Keeps all supported input actions that may be received from ProcessKeyInput
+    ///     You will not be able to receive actions from unsupported TrackerType either
+    /// </summary>
+    [DefaultValue(null)]
+    public Dictionary<TrackerType, SortedSet<IKeyInputAction>> SupportedInputActions { get; }
+
+    /// <summary>
     ///     Get the absolute pose of the HMD, calibrated against the play space
     ///     Return null if unknown to the service or unavailable
     ///     You'll need to provide this to support automatic calibration
@@ -341,6 +348,12 @@ public interface IServiceEndpoint
     ///     Check connection: status, serialized status, combined ping time
     /// </summary>
     public Task<(int Status, string StatusMessage, long PingTime)> TestConnection();
+
+    /// <summary>
+    ///     Process a key input event sent by a device, that was assigned and found
+    /// </summary>
+    public Task ProcessKeyInput(IKeyInputAction action, object? data, 
+        TrackerType? receiver, CancellationToken? token = null);
 }
 
 /// <summary>
@@ -352,7 +365,7 @@ public interface IAmethystHost
     ///     Helper to get all joints' positions from the app, which are added in Amethyst.
     ///     Note: if joint's off, its trackingState will be ITrackedJointState::State_NotTracked
     ///     Note: [AppJointPoses] will always be returned raw and w/o tweaks/offsets
-    ///     /     if need the final ones, please consider writing an IServiceEndpoint
+    ///     /     if you need the final ones, please consider writing an IServiceEndpoint
     /// </summary>
     List<TrackedJoint> AppJointPoses { get; }
 
@@ -413,6 +426,11 @@ public interface IAmethystHost
     bool IsTrackedJointValid(TrackedJointType jointType);
 
     /// <summary>
+    ///     Check if a tracker with the specified role is enabled and active
+    /// </summary>
+    bool IsTrackerEnabled(TrackerType trackerType);
+
+    /// <summary>
     ///     Lock the main update loop while in scope with [lock (UpdateThreadLock) { }]
     ///     This will block AME from updating while locked, and also wait for when the/
     ///     / lock is available => multiple plugins can never lock it at the same time!
@@ -465,6 +483,28 @@ public interface IAmethystHost
     ///     Mark fatal as true to show the crash handler with your message
     /// </summary>
     void RequestExit(string message, bool fatal = false);
+
+    /// <summary>
+    ///     Process a key input action called from a single joint
+    ///     The handler will check whether the action is used anywhere,
+    ///     and trigger the linked output action if applicable
+    /// </summary>
+    /// <param name="action">
+    ///     Definition of the input action called
+    /// </param>
+    /// <param name="data">
+    ///     Data to be sent, involved with the action
+    /// </param>
+    void ReceiveKeyInput(IKeyInputAction action, object? data);
+
+    /// <summary>
+    ///     Check whether a KeyInputAction is used for anything
+    ///     Devices may use this to skip updating unused actions
+    /// </summary>
+    /// <param name="action">
+    ///     Definition of the input action to validate
+    /// </param>
+    bool CheckInputActionIsUsed(IKeyInputAction action);
 }
 
 /// <summary>
@@ -472,7 +512,7 @@ public interface IAmethystHost
 ///     under "DependencyInstaller" for dependency installation functionality
 ///     Note: you should only use basic/local functionality, as it is unknown
 ///     whether the load context will contain any external libraries you may
-///     be relying on - like framework or device proprietary SDKs and such, etc
+///     be relying on - like framework or device proprietary SDKs and such, etc.
 /// </summary>
 public interface IDependencyInstaller
 {

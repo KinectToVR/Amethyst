@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
+using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -24,8 +25,13 @@ using Amethyst.Utils;
 using AmethystSupport;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
+using Newtonsoft.Json;
 using RestSharp;
 using static Amethyst.Classes.Interfacing;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace Amethyst.MVVM;
 
@@ -58,6 +64,13 @@ public class PluginHost(string guid) : IAmethystHost
     public bool IsTrackedJointValid(TrackedJointType jointType)
     {
         return AppPlugins.BaseTrackingDevice.TrackedJoints.Exists(x => x.Role == jointType);
+    }
+
+    // Check if a tracker with the specified role is enabled and active
+    public bool IsTrackerEnabled(TrackerType trackerType)
+    {
+        return AppData.Settings.TrackersVector
+            .Any(x => x.Role == trackerType && x.IsActive);
     }
 
     // Lock the main update loop while in scope with [lock (UpdateThreadLock) { }]
@@ -234,6 +247,8 @@ public class PluginHost(string guid) : IAmethystHost
     // Get Amethyst Docs (web) language
     public string DocsLanguageCode => Interfacing.DocsLanguageCode;
 
+    public bool IsDarkMode => ActualTheme == ElementTheme.Dark;
+
     // Request a string from AME resources, empty for no match
     // Warning: The primarily searched resource is the device-provided one!
     public string RequestLocalizedString(string key)
@@ -274,6 +289,39 @@ public class PluginHost(string guid) : IAmethystHost
         });
     }
 
+    // Process a key input action called from a single joint
+    // The handler will check whether the action is used anywhere,
+    // and trigger the linked output action if applicable
+    public void ReceiveKeyInput(IKeyInputAction action, object data)
+    {
+        try
+        {
+            // Invoke all linked input actions
+            AppData.Settings.TrackersVector
+                .SelectMany(x => x.InputActionsMap.Where(y => y.Value?.Guid == action.Guid)
+                    .Select(y => (Tracker: x.Role, Action: y.Key.LinkedAction))).ToList()
+                .ForEach(x => AppPlugins.CurrentServiceEndpoint.ProcessKeyInput(x.Action, data, x.Tracker));
+
+            // Update testing input if available
+            if (InputActionBindingEntry.TreeCurrentAction is not null &&
+                InputActionBindingEntry.TreeCurrentAction.Device == Guid &&
+                InputActionBindingEntry.TreeCurrentAction.Guid == action.Guid)
+                InputActionBindingEntry.TreeCurrentAction.TestValue = data?.ToString();
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(e);
+        }
+    }
+
+    // Check whether a KeyInputAction is used for anything
+    // Devices may use this to skip updating unused actions
+    public bool CheckInputActionIsUsed(IKeyInputAction action)
+    {
+        return AppData.Settings.TrackersVector
+            .Any(x => x.InputActionsMap.Any(y => y.Value?.Guid == action.Guid));
+    }
+
     // INTERNAL: Available only via reflection, not defined in the Host interface
     // Return all devices added from plugins, INCLUDING forwarded ones
     public Dictionary<string, ITrackingDevice> TrackingDevices =>
@@ -300,6 +348,14 @@ public class PluginHost(string guid) : IAmethystHost
     {
         RelayBarOverride = infoBarData;
         Shared.Events.RefreshMainWindowEvent?.Set();
+    }
+
+    public string Eval(string code)
+    {
+        // Exit with a custom message to be shown by the crash handler
+        Logger.Info($"Trying to evaluate expression \"{code.Trim()}\"...");
+        return CSharpScript.EvaluateAsync(code.Trim(), ScriptOptions.Default.WithImports("Amethyst.Classes")
+            .WithReferences(typeof(Interfacing).Assembly).AddImports("System.Linq")).GetAwaiter().GetResult().ToString();
     }
 }
 
@@ -465,7 +521,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             if (AppPlugins.TrackingDevicesList.ContainsKey(Guid) &&
                 AppData.Settings.DisabledPluginsGuidSet.Contains(Guid))
             {
-                SortedSet<string> loadedDeviceSet = new();
+                SortedSet<string> loadedDeviceSet = [];
 
                 // Check which devices are loaded : device plugin
                 if (AppPlugins.TrackingDevicesList.ContainsKey("K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1"))
@@ -493,7 +549,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             else if (AppPlugins.ServiceEndpointsList.ContainsKey(Guid) &&
                      AppData.Settings.DisabledPluginsGuidSet.Contains(Guid))
             {
-                SortedSet<string> loadedServiceSet = new();
+                SortedSet<string> loadedServiceSet = [];
 
                 // Check which services are loaded
                 if (AppPlugins.ServiceEndpointsList.ContainsKey("K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR"))
@@ -600,7 +656,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
             // Parse the received manifest
             var remoteVersion = new Version(manifest["version"]?.ToString() ?? Version.ToString());
-            UpdateData = (Version.CompareTo(remoteVersion) < 0, manifest["download"]?.ToString(),
+            UpdateData = (Version.CompareTo(remoteVersion) < 0, manifest["download_"]?.ToString(),
                 remoteVersion, manifest["changelog"]?.ToString());
 
             // Try downloading the update if found
@@ -1081,7 +1137,71 @@ public class AppTrackerEntry
     public bool IsEnabled => AppData.Settings.TrackersVector.Any(x => x.Role == TrackerRole);
 }
 
-public static class CollectionExtensions
+public class InputActionEntry
+{
+    public InputActionEndpoint Action { get; set; }
+    public bool IsEnabled { get; set; }
+    public string Name => Action?.LinkedAction?.Name ?? "INVALID";
+}
+
+public class InputActionBindingEntry : INotifyPropertyChanged
+{
+    private InputActionSource _treeSelectedAction;
+    public InputActionEndpoint Action { get; set; }
+    public InputActionSource Source { get; set; }
+
+    public string ActionName => Action?.LinkedAction?.Name ?? "INVALID";
+    public string SourceName => Source?.LinkedAction?.Name ?? Source?.Name ?? LocalizedJsonString("/InputActions/Picker/Options/Disabled");
+    public string ActionNameFormatted => $"{ActionName}:";
+    public string ActionDescription => Action?.LinkedAction?.Description;
+    public string SourceDescription => Source?.LinkedAction?.Description;
+
+    public string SourceTracker => AppPlugins.GetDevice(Source?.Device, out var device)
+        ? device.TrackedJoints.FirstOrDefault(x => x.Role == Source?.Tracker, null)?
+            .Role.ToString() ?? (Source?.Tracker.ToString() ?? string.Empty)
+        : Source?.Tracker.ToString() ?? string.Empty;
+
+    public string SourceDevice => AppPlugins.GetDevice(Source?.Device, out var device) ? device.Name : string.Empty;
+
+    public string SourcePath => (string.IsNullOrEmpty(SourceDevice) ? "" : $"{SourceDevice} > ") +
+                                (string.IsNullOrEmpty(SourceTracker) ? "" : $"{SourceTracker} > ") + SourceName;
+
+    public bool IsEnabled => Source is not null;
+    public bool IsValid => !IsEnabled || Source?.LinkedAction is not null;
+    public bool IsInvalid => !IsValid;
+
+    public InputActionSource TreeSelectedAction
+    {
+        get => _treeSelectedAction;
+        set
+        {
+            if (Equals(value, _treeSelectedAction)) return;
+            _treeSelectedAction = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string SelectedActionName => TreeSelectedAction?.Name ?? LocalizedJsonString("/InputActions/Picker/NoSelectionHeader");
+    public string SelectedActionDescription => TreeSelectedAction?.LinkedAction?.Description;
+    public bool SelectedActionValid => TreeSelectedAction is not null;
+    public bool SelectedActionInvalid => TreeSelectedAction is null;
+    public UIElement SelectedActionImage => TreeSelectedAction?.LinkedAction?.Image as UIElement;
+    public bool SelectedActionImageValid => TreeSelectedAction?.LinkedAction?.Image is UIElement;
+    public bool SelectedActionImageInvalid => TreeSelectedAction?.LinkedAction?.Image is not UIElement;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    public string TestingValue => string.IsNullOrEmpty(TreeCurrentAction?.TestValue) ? "No data" : TreeCurrentAction.TestValue; // TODO
+
+    public static InputActionSource TreeCurrentAction { get; set; }
+}
+
+public static partial class CollectionExtensions
 {
     public static bool AddPlugin<T>(this ICollection<T> collection, DirectoryInfo item) where T : ComposablePartCatalog
     {
@@ -1179,13 +1299,66 @@ public static class CollectionExtensions
             }
             catch (Exception e)
             {
-                if ((e as ReflectionTypeLoadException)?.LoaderExceptions.First() is not
+                if ((e as ReflectionTypeLoadException)?.LoaderExceptions.FirstOrDefault() is not
                     FileNotFoundException) Crashes.TrackError(e); // Only send unknown exceptions
 
                 if (fileInfo.Name.StartsWith("plugin"))
                 {
+                    List<string> dependencies = [];
                     Logger.Error($"Loading {fileInfo} failed with an exception: Message: {e.Message} " +
                                  "Probably some assembly referenced by this plugin is missing.");
+
+                    try
+                    {
+                        var failedDependency = ((e as ReflectionTypeLoadException)?.LoaderExceptions
+                            .FirstOrDefault()?.InnerException as FileNotFoundException)?.FileName;
+
+                        if (!string.IsNullOrEmpty(failedDependency) && File.Exists(failedDependency))
+                        {
+                            var walkerPath = Path.Join(ProgramLocation.DirectoryName,
+                                "Assets", "Utils", "Dependencies", "Dependencies.exe");
+
+                            Logger.Info($"One of {failedDependency}'s (which itself was attempted to be " +
+                                        $"loaded by {fileInfo}) unmanaged dependencies was not found! " +
+                                        $"Trying to find out what caused that, using dependencies.exe...");
+
+                            // Don't care any longer if it's not found in our files
+                            if (!File.Exists(walkerPath))
+                            {
+                                Logger.Warn("The dependency walker was not found!");
+                                throw new FileNotFoundException(walkerPath);
+                            }
+
+                            var process = new Process
+                            {
+                                StartInfo = new ProcessStartInfo
+                                {
+                                    FileName = walkerPath,
+                                    Arguments = $"-chain {failedDependency} -depth 1",
+                                    UseShellExecute = false,
+                                    RedirectStandardOutput = true,
+                                    RedirectStandardError = true,
+                                    CreateNoWindow = true
+                                }
+                            };
+
+                            Logger.Info($"Trying to start {walkerPath} for {failedDependency}...");
+                            process.Start();
+
+                            Logger.Info("Waiting for the process to exit... (<500ms)");
+                            var output = process.StandardOutput.ReadToEnd().Replace("Ã", "―");
+                            process.WaitForExit(500);
+
+                            Logger.Info($"Received dependency graph (depth=1):\n{output}");
+                            dependencies = output.Split('\n').SelectMany(x =>
+                                MissingDllRegex().Matches(x).Select(y => y.Value)).ToList();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(e);
+                        Logger.Error(ex);
+                    }
 
                     try
                     {
@@ -1228,9 +1401,14 @@ public static class CollectionExtensions
                         {
                             Name = result?.GetMetadata("Name", $"{item.Name}/{fileInfo.Name}"),
                             Guid = $"{result.GetMetadata("Guid", $"{placeholderGuid}")}:INSTALLER",
-                            Error = $"{e.Message}\n\n{e.StackTrace}",
+                            Error = $"{(dependencies.Any() ? $"{LocalizedJsonString("/DevicesPage/Devices/Manager/Messages/MissingLibrary")
+                                .Format(fileInfo.Name, string.Join(", ", dependencies))}\n\n" : "")}{e.Message}\n\n{e.StackTrace}",
                             Folder = item.FullName,
-                            Status = AppPlugins.PluginLoadError.NoPluginDll,
+                            Status = dependencies.Any()
+                                ? AppPlugins.PluginLoadError.NoPluginDependencyDll
+                                : e.Message.Contains("get_SupportedInputActions")
+                                    ? AppPlugins.PluginLoadError.Contract
+                                    : AppPlugins.PluginLoadError.NoPluginDll,
 
                             DependencyLink = result?.GetMetadata("DependencyLink", string.Empty)
                                 ?.Format(DocsLanguageCode),
@@ -1293,4 +1471,81 @@ public static class CollectionExtensions
 
         return false; // Nah, not this time
     }
+
+    [GeneratedRegex(@"(?<=\|  ― ).*?(?= \(NOT_FOUND\) :)", RegexOptions.IgnoreCase)]
+    private static partial Regex MissingDllRegex();
+}
+
+[Serializable]
+public class InputActionEndpoint
+{
+    // Action's container tracker
+    [JsonProperty] public TrackerType Tracker { get; set; }
+
+    // Action that should be called
+    [JsonProperty] public string Guid { get; set; }
+
+    // MVVM Stuff
+    [JsonIgnore]
+    [IgnoreDataMember]
+    public IKeyInputAction LinkedAction
+    {
+        get
+        {
+            try
+            {
+                return AppPlugins.CurrentServiceEndpoint?.SupportedInputActions?
+                    .TryGetValue(Tracker, out var actions) ?? false
+                    ? actions?.First(x => x.Guid == Guid) // Find the action
+                    : null; // If there's no corresponding tracker - give up now
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+
+    [JsonIgnore] [IgnoreDataMember] public bool IsValid => LinkedAction is not null;
+}
+
+[Serializable]
+public class InputActionSource
+{
+    // The provider device's Guid
+    [JsonProperty] public string Device { get; set; }
+
+    // The action's friendly name (cached)
+    [JsonProperty] public string Name { get; set; }
+
+    // Action's container tracker
+    [JsonProperty] public TrackedJointType Tracker { get; set; }
+
+    // Action that should be called
+    [JsonProperty] public string Guid { get; set; }
+
+    // MVVM Stuff
+    [JsonIgnore]
+    [IgnoreDataMember]
+    public IKeyInputAction LinkedAction
+    {
+        get
+        {
+            try
+            {
+                return AppPlugins.TrackingDevicesList.TryGetValue(Device, out var device)
+                    ? device?.TrackedJoints?.Where(x => x.Role == Tracker)
+                        .Select(x => x.SupportedInputActions.FirstOrDefault(y => y.Guid == Guid, null))
+                        .FirstOrDefault(x => x is not null, null) // Return the first valid action
+                    : null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+
+    [JsonIgnore] [IgnoreDataMember] public bool IsValid => LinkedAction is not null;
+    [JsonIgnore] [IgnoreDataMember] public string TestValue = string.Empty;
 }

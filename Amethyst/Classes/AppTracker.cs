@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
+using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
@@ -19,15 +20,15 @@ public class AppTracker : INotifyPropertyChanged
 
     [JsonIgnore] private readonly Vector3 _predictedPosition = new(0);
 
+    // Internal filters' data
+    private Vector3 _euroPosition = new(0);
+
     // Is this tracker enabled?
     private bool _isActive;
     private bool _isOrientationOverridden;
 
     private bool _isPositionOverridden;
     private bool _isTrackerExpanderOpen;
-
-    // Internal filters' data
-    private Vector3 _euroPosition = new(0);
     private Vector3 _lastLerpPosition = new(0);
     private Quaternion _lastSlerpOrientation = new(0, 0, 0, 1);
     private Quaternion _lastSlerpSlowOrientation = new(0, 0, 0, 1);
@@ -56,6 +57,11 @@ public class AppTracker : INotifyPropertyChanged
 
     private Quaternion _slerpOrientation = new(0, 0, 0, 1);
     private Quaternion _slerpSlowOrientation = new(0, 0, 0, 1);
+
+    // Input actions: < SERVICE : < SERVICE ACTION DATA : DEVICE ACTION DATA > >
+    // For "disabled" actions InputActionSource is null, for "hidden" - nothing
+    // Use InputActionsMap for faster and easier data access, along with bindings
+    public SortedDictionary<string, JsonDictionary<InputActionEndpoint, InputActionSource>> InputActions = [];
     public Vector3 OrientationOffset = new(0, 0, 0);
 
     // Internal data offset
@@ -214,10 +220,42 @@ public class AppTracker : INotifyPropertyChanged
         Role is TrackerType.TrackerWaist or TrackerType.TrackerLeftFoot or TrackerType.TrackerRightFoot ||
         (AppPlugins.CurrentServiceEndpoint?.AdditionalSupportedTrackerTypes.Contains(Role) ?? false);
 
-    [JsonIgnore] public bool OverridePhysics { get; set; }
+    // Returns all input actions available from the currently selected service,
+    // paired with their selected sources that will trigger the action if updated
+    // Note: use InputActionSource.IsValid to check whether the source exists
+    [JsonIgnore]
+    public Dictionary<InputActionEndpoint, InputActionSource> InputActionsMap =>
+        InputActions.TryGetValue(AppData.Settings.ServiceEndpointGuid, out var map) ? map : [];
+
+    // Returns all input actions available from the currently selected service,
+    // paired with their current selection state: true for used, false for hidden
+    // Note: "used" can also mean that the action is shown & disabled by the user
+    [JsonIgnore]
+    public Dictionary<InputActionEndpoint, bool> AvailableInputActions =>
+        AppPlugins.CurrentServiceEndpoint?.SupportedInputActions?.TryGetValue(Role, out var actions) ?? false
+            ? actions.ToDictionary(x => new InputActionEndpoint { Tracker = Role, Guid = x.Guid },
+                x => InputActionsMap.Keys.Any(y => y.Tracker == Role && y.Guid == x.Guid && y.IsValid))
+            : [];
 
     [JsonIgnore]
-    public string TrackerName => Interfacing.LocalizedJsonString($"/SharedStrings/Joints/Enum/{(int)Role}");
+    public IEnumerable<InputActionEntry> InputActionEntries =>
+        AvailableInputActions.Select(x => new InputActionEntry
+        {
+            Action = x.Key,
+            IsEnabled = x.Value
+        }).OrderBy(x => x.Name);
+
+    [JsonIgnore]
+    public IEnumerable<InputActionBindingEntry> InputActionBindingEntries =>
+        InputActionsMap.Select(x => new InputActionBindingEntry
+        {
+            Action = x.Key,
+            Source = x.Value
+        }).OrderBy(x => x.ActionName);
+
+    [JsonIgnore] public bool OverridePhysics { get; set; }
+
+    [JsonIgnore] public string TrackerName => Interfacing.LocalizedJsonString($"/SharedStrings/Joints/Enum/{(int)Role}");
 
     [JsonIgnore]
     public int PositionTrackingDisplayOption
@@ -454,7 +492,7 @@ public class AppTracker : INotifyPropertyChanged
             $"{AppPlugins.GetDevice(ManagingDeviceGuid).Device?.Name ?? "INVALID"} (GUID: {ManagingDeviceGuid})");
 
     // MVVM: a connection of the transitions each tracker expander should animate
-    [JsonIgnore] public TransitionCollection SettingsExpanderTransitions { get; set; } = new();
+    [JsonIgnore] public TransitionCollection SettingsExpanderTransitions { get; set; } = [];
 
     [JsonIgnore]
     public List<string> BaseDeviceJointsList =>
@@ -466,11 +504,11 @@ public class AppTracker : INotifyPropertyChanged
         get
         {
             if (string.IsNullOrEmpty(AppData.Settings.SelectedTrackingDeviceGuid))
-                return new List<string>
-                {
+                return
+                [
                     Interfacing.LocalizedJsonString(
                         "/DevicesPage/Placeholders/Overrides/NoOverride/PlaceholderText")
-                };
+                ];
 
             var jointsList = AppPlugins.GetDevice(AppData.Settings.SelectedTrackingDeviceGuid)
                 .Device.TrackedJoints.Select(x => x.Name).ToList();
@@ -741,4 +779,9 @@ public class AppTracker : INotifyPropertyChanged
     {
         return guid == ManagingDeviceGuid;
     }
+}
+
+[JsonArray]
+public class JsonDictionary<T, TU> : Dictionary<T, TU>
+{
 }

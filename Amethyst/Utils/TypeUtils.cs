@@ -32,7 +32,7 @@ public static class TypeUtils
         { TrackerType.TrackerHanded, "vive_tracker_handed" },
         { TrackerType.TrackerLeftFoot, "vive_tracker_left_foot" },
         { TrackerType.TrackerRightFoot, "vive_tracker_right_foot" },
-        { TrackerType.TrackerLeftShoulder, "vive_tracker_left_Shoulder" },
+        { TrackerType.TrackerLeftShoulder, "vive_tracker_left_shoulder" },
         { TrackerType.TrackerRightShoulder, "vive_tracker_right_shoulder" },
         { TrackerType.TrackerLeftElbow, "vive_tracker_left_elbow" },
         { TrackerType.TrackerRightElbow, "vive_tracker_right_elbow" },
@@ -41,7 +41,10 @@ public static class TypeUtils
         { TrackerType.TrackerWaist, "vive_tracker_waist" },
         { TrackerType.TrackerChest, "vive_tracker_chest" },
         { TrackerType.TrackerCamera, "vive_tracker_camera" },
-        { TrackerType.TrackerKeyboard, "vive_tracker_keyboard" }
+        { TrackerType.TrackerKeyboard, "vive_tracker_keyboard" },
+        { TrackerType.TrackerHead, "vive_tracker_head" },
+        { TrackerType.TrackerLeftHand, "vive_tracker_left_hand" },
+        { TrackerType.TrackerRightHand, "vive_tracker_right_hand" }
     };
 
     public static SortedDictionary<TrackerType, string> TrackerTypeRoleSerialDictionary = new()
@@ -58,7 +61,10 @@ public static class TypeUtils
         { TrackerType.TrackerWaist, "AME-WAIST" },
         { TrackerType.TrackerChest, "AME-CHEST" },
         { TrackerType.TrackerCamera, "AME-CAMERA" },
-        { TrackerType.TrackerKeyboard, "AME-KEYBOARD" }
+        { TrackerType.TrackerKeyboard, "AME-KEYBOARD" },
+        { TrackerType.TrackerHead, "AME-HEAD" },
+        { TrackerType.TrackerLeftHand, "AME-LHAND" },
+        { TrackerType.TrackerRightHand, "AME-RHAND" }
     };
 
     public static SortedDictionary<TrackerType, TrackedJointType> TrackerTypeJointDictionary = new()
@@ -75,7 +81,10 @@ public static class TypeUtils
         { TrackerType.TrackerWaist, TrackedJointType.JointSpineWaist },
         { TrackerType.TrackerChest, TrackedJointType.JointSpineMiddle },
         { TrackerType.TrackerCamera, TrackedJointType.JointManual },
-        { TrackerType.TrackerKeyboard, TrackedJointType.JointManual }
+        { TrackerType.TrackerKeyboard, TrackedJointType.JointManual },
+        { TrackerType.TrackerHead, TrackedJointType.JointHead },
+        { TrackerType.TrackerLeftHand, TrackedJointType.JointHandLeft },
+        { TrackerType.TrackerRightHand, TrackedJointType.JointHandRight }
     };
 
     public static SortedDictionary<TrackerType, TrackerType?> PairedTrackerTypeDictionary = new()
@@ -92,7 +101,10 @@ public static class TypeUtils
         { TrackerType.TrackerWaist, null },
         { TrackerType.TrackerChest, null },
         { TrackerType.TrackerCamera, null },
-        { TrackerType.TrackerKeyboard, null }
+        { TrackerType.TrackerKeyboard, null },
+        { TrackerType.TrackerHead, null },
+        { TrackerType.TrackerLeftHand, null },
+        { TrackerType.TrackerRightHand, null }
     };
 
     public static SortedDictionary<TrackerType, TrackerType?> PairedTrackerTypeDictionaryReverse = new()
@@ -109,7 +121,10 @@ public static class TypeUtils
         { TrackerType.TrackerWaist, null },
         { TrackerType.TrackerChest, null },
         { TrackerType.TrackerCamera, null },
-        { TrackerType.TrackerKeyboard, null }
+        { TrackerType.TrackerKeyboard, null },
+        { TrackerType.TrackerHead, null },
+        { TrackerType.TrackerLeftHand, null },
+        { TrackerType.TrackerRightHand, null }
     };
 
     public static SortedDictionary<TrackedJointType, TrackerType> JointTrackerTypeDictionary = new()
@@ -161,8 +176,8 @@ public static class TypeUtils
         { TrackedJointType.JointManual, TrackedJointType.JointManual }
     };
 
-    public static SortedSet<string> ProtectedPluginGuidSet = new()
-    {
+    public static SortedSet<string> ProtectedPluginGuidSet =
+    [
         "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1",
         "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1:SETUP",
         "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1:INSTALLER",
@@ -181,7 +196,7 @@ public static class TypeUtils
         "K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC",
         "K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC:SETUP",
         "K2VRTEAM-AME2-APII-SNDP-SENDPTVRCOSC:INSTALLER"
-    };
+    ];
 
     public static TrackedJointType FlipJointType(TrackedJointType joint, bool flip)
     {

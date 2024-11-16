@@ -194,7 +194,7 @@ public static class Main
                             var trackerBase = tracker.GetTrackerBase();
                             trackerBase.ConnectionState = false;
 
-                            await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
+                            await AppPlugins.CurrentServiceEndpoint.SetTrackerStates([trackerBase]);
                             await Task.Delay(25, token);
                         }
 

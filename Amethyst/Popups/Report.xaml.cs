@@ -25,7 +25,7 @@ namespace Amethyst.Popups;
 /// </summary>
 public sealed partial class Report : Page, INotifyPropertyChanged
 {
-    private readonly List<string> _languageList = new();
+    private readonly List<string> _languageList = [];
 
     private bool _blockHiddenSoundOnce;
     private bool _reportPageSetupFinished, _reportPageLoadedOnce;

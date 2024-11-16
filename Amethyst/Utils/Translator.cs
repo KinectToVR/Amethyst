@@ -25,7 +25,7 @@ public class Translator : INotifyPropertyChanged
 public class LocalisationFileJson
 {
     [JsonProperty("language")] public string Language = string.Empty;
-    [JsonProperty("messages")] public List<LocalizedMessage> Messages = new();
+    [JsonProperty("messages")] public List<LocalizedMessage> Messages = [];
 }
 
 public class LocalizedMessage

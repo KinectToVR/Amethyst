@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -27,7 +27,7 @@ namespace Amethyst.Installer.Views;
 /// </summary>
 public sealed partial class SetupDevices : Page, INotifyPropertyChanged
 {
-    private readonly List<string> _languageList = new();
+    private readonly List<string> _languageList = [];
 
     private bool _blockHiddenSoundOnce, _blockSelectionOnce;
     private bool _pageSetupFinished, _pageLoadedOnce;
@@ -73,7 +73,7 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
     public RaisedEvent ContinueEvent { get; set; }
     public List<SetupPlugin> Devices { get; set; }
 
-    private List<(GridViewItem Container, SetupPlugin Item)> SelectedDevices { get; set; } = new();
+    private List<(GridViewItem Container, SetupPlugin Item)> SelectedDevices { get; set; } = [];
     private List<IDependency> DependenciesToInstall { get; set; }
     private List<IFix> FixesToApply { get; set; }
     private SemaphoreSlim NextButtonClickedSemaphore { get; } = new(0);
@@ -321,7 +321,7 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
             device.Item.OnPropertyChanged();
 
             // Loop over all dependencies and install them
-            foreach (var dependency in DependenciesToInstall ?? new List<IDependency>())
+            foreach (var dependency in DependenciesToInstall ?? [])
             {
                 eula:
                 if (!string.IsNullOrEmpty(dependency.InstallerEula))
@@ -356,7 +356,7 @@ public sealed partial class SetupDevices : Page, INotifyPropertyChanged
             }
 
             // Loop over all fixes and apply them
-            foreach (var fix in FixesToApply ?? new List<IFix>())
+            foreach (var fix in FixesToApply ?? [])
             {
                 eula:
                 if (!string.IsNullOrEmpty(fix.InstallerEula))

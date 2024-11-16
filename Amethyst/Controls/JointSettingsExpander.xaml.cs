@@ -1,15 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using Amethyst.Classes;
+using Amethyst.MVVM;
+using Amethyst.Pages;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media.Animation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -57,6 +64,8 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
     private bool IsActive => Trackers.All(x => x.IsActive);
 
     private bool IsSupported => Trackers.All(x => x.IsSupported);
+
+    private bool ShowBindingsSection => Trackers.Any(x => x.AvailableInputActions.Count > 0);
 
     private bool IsActiveEnabled
     {
@@ -216,7 +225,7 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
                         var trackerBase = tracker.GetTrackerBase();
                         trackerBase.ConnectionState = (sender as ToggleSwitch)!.IsOn;
 
-                        await AppPlugins.CurrentServiceEndpoint.SetTrackerStates(new[] { trackerBase });
+                        await AppPlugins.CurrentServiceEndpoint.SetTrackerStates([trackerBase]);
                         await Task.Delay(20);
                     }
 
@@ -264,5 +273,286 @@ public sealed partial class JointSettingsExpander : UserControl, INotifyProperty
     {
         if ((sender as ComboBox)!.SelectedIndex < 0)
             (sender as ComboBox)!.SelectedItem = e.RemovedItems[0];
+    }
+
+    private void ActionConfigButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        // ignored
+    }
+
+    private void InputActionToggle_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not ToggleMenuFlyoutItem { DataContext: InputActionEntry entry, Parent: ItemsRepeater parent } item ||
+            parent.GetValue(AttachedObject.AttachedObjectProperty) is not AppTracker tracker) return;
+
+        if (!tracker.InputActions.ContainsKey(AppData.Settings.ServiceEndpointGuid))
+            tracker.InputActions[AppData.Settings.ServiceEndpointGuid] = [];
+
+        // Set up the binding placeholder now
+        if (item.IsChecked)
+            tracker.InputActions[AppData.Settings.ServiceEndpointGuid][entry.Action] = null;
+        else
+            tracker.InputActions[AppData.Settings.ServiceEndpointGuid].Remove(
+                tracker.InputActions[AppData.Settings.ServiceEndpointGuid]
+                    .FirstOrDefault(x => x.Key.Guid == entry.Action.Guid).Key ?? entry.Action);
+
+        // Refresh everything
+        _blockPropertyToggleSignals = true;
+        OnPropertyChanged(); // Refresh UI
+        Trackers.ForEach(x =>
+        {
+            x.OnPropertyChanged("InputActionEntries");
+            x.OnPropertyChanged("InputActionBindingEntries");
+        });
+        _blockPropertyToggleSignals = false;
+
+        // Hide and save
+        if (((parent.Parent as StackPanel)?.Parent as FlyoutPresenter)?
+            .Parent is Popup popup)
+            popup.IsOpen = false;
+
+        AppData.Settings.SaveSettings();
+    }
+
+    private void BindingFlyoutItem_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuFlyoutItem { DataContext: InputActionBindingEntry entry } item ||
+            item.GetValue(AttachedString.AttachedStringProperty) is not string command) return;
+
+        var tracker = Trackers.FirstOrDefault(x => x.Role == entry.Action.Tracker);
+        if (tracker is null) return; // Not related to the updated selection
+
+        switch (command)
+        {
+            case "HIDE":
+                // Remove the action from our bindings
+                tracker.InputActions[AppData.Settings.ServiceEndpointGuid].Remove(
+                    tracker.InputActions[AppData.Settings.ServiceEndpointGuid]
+                        .FirstOrDefault(x => x.Key.Guid == entry.Action.Guid).Key ?? entry.Action);
+                break;
+            case "DISABLE":
+                // Set up the command as "null" so it's shown but disabled
+                tracker.InputActions[AppData.Settings.ServiceEndpointGuid][entry.Action] = null;
+                break;
+            default:
+                return;
+        }
+
+        // Refresh everything
+        _blockPropertyToggleSignals = true;
+        OnPropertyChanged(); // Refresh UI
+        Trackers.ForEach(x =>
+        {
+            x.OnPropertyChanged("InputActionEntries");
+            x.OnPropertyChanged("InputActionBindingEntries");
+        });
+        _blockPropertyToggleSignals = false;
+
+        // Hide and save
+        if ((((((item.Parent as StackPanel)?.Parent as Grid)?.Parent as Grid)?.Parent as Grid)?
+                .Parent as FlyoutPresenter)?.Parent is Popup popup) popup.IsOpen = false;
+
+        // Hide and save
+        AppData.Settings.SaveSettings();
+    }
+
+    private void ButtonFlyout_Opening(object sender, object e)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+
+        if (sender is not Flyout flyout) return;
+        if (flyout.Content is not Grid { DataContext: InputActionBindingEntry entry } grid) return;
+        if ((((grid.Children.FirstOrDefault() as Grid)?.Children?.FirstOrDefault() as Grid)?
+                .Children?.FirstOrDefault() as ScrollViewer)?.Content is not TreeView tree) return;
+
+        var tracker = Trackers.FirstOrDefault(x => x.Role == entry.Action.Tracker);
+        if (tracker is null) return; // Not related to the updated selection
+
+        tree.RootNodes.Clear(); // Remove everything first
+        AppPlugins.TrackingDevicesList.Values
+            .Where(x => x.TrackedJoints.Any(y => y.SupportedInputActions.Any()))
+            .OrderByDescending(x => x.Name).Select(device => new TreeViewNodeEx(device.Name,
+                device.TrackedJoints.Where(joint => joint.SupportedInputActions.Any())
+                    .Select(joint => new TreeViewNodeEx(joint.Name, joint.SupportedInputActions
+                        .Select(action => new TreeViewNodeEx(action.Name, entry,
+                            entry.Action, device.Guid, joint.Role, action)), entry)).ToList(),
+                entry)).ToList().ForEach(tree.RootNodes.Add);
+
+        tree.ItemInvoked -= Tree_ItemInvoked;
+        tree.ItemInvoked += Tree_ItemInvoked;
+
+        entry.TreeSelectedAction = null;
+        InputActionBindingEntry.TreeCurrentAction = null;
+    }
+
+    private async void Tree_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
+    {
+        if (!sender.IsLoaded) return;
+        if (args.InvokedItem is not TreeViewNodeEx { HasData: true } node)
+        {
+            sender.SelectionMode = TreeViewSelectionMode.None;
+
+            if (args.InvokedItem is not
+                TreeViewNodeEx { HasData: false, Entry: not null } node1) return;
+
+            var shouldAnimate1 = node1.Entry.TreeSelectedAction != node1.Source;
+            node1.Entry.TreeSelectedAction = node1.Source;
+
+            if (!shouldAnimate1) return;
+            await Tree_LaunchTransition(sender); 
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.Focus);
+
+            return; // Give up now...
+        }
+
+        sender.SelectionMode = TreeViewSelectionMode.Single;
+        sender.SelectedNode = node;
+
+        var shouldAnimate = node.Entry.TreeSelectedAction != node.Source;
+        node.Entry.TreeSelectedAction = node.Source;
+        InputActionBindingEntry.TreeCurrentAction = node.Source;
+
+        if (!shouldAnimate) return;
+        await Tree_LaunchTransition(sender);
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
+    }
+
+    private async Task Tree_LaunchTransition(TreeView tree)
+    {
+        // Hide and save
+        if (((tree.Parent as ScrollViewer)?.Parent as Grid)?.Parent
+            is not Grid innerGrid || innerGrid.Children.Last() is not Grid previewGrid) return;
+
+        // Action stuff reload animation
+        try
+        {
+            // Remove the only one child of our outer main content grid
+            // (What a bestiality it is to do that!!1)
+            innerGrid.Children.Remove(previewGrid);
+            previewGrid.Transitions.Add(
+                new EntranceThemeTransition { IsStaggeringEnabled = false });
+
+            // Sleep peacefully pretending that noting happened
+            await Task.Delay(10);
+
+            // Re-add the child for it to play our funky transition
+            // (Though it's not the same as before...)
+            innerGrid.Children.Add(previewGrid);
+
+            // Remove the transition
+            await Task.Delay(100);
+            previewGrid.Transitions.Clear();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    private void ButtonFlyout_Closing(FlyoutBase sender,
+        FlyoutBaseClosingEventArgs args)
+    {
+        // Play a sound
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+        InputActionBindingEntry.TreeCurrentAction = null;
+    }
+
+    private void ToggleSplitButton_OnIsCheckedChanged(
+        ToggleSplitButton sender, ToggleSplitButtonIsCheckedChangedEventArgs args)
+    {
+        sender.IsChecked = true;
+    }
+
+    private void SplitButton_OnClick(SplitButton sender, SplitButtonClickEventArgs args)
+    {
+        if (!sender.IsLoaded || sender.GetValue(AttachedObject.AttachedObjectProperty)
+                is not InputActionBindingEntry entry) return; // Sanity check -> give up
+
+        var tracker = Trackers.FirstOrDefault(x => x.Role == entry.Action.Tracker);
+        if (tracker is null) return; // Not related to the updated selection
+
+        // Set up the command binding
+        tracker.InputActions[AppData.Settings.ServiceEndpointGuid]
+            [entry.Action] = entry.TreeSelectedAction;
+
+        // Refresh everything
+        _blockPropertyToggleSignals = true;
+        OnPropertyChanged(); // Refresh UI
+        Trackers.ForEach(x =>
+        {
+            x.OnPropertyChanged("InputActionEntries");
+            x.OnPropertyChanged("InputActionBindingEntries");
+        });
+        _blockPropertyToggleSignals = false;
+
+        AppData.Settings.SaveSettings(); // Save and signal
+        if (((((sender.Parent as Grid)?.Parent as Grid)?.Parent as Grid)?.Parent as FlyoutPresenter)?
+            .Parent is Popup popup) popup.IsOpen = false; // Hide the flyout
+
+        if (!AppPlugins.GetDevice(entry.TreeSelectedAction.Device, out var device)) return;
+        device.SignalJoint(device.TrackedJoints.FindIndex(x => x.Role == entry.TreeSelectedAction.Tracker));
+    }
+}
+
+public class AttachedObject : DependencyObject
+{
+    public static readonly DependencyProperty AttachedObjectProperty =
+        DependencyProperty.RegisterAttached(
+            "AttachedObject",
+            typeof(object),
+            typeof(AttachedObject),
+            new PropertyMetadata(false)
+        );
+
+    public static void SetAttachedObject(UIElement element, object value)
+    {
+        element.SetValue(AttachedObjectProperty, value);
+    }
+
+    public static object GetAttachedObject(UIElement element)
+    {
+        return element.GetValue(AttachedObjectProperty);
+    }
+}
+
+internal class TreeViewNodeEx : TreeViewNode
+{
+    public InputActionBindingEntry Entry { get; set; }
+    public InputActionEndpoint Endpoint { get; set; }
+    public InputActionSource Source { get; set; }
+
+    public bool HasData => Source is not null && Endpoint is not null;
+
+    public TreeViewNodeEx(string name, IEnumerable<TreeViewNode> children,
+        InputActionBindingEntry entry = null, InputActionEndpoint endpoint = null,
+        InputActionSource source = null)
+    {
+        Content = name;
+        Endpoint = endpoint;
+        Source = source;
+        Entry = entry;
+
+        children.ToList().ForEach(Children.Add);
+    }
+
+    public TreeViewNodeEx(string name, InputActionBindingEntry entry = null,
+        InputActionEndpoint endpoint = null, string device = null,
+        TrackedJointType? tracker = null, IKeyInputAction source = null)
+    {
+        Content = name;
+        Endpoint = endpoint;
+        Entry = entry;
+
+        if (string.IsNullOrEmpty(device) ||
+            source is null || tracker is null) return;
+
+        Source = new InputActionSource
+        {
+            Device = device,
+            Guid = source.Guid,
+            Name = source.Name,
+            Tracker = tracker.Value
+        };
     }
 }

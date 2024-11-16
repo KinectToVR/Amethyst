@@ -10,6 +10,7 @@
 	xmlns:mvvm="using:Amethyst.MVVM" xmlns:classes="using:Amethyst.Classes"
 	xmlns:local="using:Amethyst.Pages" xmlns:util="using:Amethyst.Utils"
 	xmlns:media="using:CommunityToolkit.WinUI.UI.Media"
+	xmlns:icons="using:WinUI.Fluent.Icons"
 	Loaded="Page_Loaded" Unloaded="Page_OnUnloaded"
 	NavigationCacheMode="Required"
 	mc:Ignorable="d" Background="Transparent">
@@ -854,15 +855,34 @@
 											</Grid.ColumnDefinitions>
 
 											<TextBlock x:Name="CalibrationCountdownLabel" HorizontalAlignment="Stretch"
+											           Opacity="{x:Bind CaptureModeManualOpacity, Mode=OneWay}"
 											           VerticalAlignment="Stretch"
 											           Foreground="{ThemeResource SystemFillColorAttentionBrush}"
 											           Margin="0,3,0,0" Grid.Column="0"
 											           HorizontalTextAlignment="Center"
-											           Text="~" FontSize="48" FontWeight="Bold" />
+											           Text="~" FontSize="48" FontWeight="Bold">
+												<TextBlock.OpacityTransition>
+													<ScalarTransition />
+												</TextBlock.OpacityTransition>
+											</TextBlock>
+
+											<!--Stability indicator: Scale BorderThickness from 3 to 20 for 0..1 stability-->
+											<!--Scale BorderBrush from White/Black to SystemFillColorAttentionBrush for 0..1-->
+											<!--Reset BorderThickness to 3 on pane opening and BorderBrush to White/Black-->
+											<!--Capture as: Stability > Target > Stability > Target > Stability...-->
+											<Border Grid.Column="0" Width="40" Height="40" CornerRadius="100"
+											        Opacity="{x:Bind CaptureModeAutomaticOpacity, Mode=OneWay}"
+											        BorderThickness="4" HorizontalAlignment="Center" VerticalAlignment="Center"
+											        BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}"
+											        x:Name="PointCaptureStabilityBorder">
+												<Border.OpacityTransition>
+													<ScalarTransition />
+												</Border.OpacityTransition>
+											</Border>
 
 											<TextBlock x:Name="CalibrationInstructionsLabel" Grid.Column="1"
 											           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Captions/Start'), Mode=OneWay}"
-											           VerticalAlignment="Center" Margin="0,0,0,5"
+											           VerticalAlignment="Center" Margin="0,2,0,5"
 											           HorizontalAlignment="Stretch" FontSize="26"
 											           FontWeight="SemiBold" />
 
@@ -872,11 +892,44 @@
 								</Grid>
 							</Border>
 
-							<Button x:Name="StartAutoCalibrationButton" Click="StartAutoCalibrationButton_Click"
-							        HorizontalAlignment="Stretch" Height="50"
-							        Grid.Row="1" Margin="20,0,20,0" Width="460"
-							        Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Calibration/Begin'), Mode=OneWay}"
-							        Style="{ThemeResource AccentButtonStyle}" FontWeight="SemiBold" />
+							<Grid Grid.Row="1" Margin="30,0,30,0">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="405" />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<Button x:Name="StartAutoCalibrationButton" Click="StartAutoCalibrationButton_Click"
+								        HorizontalAlignment="Stretch" Height="50" Grid.Column="0" CornerRadius="4,0,0,4"
+								        Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Calibration/Begin'), Mode=OneWay}"
+								        Style="{ThemeResource AccentButtonStyle}" FontWeight="SemiBold" />
+
+								<AppBarSeparator Padding="0" Grid.Column="1" />
+
+								<ToggleButton Grid.Column="2" IsChecked="{x:Bind CaptureModeAutomatic, Mode=TwoWay}"
+								              x:Name="CalibrationCaptureModeToggleButton" Height="50" BorderThickness="1"
+								              Checked="CalibrationCaptureModeToggleButton_OnChecked"
+								              Unchecked="CalibrationCaptureModeToggleButton_OnUnchecked"
+								              HorizontalAlignment="Stretch" CornerRadius="0,4,4,0">
+									<Grid>
+										<icons:FluentSymbolIcon Visibility="{x:Bind CaptureModeManual, Mode=OneWay}"
+										                        Margin="-2,-1,0,0" Symbol="Timer24" Foreground="White" />
+										<icons:FluentSymbolIcon Visibility="{x:Bind CaptureModeAutomatic, Mode=OneWay}"
+										                        Margin="-1,-2,0,0" Symbol="Communication24" 
+										                        Foreground="{x:Bind CaptureToggleOnBrush, Mode=OneWay}" />
+									</Grid>
+
+									<ToggleButton.Resources>
+										<TeachingTip x:Name="CaptureModeTeachingTip"
+										             Target="{Binding ElementName=CalibrationCaptureModeToggleButton}"
+										             Title="{x:Bind util:Translator.Get.String('/NUX/CaptureTip/Title'), Mode=OneWay}"
+										             Subtitle="{x:Bind util:Translator.Get.String('/NUX/CaptureTip/Content'), Mode=OneWay}"
+										             PreferredPlacement="Top"
+										             IsLightDismissEnabled="False"
+										             Style="{ThemeResource BigTeachingTipStyle}"
+										             Closing="CaptureModeTeachingTip_OnClosing" />
+									</ToggleButton.Resources>
+								</ToggleButton>
+							</Grid>
 
 							<Grid Margin="20,0,20,0" Width="460"
 							      HorizontalAlignment="Stretch" Grid.Row="3">

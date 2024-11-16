@@ -86,7 +86,7 @@ public static class MediaPlayerExtensions
         mediaPlayer.Play();
 
         _cancellationTokenSource = new CancellationTokenSource();
-        await Task.Run(() => { WaitHandle.WaitAny(new[] { _cancellationTokenSource.Token.WaitHandle }); });
+        await Task.Run(() => { WaitHandle.WaitAny([_cancellationTokenSource.Token.WaitHandle]); });
     }
 
     private static void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
