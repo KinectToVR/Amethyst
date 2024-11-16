@@ -385,7 +385,7 @@ public class StorePlugin : INotifyPropertyChanged
                 DisplayName = manifest["display_name"]?.ToString(),
 
                 Download = release["assets"]?.Children().FirstOrDefault(
-                        x => x["name"]?.ToString() == manifest["download"]?.ToString(), null)?
+                        x => x["name"]?.ToString() == manifest["download_"]?.ToString(), null)?
                     ["browser_download_url"]?.ToString()
             };
 

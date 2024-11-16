@@ -19,7 +19,10 @@ namespace Amethyst.Classes;
 public class AppSettings : INotifyPropertyChanged
 {
     // Disabled (by the user) plugins set
-    public readonly SortedSet<string> DisabledPluginsGuidSet = [];
+    public readonly SortedSet<string> DisabledPluginsGuidSet = 
+    [
+        "K2VRTEAM-AME2-APII-SNDP-SENDPTOVREMU"
+    ];
 
     // App sounds' volume and *nice* is the default
     private uint _appSoundsVolume = 69; // Always 0<x<100

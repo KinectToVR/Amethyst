@@ -190,7 +190,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Chad Windows 11
             Shared.Main.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
             Shared.Main.AppWindow.TitleBar.SetDragRectangles([
-                new(0, 0, 10000000, 30)
+                new RectInt32(0, 0, 10000000, 30)
             ]);
 
             Shared.Main.AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -282,7 +282,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                     // Check the plugin GUID against others loaded, INVALID and null
                     if (string.IsNullOrEmpty(plugin.Metadata.Guid) || plugin.Metadata.Guid == "INVALID" ||
-                        AppPlugins.TrackingDevicesList.ContainsKey(plugin.Metadata.Guid))
+                        (AppPlugins.TrackingDevicesList.TryGetValue(plugin.Metadata.Guid, out var alreadyExistingDevice) &&
+                         alreadyExistingDevice.Version >= new Version(plugin.Metadata.Version)))
                     {
                         // Add the device to the 'attempted' list, mark as duplicate
                         AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
@@ -397,6 +398,18 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     // Add the device to the global device list, add the plugin folder path
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "to the global tracking device plugins list (AppPlugins)...");
+
+                    if (AppPlugins.TrackingDevicesList.TryGetValue(plugin.Metadata.Guid, out var existingDevice) &&
+                        existingDevice.Version < new Version(plugin.Metadata.Version))
+                    {
+                        Logger.Info($"There is a ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                    $"loaded from \"{existingDevice.Location}\"" +
+                                    "already in the tracking device plugins list (AppPlugins)! " +
+                                    "However, it's version is lower - replacing it with the newer one...");
+
+                        AppPlugins.TrackingDevicesList.Remove(plugin.Metadata.Guid); // Remove
+                    }
+
                     AppPlugins.TrackingDevicesList.Add(plugin.Metadata.Guid, new TrackingDevice(
                         plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation,
                         new Version(plugin.Metadata.Version), plugin.Value)
@@ -503,7 +516,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
                     // Check the plugin GUID against others loaded, INVALID and null
                     if (string.IsNullOrEmpty(plugin.Metadata.Guid) || plugin.Metadata.Guid == "INVALID" ||
-                        AppPlugins.ServiceEndpointsList.ContainsKey(plugin.Metadata.Guid))
+                        (AppPlugins.ServiceEndpointsList.TryGetValue(plugin.Metadata.Guid, out var alreadyExistingService) &&
+                         alreadyExistingService.Version >= new Version(plugin.Metadata.Version)))
                     {
                         // Add the device to the 'attempted' list, mark as duplicate
                         AppPlugins.LoadAttemptedPluginsList.Add(new LoadAttemptedPlugin
@@ -602,6 +616,18 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     // Add the device to the global device list, add the plugin folder path
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "to the global service endpoints plugins list (AppPlugins)...");
+
+                    if (AppPlugins.ServiceEndpointsList.TryGetValue(plugin.Metadata.Guid, out var existingDevice) &&
+                        existingDevice.Version < new Version(plugin.Metadata.Version))
+                    {
+                        Logger.Info($"There is a ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
+                                    $"loaded from \"{existingDevice.Location}\"" +
+                                    "already in the service endpoints plugins list (AppPlugins)! " +
+                                    "However, it's version is lower - replacing it with the newer one...");
+
+                        AppPlugins.ServiceEndpointsList.Remove(plugin.Metadata.Guid); // Remove
+                    }
+
                     AppPlugins.ServiceEndpointsList.Add(plugin.Metadata.Guid, new ServiceEndpoint(
                         plugin.Metadata.Name, plugin.Metadata.Guid, pluginLocation,
                         new Version(plugin.Metadata.Version), plugin.Value)

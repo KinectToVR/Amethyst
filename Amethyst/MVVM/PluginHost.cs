@@ -656,7 +656,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
 
             // Parse the received manifest
             var remoteVersion = new Version(manifest["version"]?.ToString() ?? Version.ToString());
-            UpdateData = (Version.CompareTo(remoteVersion) < 0, manifest["download"]?.ToString(),
+            UpdateData = (Version.CompareTo(remoteVersion) < 0, manifest["download_"]?.ToString(),
                 remoteVersion, manifest["changelog"]?.ToString());
 
             // Try downloading the update if found
