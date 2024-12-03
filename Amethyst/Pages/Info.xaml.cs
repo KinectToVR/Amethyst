@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System;
@@ -349,6 +349,19 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                 {
                     SetCommandText("Hello!");
                     break; // Why does this exist...
+                }
+                case "JOLLY" or "jolly":
+                {
+                    Shared.Main.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        Shared.Main.Snowfall.Visibility = Shared.Main.Snowfall.Visibility switch
+                        {
+                            Visibility.Collapsed => Visibility.Visible,
+                            _ => Visibility.Collapsed
+                        };
+                    });
+                    SetCommandText("☃️");
+                    break;
                 }
                 default:
                 {

@@ -11,7 +11,8 @@
 	xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	xmlns:util="using:Amethyst.Utils"
 	xmlns:icons="using:WinUI.Fluent.Icons"
-	xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls">
+	xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+	xmlns:snowflake="using:Amethyst.Controls.Snowflake">
 
 	<!--Note: Change {ThemeResource AcrylicBackgroundFillColorBaseBrush} to Transparent if Mica is supported-->
 	<Grid Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"
@@ -93,6 +94,17 @@
 		      DoubleTapped="InterfaceBlockerGrid_DoubleTapped"
 		      Opacity="0.0" Background="White" Canvas.ZIndex="10"
 		      IsHitTestVisible="{Binding ElementName=InterfaceBlockerGrid, Path=IsHitTestVisible}" />
+
+		<snowflake:Snowfall
+			x:Name="Snowfall"
+			IsHitTestVisible="False"
+			EmissionRate="15"
+			Fill="White"
+			LeaveAnimation="Fade"
+			OpacityFactor="1"
+			ParticleSpeed="1"
+			ScaleFactor="1.1"
+			Visibility="Collapsed" />
 
 		<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
 		      x:Name="InterfaceBlockerGrid" Opacity="0.0"

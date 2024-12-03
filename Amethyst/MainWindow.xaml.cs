@@ -48,6 +48,7 @@ using WinRT;
 using WinRT.Interop;
 using WinUI.Fluent.Icons;
 using Newtonsoft.Json;
+using Amethyst.Controls.Snowflake;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -105,6 +106,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         Shared.Main.EulaText = EulaText;
         Shared.Main.EulaFlyout = EulaFlyout;
         Shared.Main.MainGrid = MainGrid;
+        Shared.Main.Snowfall = Snowfall;
 
         Shared.Main.NavigationItems.NavViewGeneralButtonIcon = NavViewGeneralButtonIcon;
         Shared.Main.NavigationItems.NavViewSettingsButtonIcon = NavViewSettingsButtonIcon;

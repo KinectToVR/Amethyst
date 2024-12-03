@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using Amethyst.Controls.Snowflake;
 using Amethyst.Utils;
 using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Dispatching;
@@ -102,7 +103,7 @@ public static class Shared
             PluginsUninstallInfoBar,
             PluginsUpdateInfoBar;
 
-
+        public static Snowfall Snowfall;
         public static Flyout EulaFlyout;
         public static TextBlock EulaHeader;
         public static MarkdownTextBlock EulaText;
