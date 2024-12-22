@@ -39,6 +39,8 @@ namespace Amethyst.Pages;
 /// </summary>
 public sealed partial class General : Page, INotifyPropertyChanged
 {
+    public static bool IsPreviewActive { get; set; }
+
     private static string _calibratingDeviceGuid = "";
     private bool _autoCalibrationStillPending;
     private bool _allowCameraPreviewHandling;
@@ -1264,6 +1266,8 @@ public sealed partial class General : Page, INotifyPropertyChanged
         timer.Tick += (_, _) =>
         {
             if (Interfacing.IsExitingNow) return;
+
+            IsPreviewActive = false;
             var windowActive = Interfacing.IsCurrentWindowActive();
 
             if (_isCurrentWindowActiveBackup != windowActive &&
@@ -1342,6 +1346,7 @@ public sealed partial class General : Page, INotifyPropertyChanged
             }
 
             // Finally handle everything
+            IsPreviewActive = true;
             HandleCameraImagePreview();
 
             // Else hide the notices
@@ -1350,7 +1355,17 @@ public sealed partial class General : Page, INotifyPropertyChanged
             CameraImage.Opacity = AppData.Settings.CameraPreviewEnabled ? 1 : 0;
 
             var trackingDevice = AppPlugins.BaseTrackingDevice;
-            var joints = trackingDevice.TrackedJoints;
+            var joints = trackingDevice.TrackedJoints
+                .Where(x => AppData.Settings.TrackingDeviceGuid is not
+                                "K2VRTEAM-AME2-APII-DVCE-CARAMLAMTHST" ||
+                            x.TrackingState is not TrackedJointState.StateNotTracked).ToList();
+
+            if (AppData.Settings.TrackingDeviceGuid is "K2VRTEAM-AME2-APII-DVCE-CARAMLAMTHST" &&
+                joints.Any(x => x.Role is TrackedJointType.JointSpineShoulder))
+            {
+                var waistPose = joints.First(x => x.Role is TrackedJointType.JointSpineShoulder).Position;
+                joints.ForEach(x => x.Position = (x.Position - waistPose) with { Z = 3.0f });
+            }
 
             // Okay to do this here => the preview is forced on calibration
             StartAutoCalibrationButton.IsEnabled =

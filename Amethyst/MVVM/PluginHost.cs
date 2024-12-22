@@ -32,6 +32,7 @@ using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using Amethyst.Pages;
 
 namespace Amethyst.MVVM;
 
@@ -348,6 +349,35 @@ public class PluginHost(string guid) : IAmethystHost
     {
         RelayBarOverride = infoBarData;
         Shared.Events.RefreshMainWindowEvent?.Set();
+    }
+
+    // INTERNAL: Available only via reflection, not defined in the Host interface
+    public List<TrackedJointType> GetEnabledJoints()
+    {
+        try
+        {
+            return General.IsPreviewActive
+                ? Enum.GetValues<TrackedJointType>().Where(x => x is not TrackedJointType.JointManual).ToList()
+                : AppData.Settings.TrackersVector
+                    .Where(x => x.IsActive && x.ManagingDeviceGuid == Guid)
+                    .Select(x => TrackingDevices[Guid].TrackedJoints[x.IsOverridden
+                        ? x.SelectedOverrideJointId
+                        : x.SelectedBaseTrackedJointId].Role).ToList();
+        }
+        catch (Exception)
+        {
+            return
+            [
+                TrackedJointType.JointHead,
+                TrackedJointType.JointSpineWaist,
+                TrackedJointType.JointFootLeft,
+                TrackedJointType.JointFootRight,
+                TrackedJointType.JointKneeLeft,
+                TrackedJointType.JointKneeRight,
+                TrackedJointType.JointElbowLeft,
+                TrackedJointType.JointElbowRight
+            ];
+        }
     }
 
     public string Eval(string code)
