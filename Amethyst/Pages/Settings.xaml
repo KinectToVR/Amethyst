@@ -2,518 +2,518 @@
 <!-- Licensed under the MIT License. See LICENSE in the project root for license information. -->
 
 <Page
-    x:Class="Amethyst.Pages.Settings"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:classes="using:Amethyst.Classes"
-    xmlns:util="using:Amethyst.Utils"
-    xmlns:mvvm="using:Amethyst.MVVM"
-    xmlns:controls="using:Amethyst.Controls"
-    Loaded="Page_Loaded" NavigationCacheMode="Required"
-    mc:Ignorable="d" Background="Transparent">
+	x:Class="Amethyst.Pages.Settings"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:classes="using:Amethyst.Classes"
+	xmlns:util="using:Amethyst.Utils"
+	xmlns:mvvm="using:Amethyst.MVVM"
+	xmlns:controls="using:Amethyst.Controls"
+	Loaded="Page_Loaded" NavigationCacheMode="Required"
+	mc:Ignorable="d" Background="Transparent">
 
-    <Grid Background="Transparent">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="700" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+	<Grid Background="Transparent">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="700" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
 
-        <Grid x:Name="DimGrid" Canvas.ZIndex="1" Opacity="0.0" IsHitTestVisible="False">
-            <Grid.OpacityTransition>
-                <ScalarTransition />
-            </Grid.OpacityTransition>
-        </Grid>
+		<Grid x:Name="DimGrid" Canvas.ZIndex="1" Opacity="0.0" IsHitTestVisible="False">
+			<Grid.OpacityTransition>
+				<ScalarTransition />
+			</Grid.OpacityTransition>
+		</Grid>
 
-        <Grid Grid.Column="0" Canvas.ZIndex="1"
-              Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-              Opacity="{Binding ElementName=DimGrid, Path=Opacity}"
-              IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
-            <Grid.OpacityTransition>
-                <ScalarTransition />
-            </Grid.OpacityTransition>
-        </Grid>
+		<Grid Grid.Column="0" Canvas.ZIndex="1"
+		      Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+		      Opacity="{Binding ElementName=DimGrid, Path=Opacity}"
+		      IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
+			<Grid.OpacityTransition>
+				<ScalarTransition />
+			</Grid.OpacityTransition>
+		</Grid>
 
-        <Grid Grid.Column="1" Canvas.ZIndex="1"
-              Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-              Opacity="{Binding ElementName=DimGrid, Path=Opacity}"
-              IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
-            <Grid.OpacityTransition>
-                <ScalarTransition />
-            </Grid.OpacityTransition>
-        </Grid>
+		<Grid Grid.Column="1" Canvas.ZIndex="1"
+		      Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+		      Opacity="{Binding ElementName=DimGrid, Path=Opacity}"
+		      IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
+			<Grid.OpacityTransition>
+				<ScalarTransition />
+			</Grid.OpacityTransition>
+		</Grid>
 
-        <Grid Grid.Column="2" Canvas.ZIndex="1"
-              Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-              Opacity="{Binding ElementName=DimGrid, Path=Opacity}"
-              IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
-            <Grid.OpacityTransition>
-                <ScalarTransition />
-            </Grid.OpacityTransition>
-        </Grid>
+		<Grid Grid.Column="2" Canvas.ZIndex="1"
+		      Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+		      Opacity="{Binding ElementName=DimGrid, Path=Opacity}"
+		      IsHitTestVisible="{Binding ElementName=DimGrid, Path=IsHitTestVisible}">
+			<Grid.OpacityTransition>
+				<ScalarTransition />
+			</Grid.OpacityTransition>
+		</Grid>
 
-        <ScrollViewer x:Name="PageMainScrollViewer"
-                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
-                      VerticalScrollBarVisibility="Visible" Padding="00,-20,20,-20" Margin="-20,20,-20,20">
+		<ScrollViewer x:Name="PageMainScrollViewer"
+		              HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"
+		              VerticalScrollBarVisibility="Visible" Padding="00,-20,20,-20" Margin="-20,20,-20,20">
 
-            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                        Padding="20,0,0,0" Orientation="Vertical">
+			<StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+			            Padding="20,0,0,0" Orientation="Vertical">
 
-                <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
-                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                      BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+				<Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
+				      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+				      BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
 
-                      CornerRadius="4" Padding="15,15" Visibility="Collapsed"
-                      HorizontalAlignment="Stretch" Height="130" Margin="0,20,0,0" x:Name="ForeignLangGrid">
-                    <TextBlock FontWeight="SemiBold" TextWrapping="WrapWholeWords" Margin="0,-3,0,0"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                        We detected that your PC is running in a language that isn't currently localized in Amethyst.
-                        As always, all community contributions are more than welcome.
-                        The more languages Amethyst is available in, the more people can actually access and use it.
-                    </TextBlock>
-                    <HyperlinkButton Content="You can help us with that here."
-                                     NavigateUri="https://docs.k2vr.tech/en/dev/localization"
-                                     VerticalAlignment="Bottom" HorizontalAlignment="Right" />
-                </Grid>
+				      CornerRadius="4" Padding="15,15" Visibility="Collapsed"
+				      HorizontalAlignment="Stretch" Height="130" Margin="0,20,0,0" x:Name="ForeignLangGrid">
+					<TextBlock FontWeight="SemiBold" TextWrapping="WrapWholeWords" Margin="0,-3,0,0"
+					           HorizontalAlignment="Stretch" VerticalAlignment="Top">
+						We detected that your PC is running in a language that isn't currently localized in Amethyst.
+						As always, all community contributions are more than welcome.
+						The more languages Amethyst is available in, the more people can actually access and use it.
+					</TextBlock>
+					<HyperlinkButton Content="You can help us with that here."
+					                 NavigateUri="https://docs.k2vr.tech/en/dev/localization"
+					                 VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+				</Grid>
 
-                <TextBlock FontWeight="SemiBold"
-                           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/Application'), Mode=OneWay}"
-                           FontSize="25" Margin="0,30,0,0">
-                    <TextBlock.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </TextBlock.Transitions>
-                </TextBlock>
+				<TextBlock FontWeight="SemiBold"
+				           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/Application'), Mode=OneWay}"
+				           FontSize="25" Margin="0,30,0,0">
+					<TextBlock.Transitions>
+						<TransitionCollection>
+							<RepositionThemeTransition />
+						</TransitionCollection>
+					</TextBlock.Transitions>
+				</TextBlock>
 
-                <Grid Margin="-20,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20" />
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="5*" />
-                    </Grid.ColumnDefinitions>
+				<Grid Margin="-20,0,0,0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="20" />
+						<ColumnDefinition Width="2*" />
+						<ColumnDefinition Width="5*" />
+					</Grid.ColumnDefinitions>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="80" />
-                        <RowDefinition Height="80" />
-                    </Grid.RowDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="80" />
+						<RowDefinition Height="80" />
+					</Grid.RowDefinitions>
 
-                    <FontIcon Margin="0,3,0,0" Grid.Column="0" Grid.Row="0"
-                              HorizontalAlignment="Left" VerticalAlignment="Center"
-                              FontSize="16" Glyph="&#xF2B7;">
-                        <FontIcon.TranslationTransition>
-                            <Vector3Transition />
-                        </FontIcon.TranslationTransition>
-                    </FontIcon>
+					<FontIcon Margin="0,3,0,0" Grid.Column="0" Grid.Row="0"
+					          HorizontalAlignment="Left" VerticalAlignment="Center"
+					          FontSize="16" Glyph="&#xF2B7;">
+						<FontIcon.TranslationTransition>
+							<Vector3Transition />
+						</FontIcon.TranslationTransition>
+					</FontIcon>
 
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                               Text="{x:Bind util:Translator.Get.String('/SettingsPage/Labels/DisplayLanguage'), Mode=OneWay}"
-                               Margin="0,0,20,0" Grid.Column="1" Grid.Row="0" />
+					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+					           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Labels/DisplayLanguage'), Mode=OneWay}"
+					           Margin="0,0,20,0" Grid.Column="1" Grid.Row="0" />
 
-                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                              Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                              x:Name="LanguageOptionBox" SelectionChanged="LanguageOptionBox_SelectionChanged"
+					<ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+					          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+					          x:Name="LanguageOptionBox" SelectionChanged="LanguageOptionBox_SelectionChanged"
 
-                              DropDownOpened="OptionBox_DropDownOpened"
-                              DropDownClosed="OptionBox_DropDownClosed"
+					          DropDownOpened="OptionBox_DropDownOpened"
+					          DropDownClosed="OptionBox_DropDownClosed"
 
-                              Grid.Column="2" Grid.Row="0" Margin="0,0,0,0">
-                        <ComboBoxItem Content="INVALID" />
-                    </ComboBox>
+					          Grid.Column="2" Grid.Row="0" Margin="0,0,0,0">
+						<ComboBoxItem Content="INVALID" />
+					</ComboBox>
 
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
-                               Text="{x:Bind util:Translator.Get.String('/SettingsPage/Labels/AppTheme'), Mode=OneWay}"
-                               Margin="0,0,20,0" Grid.Column="1" Grid.Row="1" />
+					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+					           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Labels/AppTheme'), Mode=OneWay}"
+					           Margin="0,0,20,0" Grid.Column="1" Grid.Row="1" />
 
-                    <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
-                              Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                              x:Name="AppThemeOptionBox" SelectionChanged="AppThemeOptionBox_SelectionChanged"
+					<ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="0"
+					          Height="65" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+					          x:Name="AppThemeOptionBox" SelectionChanged="AppThemeOptionBox_SelectionChanged"
 
-                              DropDownOpened="OptionBox_DropDownOpened"
-                              DropDownClosed="OptionBox_DropDownClosed"
+					          DropDownOpened="OptionBox_DropDownOpened"
+					          DropDownClosed="OptionBox_DropDownClosed"
 
-                              Grid.Column="2" Grid.Row="1" Margin="0,0,0,0">
-                        <ComboBoxItem Content="INVALID" />
-                    </ComboBox>
+					          Grid.Column="2" Grid.Row="1" Margin="0,0,0,0">
+						<ComboBoxItem Content="INVALID" />
+					</ComboBox>
 
-                </Grid>
+				</Grid>
 
-                <Grid HorizontalAlignment="Stretch">
-                    <Grid Grid.Column="0" Grid.Row="1" Margin="0,15,0,0">
-                        <Grid.Transitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition />
-                            </TransitionCollection>
-                        </Grid.Transitions>
+				<Grid HorizontalAlignment="Stretch">
+					<Grid Grid.Column="0" Grid.Row="1" Margin="0,15,0,0">
+						<Grid.Transitions>
+							<TransitionCollection>
+								<RepositionThemeTransition />
+							</TransitionCollection>
+						</Grid.Transitions>
 
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                                   Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/Sounds'), Mode=OneWay}"
-                                   Margin="30,0,0,10" />
-                        <CheckBox IsChecked="{x:Bind classes:AppData.Settings.EnableAppSounds, Mode=TwoWay}"
-                                  HorizontalAlignment="Left" VerticalAlignment="Center"
-                                  MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
-                    </Grid>
+						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+						           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/Sounds'), Mode=OneWay}"
+						           Margin="30,0,0,10" />
+						<CheckBox IsChecked="{x:Bind classes:AppData.Settings.EnableAppSounds, Mode=TwoWay}"
+						          HorizontalAlignment="Left" VerticalAlignment="Center"
+						          MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
+					</Grid>
 
-                    <Slider Grid.Row="1" HorizontalAlignment="Right" Width="350" Minimum="0" Maximum="100"
-                            IsEnabled="{x:Bind classes:AppData.Settings.EnableAppSounds, Mode=OneWay}"
-                            Value="{x:Bind classes:AppData.Settings.AppSoundsVolume, Mode=TwoWay}" Margin="30,11,0,0">
-                        <Slider.Transitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition />
-                            </TransitionCollection>
-                        </Slider.Transitions>
-                    </Slider>
-                </Grid>
+					<Slider Grid.Row="1" HorizontalAlignment="Right" Width="350" Minimum="0" Maximum="100"
+					        IsEnabled="{x:Bind classes:AppData.Settings.EnableAppSounds, Mode=OneWay}"
+					        Value="{x:Bind classes:AppData.Settings.AppSoundsVolume, Mode=TwoWay}" Margin="30,11,0,0">
+						<Slider.Transitions>
+							<TransitionCollection>
+								<RepositionThemeTransition />
+							</TransitionCollection>
+						</Slider.Transitions>
+					</Slider>
+				</Grid>
 
-                <Grid HorizontalAlignment="Stretch" Margin="0,5,0,0"
-                      Visibility="{x:Bind CanAutoStartAmethyst, Mode=OneWay}">
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                               Text="{x:Bind AutoStartLabelText, Mode=OneWay}"
-                               x:Name="Captions_AutoStart" Margin="30,0,0,3" />
+				<Grid HorizontalAlignment="Stretch" Margin="0,5,0,0"
+				      Visibility="{x:Bind CanAutoStartAmethyst, Mode=OneWay}">
+					<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+					           Text="{x:Bind AutoStartLabelText, Mode=OneWay}"
+					           x:Name="Captions_AutoStart" Margin="30,0,0,3" />
 
-                    <CheckBox x:Name="AutoStartCheckBox" Checked="AutoStartCheckBox_Checked"
-                              Unchecked="AutoStartCheckBox_Unchecked"
-                              HorizontalAlignment="Left" VerticalAlignment="Center"
-                              MinWidth="0" MinHeight="0" />
+					<CheckBox x:Name="AutoStartCheckBox" Checked="AutoStartCheckBox_Checked"
+					          Unchecked="AutoStartCheckBox_Unchecked"
+					          HorizontalAlignment="Left" VerticalAlignment="Center"
+					          MinWidth="0" MinHeight="0" />
 
-                    <Grid.Resources>
-                        <TeachingTip x:Name="AutoStartTeachingTip"
-                                     Target="{Binding ElementName=Captions_AutoStart}"
-                                     Title="{x:Bind AutoStartTipText, Mode=OneWay}"
-                                     Subtitle="{x:Bind AutoStartTipContent, Mode=OneWay}"
-                                     CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
-                                     ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
-                                     PreferredPlacement="Bottom"
-                                     IsLightDismissEnabled="False"
-                                     Style="{ThemeResource BigTeachingTipStyle}"
-                                     ActionButtonClick="AutoStartTeachingTip_ActionButtonClick"
-                                     CloseButtonClick="AutoStartTeachingTip_CloseButtonClick" />
-                    </Grid.Resources>
-                </Grid>
+					<Grid.Resources>
+						<TeachingTip x:Name="AutoStartTeachingTip"
+						             Target="{Binding ElementName=Captions_AutoStart}"
+						             Title="{x:Bind AutoStartTipText, Mode=OneWay}"
+						             Subtitle="{x:Bind AutoStartTipContent, Mode=OneWay}"
+						             CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+						             ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
+						             PreferredPlacement="Bottom"
+						             IsLightDismissEnabled="False"
+						             Style="{ThemeResource BigTeachingTipStyle}"
+						             ActionButtonClick="AutoStartTeachingTip_ActionButtonClick"
+						             CloseButtonClick="AutoStartTeachingTip_CloseButtonClick" />
+					</Grid.Resources>
+				</Grid>
 
 				<StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
-                            x:Name="FlipDropDownContainer" Margin="0,20,0,10">
+				            x:Name="FlipDropDownContainer" Margin="0,20,0,10">
 
-                    <TextBlock FontWeight="SemiBold" FontSize="25"
-                               Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/SkeletonFlip'), Mode=OneWay}" />
+					<TextBlock FontWeight="SemiBold" FontSize="25"
+					           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/SkeletonFlip'), Mode=OneWay}" />
 
-                    <Grid x:Name="FlipDropDownGrid">
-                        <Grid Margin="20,15,0,0" VerticalAlignment="Top" Canvas.ZIndex="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+					<Grid x:Name="FlipDropDownGrid">
+						<Grid Margin="20,15,0,0" VerticalAlignment="Top" Canvas.ZIndex="1">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="3*" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
 
-                            <TextBlock FontWeight="SemiBold" FontSize="14" Margin="0,-3,0,0"
-                                       Text="{x:Bind FlipDropDownHeader, Mode=OneWay}"
-                                       TextTrimming="CharacterEllipsis"
-                                       Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+							<TextBlock FontWeight="SemiBold" FontSize="14" Margin="0,-3,0,0"
+							           Text="{x:Bind FlipDropDownHeader, Mode=OneWay}"
+							           TextTrimming="CharacterEllipsis"
+							           Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
-                            <!--This is needed only for the teachingtip-->
-                            <Grid Grid.Column="1" Margin="0,0,-11,0"
-                                  Width="40" Height="22" x:Name="FlipToggleDummyGrid"
-                                  VerticalAlignment="Center" IsHitTestVisible="False"
-                                  HorizontalAlignment="Right" />
+							<!--This is needed only for the teachingtip-->
+							<Grid Grid.Column="1" Margin="0,0,-11,0"
+							      Width="40" Height="22" x:Name="FlipToggleDummyGrid"
+							      VerticalAlignment="Center" IsHitTestVisible="False"
+							      HorizontalAlignment="Right" />
 
-                            <ToggleSwitch IsOn="{x:Bind classes:AppData.Settings.IsFlipEnabled, Mode=TwoWay}"
-                                          ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/SettingsPage/Elements/FlipToggle/ToolTip'), Mode=OneWay}"
-                                          x:Name="FlipToggle" Toggled="FlipToggle_Toggled"
-                                          Grid.Column="1" Margin="0,0,-65,0"
-                                          OnContent="" OffContent=""
-                                          VerticalAlignment="Center"
-                                          HorizontalAlignment="Right">
-                                <ToggleSwitch.Resources>
-                                    <TeachingTip x:Name="ToggleFlipTeachingTip"
-                                                 Closed="ToggleFlipTeachingTip_Closed"
-                                                 Target="{Binding ElementName=FlipToggleDummyGrid}"
-                                                 PreferredPlacement="Bottom"
-                                                 IsLightDismissEnabled="True"
-                                                 Title="[CONTENT NOT SET]"
-                                                 Subtitle="[CONTENT NOT SET]">
-                                        <TeachingTip.IconSource>
-                                            <FontIconSource Glyph="&#xE946;" />
-                                        </TeachingTip.IconSource>
-                                    </TeachingTip>
-                                </ToggleSwitch.Resources>
-                            </ToggleSwitch>
-                        </Grid>
+							<ToggleSwitch IsOn="{x:Bind classes:AppData.Settings.IsFlipEnabled, Mode=TwoWay}"
+							              ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/SettingsPage/Elements/FlipToggle/ToolTip'), Mode=OneWay}"
+							              x:Name="FlipToggle" Toggled="FlipToggle_Toggled"
+							              Grid.Column="1" Margin="0,0,-65,0"
+							              OnContent="" OffContent=""
+							              VerticalAlignment="Center"
+							              HorizontalAlignment="Right">
+								<ToggleSwitch.Resources>
+									<TeachingTip x:Name="ToggleFlipTeachingTip"
+									             Closed="ToggleFlipTeachingTip_Closed"
+									             Target="{Binding ElementName=FlipToggleDummyGrid}"
+									             PreferredPlacement="Bottom"
+									             IsLightDismissEnabled="True"
+									             Title="[CONTENT NOT SET]"
+									             Subtitle="[CONTENT NOT SET]">
+										<TeachingTip.IconSource>
+											<FontIconSource Glyph="&#xE946;" />
+										</TeachingTip.IconSource>
+									</TeachingTip>
+								</ToggleSwitch.Resources>
+							</ToggleSwitch>
+						</Grid>
 
-                        <Expander Margin="0,10,0,0" IsExpanded="False" x:Name="FlipDropDown"
-                                  Expanding="FlipDropDown_Expanding"
-                                  Collapsed="FlipDropDown_Collapsed"
-                                  ExpandDirection="Down" HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Stretch" IsEnabled="False">
+						<Expander Margin="0,10,0,0" IsExpanded="False" x:Name="FlipDropDown"
+						          Expanding="FlipDropDown_Expanding"
+						          Collapsed="FlipDropDown_Collapsed"
+						          ExpandDirection="Down" HorizontalAlignment="Stretch"
+						          HorizontalContentAlignment="Stretch" IsEnabled="False">
 
-                            <Expander.Content>
-                                <StackPanel Orientation="Vertical" Padding="0,-5">
+							<Expander.Content>
+								<StackPanel Orientation="Vertical" Padding="0,-5">
 
-                                    <StackPanel Orientation="Horizontal" x:Name="ExternalFlipStackPanel"
-                                                Margin="0,-25,0,-20">
+									<StackPanel Orientation="Horizontal" x:Name="ExternalFlipStackPanel"
+									            Margin="0,-25,0,-20">
 
-                                        <Grid Margin="0,5,0,0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="9*" />
-                                                <ColumnDefinition Width="2*" />
-                                            </Grid.ColumnDefinitions>
+										<Grid Margin="0,5,0,0">
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition Width="9*" />
+												<ColumnDefinition Width="2*" />
+											</Grid.ColumnDefinitions>
 
-                                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                                       FontWeight="Medium"
-                                                       Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/ExtFlip'), Mode=OneWay}"
-                                                       x:Name="ExternalFlipCheckBoxLabel" Margin="30,0,0,10"
-                                                       Grid.Column="0" />
-                                            <CheckBox x:Name="ExternalFlipCheckBox"
-                                                      Checked="CheckBox_CheckedSound"
-                                                      Unchecked="CheckBox_UncheckedSound"
-                                                      IsChecked="{x:Bind classes:AppData.Settings.IsExternalFlipEnabled, Mode=TwoWay}"
-                                                      HorizontalAlignment="Left" VerticalAlignment="Center"
-                                                      MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
-                                        </Grid>
+											<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+											           FontWeight="Medium"
+											           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/ExtFlip'), Mode=OneWay}"
+											           x:Name="ExternalFlipCheckBoxLabel" Margin="30,0,0,10"
+											           Grid.Column="0" />
+											<CheckBox x:Name="ExternalFlipCheckBox"
+											          Checked="CheckBox_CheckedSound"
+											          Unchecked="CheckBox_UncheckedSound"
+											          IsChecked="{x:Bind classes:AppData.Settings.IsExternalFlipEnabled, Mode=TwoWay}"
+											          HorizontalAlignment="Left" VerticalAlignment="Center"
+											          MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
+										</Grid>
 
-                                        <AppBarButton IsCompact="True" Width="35" Height="65" Margin="5,17,0,0"
-                                                      x:Name="ExtFlipAppBarButton"
-                                                      ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/SettingsPage/Elements/ExtFlipCalibration/ToolTip'), Mode=OneWay}"
-                                                      IsEnabled="{Binding ElementName=ExternalFlipCheckBox, Path=IsChecked,TargetNullValue=False}">
-                                            <AppBarButton.Flyout>
-                                                <MenuFlyout Opening="MenuFlyout_Opening"
-                                                            Closing="MenuFlyout_Closing">
-                                                    <MenuFlyoutItem
-                                                        Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/FaceTheKinect'), Mode=OneWay}"
-                                                        FontWeight="Medium" IsHitTestVisible="False" />
-                                                    <MenuFlyoutItem
-                                                        Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/CalibrateExtFlip'), Mode=OneWay}"
-                                                        Tag="Calibrate"
-                                                        Click="CalibrateExternalFlipMenuFlyoutItem_Click" />
-                                                </MenuFlyout>
-                                            </AppBarButton.Flyout>
-                                        </AppBarButton>
+										<AppBarButton IsCompact="True" Width="35" Height="65" Margin="5,17,0,0"
+										              x:Name="ExtFlipAppBarButton"
+										              ToolTipService.ToolTip="{x:Bind util:Translator.Get.String('/SettingsPage/Elements/ExtFlipCalibration/ToolTip'), Mode=OneWay}"
+										              IsEnabled="{Binding ElementName=ExternalFlipCheckBox, Path=IsChecked,TargetNullValue=False}">
+											<AppBarButton.Flyout>
+												<MenuFlyout Opening="MenuFlyout_Opening"
+												            Closing="MenuFlyout_Closing">
+													<MenuFlyoutItem
+														Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/FaceTheKinect'), Mode=OneWay}"
+														FontWeight="Medium" IsHitTestVisible="False" />
+													<MenuFlyoutItem
+														Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/CalibrateExtFlip'), Mode=OneWay}"
+														Tag="Calibrate"
+														Click="CalibrateExternalFlipMenuFlyoutItem_Click" />
+												</MenuFlyout>
+											</AppBarButton.Flyout>
+										</AppBarButton>
 
-                                    </StackPanel>
+									</StackPanel>
 
-                                    <StackPanel Orientation="Horizontal" Margin="30,0,0,5"
-                                                x:Name="ExtFlipStatusStackPanel">
-                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                                   FontWeight="SemiBold"
-                                                   Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Device/Status'), Mode=OneWay}"
-                                                   Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                   Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
+									<StackPanel Orientation="Horizontal" Margin="30,0,0,5"
+									            x:Name="ExtFlipStatusStackPanel">
+										<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+										           FontWeight="SemiBold"
+										           Text="{x:Bind util:Translator.Get.String('/GeneralPage/Captions/Device/Status'), Mode=OneWay}"
+										           Foreground="{ThemeResource ControlDisplayTextBrush}"
+										           Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
 									                    Path=Opacity,TargetNullValue=1.0}" />
 
-                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                                   FontWeight="SemiBold"
-                                                   x:Name="ExtFlipStatusLabel" Text="[NOT_DEFINED]" Margin="5,0,0,0"
-                                                   Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
+										<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+										           FontWeight="SemiBold"
+										           x:Name="ExtFlipStatusLabel" Text="[NOT_DEFINED]" Margin="5,0,0,0"
+										           Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, 
 									                    Path=Opacity,TargetNullValue=1.0}" />
-                                    </StackPanel>
+									</StackPanel>
 
-                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                               FontWeight="SemiBold"
-                                               Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/ExtFlip'), Mode=OneWay}"
-                                               Margin="30,0,0,7" Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                               Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, Path=Opacity,TargetNullValue=1.0}">
-                                        <TextBlock.Transitions>
-                                            <TransitionCollection>
-                                                <RepositionThemeTransition />
-                                            </TransitionCollection>
-                                        </TextBlock.Transitions>
-                                    </TextBlock>
+									<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+									           FontWeight="SemiBold"
+									           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/ExtFlip'), Mode=OneWay}"
+									           Margin="30,0,0,7" Foreground="{ThemeResource ControlDisplayTextBrush}"
+									           Opacity="{Binding ElementName=ExternalFlipCheckBoxLabel, Path=Opacity,TargetNullValue=1.0}">
+										<TextBlock.Transitions>
+											<TransitionCollection>
+												<RepositionThemeTransition />
+											</TransitionCollection>
+										</TextBlock.Transitions>
+									</TextBlock>
 
-                                </StackPanel>
-                            </Expander.Content>
-                        </Expander>
+								</StackPanel>
+							</Expander.Content>
+						</Expander>
 
-                    </Grid>
+					</Grid>
 
-                </StackPanel>
+				</StackPanel>
 
 				<Grid Visibility="{x:Bind ServiceNotRelay, Mode=OneWay}">
-                    <Grid.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </Grid.Transitions>
+					<Grid.Transitions>
+						<TransitionCollection>
+							<RepositionThemeTransition />
+						</TransitionCollection>
+					</Grid.Transitions>
 
-                    <Grid Margin="0,20,0,0" Grid.Row="0"
-                          x:Name="JointExpanderStackHeader">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+					<Grid Margin="0,20,0,0" Grid.Row="0"
+					      x:Name="JointExpanderStackHeader">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
 
-                        <Grid.Resources>
-                            <TeachingTip x:Name="ManageTrackersTeachingTip"
-                                         Target="{Binding ElementName=JointExpanderStackHeader}"
-                                         Title="{x:Bind util:Translator.Get.String('/NUX/Tip5/Title'), Mode=OneWay}"
-                                         Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip5/Content'), Mode=OneWay}"
-                                         CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
-                                         ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
-                                         PreferredPlacement="Top"
-                                         IsLightDismissEnabled="False"
-                                         Style="{ThemeResource BigTeachingTipStyle}"
-                                         ActionButtonClick="ManageTrackersTeachingTip_ActionButtonClick"
-                                         CloseButtonClick="ManageTrackersTeachingTip_CloseButtonClick" />
-                        </Grid.Resources>
+						<Grid.Resources>
+							<TeachingTip x:Name="ManageTrackersTeachingTip"
+							             Target="{Binding ElementName=JointExpanderStackHeader}"
+							             Title="{x:Bind util:Translator.Get.String('/NUX/Tip5/Title'), Mode=OneWay}"
+							             Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip5/Content'), Mode=OneWay}"
+							             CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+							             ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
+							             PreferredPlacement="Top"
+							             IsLightDismissEnabled="False"
+							             Style="{ThemeResource BigTeachingTipStyle}"
+							             ActionButtonClick="ManageTrackersTeachingTip_ActionButtonClick"
+							             CloseButtonClick="ManageTrackersTeachingTip_CloseButtonClick" />
+						</Grid.Resources>
 
-                        <TextBlock FontWeight="SemiBold" FontSize="25" Grid.Column="0"
-                                   Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/TrackerConfig/Header'), Mode=OneWay}" />
+						<TextBlock FontWeight="SemiBold" FontSize="25" Grid.Column="0"
+						           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/TrackerConfig/Header'), Mode=OneWay}" />
 
-                        <HyperlinkButton FontWeight="SemiBold" FontSize="16" Grid.Column="1"
-                                         HorizontalAlignment="Right"
-                                         Content="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/TrackerConfig/Learn'), Mode=OneWay}"
-                                         x:Name="LearnAboutFiltersButton" Click="LearnAboutFiltersButton_Click">
+						<HyperlinkButton FontWeight="SemiBold" FontSize="16" Grid.Column="1"
+						                 HorizontalAlignment="Right"
+						                 Content="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/TrackerConfig/Learn'), Mode=OneWay}"
+						                 x:Name="LearnAboutFiltersButton" Click="LearnAboutFiltersButton_Click">
 
-                            <FlyoutBase.AttachedFlyout>
-                                <Flyout Placement="Full" x:Name="LearnAboutFiltersFlyout"
-                                        Closed="LearnAboutFiltersFlyout_Closed"
-                                        Opening="MenuFlyout_Opening" Closing="MenuFlyout_Closing">
+							<FlyoutBase.AttachedFlyout>
+								<Flyout Placement="Full" x:Name="LearnAboutFiltersFlyout"
+								        Closed="LearnAboutFiltersFlyout_Closed"
+								        Opening="MenuFlyout_Opening" Closing="MenuFlyout_Closing">
 
-                                    <Flyout.FlyoutPresenterStyle>
-                                        <Style TargetType="FlyoutPresenter">
-                                            <Setter Property="MaxHeight" Value="615" />
-                                            <Setter Property="MaxWidth" Value="720" />
-                                            <Setter Property="MinWidth" Value="720" />
-                                            <Setter Property="Margin" Value="30,15,0,0" />
-                                            <Setter Property="CornerRadius" Value="8" />
-                                            <Setter Property="Background"
-                                                    Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
-                                        </Style>
-                                    </Flyout.FlyoutPresenterStyle>
+									<Flyout.FlyoutPresenterStyle>
+										<Style TargetType="FlyoutPresenter">
+											<Setter Property="MaxHeight" Value="615" />
+											<Setter Property="MaxWidth" Value="720" />
+											<Setter Property="MinWidth" Value="720" />
+											<Setter Property="Margin" Value="30,15,0,0" />
+											<Setter Property="CornerRadius" Value="8" />
+											<Setter Property="Background"
+											        Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+										</Style>
+									</Flyout.FlyoutPresenterStyle>
 
-                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"
-                                                Margin="10,0" MaxWidth="660">
+									<StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"
+									            VerticalAlignment="Stretch"
+									            Margin="10,0" MaxWidth="660">
 
-                                        <TextBlock
-                                            Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Titles/TrackerConfig'), Mode=OneWay}"
-                                            FontSize="24"
-                                            FontWeight="SemiBold" Margin="0,10,0,20" />
+										<TextBlock
+											Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Titles/TrackerConfig'), Mode=OneWay}"
+											FontSize="24"
+											FontWeight="SemiBold" Margin="0,10,0,20" />
 
-                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
-                                                   Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/TrackerConfig'), Mode=OneWay}" />
+										<TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
+										           Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/TrackerConfig'), Mode=OneWay}" />
 
-                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15"
-                                                   Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                   Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/TrackerConfigNote'), Mode=OneWay}" />
+										<TextBlock TextWrapping="WrapWholeWords" FontSize="15"
+										           Foreground="{ThemeResource ControlDisplayTextBrush}"
+										           Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/TrackerConfigNote'), Mode=OneWay}" />
 
-                                        <TextBlock FontSize="20"
-                                                   Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Titles/FilterSettings'), Mode=OneWay}"
-                                                   FontWeight="SemiBold" Margin="0,20,0,20" />
+										<TextBlock FontSize="20"
+										           Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Titles/FilterSettings'), Mode=OneWay}"
+										           FontWeight="SemiBold" Margin="0,20,0,20" />
 
-                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10">
+										<TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10">
 
-                                            <Run
-                                                Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Names/LERP'), Mode=OneWay}" />
-                                            <LineBreak />
+											<Run
+												Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Names/LERP'), Mode=OneWay}" />
+											<LineBreak />
 
-                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Explanations/LERP'), Mode=OneWay}" />
-                                            <LineBreak /><LineBreak />
+											<Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+											     Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Explanations/LERP'), Mode=OneWay}" />
+											<LineBreak /><LineBreak />
 
-                                            <Run
-                                                Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Names/LowPass'), Mode=OneWay}" />
-                                            <LineBreak />
+											<Run
+												Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Names/LowPass'), Mode=OneWay}" />
+											<LineBreak />
 
-                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Explanations/LowPass'), Mode=OneWay}" />
-                                            <LineBreak /><LineBreak />
+											<Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+											     Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Explanations/LowPass'), Mode=OneWay}" />
+											<LineBreak /><LineBreak />
 
-                                            <Run
-                                                Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Names/EKF'), Mode=OneWay}" />
-                                            <LineBreak />
+											<Run
+												Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Names/EKF'), Mode=OneWay}" />
+											<LineBreak />
 
-                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Explanations/EKF'), Mode=OneWay}" />
-                                            <LineBreak /><LineBreak />
+											<Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+											     Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Explanations/EKF'), Mode=OneWay}" />
+											<LineBreak /><LineBreak />
 
-                                            <Run
-                                                Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Names/None'), Mode=OneWay}" />
-                                            <LineBreak />
+											<Run
+												Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Names/None'), Mode=OneWay}" />
+											<LineBreak />
 
-                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Explanations/None'), Mode=OneWay}" />
+											<Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+											     Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Filters/Explanations/None'), Mode=OneWay}" />
 
-                                        </TextBlock>
-                                        <TextBlock
-                                            Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Titles/RotationSettings'), Mode=OneWay}"
-                                            FontSize="20"
-                                            FontWeight="SemiBold" Margin="0,20,0,20" />
+										</TextBlock>
+										<TextBlock
+											Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Titles/RotationSettings'), Mode=OneWay}"
+											FontSize="20"
+											FontWeight="SemiBold" Margin="0,20,0,20" />
 
-                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10">
+										<TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10">
 
-                                            <Run
-                                                Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Introduction'), Mode=OneWay}" />
-                                            <LineBreak /><LineBreak />
+											<Run
+												Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Introduction'), Mode=OneWay}" />
+											<LineBreak /><LineBreak />
 
-                                            <Run
-                                                Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Names/Default'), Mode=OneWay}" />
-                                            <LineBreak />
+											<Run
+												Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Names/Default'), Mode=OneWay}" />
+											<LineBreak />
 
-                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Explanations/Default'), Mode=OneWay}" />
-                                            <LineBreak /><LineBreak />
+											<Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+											     Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Explanations/Default'), Mode=OneWay}" />
+											<LineBreak /><LineBreak />
 
-                                            <Run
-                                                Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Names/MathBased'), Mode=OneWay}" />
-                                            <LineBreak />
+											<Run
+												Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Names/MathBased'), Mode=OneWay}" />
+											<LineBreak />
 
-                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Explanations/MathBased'), Mode=OneWay}" />
-                                            <LineBreak /><LineBreak />
+											<Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+											     Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Explanations/MathBased'), Mode=OneWay}" />
+											<LineBreak /><LineBreak />
 
-                                            <Run
-                                                Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Names/MathBasedV2'), Mode=OneWay}" />
-                                            <LineBreak />
+											<Run
+												Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Names/MathBasedV2'), Mode=OneWay}" />
+											<LineBreak />
 
-                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Explanations/MathBasedV2'), Mode=OneWay}" />
-                                            <LineBreak /><LineBreak />
+											<Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+											     Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Explanations/MathBasedV2'), Mode=OneWay}" />
+											<LineBreak /><LineBreak />
 
-                                            <Run
-                                                Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Names/HMD'), Mode=OneWay}" />
-                                            <LineBreak />
+											<Run
+												Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Names/HMD'), Mode=OneWay}" />
+											<LineBreak />
 
-                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Explanations/HMD'), Mode=OneWay}" />
-                                            <LineBreak /><LineBreak />
+											<Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+											     Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Explanations/HMD'), Mode=OneWay}" />
+											<LineBreak /><LineBreak />
 
-                                            <Run
-                                                Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Names/None'), Mode=OneWay}" />
-                                            <LineBreak />
+											<Run
+												Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Names/None'), Mode=OneWay}" />
+											<LineBreak />
 
-                                            <Run Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                                 Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Explanations/None'), Mode=OneWay}" />
+											<Run Foreground="{ThemeResource ControlDisplayTextBrush}"
+											     Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Captions/Orientation/Explanations/None'), Mode=OneWay}" />
 
-                                        </TextBlock>
+										</TextBlock>
 
-                                        <TextBlock
-                                            Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Titles/ManageTrackers'), Mode=OneWay}"
-                                            FontSize="20"
-                                            FontWeight="SemiBold" Margin="0,20,0,20" />
+										<TextBlock
+											Text="{x:Bind util:Translator.Get.String('/SettingsLearn/Titles/ManageTrackers'), Mode=OneWay}"
+											FontSize="20"
+											FontWeight="SemiBold" Margin="0,20,0,20" />
 
-                                        <TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
-                                                   Text="{x:Bind ManageTrackersText, Mode=OneWay}" />
-                                    </StackPanel>
+										<TextBlock TextWrapping="WrapWholeWords" FontSize="15" Margin="0,0,0,10"
+										           Text="{x:Bind ManageTrackersText, Mode=OneWay}" />
+									</StackPanel>
 
-                                </Flyout>
-                            </FlyoutBase.AttachedFlyout>
+								</Flyout>
+							</FlyoutBase.AttachedFlyout>
 
-                        </HyperlinkButton>
-                    </Grid>
-                </Grid>
+						</HyperlinkButton>
+					</Grid>
+				</Grid>
 
-                <!--For the waist & pair trackers' expanders-->
+				<!--For the waist & pair trackers' expanders-->
 				<StackPanel x:Name="JointExpanderHostStackPanel" HorizontalAlignment="Stretch"
 				            Visibility="{x:Bind ServiceNotRelay, Mode=OneWay}"
-                            VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
+				            VerticalAlignment="Stretch" Orientation="Vertical" Margin="0,10,0,0">
 
-                    <StackPanel.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </StackPanel.Transitions>
+					<StackPanel.Transitions>
+						<TransitionCollection>
+							<RepositionThemeTransition />
+						</TransitionCollection>
+					</StackPanel.Transitions>
 
-                    <!--<StackPanel.Transitions>
+					<!--<StackPanel.Transitions>
                         <TransitionCollection>
                             <EntranceThemeTransition />
                             <RepositionThemeTransition />
@@ -522,329 +522,354 @@
                         </TransitionCollection>
                     </StackPanel.Transitions>-->
 
-                    <ItemsRepeater ItemsSource="{x:Bind classes:AppData.Settings.TrackersVector, Mode=OneWay}">
-                        <DataTemplate x:DataType="classes:AppTracker">
-                            <controls:JointSettingsExpander Role="{x:Bind Role, Mode=OneWay}"
-                                                            Transitions="{x:Bind SettingsExpanderTransitions, Mode=OneWay}" />
-                        </DataTemplate>
-                    </ItemsRepeater>
-                </StackPanel>
+					<ItemsRepeater ItemsSource="{x:Bind classes:AppData.Settings.TrackersVector, Mode=OneWay}">
+						<DataTemplate x:DataType="classes:AppTracker">
+							<controls:JointSettingsExpander Role="{x:Bind Role, Mode=OneWay}"
+							                                Transitions="{x:Bind SettingsExpanderTransitions, Mode=OneWay}" />
+						</DataTemplate>
+					</ItemsRepeater>
+				</StackPanel>
 
 				<Grid Margin="0,10,0,0" Visibility="{x:Bind ServiceNotRelay, Mode=OneWay}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="50" />
-                        <RowDefinition Height="50" />
-                        <RowDefinition Height="40" />
-                    </Grid.RowDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="50" />
+						<RowDefinition Height="50" />
+						<RowDefinition Height="40" />
+					</Grid.RowDefinitions>
 
-                    <Grid.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </Grid.Transitions>
+					<Grid.Transitions>
+						<TransitionCollection>
+							<RepositionThemeTransition />
+						</TransitionCollection>
+					</Grid.Transitions>
 
-                    <AppBarButton Grid.Column="0" x:Name="TrackerConfigButton" VerticalAlignment="Top"
-                                  Icon="Setting" Width="38" Height="46" Click="TrackerConfigButton_Click">
+					<AppBarButton Grid.Column="0" x:Name="TrackerConfigButton" VerticalAlignment="Top"
+					              Icon="Setting" Width="38" Height="46" Click="TrackerConfigButton_Click">
 
-                        <AppBarButton.Resources>
-                            <TeachingTip x:Name="AddTrackersTeachingTip"
-                                         Target="{Binding ElementName=TrackerConfigButton}"
-                                         Title="{x:Bind util:Translator.Get.String('/NUX/Tip6/Title'), Mode=OneWay}"
-                                         Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip6/Content'), Mode=OneWay}"
-                                         CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
-                                         ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
-                                         PreferredPlacement="Bottom"
-                                         IsLightDismissEnabled="False"
-                                         Style="{ThemeResource BigTeachingTipStyle}"
-                                         ActionButtonClick="AddTrackersTeachingTip_ActionButtonClick"
-                                         CloseButtonClick="AddTrackersTeachingTip_CloseButtonClick" />
-                        </AppBarButton.Resources>
+						<AppBarButton.Resources>
+							<TeachingTip x:Name="AddTrackersTeachingTip"
+							             Target="{Binding ElementName=TrackerConfigButton}"
+							             Title="{x:Bind util:Translator.Get.String('/NUX/Tip6/Title'), Mode=OneWay}"
+							             Subtitle="{x:Bind util:Translator.Get.String('/NUX/Tip6/Content'), Mode=OneWay}"
+							             CloseButtonContent="{x:Bind util:Translator.Get.String('/NUX/Next'), Mode=OneWay}"
+							             ActionButtonContent="{x:Bind util:Translator.Get.String('/NUX/Prev'), Mode=OneWay}"
+							             PreferredPlacement="Bottom"
+							             IsLightDismissEnabled="False"
+							             Style="{ThemeResource BigTeachingTipStyle}"
+							             ActionButtonClick="AddTrackersTeachingTip_ActionButtonClick"
+							             CloseButtonClick="AddTrackersTeachingTip_CloseButtonClick" />
+						</AppBarButton.Resources>
 
-                        <AppBarButton.Flyout>
-                            <Flyout x:Name="ToggleTrackersFlyout">
-                                <StackPanel Orientation="Vertical" Padding="-12,-10">
-                                    <ItemsRepeater ItemsSource="{x:Bind ToggleableTrackerEntries, Mode=OneWay}">
-                                        <DataTemplate x:DataType="mvvm:AppTrackerEntry">
-                                            <ToggleMenuFlyoutItem Text="{x:Bind Name}" DataContext="{x:Bind}"
-                                                                  IsChecked="{x:Bind IsEnabled}"
-                                                                  Click="TrackerToggleMenuFlyoutItem_Click" />
-                                        </DataTemplate>
-                                    </ItemsRepeater>
-                                    <MenuFlyoutSeparator />
-                                    <ToggleMenuFlyoutItem
-                                        Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/TrackerPairs'), Mode=OneWay}"
-                                        IsChecked="{x:Bind classes:AppData.Settings.UseTrackerPairs, Mode=TwoWay}"
-                                        x:Name="PairsToggleMenuFlyoutItem" Click="PairsToggleMenuFlyoutItem_Click" />
-                                </StackPanel>
-                            </Flyout>
-                        </AppBarButton.Flyout>
-                    </AppBarButton>
+						<AppBarButton.Flyout>
+							<Flyout x:Name="ToggleTrackersFlyout">
+								<StackPanel Orientation="Vertical" Padding="-12,-10">
+									<ItemsRepeater ItemsSource="{x:Bind ToggleableTrackerEntries, Mode=OneWay}">
+										<DataTemplate x:DataType="mvvm:AppTrackerEntry">
+											<ToggleMenuFlyoutItem Text="{x:Bind Name}" DataContext="{x:Bind}"
+											                      IsChecked="{x:Bind IsEnabled}"
+											                      Click="TrackerToggleMenuFlyoutItem_Click" />
+										</DataTemplate>
+									</ItemsRepeater>
+									<MenuFlyoutSeparator />
+									<ToggleMenuFlyoutItem
+										Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/TrackerPairs'), Mode=OneWay}"
+										IsChecked="{x:Bind classes:AppData.Settings.UseTrackerPairs, Mode=TwoWay}"
+										x:Name="PairsToggleMenuFlyoutItem" Click="PairsToggleMenuFlyoutItem_Click" />
+								</StackPanel>
+							</Flyout>
+						</AppBarButton.Flyout>
+					</AppBarButton>
 
-                    <Button Grid.Column="1" Grid.Row="0" Padding="15,0" Height="40"
-                            Visibility="{x:Bind ServiceNeedsRestart, Mode=OneWay}"
-                            Content="{x:Bind RestartServiceText, Mode=OneWay}"
-                            Style="{ThemeResource AccentButtonStyle}" x:Name="RestartButton"
-                            Click="RestartButton_Click" FontWeight="SemiBold"
-                            HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                            FontSize="16" IsEnabled="False" />
+					<Button Grid.Column="1" Grid.Row="0" Padding="15,0" Height="40"
+					        Visibility="{x:Bind ServiceNeedsRestart, Mode=OneWay}"
+					        Content="{x:Bind RestartServiceText, Mode=OneWay}"
+					        Style="{ThemeResource AccentButtonStyle}" x:Name="RestartButton"
+					        Click="RestartButton_Click" FontWeight="SemiBold"
+					        HorizontalAlignment="Stretch" VerticalAlignment="Center"
+					        FontSize="16" IsEnabled="False" />
 
-                    <StackPanel Grid.Column="0" Orientation="Vertical"
-                                Visibility="{x:Bind ServiceNeedsRestart, Mode=OneWay}"
-                                Margin="0,2,15,0" Grid.Row="0">
-                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
-                                   Text="{x:Bind RestartServiceNoteL1, Mode=OneWay}"
-                                   FontWeight="SemiBold"  TextTrimming="CharacterEllipsis" MaxWidth="450"
-                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
-                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
-                                   Text="{x:Bind RestartServiceNoteL2, Mode=OneWay}"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
-                    </StackPanel>
+					<StackPanel Grid.Column="0" Orientation="Vertical"
+					            Visibility="{x:Bind ServiceNeedsRestart, Mode=OneWay}"
+					            Margin="0,2,15,0" Grid.Row="0">
+						<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+						           Text="{x:Bind RestartServiceNoteL1, Mode=OneWay}"
+						           FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxWidth="450"
+						           Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
+						<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+						           Text="{x:Bind RestartServiceNoteL2, Mode=OneWay}"
+						           FontWeight="SemiBold"
+						           Margin="0,0,0,0" Foreground="{ThemeResource ControlDisplayTextBrush}" />
+					</StackPanel>
 
-                    <Grid Grid.Column="0" Grid.Row="1" Margin="0,20,0,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                                   Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/TrackersAutoSpawn'), Mode=OneWay}"
-                                   Margin="30,0,0,10" />
-                        <CheckBox Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
-                                  IsChecked="{x:Bind classes:AppData.Settings.AutoSpawnEnabledJoints, Mode=TwoWay}"
-                                  HorizontalAlignment="Left" VerticalAlignment="Center"
-                                  MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
-                    </Grid>
+					<Grid Grid.Column="0" Grid.Row="1" Margin="0,20,0,0">
+						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+						           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/TrackersAutoSpawn'), Mode=OneWay}"
+						           Margin="30,0,0,10" />
+						<CheckBox Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
+						          IsChecked="{x:Bind classes:AppData.Settings.AutoSpawnEnabledJoints, Mode=TwoWay}"
+						          HorizontalAlignment="Left" VerticalAlignment="Center"
+						          MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
+					</Grid>
 
-                    <Grid Grid.Column="0" Grid.Row="2">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
-                                   Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/TrackersAutoCheck'), Mode=OneWay}"
-                                   Margin="30,0,0,10" />
-                        <CheckBox x:Name="CheckOverlapsCheckBox"
-                                  Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
-                                  IsChecked="{x:Bind classes:AppData.Settings.CheckForOverlappingTrackers, Mode=TwoWay}"
-                                  HorizontalAlignment="Left" VerticalAlignment="Center"
-                                  MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
-                    </Grid>
-                </Grid>
+					<Grid Grid.Column="0" Grid.Row="2">
+						<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Medium"
+						           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/TrackersAutoCheck'), Mode=OneWay}"
+						           Margin="30,0,0,10" />
+						<CheckBox x:Name="CheckOverlapsCheckBox"
+						          Checked="CheckBox_CheckedSound" Unchecked="CheckBox_UncheckedSound"
+						          IsChecked="{x:Bind classes:AppData.Settings.CheckForOverlappingTrackers, Mode=TwoWay}"
+						          HorizontalAlignment="Left" VerticalAlignment="Center"
+						          MinWidth="0" MinHeight="0" Margin="0,0,0,7" />
+					</Grid>
+				</Grid>
 
-                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
-                            x:Name="ServiceDropDownContainer" Margin="0,20,0,10">
-                    <StackPanel.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </StackPanel.Transitions>
+				<StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical"
+				            x:Name="ServiceDropDownContainer" Margin="0,20,0,10">
+					<StackPanel.Transitions>
+						<TransitionCollection>
+							<RepositionThemeTransition />
+						</TransitionCollection>
+					</StackPanel.Transitions>
 
-                    <TextBlock FontWeight="SemiBold" FontSize="25"
-                               Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/Services'), Mode=OneWay}" />
+					<TextBlock FontWeight="SemiBold" FontSize="25"
+					           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/Services'), Mode=OneWay}" />
 
-                    <StackPanel Margin="0,10,0,0" Style="{ThemeResource CardTopStyle}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="5*" />
-                            </Grid.ColumnDefinitions>
+					<StackPanel Margin="0,10,0,0" Style="{ThemeResource CardTopStyle}">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="2*" />
+								<ColumnDefinition Width="5*" />
+							</Grid.ColumnDefinitions>
 
-                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" FontSize="16"
-                                       Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/Services'), Mode=OneWay}"
-                                       Margin="5,0,0,0" Grid.Column="0" />
+							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+							           FontWeight="SemiBold" FontSize="16"
+							           Text="{x:Bind util:Translator.Get.String('/SettingsPage/Captions/Services'), Mode=OneWay}"
+							           Margin="5,0,0,0" Grid.Column="0" />
 
-                            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center"
-                                      Height="48" MinWidth="350" FontSize="15" FontWeight="SemiBold"
-                                      Grid.Column="1" Margin="0,0,0,0"
-                                      SelectionChanged="SelectedServiceComboBox_SelectionChanged"
-                                      DropDownOpened="ServiceCombo_OnDropDownOpened"
-                                      DropDownClosed="ServiceCombo_OnDropDownClosed"
-                                      ItemsSource="{x:Bind LoadedServiceNames, Mode=OneWay}"
-                                      SelectedIndex="{x:Bind SelectedServiceIndex, Mode=OneWay}" />
-                        </Grid>
-                    </StackPanel>
+							<ComboBox HorizontalAlignment="Right" VerticalAlignment="Center"
+							          Height="48" MinWidth="350" FontSize="15" FontWeight="SemiBold"
+							          Grid.Column="1" Margin="0,0,0,0"
+							          SelectionChanged="SelectedServiceComboBox_SelectionChanged"
+							          DropDownOpened="ServiceCombo_OnDropDownOpened"
+							          DropDownClosed="ServiceCombo_OnDropDownClosed"
+							          ItemsSource="{x:Bind LoadedServiceNames, Mode=OneWay}"
+							          SelectedIndex="{x:Bind SelectedServiceIndex, Mode=OneWay}" />
+						</Grid>
+					</StackPanel>
 
-                    <StackPanel Style="{ThemeResource CardMiddleStyle}"
-                                CornerRadius="{x:Bind ServiceControlsCornerRadius, Mode=OneWay}">
-                        <Grid Margin="5,0,0,0" HorizontalAlignment="Stretch">
-                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" 
-                                       Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/DeviceStatus'), Mode=OneWay}"
-                                       Foreground="{ThemeResource ControlDisplayTextBrush}" />
+					<StackPanel Style="{ThemeResource CardMiddleStyle}"
+					            CornerRadius="{x:Bind ServiceControlsCornerRadius, Mode=OneWay}">
+						<Grid Margin="5,0,0,0" HorizontalAlignment="Stretch">
+							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"
+							           Text="{x:Bind util:Translator.Get.String('/DevicesPage/Titles/DeviceStatus'), Mode=OneWay}"
+							           Foreground="{ThemeResource ControlDisplayTextBrush}" />
 
-                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                                       FontWeight="SemiBold" Text="{x:Bind ServiceStatusText[0], Mode=OneWay}"
-                                       Margin="55,0,0,0" />
+							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+							           FontWeight="SemiBold" Text="{x:Bind ServiceStatusText[0], Mode=OneWay}"
+							           Margin="55,0,0,0" />
 
-                            <SplitButton VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                         CornerRadius="4" Height="35" MinWidth="160" 
-                                         HorizontalAlignment="Right" VerticalAlignment="Top"
-                                         Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/Reconnect'), Mode=OneWay}"
-                                         Click="RefreshServiceButton_Click">
+							<SplitButton VerticalContentAlignment="Center" FontWeight="SemiBold"
+							             CornerRadius="4" Height="35" MinWidth="160"
+							             HorizontalAlignment="Right" VerticalAlignment="Top"
+							             Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/Reconnect'), Mode=OneWay}"
+							             Click="RefreshServiceButton_Click">
 
-                                <SplitButton.Flyout>
-                                    <Flyout Placement="Bottom" x:Name="AlternativeConnectionOptionsFlyout"
-                                            Opening="MenuFlyout_Opening" Closing="MenuFlyout_Closing">
-                                        <Flyout.FlyoutPresenterStyle>
-                                            <Style TargetType="FlyoutPresenter">
-                                                <Setter Property="CornerRadius" Value="8" />
-                                                <Setter Property="Background"
-                                                        Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
-                                            </Style>
-                                        </Flyout.FlyoutPresenterStyle>
+								<SplitButton.Flyout>
+									<Flyout Placement="Bottom" x:Name="AlternativeConnectionOptionsFlyout"
+									        Opening="MenuFlyout_Opening" Closing="MenuFlyout_Closing">
+										<Flyout.FlyoutPresenterStyle>
+											<Style TargetType="FlyoutPresenter">
+												<Setter Property="CornerRadius" Value="8" />
+												<Setter Property="Background"
+												        Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+											</Style>
+										</Flyout.FlyoutPresenterStyle>
 
-                                        <StackPanel Orientation="Vertical">
-                                            <Button CornerRadius="4" Height="35" HorizontalAlignment="Stretch"
-                                                    Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/Disconnect'), Mode=OneWay}"
-                                                    FontWeight="SemiBold" Click="ShutdownServiceButton_Click" />
-                                        </StackPanel>
-                                    </Flyout>
-                                </SplitButton.Flyout>
-                            </SplitButton>
-                        </Grid>
+										<StackPanel Orientation="Vertical">
+											<Button CornerRadius="4" Height="35" HorizontalAlignment="Stretch"
+											        Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/Disconnect'), Mode=OneWay}"
+											        FontWeight="SemiBold" Click="ShutdownServiceButton_Click" />
+										</StackPanel>
+									</Flyout>
+								</SplitButton.Flyout>
+							</SplitButton>
+						</Grid>
 
-                        <Grid Margin="0,5,0,0" HorizontalAlignment="Stretch"
-                              Visibility="{x:Bind ServiceStatusError, Mode=OneWay}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="38" MinWidth="0" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+						<Grid Margin="0,5,0,0" HorizontalAlignment="Stretch"
+						      Visibility="{x:Bind ServiceStatusError, Mode=OneWay}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="38" MinWidth="0" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
 
-                            <Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
-                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                  BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
+							<Grid Background="{ThemeResource ControlDisplayBackgroundBrush}"
+							      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+							      BorderThickness="{ThemeResource ControlExampleDisplayBorderThickness}"
 
-                                  Padding="0,0,5,10" Width="Auto" Grid.Column="0"
-                                  MinHeight="115" Height="Auto" CornerRadius="4">
+							      Padding="0,0,5,10" Width="Auto" Grid.Column="0"
+							      MinHeight="115" Height="Auto" CornerRadius="4">
 
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
-                                           FontWeight="SemiBold" FontFamily="Consolas"
-                                           Text="{x:Bind ServiceStatusText[1], Mode=OneWay}"
-                                           x:Name="TrackingDeviceErrorLabel" Margin="10,7,0,0"
-                                           Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
+								<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+								           FontWeight="SemiBold" FontFamily="Consolas"
+								           Text="{x:Bind ServiceStatusText[1], Mode=OneWay}"
+								           x:Name="TrackingDeviceErrorLabel" Margin="10,7,0,0"
+								           Foreground="{ThemeResource SystemFillColorAttentionBrush}" />
 
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
-                                           FontWeight="SemiBold" Margin="10,30,5,0"
-                                           Text="{x:Bind ServiceStatusText[2], Mode=OneWay}"
-                                           Foreground="{ThemeResource ControlDisplayTextBrush}"
-                                           TextWrapping="WrapWholeWords" />
-                            </Grid>
+								<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+								           FontWeight="SemiBold" Margin="10,30,5,0"
+								           Text="{x:Bind ServiceStatusText[2], Mode=OneWay}"
+								           Foreground="{ThemeResource ControlDisplayTextBrush}"
+								           TextWrapping="WrapWholeWords" />
+							</Grid>
 
-                            <StackPanel Grid.Column="2" Orientation="Vertical">
-                                <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Margin="0,0,0,5" CornerRadius="4"
-                                        Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/ViewDocs'), Mode=OneWay}"
-                                        Click="OpenDocsButton_Click" Height="55" Width="160"
-                                        Style="{ThemeResource AccentButtonStyle}"
-                                        HorizontalAlignment="Right" VerticalAlignment="Top" />
+							<StackPanel Grid.Column="2" Orientation="Vertical">
+								<Button VerticalContentAlignment="Center" FontWeight="SemiBold"
+								        Margin="0,0,0,5" CornerRadius="4"
+								        Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/ViewDocs'), Mode=OneWay}"
+								        Click="OpenDocsButton_Click" Height="55" Width="160"
+								        Style="{ThemeResource AccentButtonStyle}"
+								        HorizontalAlignment="Right" VerticalAlignment="Top" />
 
-                                <Button VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Margin="0,0,0,0" CornerRadius="4"
-                                        Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/JoinDiscord'), Mode=OneWay}"
-                                        Height="55" Width="160" Click="OpenDiscordButton_Click"
-                                        HorizontalAlignment="Right" VerticalAlignment="Top" />
-                            </StackPanel>
-                        </Grid>
-                    </StackPanel>
+								<Button VerticalContentAlignment="Center" FontWeight="SemiBold"
+								        Margin="0,0,0,0" CornerRadius="4"
+								        Content="{x:Bind util:Translator.Get.String('/DevicesPage/Buttons/JoinDiscord'), Mode=OneWay}"
+								        Height="55" Width="160" Click="OpenDiscordButton_Click"
+								        HorizontalAlignment="Right" VerticalAlignment="Top" />
+							</StackPanel>
+						</Grid>
+					</StackPanel>
 
-                    <StackPanel Style="{ThemeResource CardBottomStyle}"
-                                Visibility="{x:Bind ServiceSupportsSettings, Mode=OneWay}">
-                        <ItemsControl ItemsSource="{x:Bind ServiceSettingsPage, Mode=OneWay}" />
-                    </StackPanel>
-                </StackPanel>
+					<StackPanel Style="{ThemeResource CardBottomStyle}"
+					            Visibility="{x:Bind ServiceSupportsSettings, Mode=OneWay}">
+						<ItemsControl ItemsSource="{x:Bind ServiceSettingsPage, Mode=OneWay}" />
+					</StackPanel>
+				</StackPanel>
 
-                <TextBlock
-                    Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/Troubleshooting'), Mode=OneWay}"
-                    FontWeight="SemiBold" FontSize="25" Margin="0,30,0,15">
-                    <TextBlock.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </TextBlock.Transitions>
-                </TextBlock>
+				<TextBlock
+					Text="{x:Bind util:Translator.Get.String('/SettingsPage/Titles/Troubleshooting'), Mode=OneWay}"
+					FontWeight="SemiBold" FontSize="25" Margin="0,30,0,15">
+					<TextBlock.Transitions>
+						<TransitionCollection>
+							<RepositionThemeTransition />
+						</TransitionCollection>
+					</TextBlock.Transitions>
+				</TextBlock>
 
-                <Grid x:Name="TroubleshootingControlsContainerGrid"
-                      HorizontalAlignment="Left" Margin="0,0,0,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+				<Grid x:Name="TroubleshootingControlsContainerGrid"
+				      HorizontalAlignment="Left" Margin="0,0,0,20">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
 
-                    <Grid.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </Grid.Transitions>
+					<Grid.Transitions>
+						<TransitionCollection>
+							<RepositionThemeTransition />
+						</TransitionCollection>
+					</Grid.Transitions>
 
-                    <StackPanel HorizontalAlignment="Stretch"
-                                Grid.Column="0" Orientation="Vertical">
+					<StackPanel HorizontalAlignment="Stretch"
+					            Grid.Column="0" Orientation="Vertical">
 
-                        <Button Height="40" HorizontalAlignment="Stretch"
-                                Padding="20,0" Margin="0,0,35,10"
-                                FontSize="16" FontWeight="SemiBold"
-                                Content="{x:Bind util:Translator.Get.String('/NUX/Replay'), Mode=OneWay}"
-                                Click="ReNUXButton_Click" />
+						<Button Height="40" HorizontalAlignment="Stretch"
+						        Padding="20,0" Margin="0,0,35,10"
+						        FontSize="16" FontWeight="SemiBold"
+						        Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/ReplayManager'), Mode=OneWay}">
+							<Button.Flyout>
+								<Flyout Placement="Full"
+								        x:Key="ReplayManagerFlyout"
+								        Opening="ReplayFlyout_OnOpening"
+								        Closing="ReplayFlyout_OnClosing">
 
-                        <Button Height="40" HorizontalAlignment="Stretch"
-                                Padding="20,0" Margin="0,0,35,10"
-                                FontSize="16" FontWeight="SemiBold"
-                                Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/Reset'), Mode=OneWay}"
-                                Click="ResetButton_Click" />
+									<Flyout.FlyoutPresenterStyle>
+										<Style TargetType="FlyoutPresenter">
+											<Setter Property="MaxHeight" Value="500" />
+											<Setter Property="MaxWidth" Value="820" />
+											<Setter Property="MinWidth" Value="820" />
+											<Setter Property="Margin" Value="30,15,0,0" />
+											<Setter Property="CornerRadius" Value="8" />
+											<Setter Property="Background"
+											        Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+										</Style>
+									</Flyout.FlyoutPresenterStyle>
+									<controls:ReplayManagerControl />
+								</Flyout>
+							</Button.Flyout>
+						</Button>
 
-                        <Button Height="40" HorizontalAlignment="Stretch"
-                                Padding="20,0" Margin="0,0,35,10"
-                                FontSize="16" FontWeight="SemiBold"
-                                Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/ViewLogs'), Mode=OneWay}"
-                                Click="ViewLogsButton_Click" />
-                    </StackPanel>
-                </Grid>
+						<Button Height="40" HorizontalAlignment="Stretch"
+						        Padding="20,0" Margin="0,0,35,10"
+						        FontSize="16" FontWeight="SemiBold"
+						        Content="{x:Bind util:Translator.Get.String('/NUX/Replay'), Mode=OneWay}"
+						        Click="ReNUXButton_Click" />
 
-                <!--Flyout for manifest and reregister errors-->
-                <FlyoutBase.AttachedFlyout>
-                    <Flyout x:Name="SetErrorFlyout" Placement="RightEdgeAlignedBottom"
-                            Opening="MenuFlyout_Opening" Closing="MenuFlyout_Closing">
-                        <Flyout.FlyoutPresenterStyle>
-                            <Style TargetType="FlyoutPresenter">
-                                <Setter Property="CornerRadius" Value="8" />
-                                <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
-                            </Style>
-                        </Flyout.FlyoutPresenterStyle>
+						<Button Height="40" HorizontalAlignment="Stretch"
+						        Padding="20,0" Margin="0,0,35,10"
+						        FontSize="16" FontWeight="SemiBold"
+						        Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/Reset'), Mode=OneWay}"
+						        Click="ResetButton_Click" />
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
+						<Button Height="40" HorizontalAlignment="Stretch"
+						        Padding="20,0" Margin="0,0,35,10"
+						        FontSize="16" FontWeight="SemiBold"
+						        Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/ViewLogs'), Mode=OneWay}"
+						        Click="ViewLogsButton_Click" />
+					</StackPanel>
+				</Grid>
 
-                            <Grid Grid.Row="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+				<!--Flyout for manifest and reregister errors-->
+				<FlyoutBase.AttachedFlyout>
+					<Flyout x:Name="SetErrorFlyout" Placement="RightEdgeAlignedBottom"
+					        Opening="MenuFlyout_Opening" Closing="MenuFlyout_Closing">
+						<Flyout.FlyoutPresenterStyle>
+							<Style TargetType="FlyoutPresenter">
+								<Setter Property="CornerRadius" Value="8" />
+								<Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+							</Style>
+						</Flyout.FlyoutPresenterStyle>
 
-                                <Button FontSize="15" Click="DismissSetErrorButton_Click"
-                                        Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/Error/Dismiss'), Mode=OneWay}"
-                                        VerticalContentAlignment="Center" FontWeight="SemiBold"
-                                        Margin="5,10,0,0" CornerRadius="4" Grid.Column="1"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" />
-                            </Grid>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*" />
+								<RowDefinition Height="*" />
+							</Grid.RowDefinitions>
 
-                            <TextBlock FontSize="15" HorizontalAlignment="Stretch"
-                                       x:Name="SetErrorFlyoutText"
-                                       VerticalAlignment="Stretch"
-                                       Grid.Row="0" FontWeight="SemiBold"
-                                       Style="{ThemeResource BaseTextBlockStyle}"
-                                       Text="[NO CONTENT SET]" />
+							<Grid Grid.Row="1">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
 
-                        </Grid>
-                    </Flyout>
-                </FlyoutBase.AttachedFlyout>
+								<Button FontSize="15" Click="DismissSetErrorButton_Click"
+								        Content="{x:Bind util:Translator.Get.String('/SettingsPage/Buttons/Error/Dismiss'), Mode=OneWay}"
+								        VerticalContentAlignment="Center" FontWeight="SemiBold"
+								        Margin="5,10,0,0" CornerRadius="4" Grid.Column="1"
+								        HorizontalAlignment="Stretch"
+								        VerticalAlignment="Stretch" />
+							</Grid>
 
-            </StackPanel>
+							<TextBlock FontSize="15" HorizontalAlignment="Stretch"
+							           x:Name="SetErrorFlyoutText"
+							           VerticalAlignment="Stretch"
+							           Grid.Row="0" FontWeight="SemiBold"
+							           Style="{ThemeResource BaseTextBlockStyle}"
+							           Text="[NO CONTENT SET]" />
 
-        </ScrollViewer>
+						</Grid>
+					</Flyout>
+				</FlyoutBase.AttachedFlyout>
 
-    </Grid>
+			</StackPanel>
 
+		</ScrollViewer>
+
+	</Grid>
 </Page>

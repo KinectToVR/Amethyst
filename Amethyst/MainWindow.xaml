@@ -315,9 +315,51 @@
 			<Grid Grid.Row="0" Opacity="{x:Bind BoolToOpacity(CanShowNoticeBar), Mode=OneWay}"
 			      Visibility="{x:Bind CanShowNoticeBar, Mode=OneWay}">
 				<InfoBar x:Name="NoticeInfoBar" Opacity="0.0"
-				         Closing="NoticeInfoBar_Closing"
+				         Closing="InfoBar_Closing"
 				         IsOpen="False" IsClosable="False" Margin="3,0,3,3"
 				         Severity="Warning" Title="?????" Message="?????">
+					<InfoBar.OpacityTransition>
+						<ScalarTransition />
+					</InfoBar.OpacityTransition>
+				</InfoBar>
+				<Grid.OpacityTransition>
+					<ScalarTransition />
+				</Grid.OpacityTransition>
+			</Grid>
+
+			<Grid Grid.Row="0" Opacity="{x:Bind BoolToOpacity(CanShowEmulationBar), Mode=OneWay}"
+			      Visibility="{x:Bind CanShowEmulationBar, Mode=OneWay}">
+				<InfoBar Opacity="0.0" Closing="InfoBar_Closing" IsClosable="False" x:Name="EmulationBar"
+				         IsOpen="{x:Bind ShowEmulationBar}" Margin="3,0,3,3" Severity="Informational" 
+				         Title="{x:Bind util:Translator.Get.String('/Main/InfoBars/Emulation/Title'), Mode=OneWay}" 
+				         Message="{x:Bind util:Translator.Get.String('/Main/InfoBars/Emulation/Message'), Mode=OneWay}" >
+
+					<InfoBar.ActionButton>
+						<Button HorizontalAlignment="Right" Click="HeadsetCalibrationButton_OnClick"
+						        Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Calibration/Begin'), Mode=OneWay}" />
+					</InfoBar.ActionButton>
+
+					<InfoBar.OpacityTransition>
+						<ScalarTransition />
+					</InfoBar.OpacityTransition>
+				</InfoBar>
+				<Grid.OpacityTransition>
+					<ScalarTransition />
+				</Grid.OpacityTransition>
+			</Grid>
+
+			<Grid Grid.Row="0" Opacity="{x:Bind BoolToOpacity(CanShowPlaybackBar), Mode=OneWay}"
+			      Visibility="{x:Bind CanShowPlaybackBar, Mode=OneWay}">
+				<InfoBar Opacity="0.0" Closing="InfoBar_Closing" IsClosable="False" 
+				         IsOpen="{x:Bind ShowPlaybackBar}" Margin="3,0,3,3" Severity="Informational" 
+				         Title="{x:Bind PlaybackTitle, Mode=OneWay}" 
+				         Message="{x:Bind util:Translator.Get.String('/Main/InfoBars/Playback/Message'), Mode=OneWay}" >
+
+					<InfoBar.ActionButton>
+						<Button HorizontalAlignment="Right" Click="StopPlaybackButton_OnClick"
+						        Content="{x:Bind util:Translator.Get.String('/Main/InfoBars/Playback/Stop'), Mode=OneWay}" />
+					</InfoBar.ActionButton>
+
 					<InfoBar.OpacityTransition>
 						<ScalarTransition />
 					</InfoBar.OpacityTransition>
@@ -330,12 +372,14 @@
 			<InfoBar x:Name="RelayActiveInfoBar" Grid.Row="1" Opacity="1.0"
 			         IsOpen="{x:Bind ShowRelayActiveInfoBar, Mode=OneWay}"
 			         IsClosable="{x:Bind RelayActiveInfoBarClosable, Mode=OneWay}"
-			         Margin="3,-5,3,3" Severity="Informational"
+			         Margin="3,-5,3,3" 
+					 Severity="{x:Bind RelayActiveBarSeverity, Mode=OneWay}"
 			         Title="{x:Bind RelayActiveInfoBarTitle, Mode=OneWay}"
 			         Message="{x:Bind RelayActiveInfoBarContent, Mode=OneWay}">
 
 				<InfoBar.ActionButton>
 					<Button HorizontalAlignment="Right" Click="RelayBarButton_Click"
+							Visibility="{x:Bind ShowRelayActiveInfoBarButton, Mode=OneWay}"
 					        Content="{x:Bind RelayActiveInfoBarButtonContent, Mode=OneWay}" />
 				</InfoBar.ActionButton>
 

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
 using AmethystSupport;
+using LibMMD;
 
 namespace Amethyst.Classes;
 
@@ -157,11 +158,11 @@ public static class Main
             var updateLowerBody = !(Interfacing.IsTrackingFrozen && AppData.Settings.FreezeLowerBodyOnly);
 
             // Update the [server] trackers
-            await AppPlugins.CurrentServiceEndpoint.UpdateTrackerPoses(
-                AppData.Settings.TrackersVector.Where(tracker => tracker.IsActive)
-                    .Where(x => (int)TypeUtils.TrackerTypeJointDictionary[x.Role] < 16 || updateLowerBody)
-                    .Select(tracker => tracker.GetTrackerBase(
-                        tracker.PositionTrackingFilterOption, tracker.OrientationTrackingFilterOption)).ToList(),
+            await AppPlugins.CurrentServiceEndpoint.UpdateTrackerPoses(Interfacing.ReplayManager.GetTrackersOr(
+                    AppData.Settings.TrackersVector.Where(tracker => tracker.IsActive)
+                        .Where(x => (int)TypeUtils.TrackerTypeJointDictionary[x.Role] < 16 || updateLowerBody)
+                        .Select(tracker => tracker.GetTrackerBase(
+                            tracker.PositionTrackingFilterOption, tracker.OrientationTrackingFilterOption)).ToList()),
                 false, token);
         }
 
@@ -581,6 +582,9 @@ public static class Main
                         }
                     // Update service endpoints for relay mode instead
                     else AppPlugins.CurrentServiceEndpoint?.Heartbeat();
+
+                    // If we're recording the tracking data, mark the loop time
+                    Interfacing.ReplayManager.MarkLoopTime();
 
                     // Wait until certain loop time has passed
                     var diffTicks = vrFrameRate - loopStopWatch.ElapsedTicks;

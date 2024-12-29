@@ -73,7 +73,7 @@ public class TrackingDevice : INotifyPropertyChanged
 
     // Joints' list / you need to (should) update at every update() call
     // Each must have its own role or _Manual to force user's manual set
-    public List<TrackedJoint> TrackedJoints => Device.TrackedJoints.ToList();
+    public List<TrackedJoint> TrackedJoints => Interfacing.ReplayManager.GetJointsOr(Guid, Device.TrackedJoints.ToList());
 
     public (LocalisationFileJson Root, string Directory) LocalizationResourcesRoot { get; set; }
 
@@ -84,7 +84,7 @@ public class TrackingDevice : INotifyPropertyChanged
     // along with joint devices
     // -> will lead to global tracking loss notification
     //    if set to false at runtime some-when
-    public bool IsSkeletonTracked => Device.IsSkeletonTracked;
+    public bool IsSkeletonTracked => Interfacing.ReplayManager.GetTrackingStateOr(Guid, Device.IsSkeletonTracked);
 
     // Should be set up at construction
     // This will tell Amethyst to disable all position filters on joints managed by this plugin

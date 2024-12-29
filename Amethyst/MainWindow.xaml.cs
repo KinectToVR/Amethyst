@@ -153,14 +153,35 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen &&
         !ReloadInfoBar.IsOpen;
 
+    private bool CanShowEmulationBar =>
+        !PluginsUninstallInfoBar.IsOpen && !PluginsInstallInfoBar.IsOpen &&
+        !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
+        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen &&
+        !ReloadInfoBar.IsOpen && !NoticeInfoBar.IsOpen;
+
+    private bool CanShowPlaybackBar =>
+        !PluginsUninstallInfoBar.IsOpen && !PluginsInstallInfoBar.IsOpen &&
+        !UpdateDownloadingInfoBar.IsOpen && !UpdateInfoBar.IsOpen &&
+        !PluginsUpdatePendingInfoBar.IsOpen && !PluginsUpdateInfoBar.IsOpen &&
+        !ReloadInfoBar.IsOpen && !NoticeInfoBar.IsOpen && !EmulationBar.IsOpen;
+
     private bool ShowRelayActiveInfoBar =>
         AppPlugins.CurrentServiceEndpoint.Guid is "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY" || Interfacing.RelayBarOverride is not null;
 
+    private bool ShowEmulationBar => AppData.Settings.TrackersVector.Any(x => x.Role is TrackerType.TrackerHead && x.IsActive) &&
+                                     AppPlugins.CurrentServiceEndpoint?.HeadsetPoseInternal?.Orientation is not null;
+
+    private string PlaybackTitle => Interfacing.LocalizedJsonString("/Main/InfoBars/Playback/Title")
+        .Format(string.IsNullOrEmpty(Interfacing.ReplayManager.RecordingName) ? "" : Interfacing.ReplayManager.RecordingName);
+
+    private bool ShowPlaybackBar => Interfacing.ReplayManager.IsPlaying;
     private bool ServiceIsRelay => AppPlugins.CurrentServiceEndpoint.Guid is "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
     private bool RelayActiveInfoBarClosable => Interfacing.RelayBarOverride?.Closable ?? false;
     private string RelayActiveInfoBarTitle => Interfacing.RelayBarOverride?.Title ?? "Amethyst running in relay mode!"; // TODO translate
     private string RelayActiveInfoBarContent => Interfacing.RelayBarOverride?.Content ?? "All available devices will be forwarded to the receiver.";
     private string RelayActiveInfoBarButtonContent => Interfacing.RelayBarOverride?.Button ?? "Relay Settings";
+    private bool ShowRelayActiveInfoBarButton => Interfacing.RelayBarOverride?.Click is not null;
+    private InfoBarSeverity RelayActiveBarSeverity => RelayActiveInfoBarClosable ? InfoBarSeverity.Informational : InfoBarSeverity.Warning;
 
     // MVVM stuff
     public event PropertyChangedEventHandler PropertyChanged;
@@ -1930,10 +1951,11 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         EulaFlyout.Hide();
     }
 
-    private void NoticeInfoBar_Closing(InfoBar sender, InfoBarClosingEventArgs args)
+    private void InfoBar_Closing(InfoBar sender, InfoBarClosingEventArgs args)
     {
-        NoticeInfoBar.Opacity = 0.0;
-        NoticeInfoBar.IsOpen = false;
+        if (sender is null) return;
+        sender.Opacity = 0.0;
+        sender.IsOpen = false;
     }
 
     private void RelayBarButton_Click(object sender, RoutedEventArgs e)
@@ -1941,7 +1963,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Invoke);
         if (Interfacing.RelayBarOverride is not null)
         {
-            Interfacing.RelayBarOverride?.Click();
+            Interfacing.RelayBarOverride?.Click?.Invoke();
             return; // Don't proceed further
         }
 
@@ -1951,5 +1973,15 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         Shared.Main.NavigateToPage("settings",
             new EntranceNavigationTransitionInfo());
+    }
+
+    private void HeadsetCalibrationButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void StopPlaybackButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
     }
 }

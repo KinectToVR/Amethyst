@@ -9,9 +9,9 @@ namespace Amethyst.Utils;
 public static class AsyncUtils
 {
     /// <summary>
-    ///     Executes an async Task<T> method which has a void return value synchronously
+    ///     Executes an async TaskT method which has a void return value synchronously
     /// </summary>
-    /// <param name="task">Task<T> method to execute</param>
+    /// <param name="task">TaskT method to execute</param>
     public static void RunSync(Func<Task> task)
     {
         var oldContext = SynchronizationContext.Current;

@@ -36,6 +36,7 @@ using Microsoft.Windows.AppLifecycle;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+using System.Text;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

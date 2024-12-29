@@ -1073,4 +1073,14 @@ public sealed partial class Settings : Page, INotifyPropertyChanged
     {
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
     }
+
+    private void ReplayFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
+    }
+
+    private void ReplayFlyout_OnOpening(object sender, object e)
+    {
+        AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+    }
 }

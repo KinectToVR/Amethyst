@@ -176,6 +176,206 @@ public static class TypeUtils
         { TrackedJointType.JointManual, TrackedJointType.JointManual }
     };
 
+    public static SortedDictionary<TrackerType, string> TrackerTypeMmdDictionary = new()
+    {
+        { TrackerType.TrackerHanded, "他" },
+        { TrackerType.TrackerLeftFoot, "左足首" },
+        { TrackerType.TrackerRightFoot, "右足首" },
+        { TrackerType.TrackerLeftShoulder, "左腕" },
+        { TrackerType.TrackerRightShoulder, "右腕" },
+        { TrackerType.TrackerLeftElbow, "左ひじ" },
+        { TrackerType.TrackerRightElbow, "右ひじ" },
+        { TrackerType.TrackerLeftKnee, "左ひざ" },
+        { TrackerType.TrackerRightKnee, "右ひざ" },
+        { TrackerType.TrackerWaist, "下半身" },
+        { TrackerType.TrackerChest, "上半身" },
+        { TrackerType.TrackerCamera, "Ｃａｍ" },
+        { TrackerType.TrackerKeyboard, "Ｋｅｙ" },
+        { TrackerType.TrackerHead, "頭" },
+        { TrackerType.TrackerLeftHand, "左手首" },
+        { TrackerType.TrackerRightHand, "右手首" }
+    };
+
+    public static SortedDictionary<TrackedJointType, string> JointTypeMmdDictionary = new()
+    {
+        { TrackedJointType.JointHead, "頭" },
+        { TrackedJointType.JointNeck, "首" },
+        { TrackedJointType.JointSpineShoulder, "上半身腕" },
+        { TrackedJointType.JointShoulderLeft, "左腕" },
+        { TrackedJointType.JointElbowLeft, "左ひじ" },
+        { TrackedJointType.JointWristLeft, "左手首" },
+        { TrackedJointType.JointHandLeft, "左手" },
+        { TrackedJointType.JointHandTipLeft, "左手先端" },
+        { TrackedJointType.JointThumbLeft, "左親指１" },
+        { TrackedJointType.JointShoulderRight, "右腕" },
+        { TrackedJointType.JointElbowRight, "右ひじ" },
+        { TrackedJointType.JointWristRight, "右手首" },
+        { TrackedJointType.JointHandRight, "右手" },
+        { TrackedJointType.JointHandTipRight, "右手先端" },
+        { TrackedJointType.JointThumbRight, "右親指１" },
+        { TrackedJointType.JointSpineMiddle, "上半身" },
+        { TrackedJointType.JointSpineWaist, "下半身" },
+        { TrackedJointType.JointHipLeft, "左足" },
+        { TrackedJointType.JointKneeLeft, "左ひざ" },
+        { TrackedJointType.JointFootLeft, "左足首" },
+        { TrackedJointType.JointFootTipLeft, "左つま先ＩＫ" },
+        { TrackedJointType.JointHipRight, "右足" },
+        { TrackedJointType.JointKneeRight, "右ひざ" },
+        { TrackedJointType.JointFootRight, "右足首" },
+        { TrackedJointType.JointFootTipRight, "右つま先ＩＫ" },
+        { TrackedJointType.JointManual, "他" }
+    };
+
+    public static SortedDictionary<string, TrackerType> MmdTrackerTypeDictionary = new()
+    {
+        { "他", TrackerType.TrackerHanded },
+        { "左足首", TrackerType.TrackerLeftFoot },
+        { "右足首", TrackerType.TrackerRightFoot },
+        { "左腕", TrackerType.TrackerLeftShoulder },
+        { "右腕", TrackerType.TrackerRightShoulder },
+        { "左ひじ", TrackerType.TrackerLeftElbow },
+        { "右ひじ", TrackerType.TrackerRightElbow },
+        { "左ひざ", TrackerType.TrackerLeftKnee },
+        { "右ひざ", TrackerType.TrackerRightKnee },
+        { "下半身", TrackerType.TrackerWaist },
+        { "上半身", TrackerType.TrackerChest },
+        { "Ｃａｍ", TrackerType.TrackerCamera },
+        { "Ｋｅｙ", TrackerType.TrackerKeyboard },
+        { "頭", TrackerType.TrackerHead },
+        { "左手首", TrackerType.TrackerLeftHand },
+        { "右手首", TrackerType.TrackerRightHand }
+    };
+
+    public static SortedDictionary<string, TrackedJointType> MmdJointTypeDictionary = new()
+    {
+        { "頭", TrackedJointType.JointHead },
+        { "首", TrackedJointType.JointNeck },
+        { "上半身腕", TrackedJointType.JointSpineShoulder },
+        { "左腕", TrackedJointType.JointShoulderLeft },
+        { "左ひじ", TrackedJointType.JointElbowLeft },
+        { "左手首", TrackedJointType.JointWristLeft },
+        { "左手", TrackedJointType.JointHandLeft },
+        { "左手先端", TrackedJointType.JointHandTipLeft },
+        { "左親指１", TrackedJointType.JointThumbLeft },
+        { "右腕", TrackedJointType.JointShoulderRight },
+        { "右ひじ", TrackedJointType.JointElbowRight },
+        { "右手首", TrackedJointType.JointWristRight },
+        { "右手", TrackedJointType.JointHandRight },
+        { "右手先端", TrackedJointType.JointHandTipRight },
+        { "右親指１", TrackedJointType.JointThumbRight },
+        { "上半身", TrackedJointType.JointSpineMiddle },
+        { "下半身", TrackedJointType.JointSpineWaist },
+        { "左足", TrackedJointType.JointHipLeft },
+        { "左ひざ", TrackedJointType.JointKneeLeft },
+        { "左足首", TrackedJointType.JointFootLeft },
+        { "左つま先ＩＫ", TrackedJointType.JointFootTipLeft },
+        { "右足", TrackedJointType.JointHipRight },
+        { "右ひざ", TrackedJointType.JointKneeRight },
+        { "右足首", TrackedJointType.JointFootRight },
+        { "右つま先ＩＫ", TrackedJointType.JointFootTipRight },
+        { "他", TrackedJointType.JointManual }
+    };
+
+    public static SortedDictionary<TrackerType, string> TrackerTypeMmdDictionaryInternal = new()
+    {
+        { TrackerType.TrackerHanded, ".0" },
+        { TrackerType.TrackerLeftFoot, ".1" },
+        { TrackerType.TrackerRightFoot, ".2" },
+        { TrackerType.TrackerLeftShoulder, ".3" },
+        { TrackerType.TrackerRightShoulder, ".4" },
+        { TrackerType.TrackerLeftElbow, ".5" },
+        { TrackerType.TrackerRightElbow, ".6" },
+        { TrackerType.TrackerLeftKnee, ".7" },
+        { TrackerType.TrackerRightKnee, ".8" },
+        { TrackerType.TrackerWaist, ".9" },
+        { TrackerType.TrackerChest, ".A" },
+        { TrackerType.TrackerCamera, ".B" },
+        { TrackerType.TrackerKeyboard, ".C" },
+        { TrackerType.TrackerHead, ".D" },
+        { TrackerType.TrackerLeftHand, ".E" },
+        { TrackerType.TrackerRightHand, ".F" }
+    };
+
+    public static SortedDictionary<TrackedJointType, string> JointTypeMmdDictionaryInternal = new()
+    {
+        { TrackedJointType.JointHead, ".0" },
+        { TrackedJointType.JointNeck, ".1" },
+        { TrackedJointType.JointSpineShoulder, ".2" },
+        { TrackedJointType.JointShoulderLeft, ".3" },
+        { TrackedJointType.JointElbowLeft, ".4" },
+        { TrackedJointType.JointWristLeft, ".5" },
+        { TrackedJointType.JointHandLeft, ".6" },
+        { TrackedJointType.JointHandTipLeft, ".7" },
+        { TrackedJointType.JointThumbLeft, ".8" },
+        { TrackedJointType.JointShoulderRight, ".9" },
+        { TrackedJointType.JointElbowRight, ".A" },
+        { TrackedJointType.JointWristRight, ".B" },
+        { TrackedJointType.JointHandRight, ".C" },
+        { TrackedJointType.JointHandTipRight, ".D" },
+        { TrackedJointType.JointThumbRight, ".E" },
+        { TrackedJointType.JointSpineMiddle, ".F" },
+        { TrackedJointType.JointSpineWaist, ".G" },
+        { TrackedJointType.JointHipLeft, ".H" },
+        { TrackedJointType.JointKneeLeft, ".I" },
+        { TrackedJointType.JointFootLeft, ".J" },
+        { TrackedJointType.JointFootTipLeft, ".K" },
+        { TrackedJointType.JointHipRight, ".L" },
+        { TrackedJointType.JointKneeRight, ".M" },
+        { TrackedJointType.JointFootRight, ".N" },
+        { TrackedJointType.JointFootTipRight, ".O" },
+        { TrackedJointType.JointManual, ".P" }
+    };
+
+    public static SortedDictionary<string, TrackerType> MmdTrackerTypeDictionaryInternal = new()
+    {
+        { ".0", TrackerType.TrackerHanded },
+        { ".1", TrackerType.TrackerLeftFoot },
+        { ".2", TrackerType.TrackerRightFoot },
+        { ".3", TrackerType.TrackerLeftShoulder },
+        { ".4", TrackerType.TrackerRightShoulder },
+        { ".5", TrackerType.TrackerLeftElbow },
+        { ".6", TrackerType.TrackerRightElbow },
+        { ".7", TrackerType.TrackerLeftKnee },
+        { ".8", TrackerType.TrackerRightKnee },
+        { ".9", TrackerType.TrackerWaist },
+        { ".A", TrackerType.TrackerChest },
+        { ".B", TrackerType.TrackerCamera },
+        { ".C", TrackerType.TrackerKeyboard },
+        { ".D", TrackerType.TrackerHead },
+        { ".E", TrackerType.TrackerLeftHand },
+        { ".F", TrackerType.TrackerRightHand }
+    };
+
+    public static SortedDictionary<string, TrackedJointType> MmdJointTypeDictionaryInternal = new()
+    {
+        { ".0", TrackedJointType.JointHead },
+        { ".1", TrackedJointType.JointNeck },
+        { ".2", TrackedJointType.JointSpineShoulder },
+        { ".3", TrackedJointType.JointShoulderLeft },
+        { ".4", TrackedJointType.JointElbowLeft },
+        { ".5", TrackedJointType.JointWristLeft },
+        { ".6", TrackedJointType.JointHandLeft },
+        { ".7", TrackedJointType.JointHandTipLeft },
+        { ".8", TrackedJointType.JointThumbLeft },
+        { ".9", TrackedJointType.JointShoulderRight },
+        { ".A", TrackedJointType.JointElbowRight },
+        { ".B", TrackedJointType.JointWristRight },
+        { ".C", TrackedJointType.JointHandRight },
+        { ".D", TrackedJointType.JointHandTipRight },
+        { ".E", TrackedJointType.JointThumbRight },
+        { ".F", TrackedJointType.JointSpineMiddle },
+        { ".G", TrackedJointType.JointSpineWaist },
+        { ".H", TrackedJointType.JointHipLeft },
+        { ".I", TrackedJointType.JointKneeLeft },
+        { ".J", TrackedJointType.JointFootLeft },
+        { ".K", TrackedJointType.JointFootTipLeft },
+        { ".L", TrackedJointType.JointHipRight },
+        { ".M", TrackedJointType.JointKneeRight },
+        { ".N", TrackedJointType.JointFootRight },
+        { ".O", TrackedJointType.JointFootTipRight },
+        { ".P", TrackedJointType.JointManual }
+    };
+
     public static SortedSet<string> ProtectedPluginGuidSet =
     [
         "K2VRTEAM-AME2-APII-DVCE-DVCEKINECTV1",

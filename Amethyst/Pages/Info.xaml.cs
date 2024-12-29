@@ -20,6 +20,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using Windows.ApplicationModel.DataTransfer;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -191,9 +192,22 @@ public sealed partial class Info : Page, INotifyPropertyChanged
 
                 try
                 {
-                    SetCommandText((await CSharpScript.EvaluateAsync(((TextBox)sender).Text["eval ".Length..].Trim(),
+                    var text = (await CSharpScript.EvaluateAsync(((TextBox)sender).Text["eval ".Length..].Trim(),
                         ScriptOptions.Default.WithImports("Amethyst.Classes")
-                            .WithReferences(typeof(Interfacing).Assembly).AddImports("System.Linq"))).ToString());
+                            .WithReferences(typeof(Interfacing).Assembly).AddImports("System.Linq"))).ToString();
+
+                    SetCommandText(text);
+
+                    try
+                    {
+                        var clipboardData = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
+                        clipboardData.SetText(text);
+                        Clipboard.SetContent(clipboardData);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                    }
                 }
                 catch (Exception ex)
                 {

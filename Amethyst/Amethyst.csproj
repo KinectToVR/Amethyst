@@ -68,6 +68,7 @@
 		<PackageReference Include="System.ComponentModel.Composition" Version="8.0.0" />
 		<PackageReference Include="System.ComponentModel.Composition.Registration" Version="8.0.0" />
 		<PackageReference Include="System.Reflection.MetadataLoadContext" Version="8.0.0" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="4.0.1" />
 		<PackageReference Include="WinUI.Fluent.Icons" Version="1.0.2" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
@@ -105,6 +106,7 @@
 		<None Remove="Controls\JointSettingsExpander.xaml" />
 		<None Remove="Controls\LoadAttemptedPluginsView.xaml" />
 		<None Remove="Controls\OverrideExpander.xaml" />
+		<None Remove="Controls\ReplayManagerControl.xaml" />
 		<None Remove="Installer\Controls\TitleControl.xaml" />
 		<None Remove="Installer\Views\SetupDevices.xaml" />
 		<None Remove="Installer\Views\SetupError.xaml" />
@@ -243,6 +245,11 @@
 		<Page Remove="$(ProjectDir)\Plugins\**\*.pri" />
 		<Compile Remove="$(ProjectDir)\Plugins\**\*.pri" />
 		<None Include="$(ProjectDir)\Plugins\**\*.pri" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\ReplayManagerControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 	<ProjectExtensions>
 		<VisualStudio>

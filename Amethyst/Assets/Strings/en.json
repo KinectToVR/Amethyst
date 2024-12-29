@@ -2048,6 +2048,66 @@
         {
             "id": "/InputActions/Picker/Options/Disabled",
             "translation": "Disabled"
+        },
+        {
+            "id": "/Main/InfoBars/Emulation/Title",
+            "translation": "Headset emulation active"
+        },
+        {
+            "id": "/Main/InfoBars/Emulation/Message",
+            "translation": "Click 'Calibrate' to set up pose correction"
+        },
+        {
+            "id": "/Main/InfoBars/Playback/Title",
+            "translation": "{0} is playing"
+        },
+        {
+            "id": "/Main/InfoBars/Playback/Message",
+            "translation": "Amethyst is using tracking data from a recording"
+        },
+        {
+            "id": "/Main/InfoBars/Playback/Stop",
+            "translation": "Stop"
+        },
+        {
+            "id": "/Recordings/Picker/Options/New",
+            "translation": "New recording"
+        },
+        {
+            "id": "/SettingsPage/Placeholders/NewRecording",
+            "translation": "New Tracking Replay"
+        },
+        {
+            "id": "/Recordings/Buttons/Play",
+            "translation": "Play"
+        },
+        {
+            "id": "/Recordings/Buttons/Export",
+            "translation": "Export"
+        },
+        {
+            "id": "/Recordings/Buttons/Remove",
+            "translation": "Remove"
+        },
+        {
+            "id": "/Recordings/Buttons/Record",
+            "translation": "Record"
+        },
+        {
+            "id": "/Recordings/Picker/NoSelection",
+            "translation": "Click on one of the saved recordings to preview it.\nYou'll be able to adjust, play, or delete it forever."
+        },
+        {
+            "id": "/Recordings/Title/NoSelection",
+            "translation": "No selection"
+        },
+        {
+            "id": "/SettingsPage/Buttons/ReplayManager",
+            "translation": "Manage tracking recordings"
+        },
+        {
+            "id": "/Recordings/Buttons/SettingUp",
+            "translation": "Setting up..."
         }
     ]
 }

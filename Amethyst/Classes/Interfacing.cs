@@ -38,6 +38,8 @@ public static class Interfacing
     // App crash check
     public static FileInfo CrashFile;
 
+    public static readonly ReplayManager ReplayManager = new();
+
     // Update check
     public static bool
         UpdateFound = false,

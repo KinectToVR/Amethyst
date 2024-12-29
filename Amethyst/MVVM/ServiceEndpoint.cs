@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -113,7 +114,10 @@ public class ServiceEndpoint(string name, string guid, string path, Version vers
     // Get the absolute pose of the HMD, calibrated against the play space
     // Return null if unknown to the service or unavailable
     // You'll need to provide this to support automatic calibration
-    public (Vector3 Position, Quaternion Orientation)? HeadsetPose => Service.HeadsetPose;
+    public (Vector3 Position, Quaternion Orientation)? HeadsetPose =>
+        AppData.Settings.TrackersVector.Any(x => x.Role is TrackerType.TrackerHead && x.IsActive) ? null : Service.HeadsetPose;
+
+    public (Vector3 Position, Quaternion Orientation)? HeadsetPoseInternal => Service.HeadsetPose;
 
     // Hot reload handler
     public FileSystemWatcher AssetsWatcher { get; set; }
