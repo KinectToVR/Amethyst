@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -243,10 +244,13 @@ public class TrackingDevice : INotifyPropertyChanged
         return v1 && v2 ? 1.0 : 0.0;
     }
 
-    private void TrackedJoints_CollectionChanged(object sender, object e)
+    private void TrackedJoints_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
+        if (Guid.Contains("KINECT") && Device.TrackedJoints.Count > 0) return;
         Shared.Main.DispatcherQueue.TryEnqueue(() =>
         {
+            Logger.Info($"Joints changed in {Guid}! Old: {e.OldItems?.Count} New: {e.NewItems?.Count}");
+
             // Stop the pose composer for now
             lock (UpdateLock)
             {
