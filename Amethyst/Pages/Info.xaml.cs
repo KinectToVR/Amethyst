@@ -217,9 +217,48 @@ public sealed partial class Info : Page, INotifyPropertyChanged
                 return; // Nothing else to do!
             }
 
+            if (((TextBox)sender).Text.ToLowerInvariant().StartsWith("play "))
+            {
+                var name = ((TextBox)sender).Text["play ".Length..].Trim();
+                Logger.Info($"Trying to play \"{name}\"...");
+
+                try
+                {
+                    var recording = Interfacing.ReplayManager.Recordings.FirstOrDefault(x => x.Name == name || x.FolderName == name);
+                    if (recording is null)
+                    {
+                        SetCommandText($"Not found: {name}");
+                        return;
+                    }
+
+                    _ = Task.Run(async () => await Interfacing.ReplayManager.Play(recording));
+                    SetCommandText($"Started playback of: {name}");
+                }
+                catch (Exception ex)
+                {
+                    SetCommandText($"Evaluation error: '{ex}'");
+                }
+
+                return; // Nothing else to do!
+            }
+
             // Parse the passed command now
             switch (((TextBox)sender).Text.ToLowerInvariant())
             {
+                case "stop":
+                {
+                    if (Interfacing.ReplayManager.IsPlaying)
+                    {
+                        SetCommandText($"Stopped playback of {Interfacing.ReplayManager.RecordingName}");
+                        Interfacing.ReplayManager.Cancel();
+                    }
+                    else
+                    {
+                        SetCommandText("No recording to stop playback of");
+                    }
+
+                    break;
+                }
                 case "alltrackers" or "all trackers" or "all":
                 {
                     // De-spawn all supported-enabled trackers

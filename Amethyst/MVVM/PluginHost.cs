@@ -382,7 +382,40 @@ public class PluginHost(string guid) : IAmethystHost
 
     public string Eval(string code)
     {
-        // Exit with a custom message to be shown by the crash handler
+        // Play a recording
+        if (code.ToLowerInvariant().StartsWith("play "))
+        {
+            var name = code["play ".Length..].Trim();
+            Logger.Info($"Trying to play \"{name}\"...");
+
+            try
+            {
+                var recording = Interfacing.ReplayManager.Recordings
+                    .FirstOrDefault(x => x.Name == name || x.FolderName == name);
+
+                if (recording is null) return $"Not found: {name}";
+
+                _ = Task.Run(async () => await Interfacing.ReplayManager.Play(recording));
+                return $"Started playback of: {name}";
+            }
+            catch (Exception ex)
+            {
+                return $"Evaluation error: '{ex}'";
+            }
+        }
+
+        // Stop playback
+        if (code is "stop")
+        {
+            if (!Interfacing.ReplayManager.IsPlaying) 
+                return "No recording to stop playback of";
+
+            Interfacing.ReplayManager.Cancel();
+            return $"Stopped playback of {Interfacing.ReplayManager.RecordingName}";
+
+        }
+
+        // Evaluate code using CSharpScript
         Logger.Info($"Trying to evaluate expression \"{code.Trim()}\"...");
         return CSharpScript.EvaluateAsync(code.Trim(), ScriptOptions.Default.WithImports("Amethyst.Classes")
             .WithReferences(typeof(Interfacing).Assembly).AddImports("System.Linq")).GetAwaiter().GetResult().ToString();

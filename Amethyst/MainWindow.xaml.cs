@@ -126,6 +126,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
     [Export(typeof(IAmethystHost))] private IAmethystHost AmethystPluginHost { get; set; }
 
+    private double EmulationBarOpacity => ShowEmulationBar ? 1.0 : 0.0;
+
     private bool CanShowPluginsUpdatePendingBar => !PluginsUpdateInfoBar.IsOpen;
 
     private bool CanShowUpdateBar =>

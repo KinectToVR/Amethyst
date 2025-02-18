@@ -303,11 +303,11 @@
         },
         {
             "id": "/GeneralPage/Captions/OtherErrors/Line1",
-            "translation": "You have additional device errors!"
+            "translation": "Other devices report status errors!"
         },
         {
             "id": "/GeneralPage/Captions/OtherErrors/Line2",
-            "translation": "Click here to inspect them now"
+            "translation": "Click here to view them"
         },
         {
             "id": "/GeneralPage/Labels/Inferred",
@@ -1879,7 +1879,7 @@
         },
         {
             "id": "/NUX/CaptureTip/Content",
-            "translation": "Amethyst can now automatically capture positions when you're standing still, and move forward on its own. Toggle this and try it!"
+            "translation": "Amethyst can now automatically capture positions when you're standing still, and move forward on its own. Here, give it a try!"
         },
         {
             "id": "/Installer/Views/SetupError/Continue",
@@ -2055,7 +2055,7 @@
         },
         {
             "id": "/Main/InfoBars/Emulation/Message",
-            "translation": "Click 'Calibrate' to set up pose correction"
+            "translation": "Use calibration to set up pose transform correction if needed"
         },
         {
             "id": "/Main/InfoBars/Playback/Title",
@@ -2108,6 +2108,30 @@
         {
             "id": "/Recordings/Buttons/SettingUp",
             "translation": "Setting up..."
+        },
+        {
+            "id": "/GeneralPage/Calibration/Subs/RotationOnly",
+            "translation": "Rotation only"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/RotationOnly/Top",
+            "translation": "Calibration is running in rotation-only mode because Amethyst is not receiving any positional headset tracking data."
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/RotationOnly/Bottom",
+            "translation": "If this is a mistake, please verify your setup and try again."
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Orientation/Stand",
+            "translation": "Please stand still!"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Orientation/LookAt/Kinect",
+            "translation": "Look at the Kinect!"
+        },
+        {
+            "id": "/GeneralPage/Calibration/Captions/Orientation/LookAt/Other",
+            "translation": "Face the direction\nof your playspace!"
         }
     ]
 }

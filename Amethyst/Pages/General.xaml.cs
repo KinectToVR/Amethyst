@@ -28,6 +28,8 @@ using Microsoft.UI.Xaml.Shapes;
 using static Amethyst.Classes.Shared.TeachingTips;
 using Path = System.IO.Path;
 using WinRT;
+using Windows.Devices.Sensors;
+using Amethyst.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -40,6 +42,8 @@ namespace Amethyst.Pages;
 public sealed partial class General : Page, INotifyPropertyChanged
 {
     public static bool IsPreviewActive { get; set; }
+    private bool CalibrationRotationOnly { get; set; }
+    private bool CalibrationNormalMode => !CalibrationRotationOnly;
 
     private static string _calibratingDeviceGuid = "";
     private bool _autoCalibrationStillPending;
@@ -445,18 +449,26 @@ public sealed partial class General : Page, INotifyPropertyChanged
         // Play a sound
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
 
+        // Used as head position override -> calibrate
+        var headOverride = AppData.Settings.TrackersVector.Any(
+            x => x.Role is TrackerType.TrackerHead && x.IsActive &&
+                 ((x.IsOverridden && x.IsPositionOverridden && x.ManagingDeviceGuid == node.Guid) ||
+                  (!x.IsPositionOverridden && AppData.Settings.TrackingDeviceGuid == node.Guid)));
+
         // If auto-calibration is not supported, proceed straight to manual
         // Test: supports if the device provides a head joint / otherwise not
-        if (node.TrackedJoints.Any(x => x.Role == TrackedJointType.JointHead))
+        if (node.TrackedJoints.Any(x => x.Role == TrackedJointType.JointHead) || headOverride)
         {
             // If manual calibration is not supported, proceed straight to automatic
-            if (AppPlugins.CurrentServiceEndpoint.HeadsetPose != null &&
-                AppPlugins.CurrentServiceEndpoint.ControllerInputActions is null) ExecuteAutomaticCalibration();
+            if ((AppPlugins.CurrentServiceEndpoint.HeadsetPose != null &&
+                 AppPlugins.CurrentServiceEndpoint.ControllerInputActions is null) ||
+                headOverride) ExecuteAutomaticCalibration();
+
             return; // Else open the selection pane
         }
 
         // Still here? the test must have failed then
-        Logger.Info($"Device ({node.Name}, {node.Guid}) does not provide a {TrackedJointType.JointHead}" +
+        Logger.Info($"Device ({node.Name}, {node.Guid}) does not provide a {TrackedJointType.JointHead} " +
                     "and can't be calibrated with automatic calibration! Proceeding to manual now...");
 
         // Open the pane and start the calibration
@@ -497,6 +509,258 @@ public sealed partial class General : Page, INotifyPropertyChanged
         DiscardAutoCalibrationButton.Content =
             Interfacing.LocalizedJsonString("/GeneralPage/Buttons/Abort");
 
+        if (CalibrationRotationOnly)
+            // Rotation-only calibration
+            await _CalibrateAutomaticRotation();
+        else
+            // Actual automatic calibration
+            await _CalibrateAutomatic();
+
+        // Reset by re-reading the settings if aborted
+        if (!_calibrationPending)
+        {
+            lock (Interfacing.UpdateLock)
+            {
+                AppData.Settings.ReadSettings();
+                AppData.Settings.CheckSettings();
+            }
+
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationAborted);
+        }
+        // Else save I guess
+        else
+        {
+            AppData.Settings.SaveSettings();
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
+        }
+
+        // Notify that we're finished
+        CalibrationCountdownLabel.Text = "~";
+        CalibrationInstructionsLabel.Text =
+            Interfacing.LocalizedJsonString(_calibrationPending
+                ? "/GeneralPage/Calibration/Captions/Done"
+                : "/GeneralPage/Calibration/Captions/Aborted");
+
+        await Task.Delay(2200);
+
+        // Exit the pane
+        CalibrationDeviceSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
+        CalibrationDeviceSelectView.IsPaneOpen = false;
+
+        CalibrationModeSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
+        CalibrationModeSelectView.IsPaneOpen = false;
+
+        CalibrationRunningView.DisplayMode = SplitViewDisplayMode.Overlay;
+        CalibrationRunningView.IsPaneOpen = false;
+
+        AllowNavigation(true);
+        Interfacing.CurrentAppState = "general";
+
+        NoSkeletonTextNotice.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoSkeletonText");
+
+        _calibrationPending = false; // We're finished
+        _autoCalibrationStillPending = false;
+
+        AppData.Settings.SkeletonPreviewEnabled = _showSkeletonPrevious; // Change to whatever
+        SetSkeletonVisibility(_showSkeletonPrevious); // Change to whatever
+    }
+
+    private async Task _CalibrateAutomaticRotation()
+    {
+        // Head joint position with HMD orientation
+        (Vector3 Position, Quaternion Orientation) headHmdPose = (Vector3.Zero, Quaternion.Identity);
+
+        // Reset the origin
+        AppData.Settings.DeviceCalibrationOrigins[_calibratingDeviceGuid] = Vector3.Zero;
+
+        // Setup helper variables
+        await Task.Delay(1000);
+
+        // Wait for the user to move
+        CalibrationInstructionsLabel.Text =
+            Interfacing.LocalizedJsonString("/GeneralPage/Calibration/Captions/Orientation/Stand");
+
+        if (AppData.Settings.PoseCaptureAutomatic)
+        {
+            // Stability capture mode - wait until stable enough
+            var signaledStabilityOnce = false;
+            var moveController = new JointStabilityDetector();
+
+            while (_calibrationPending)
+            {
+                var neutralBrush = Application.Current
+                    .Resources["NoThemeColorSolidColorBrushOpposite"].As<SolidColorBrush>();
+                var accentBrush = Application.Current
+                    .Resources["SystemFillColorAttentionBrush"].As<SolidColorBrush>();
+                var stability = moveController.Update(Interfacing
+                    .DeviceHookJointPosition.ValueOr(_calibratingDeviceGuid).Position);
+
+                PointCaptureStabilityBorder.BorderThickness = new Thickness(
+                    stability.Map(0.0, 0.9, 4.0, 20.0));
+                PointCaptureStabilityBorder.BorderBrush = neutralBrush
+                    .Blend(accentBrush, stability); // Make the border more colorful too
+
+                switch (stability)
+                {
+                    case > 0.9 when !signaledStabilityOnce:
+                        AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
+                        signaledStabilityOnce = true;
+                        break;
+                    case < 0.3 when signaledStabilityOnce:
+                        signaledStabilityOnce = false;
+                        break;
+                }
+
+                if (stability > 0.95)
+                    break; // End the loop
+
+                await Task.Delay(100);
+            }
+        }
+        else
+        {
+            // Standard capture mode - wait 3 seconds
+            for (var i = 3; i >= 0; i--)
+            {
+                if (!_calibrationPending) break; // Check for exiting
+
+                // Update the countdown label
+                CalibrationCountdownLabel.Text = i.ToString();
+
+                // Exit if aborted
+                if (!_calibrationPending) break;
+
+                // Play a nice sound - tick / move
+                if (i > 0) // Don't play the last one!
+                    AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
+
+                await Task.Delay(1000);
+                if (!_calibrationPending) break; // Check for exiting
+            }
+        }
+
+        CalibrationInstructionsLabel.Text = Interfacing.LocalizedJsonString(
+            $"/GeneralPage/Calibration/Captions/Orientation/" +
+            $"LookAt/{(_calibratingDeviceGuid.Contains("KINECT") ? "Kinect" : "Other")}");
+
+        if (AppData.Settings.PoseCaptureAutomatic)
+        {
+            // Stability capture mode - wait until moved at least 0.5m
+            var signaledStabilityOnce = false;
+            var moveController = new JointStabilityDetector();
+
+            while (_calibrationPending)
+            {
+                var neutralBrush = Application.Current
+                    .Resources["NoThemeColorSolidColorBrushOpposite"].As<SolidColorBrush>();
+                var accentBrush = Application.Current
+                    .Resources["SystemFillColorAttentionBrush"].As<SolidColorBrush>();
+                var stability = moveController.Update(Interfacing
+                    .Plugins.GetHmdPose.Orientation.EulerAngles());
+
+                PointCaptureStabilityBorder.BorderThickness = new Thickness(
+                    stability.Map(0.0, 0.9, 4.0, 20.0));
+                PointCaptureStabilityBorder.BorderBrush = neutralBrush
+                    .Blend(accentBrush, stability); // Make the border more colorful too
+
+                switch (stability)
+                {
+                    case > 0.9 when !signaledStabilityOnce:
+                        AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
+                        signaledStabilityOnce = true;
+                        break;
+                    case < 0.3 when signaledStabilityOnce:
+                        signaledStabilityOnce = false;
+                        break;
+                }
+
+                if (stability > 0.95)
+                {
+                    // Add the position and break the loop
+                    headHmdPose = (AppData.Settings.TrackersVector.FirstOrDefault(
+                                       x => x.Role is TrackerType.TrackerHead && x.IsActive, null)?.Position ??
+                                   Vector3.Zero, Interfacing.Plugins.GetHmdPose.Orientation);
+
+                    CalibrationInstructionsLabel.Text = Interfacing.LocalizedJsonString(
+                        "/GeneralPage/Calibration/Captions/Captured");
+
+                    break;
+                }
+
+                await Task.Delay(100);
+            }
+        }
+        else
+        {
+            // Standard capture mode - wait 3 seconds
+            for (var i = 3; i >= 0; i--)
+            {
+                if (!_calibrationPending) break; // Check for exiting
+
+                // Update the countdown label
+                CalibrationCountdownLabel.Text = i.ToString();
+
+                switch (i)
+                {
+                    // Play a nice sound - tick / stand (w/o the last one!)
+                    case > 0:
+                        AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationTick);
+                        break;
+
+                    // Capture user's position at t_end-1, update the label text
+                    case 0:
+                        headHmdPose = (AppData.Settings.TrackersVector.FirstOrDefault(
+                                           x => x.Role is TrackerType.TrackerHead && x.IsActive, null)?.Position ??
+                                       Vector3.Zero, Interfacing.Plugins.GetHmdPose.Orientation);
+
+                        CalibrationInstructionsLabel.Text = Interfacing.LocalizedJsonString(
+                            "/GeneralPage/Calibration/Captions/Captured");
+                        break;
+                }
+
+                await Task.Delay(1000);
+                if (!_calibrationPending) break; // Check for exiting
+            }
+        }
+
+        // Exit if aborted
+        if (_calibrationPending)
+        {
+            // Play a nice sound - tick / captured
+            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationPointCaptured);
+
+            await Task.Delay(1000);
+        }
+
+        // Bring back the standard stability border (optional)
+        PointCaptureStabilityBorder.BorderThickness = new Thickness(_calibrationPending ? 20 : 4);
+        PointCaptureStabilityBorder.BorderBrush = _calibrationPending
+            ? Application.Current.Resources["SystemFillColorAttentionBrush"].As<SolidColorBrush>()
+            : new SolidColorBrush(Application.Current.Resources["SystemFillColorCritical"].As<Color>());
+
+        // Do the actual calibration after capturing points
+        if (_calibrationPending)
+        {
+            // Calibrate (AmethystSupport/CLI)
+            var (translation, rotation) = (
+                new Vector3(0f, 1.7f, 0f) - headHmdPose.Position,
+                Quaternion.CreateFromYawPitchRoll(
+                    Support.QuaternionYaw(headHmdPose.Orientation.Projected()), 0, 0));
+
+            Logger.Info("Automatic orientation calibration concluded!\n" +
+                        $"Head position: {headHmdPose.Position}\n" +
+                        $"HMD orientation: {headHmdPose.Orientation}\n" +
+                        $"Recovered t: {translation}\n" +
+                        $"Recovered R: {rotation}");
+
+            AppData.Settings.DeviceCalibrationRotationMatrices[_calibratingDeviceGuid] = rotation;
+            AppData.Settings.DeviceCalibrationTranslationVectors[_calibratingDeviceGuid] = translation;
+            AppData.Settings.DeviceCalibrationOrigins[_calibratingDeviceGuid] = Vector3.Zero;
+        }
+    }
+
+    private async Task _CalibrateAutomatic()
+    {
         // Reset the origin
         AppData.Settings.DeviceCalibrationOrigins[_calibratingDeviceGuid] = Vector3.Zero;
 
@@ -690,54 +954,6 @@ public sealed partial class General : Page, INotifyPropertyChanged
             AppData.Settings.DeviceCalibrationTranslationVectors[_calibratingDeviceGuid] = translation;
             AppData.Settings.DeviceCalibrationOrigins[_calibratingDeviceGuid] = Vector3.Zero;
         }
-
-        // Reset by re-reading the settings if aborted
-        if (!_calibrationPending)
-        {
-            lock (Interfacing.UpdateLock)
-            {
-                AppData.Settings.ReadSettings();
-                AppData.Settings.CheckSettings();
-            }
-
-            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationAborted);
-        }
-        // Else save I guess
-        else
-        {
-            AppData.Settings.SaveSettings();
-            AppSounds.PlayAppSound(AppSounds.AppSoundType.CalibrationComplete);
-        }
-
-        // Notify that we're finished
-        CalibrationCountdownLabel.Text = "~";
-        CalibrationInstructionsLabel.Text =
-            Interfacing.LocalizedJsonString(_calibrationPending
-                ? "/GeneralPage/Calibration/Captions/Done"
-                : "/GeneralPage/Calibration/Captions/Aborted");
-
-        await Task.Delay(2200);
-
-        // Exit the pane
-        CalibrationDeviceSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
-        CalibrationDeviceSelectView.IsPaneOpen = false;
-
-        CalibrationModeSelectView.DisplayMode = SplitViewDisplayMode.Overlay;
-        CalibrationModeSelectView.IsPaneOpen = false;
-
-        CalibrationRunningView.DisplayMode = SplitViewDisplayMode.Overlay;
-        CalibrationRunningView.IsPaneOpen = false;
-
-        AllowNavigation(true);
-        Interfacing.CurrentAppState = "general";
-
-        NoSkeletonTextNotice.Text = Interfacing.LocalizedJsonString("/GeneralPage/Captions/Preview/NoSkeletonText");
-
-        _calibrationPending = false; // We're finished
-        _autoCalibrationStillPending = false;
-
-        AppData.Settings.SkeletonPreviewEnabled = _showSkeletonPrevious; // Change to whatever
-        SetSkeletonVisibility(_showSkeletonPrevious); // Change to whatever
     }
 
     private void CalibrationPointsNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
@@ -869,13 +1085,18 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 AppPlugins.CurrentServiceEndpoint.HeadsetPose != null)
             {
                 // If manual calibration is not supported, proceed straight to automatic
-                if (AppPlugins.CurrentServiceEndpoint.ControllerInputActions is null) ExecuteAutomaticCalibration();
+                if (AppPlugins.CurrentServiceEndpoint.ControllerInputActions is null ||
+                    AppData.Settings.TrackersVector.Any( // The device is managing JointHead -> calibrate
+                        x => x.Role is TrackerType.TrackerHead && x.IsActive && !x.IsOverridden &&
+                             x.ManagingDeviceGuid == _calibratingDeviceGuid))
+                    ExecuteAutomaticCalibration();
+
                 return; // Else open the selection pane
             }
 
             // Still here? the test must have failed then
             Logger.Info($"Device ({trackingDevice.Name}, {trackingDevice.Guid}) " +
-                        $"does not provide a {TrackedJointType.JointHead}" +
+                        $"does not provide a {TrackedJointType.JointHead} " +
                         "and can't be calibrated with automatic calibration! Proceeding to manual now...");
 
             // Open the pane and start the calibration
@@ -1367,10 +1588,19 @@ public sealed partial class General : Page, INotifyPropertyChanged
                 joints.ForEach(x => x.Position = (x.Position - waistPose) with { Z = 3.0f });
             }
 
+#if DEBUG
+            // Okay to do this here => the preview is forced on calibration
+            StartAutoCalibrationButton.IsEnabled =
+                (CalibrationRotationOnly
+                    ? AppPlugins.CurrentServiceEndpoint.HeadsetPose?.Orientation is not null
+                    : trackingDevice.IsSkeletonTracked)
+                && !_calibrationPending && !_autoCalibrationStillPending;
+#else
             // Okay to do this here => the preview is forced on calibration
             StartAutoCalibrationButton.IsEnabled =
                 trackingDevice.IsSkeletonTracked
-                && !_calibrationPending && !_autoCalibrationStillPending;
+                  && !_calibrationPending && !_autoCalibrationStillPending;
+#endif
 
             if (!trackingDevice.IsSkeletonTracked)
             {
@@ -1836,7 +2066,19 @@ public sealed partial class General : Page, INotifyPropertyChanged
 
     private void ExecuteAutomaticCalibration()
     {
-        // Setup the calibration image : reset and stop
+        CalibrationRotationOnly = // Set up automatic calibration mode
+            AppPlugins.CurrentServiceEndpoint.HeadsetPose is not null &&
+            AppPlugins.CurrentServiceEndpoint.HeadsetPose.Value.Position == Vector3.Zero &&
+            AppPlugins.CurrentServiceEndpoint.HeadsetPose.Value.Orientation != Quaternion.Zero &&
+            AppData.Settings.TrackersVector.Any(x =>
+                x.Role is TrackerType.TrackerHead && x.IsActive &&
+                ((x.IsOverridden && x.IsPositionOverridden && x.ManagingDeviceGuid == _calibratingDeviceGuid) ||
+                 (!x.IsPositionOverridden && AppData.Settings.TrackingDeviceGuid == _calibratingDeviceGuid)));
+
+        OnPropertyChanged("CalibrationRotationOnly");
+        OnPropertyChanged("CalibrationNormalMode");
+
+        // Set up the calibration image : reset and stop
         CalibrationPreviewMediaElement.MediaPlayer.Position = TimeSpan.Zero;
         CalibrationPreviewMediaElement.MediaPlayer.Pause();
 

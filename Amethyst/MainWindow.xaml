@@ -329,15 +329,16 @@
 
 			<Grid Grid.Row="0" Opacity="{x:Bind BoolToOpacity(CanShowEmulationBar), Mode=OneWay}"
 			      Visibility="{x:Bind CanShowEmulationBar, Mode=OneWay}">
-				<InfoBar Opacity="0.0" Closing="InfoBar_Closing" IsClosable="False" x:Name="EmulationBar"
-				         IsOpen="{x:Bind ShowEmulationBar}" Margin="3,0,3,3" Severity="Informational" 
+				<InfoBar Opacity="{x:Bind EmulationBarOpacity, Mode=OneWay}" Closing="InfoBar_Closing" 
+				         IsClosable="False" x:Name="EmulationBar" Severity="Informational" 
+				         IsOpen="{x:Bind ShowEmulationBar, Mode=OneWay}" Margin="3,0,3,3" 
 				         Title="{x:Bind util:Translator.Get.String('/Main/InfoBars/Emulation/Title'), Mode=OneWay}" 
 				         Message="{x:Bind util:Translator.Get.String('/Main/InfoBars/Emulation/Message'), Mode=OneWay}" >
 
-					<InfoBar.ActionButton>
+					<!--<InfoBar.ActionButton>
 						<Button HorizontalAlignment="Right" Click="HeadsetCalibrationButton_OnClick"
 						        Content="{x:Bind util:Translator.Get.String('/GeneralPage/Buttons/Calibration/Begin'), Mode=OneWay}" />
-					</InfoBar.ActionButton>
+					</InfoBar.ActionButton>-->
 
 					<InfoBar.OpacityTransition>
 						<ScalarTransition />

@@ -115,7 +115,10 @@ public class ServiceEndpoint(string name, string guid, string path, Version vers
     // Return null if unknown to the service or unavailable
     // You'll need to provide this to support automatic calibration
     public (Vector3 Position, Quaternion Orientation)? HeadsetPose =>
-        AppData.Settings.TrackersVector.Any(x => x.Role is TrackerType.TrackerHead && x.IsActive) ? null : Service.HeadsetPose;
+        AppData.Settings.TrackersVector.Any(x => x.Role is TrackerType.TrackerHead && x.IsActive) &&
+        Service.HeadsetPose?.Position != Vector3.Zero
+            ? null
+            : Service.HeadsetPose;
 
     public (Vector3 Position, Quaternion Orientation)? HeadsetPoseInternal => Service.HeadsetPose;
 

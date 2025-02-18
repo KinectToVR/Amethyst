@@ -167,7 +167,7 @@ public class AppSettings : INotifyPropertyChanged
     public bool CameraPreviewEnabled { get; set; } = false;
 
     // Save the calibration mode type
-    public bool PoseCaptureAutomatic { get; set; } = false;
+    public bool PoseCaptureAutomatic { get; set; } = true;
 
     // Save the calibration mode type tip state
     public bool PoseCaptureTipShown { get; set; } = false;

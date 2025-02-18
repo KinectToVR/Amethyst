@@ -195,7 +195,8 @@ public static class AppPlugins
                 CurrentServiceEndpoint.ControllerInputActions != null ||
                 // Or when automatic calibration *should be* available
                 (CurrentServiceEndpoint.HeadsetPose != null &&
-                 currentDevice.TrackedJoints.Any(x => x.Role == TrackedJointType.JointHead))
+                 (currentDevice.TrackedJoints.Any(x => x.Role == TrackedJointType.JointHead) ||
+                  AppData.Settings.TrackersVector.Any(x => x.Role is TrackerType.TrackerHead && x.IsActive)))
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
