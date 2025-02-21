@@ -150,6 +150,28 @@ stages:
             displayName: Publish Amethyst - Signed
             artifact: signed
 
+          - task: VSBuild@1
+            displayName: Build (publish) Amethyst - Unpackaged
+            inputs:
+              platform: "$(buildPlatform)"
+              solution: "$(solution)"
+              configuration: "$(buildConfiguration)"
+              msbuildArgs:
+                '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=false
+                /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml
+                /p:WindowsPackageType=None /p:IncludeNativeLibrariesForSelfExtract=true'
+
+          - task: CopyFiles@2
+            displayName: Pack Amethyst - Unpackaged
+            inputs:
+              Contents: 'Amethyst\bin\$(buildPlatform)\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\**'
+              TargetFolder: '$(Build.ArtifactStagingDirectory)\pack'
+              preserveTimestamp: true
+
+          - publish: "$(Build.ArtifactStagingDirectory)/pack"
+            displayName: Publish Amethyst - Unpackaged
+            artifact: pack
+
   - stage: Stage
     dependsOn: Build
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
