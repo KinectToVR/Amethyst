@@ -191,7 +191,7 @@ public class AppSettings : INotifyPropertyChanged
     public bool FirstShutdownTipShown { get; set; } = false;
 
     // Disable/Enable optional data
-    public bool IsTelemetryEnabled { get; set; } = true;
+    public bool IsTelemetryEnabled { get; set; } = false;
 
     [JsonIgnore]
     public string SelectedTrackingDeviceGuid

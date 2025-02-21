@@ -104,30 +104,6 @@ stages:
             displayName: Import the signing certificate
 
           - task: VSBuild@1
-            displayName: Build (publish) Amethyst - Unsigned
-            inputs:
-              platform: "$(buildPlatform)"
-              solution: "$(solution)"
-              configuration: "$(buildConfiguration)"
-              msbuildArgs:
-                '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true
-                /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml
-                /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\"
-                /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=false'
-
-          - task: CopyFiles@2
-            displayName: Pack Amethyst - Unsigned
-            inputs:
-              SourceFolder: 'Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test'
-              Contents: "Amethyst_$(packageVersion)_$(buildPlatform).msix"
-              TargetFolder: $(Build.ArtifactStagingDirectory)
-              preserveTimestamp: true
-
-          - publish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform).msix"
-            displayName: Publish Amethyst - Unsigned
-            artifact: pack
-
-          - task: VSBuild@1
             displayName: Build (publish) Amethyst - Signed
             inputs:
               platform: "$(buildPlatform)"
@@ -160,41 +136,52 @@ stages:
                 '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=false
                 /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml
                 /p:WindowsPackageType=None /p:IncludeNativeLibrariesForSelfExtract=true'
-                
+
           - task: ArchiveFiles@2
             inputs:
               rootFolderOrFile: 'Amethyst\bin\$(buildPlatform)\$(buildConfiguration)\net7.0\win10-$(buildPlatform)'
               includeRootFolder: false
-              archiveType: 'zip'
-              archiveFile: '$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_Unpackaged.zip'
-              
+              archiveType: "zip"
+              archiveFile: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_Unpackaged.zip"
+
           - publish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_Unpackaged.zip"
             displayName: Publish Amethyst - Unpackaged
             artifact: unpack
 
-  - stage: Stage
-    dependsOn: Build
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-    jobs:
-      - job: Artifacts
-        variables:
-          packageVersion: $[ stageDependencies.Build.Publish.outputs['ParseAppxManifest.PackageVersion'] ]
-        steps:
-          - checkout: self
-            persistCredentials: "true"
-
-          - download: current
-            displayName: Download published artifacts
-            artifact: signed
-
           - task: GitHubRelease@1
             inputs:
-              gitHubConnection: 'github.com_KimihikoAkayasaki'
+              gitHubConnection: "github.com_KimihikoAkayasaki"
               repositoryName: KinectToVR/Amethyst
-              action: 'edit'
-              tagSource: 'userSpecifiedTag'
+              action: "edit"
+              tagSource: "userSpecifiedTag"
               tag: artifact
-              releaseNotesInline: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, then [Amethyst itself](https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest)  \n(Note: The cert import is one-time, no need to redo it each time) \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
+              releaseNotesSource: "inline"
+              releaseNotesInline: "# Testing Setup (Unpackaged)  \n### 1. Download the `__Unpackaged` .zip file and extract anywhere\n(Note: No shared AppData is used, it will be forwarded to inside the extracted folder) \n\n### 2. Run `Amethyst.exe` and reregister the driver\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)\n\n# Testing Setup (Packaged)  \n### 1. Install the testing certificate, then Amethyst (MSIX)  \n(Note: The cert import is one-time, no need to redo it each time) \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
               isPreRelease: true
-              changeLogCompareToRelease: 'lastFullRelease'
-              changeLogType: 'commitBased' 
+              changeLogCompareToRelease: "lastFullRelease"
+              changeLogType: "commitBased"
+              assets: "$(Build.ArtifactStagingDirectory)/*"
+
+          - task: VSBuild@1
+            displayName: Build (publish) Amethyst - Unsigned
+            inputs:
+              platform: "$(buildPlatform)"
+              solution: "$(solution)"
+              configuration: "$(buildConfiguration)"
+              msbuildArgs:
+                '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true
+                /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml
+                /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\"
+                /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=false'
+
+          - task: CopyFiles@2
+            displayName: Pack Amethyst - Unsigned
+            inputs:
+              SourceFolder: 'Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test'
+              Contents: "Amethyst_$(packageVersion)_$(buildPlatform).msix"
+              TargetFolder: $(Build.ArtifactStagingDirectory)
+              preserveTimestamp: true
+
+          - publish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform).msix"
+            displayName: Publish Amethyst - Unsigned
+            artifact: pack
