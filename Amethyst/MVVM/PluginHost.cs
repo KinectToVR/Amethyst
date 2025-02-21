@@ -23,7 +23,6 @@ using Amethyst.Plugins.Contract;
 using Amethyst.Schedulers;
 using Amethyst.Utils;
 using AmethystSupport;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 using RestSharp;
@@ -1344,7 +1343,6 @@ public static partial class CollectionExtensions
             }
             catch (CompositionException e)
             {
-                Crashes.TrackError(e); // Composition exception
                 if (fileInfo.Name.StartsWith("plugin"))
                     Logger.Error($"Loading {fileInfo} failed with a composition exception: " +
                                  $"Message: {e.Message}\nErrors occurred: {e.Errors}\nPossible causes: {e.RootCauses}");
@@ -1364,9 +1362,6 @@ public static partial class CollectionExtensions
             }
             catch (Exception e)
             {
-                if ((e as ReflectionTypeLoadException)?.LoaderExceptions.FirstOrDefault() is not
-                    FileNotFoundException) Crashes.TrackError(e); // Only send unknown exceptions
-
                 if (fileInfo.Name.StartsWith("plugin"))
                 {
                     List<string> dependencies = [];

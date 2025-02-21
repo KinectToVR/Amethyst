@@ -342,8 +342,7 @@
 					<TextBlock FontWeight="ExtraLight" TextWrapping="Wrap" MaxWidth="440" Margin="0,7,0,0"
 					           Text="{x:Bind util:Translator.Get.String('/InfoPage/Telemetry/Switch'), Mode=OneWay}" />
 
-					<ToggleSwitch FontWeight="SemiBold" Toggled="TelemetryToggleSwitch_Toggled"
-					              IsOn="{x:Bind classes:AppData.Settings.IsTelemetryEnabled, Mode=TwoWay}"
+					<ToggleSwitch FontWeight="SemiBold" IsOn="False" IsEnabled="False"
 					              OnContent="{x:Bind util:Translator.Get.String('/InfoPage/Telemetry/Toggle/On'), Mode=OneWay}"
 					              OffContent="{x:Bind util:Translator.Get.String('/InfoPage/Telemetry/Toggle/Off'), Mode=OneWay}" />
 				</StackPanel>

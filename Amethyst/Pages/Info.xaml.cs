@@ -11,8 +11,6 @@ using Windows.System;
 using Amethyst.Classes;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.UI.Xaml;
@@ -471,9 +469,6 @@ public sealed partial class Info : Page, INotifyPropertyChanged
         if (!_infoPageLoadedOnce) return;
         AppData.Settings.IsTelemetryEnabled = (sender as ToggleSwitch)?.IsOn ?? true;
         AppData.Settings.SaveSettings(); // Save our made changes
-
-        await Analytics.SetEnabledAsync(AppData.Settings.IsTelemetryEnabled);
-        await Crashes.SetEnabledAsync(AppData.Settings.IsTelemetryEnabled);
 
         AppSounds.PlayAppSound(AppData.Settings.IsTelemetryEnabled
             ? AppSounds.AppSoundType.ToggleOn

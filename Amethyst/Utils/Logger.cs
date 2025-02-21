@@ -4,7 +4,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Microsoft.AppCenter.Crashes;
 
 namespace Amethyst.Utils;
 
@@ -62,8 +61,6 @@ public static partial class Logger
             $"Exception occurred! {exception.GetType().Name} " +
             $"in {exception.Source}: {exception.Message}\n{exception.StackTrace}",
             "E", lineNumber, filePath, memberName), ConsoleColor.Red);
-
-        Crashes.TrackError(exception);
     }
 
     public static void Error(object obj, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",
@@ -85,8 +82,6 @@ public static partial class Logger
             $"Exception occurred! {exception.GetType().Name} " +
             $"in {exception.Source}: {exception.Message}\n{exception.StackTrace}",
             "F", lineNumber, filePath, memberName), ConsoleColor.DarkRed);
-
-        Crashes.TrackError(exception);
     }
 
     public static void Fatal(object obj, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "",

@@ -29,8 +29,6 @@ using Amethyst.Pages;
 using Amethyst.Plugins.Contract;
 using Amethyst.Schedulers;
 using Amethyst.Utils;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
@@ -356,7 +354,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     catch (CompositionException e)
                     {
-                        Crashes.TrackError(e); // Composition exception
                         Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                      "failed with a local (plugin-wise) MEF exception: " +
                                      $"Message: {e.Message}\nErrors occurred: {e.Errors}\n" +
@@ -379,7 +376,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     catch (Exception e)
                     {
-                        Crashes.TrackError(e); // Other exception
                         Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                      "failed with an exception, probably some of its dependencies are missing. " +
                                      $"Message: {e.Message}, Trace: {e.StackTrace}");
@@ -590,7 +586,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     catch (CompositionException e)
                     {
-                        Crashes.TrackError(e); // Composition exception
                         Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                      "failed with a local (plugin-wise) MEF exception: " +
                                      $"Message: {e.Message}\nErrors occurred: {e.Errors}\n" +
@@ -613,7 +608,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     }
                     catch (Exception e)
                     {
-                        Crashes.TrackError(e); // Other exception
                         Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                      "failed with an exception, probably some of its dependencies are missing. " +
                                      $"Message: {e.Message}, Trace: {e.StackTrace}");
@@ -716,7 +710,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 catch (Exception e)
                 {
                     // Add the device to the 'attempted' list, mark as unknown
-                    Crashes.TrackError(e); // Other, outer MEF container exception
                     Logger.Error($"Loading plugin ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                  "failed with a global outer caught exception. " +
                                  $"Provided exception Message: {e.Message}, Trace: {e.StackTrace}");
@@ -751,7 +744,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         }
         catch (CompositionException e)
         {
-            Crashes.TrackError(e); // Other, outer MEF builder exception
             Logger.Error("Loading plugins failed with a global MEF exception: " +
                          $"Message: {e.Message}\nErrors occurred: {e.Errors}\n" +
                          $"Possible causes: {e.RootCauses}\nTrace: {e.StackTrace}");
@@ -958,20 +950,6 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
 
         // Update the UI
         AppPlugins.UpdateTrackingDevicesInterface();
-
-        // Log our used device to the telemetry module
-        Analytics.TrackEvent("TrackingDevice", new Dictionary<string, string>
-            { { "Guid", AppData.Settings.TrackingDeviceGuid } });
-
-        // Log our used service to the telemetry module
-        Analytics.TrackEvent("ServiceEndpoint", new Dictionary<string, string>
-            { { "Guid", AppData.Settings.ServiceEndpointGuid } });
-
-        // Log our used overrides to the telemetry module
-        Analytics.TrackEvent("OverrideDevices", new Dictionary<string, string>(
-            AppData.Settings.OverrideDevicesGuidMap
-                .Select(x => new KeyValuePair<string, string>(
-                    $"Guid{AppData.Settings.OverrideDevicesGuidMap.ToList().IndexOf(x)}", x))));
 
         // Send a non-dismissible tip about reloading the app
         static void OnWatcherOnChanged(object o, FileSystemEventArgs fileSystemEventArgs)

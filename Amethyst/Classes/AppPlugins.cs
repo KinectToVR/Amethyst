@@ -10,7 +10,6 @@ using Amethyst.Installer.ViewModels;
 using Amethyst.MVVM;
 using Amethyst.Plugins.Contract;
 using Amethyst.Utils;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -536,7 +535,6 @@ public static class AppPlugins
                         }
                         catch (Exception e)
                         {
-                            Crashes.TrackError(e); // Other, outer MEF builder exception
                             Logger.Error($"Removing remote plugin {removedDevice.Key} failed with an exception: " +
                                          $"Message: {e.Message}\nErrors occurred: {e.InnerException}\n" +
                                          $"Possible causes: {e.Source}\nTrace: {e.StackTrace}");
@@ -599,7 +597,6 @@ public static class AppPlugins
                         }
                         catch (Exception e)
                         {
-                            Crashes.TrackError(e); // Other, outer MEF builder exception
                             Logger.Error($"Replacing remote plugin {replacedDevice.Key} failed with an exception: " +
                                          $"Message: {e.Message}\nErrors occurred: {e.InnerException}\n" +
                                          $"Possible causes: {e.Source}\nTrace: {e.StackTrace}");
@@ -662,7 +659,6 @@ public static class AppPlugins
                         }
                         catch (Exception e)
                         {
-                            Crashes.TrackError(e); // Other, outer MEF builder exception
                             Logger.Error($"Adding remote plugin {addedDevice.Key} failed with an exception: " +
                                          $"Message: {e.Message}\nErrors occurred: {e.InnerException}\n" +
                                          $"Possible causes: {e.Source}\nTrace: {e.StackTrace}");
@@ -672,7 +668,6 @@ public static class AppPlugins
         }
         catch (Exception e)
         {
-            Crashes.TrackError(e); // Other, outer MEF builder exception
             Logger.Error("Reloading remote plugins failed with an exception: " +
                          $"Message: {e.Message}\nErrors occurred: {e.InnerException}\n" +
                          $"Possible causes: {e.Source}\nTrace: {e.StackTrace}");

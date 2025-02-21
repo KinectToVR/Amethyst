@@ -971,11 +971,11 @@
         },
         {
             "id": "/InfoPage/Telemetry/Notice",
-            "translation": "Amethyst uses Microsoft App Center to collect anonymous data which helps us with app development and troubleshooting major bugs. \nInformation sent to App Center is anonymous and free of any user or contextual data. Additionally, you can disable sending it at any time."
+            "translation": "Great news! Amethyst doesn't use Microsoft App Center to collect telemetry data anymore. We don't collect any data from you!"
         },
         {
             "id": "/InfoPage/Telemetry/Switch",
-            "translation": "Toggle the switch below to disable/enable sending anything to App Center."
+            "translation": "Toggling the switch below won't do anything, it's here to assert our everlasting supremacy and make you love us even more. 💖"
         },
         {
             "id": "/InfoPage/Telemetry/Toggle/On",

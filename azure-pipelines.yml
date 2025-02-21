@@ -160,15 +160,15 @@ stages:
                 '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=false
                 /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml
                 /p:WindowsPackageType=None /p:IncludeNativeLibrariesForSelfExtract=true'
-
-          - task: CopyFiles@2
-            displayName: Pack Amethyst - Unpackaged
+                
+          - task: ArchiveFiles@2
             inputs:
-              Contents: 'Amethyst\bin\$(buildPlatform)\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\**'
-              TargetFolder: '$(Build.ArtifactStagingDirectory)\pack'
-              preserveTimestamp: true
-
-          - publish: "$(Build.ArtifactStagingDirectory)/pack"
+              rootFolderOrFile: 'Amethyst\bin\$(buildPlatform)\$(buildConfiguration)\net7.0\win10-$(buildPlatform)'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_Unpackaged.zip'
+              
+          - publish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_Unpackaged.zip"
             displayName: Publish Amethyst - Unpackaged
             artifact: unpack
 
@@ -187,15 +187,14 @@ stages:
             displayName: Download published artifacts
             artifact: signed
 
-          - task: AppCenterDistribute@3
-            displayName: Upload packed Amethyst artifact (AppCenter)
+          - task: GitHubRelease@1
             inputs:
-              serverEndpoint: K2VR
-              appSlug: K2VR/Amethyst
-              appFile: "$(Pipeline.Workspace)/signed/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
-              buildVersion: $(packageVersion)
-              releaseNotesOption: "input"
-              releaseNotesInput: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, then install [Amethyst itself](https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest)  \n(Note: The cert import is one-time, no need to redo it each time) \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
-              isMandatory: true
-              destinationType: "groups"
-              distributionGroupId: "6753850b-854c-455b-a88f-2b335104a64a"
+              gitHubConnection: 'github.com_KimihikoAkayasaki'
+              repositoryName: KinectToVR/Amethyst
+              action: 'edit'
+              tagSource: 'userSpecifiedTag'
+              tag: artifact
+              releaseNotesInline: "# Testing Setup (Packaged)  \n### 1. Install the testing certificate, then [Amethyst itself](https://install.appcenter.ms/orgs/k2vr/apps/amethyst/distribution_groups/public/releases/latest)  \n(Note: The cert import is one-time, no need to redo it each time) \n\n![Certificate](https://imgur.com/M9YUUJA.gif)\n\n### 2. Reregister the driver inside Amethyst\n![Reregister](https://user-images.githubusercontent.com/50022719/230727961-75900c17-e65a-4c87-b653-a90af395d759.gif)"
+              isPreRelease: true
+              changeLogCompareToRelease: 'lastFullRelease'
+              changeLogType: 'commitBased' 
