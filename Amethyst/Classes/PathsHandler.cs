@@ -46,7 +46,7 @@ public static class PathsHandler
         }
     }
 
-    public static AppDataContainer LocalSettings => new();
+    public static AppDataContainer LocalSettings = new();
 
     public static FileInfo ProgramLocation => new(Assembly.GetExecutingAssembly().Location);
 

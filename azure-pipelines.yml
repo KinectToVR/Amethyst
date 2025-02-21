@@ -170,7 +170,7 @@ stages:
 
           - publish: "$(Build.ArtifactStagingDirectory)/pack"
             displayName: Publish Amethyst - Unpackaged
-            artifact: pack
+            artifact: unpack
 
   - stage: Stage
     dependsOn: Build
