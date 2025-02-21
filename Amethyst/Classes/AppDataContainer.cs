@@ -95,9 +95,9 @@ public class AppDataContainer : INotifyPropertyChanged
         set
         {
             if (PathsHandler.IsAmethystPackaged)
-                SettingsDictionary[key] = value;
-            else
                 ApplicationData.Current.LocalSettings.Values[key?.ToString() ?? "INVALID"] = value;
+            else
+                SettingsDictionary[key] = value;
 
             SaveSettings();
             OnPropertyChanged(nameof(SettingsDictionary));
