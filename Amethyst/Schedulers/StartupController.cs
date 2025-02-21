@@ -72,7 +72,9 @@ public static class StartupController
             }
             catch (Exception e)
             {
-                Logger.Error($"Error reading scheduled startup tasks! Message: {e.Message}");
+                if (e is not FileNotFoundException) Logger.Error(
+                    $"Error reading scheduled startup tasks! Message: {e.Message}");
+
                 StartupTasks = []; // Reset if null
             }
 

@@ -187,7 +187,7 @@ public sealed partial class ReplayManagerControl : Grid, INotifyPropertyChanged
 
         try
         {
-            Directory.Delete(Path.Join((await ApplicationData.Current.LocalFolder
+            Directory.Delete(Path.Join((await Interfacing.LocalFolder
                     .CreateFolderAsync("Recordings", CreationCollisionOption.OpenIfExists))
                 .Path, SelectedRecording.FolderName), true);
         }

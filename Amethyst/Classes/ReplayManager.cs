@@ -260,7 +260,7 @@ public class ReplayManager : INotifyPropertyChanged
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            var recordingsFolder = await ApplicationData.Current.LocalFolder
+            var recordingsFolder = await Interfacing.LocalFolder
                 .CreateFolderAsync("Recordings", CreationCollisionOption.OpenIfExists);
 
             Recordings = []; // Empty the cached recordings prior to any operations
@@ -310,7 +310,7 @@ public class ReplayManager : INotifyPropertyChanged
     {
         try
         {
-            var recordingsFolder = await ApplicationData.Current.LocalFolder
+            var recordingsFolder = await Interfacing.LocalFolder
                 .CreateFolderAsync("Recordings", CreationCollisionOption.OpenIfExists);
 
             foreach (var recording in Recordings.ToList())

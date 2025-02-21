@@ -55,7 +55,7 @@ public class AppSettings : INotifyPropertyChanged
         {
             try
             {
-                return Windows.Storage.ApplicationData.Current.LocalSettings.Values["AppLanguage"] as string ??
+                return PathsHandler.LocalSettings["AppLanguage"] as string ??
                        new Language(GlobalizationPreferences.Languages[0]).LanguageTag[..2] ?? "en";
             }
             catch (Exception e)
@@ -64,7 +64,7 @@ public class AppSettings : INotifyPropertyChanged
                 return "en";
             }
         }
-        set => Windows.Storage.ApplicationData.Current.LocalSettings.Values["AppLanguage"] = value;
+        set => PathsHandler.LocalSettings["AppLanguage"] = value;
     }
 #pragma warning restore CA1822
 
@@ -241,7 +241,8 @@ public class AppSettings : INotifyPropertyChanged
         }
         catch (Exception e)
         {
-            Logger.Error($"Error reading application settings! Message: {e.Message}");
+            if (e is FileNotFoundException) SaveSettings();
+            else Logger.Error($"Error reading application settings! Message: {e.Message}");
             AppData.Settings ??= new AppSettings(); // Reset if null
         }
 
@@ -537,26 +538,26 @@ public static class DefaultSettings
 {
     public static string TrackingDevice
     {
-        get => Windows.Storage.ApplicationData.Current.LocalSettings.Values["TrackingDevice"] as string;
-        set => Windows.Storage.ApplicationData.Current.LocalSettings.Values["TrackingDevice"] = value;
+        get => PathsHandler.LocalSettings["TrackingDevice"] as string;
+        set => PathsHandler.LocalSettings["TrackingDevice"] = value;
     }
 
     public static string ServiceEndpoint
     {
-        get => Windows.Storage.ApplicationData.Current.LocalSettings.Values["ServiceEndpoint"] as string;
-        set => Windows.Storage.ApplicationData.Current.LocalSettings.Values["ServiceEndpoint"] = value;
+        get => PathsHandler.LocalSettings["ServiceEndpoint"] as string;
+        set => PathsHandler.LocalSettings["ServiceEndpoint"] = value;
     }
 
     public static bool? ExtraTrackers
     {
-        get => Windows.Storage.ApplicationData.Current.LocalSettings.Values["ExtraTrackers"] as bool?;
-        set => Windows.Storage.ApplicationData.Current.LocalSettings.Values["ExtraTrackers"] = value;
+        get => PathsHandler.LocalSettings["ExtraTrackers"] as bool?;
+        set => PathsHandler.LocalSettings["ExtraTrackers"] = value;
     }
 
     public static bool SetupFinished
     {
-        get => Windows.Storage.ApplicationData.Current.LocalSettings.Values["FirstSetupFinished"] as bool? ?? false;
-        set => Windows.Storage.ApplicationData.Current.LocalSettings.Values["FirstSetupFinished"] = value;
+        get => PathsHandler.LocalSettings["FirstSetupFinished"] as bool? ?? false;
+        set => PathsHandler.LocalSettings["FirstSetupFinished"] = value;
     }
 }
 

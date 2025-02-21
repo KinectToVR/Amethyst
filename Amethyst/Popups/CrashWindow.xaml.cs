@@ -181,7 +181,7 @@ public sealed partial class CrashWindow : Window
         SmSystemdocked = 0x2004
     }
 
-    public CrashWindow()
+    public CrashWindow(string[] args)
     {
         InitializeComponent();
 
@@ -208,8 +208,13 @@ public sealed partial class CrashWindow : Window
 
         // Check if there's any launch arguments
         Logger.Info("Validating activation arguments...");
-        var activationUri = (AppInstance.GetCurrent().GetActivatedEventArgs().Data as
-            ProtocolActivatedEventArgs)?.Uri;
+        var activationUri = PathsHandler.IsAmethystPackaged
+            ? (AppInstance.GetCurrent().GetActivatedEventArgs().Data as
+                ProtocolActivatedEventArgs)?.Uri
+            : args.Length > 1 && args[1].StartsWith("amethyst-app:") &&
+              Uri.TryCreate(args[1], UriKind.RelativeOrAbsolute, out var au)
+                ? au
+                : null;
 
         Logger.Info($"Activated via uri of: {activationUri}");
         if (activationUri is not null && activationUri.Segments.Length > 0)

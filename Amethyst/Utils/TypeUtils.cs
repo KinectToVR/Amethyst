@@ -21,6 +21,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using Windows.Devices.Geolocation;
+using static Amethyst.Classes.Shared;
+using System.Diagnostics;
+using System.Reflection.Metadata;
 
 namespace Amethyst.Utils;
 
@@ -684,6 +687,42 @@ public static class UriExtensions
             else
                 Logger.Warn($"No application registered to handle uri of \"{uri.Scheme}:\"," +
                             $" query result: {await Launcher.QueryAppUriSupportAsync(uri)}");
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    public static async Task Launch(this string uri)
+    {
+        try
+        {
+            if (PathsHandler.IsAmethystPackaged)
+            {
+                await uri.ToUri().LaunchAsync();
+            }
+            else
+            {
+                // If we've found who asked
+                if (File.Exists(Interfacing.ProgramLocation.FullName))
+                {
+                    var info = new ProcessStartInfo
+                    {
+                        FileName = Interfacing.ProgramLocation.FullName.Replace(".dll", ".exe"),
+                        Arguments = uri
+                    };
+
+                    try
+                    {
+                        Process.Start(info);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Fatal(e);
+                    }
+                }
+            }
         }
         catch (Exception e)
         {

@@ -44,7 +44,8 @@ public class AppPluginSettings : INotifyPropertyChanged
         }
         catch (Exception e)
         {
-            Logger.Error($"Error reading plugin settings! Message: {e.Message}");
+            if (e is FileNotFoundException) SaveSettings();
+            else Logger.Error($"Error reading plugin settings! Message: {e.Message}");
             AppPlugins.PluginSettings ??= new AppPluginSettings(); // Reset if null
         }
     }
@@ -116,15 +117,10 @@ public class AppPluginSettings : INotifyPropertyChanged
 #nullable disable
 }
 
-public class PluginSettingsHelper : IPluginSettings
+[method: SetsRequiredMembers]
+public class PluginSettingsHelper(string guid) : IPluginSettings
 {
-    [SetsRequiredMembers]
-    public PluginSettingsHelper(string guid)
-    {
-        Guid = guid;
-    }
-
-    private string Guid { get; }
+    private string Guid { get; } = guid;
 
 #nullable enable
     // Get a serialized object from the plugin settings

@@ -46,6 +46,8 @@ public class PluginHost(string guid) : IAmethystHost
     // Settings helper : read/write plugins settings
     private PluginSettingsHelper SettingsHelper { get; } = new(guid);
 
+    public IPathHelper PathHelper { get; } = new PluginsPathsHelper();
+
     // Get the plugin settings helper
     public IPluginSettings PluginSettings => SettingsHelper;
 
@@ -280,7 +282,7 @@ public class PluginHost(string guid) : IAmethystHost
         Shared.Main.DispatcherQueue.TryEnqueue(async () =>
         {
             // Launch the crash handler if fatal
-            if (fatal) await $"amethyst-app:crash-message#{HttpUtility.UrlEncode(message)}".ToUri().LaunchAsync();
+            if (fatal) await $"amethyst-app:crash-message#{HttpUtility.UrlEncode(message)}".Launch();
 
             // Handle all the exit actions (if needed)
             if (!IsExitHandled) await HandleAppExit(1000);

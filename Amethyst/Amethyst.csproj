@@ -49,6 +49,11 @@
 		<AppxBundlePlatforms>x64</AppxBundlePlatforms>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<!-- Workaround for MSB3271 error on processor architecture mismatch -->
+		<ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
@@ -62,7 +67,7 @@
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.10.0" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240627000" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
-		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.8" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="RestSharp" Version="108.0.3" />
 		<PackageReference Include="System.ComponentModel.Composition" Version="8.0.0" />

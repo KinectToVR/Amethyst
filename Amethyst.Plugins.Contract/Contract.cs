@@ -401,6 +401,16 @@ public interface IAmethystHost
     public IPluginSettings PluginSettings { get; }
 
     /// <summary>
+    ///    Helper class that provides path-related methods,
+    ///    as Amethyst may be both packaged and unpackaged,
+    ///    this aims to make path handling easier and safer.
+    ///    In packaged mode, AppData will return shared, packaged AppData
+    ///    and in unpackaged mode, AppData will be created near main exe.
+    ///    This is to ensure portability and prevent the need for cleanup
+    /// </summary>
+    public IPathHelper PathHelper { get; }
+
+    /// <summary>
     ///     Get the hook joint pose (typically Head, fallback to .First())
     ///     of the currently selected base tracking device (no overrides!)
     ///     Mark [calibrated] as [true] to get the calibrated joint pose

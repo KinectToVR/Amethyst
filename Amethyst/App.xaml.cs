@@ -36,10 +36,6 @@ using Microsoft.Windows.AppLifecycle;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
-using System.Text;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace Amethyst;
 
@@ -61,6 +57,7 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
+        AsyncUtils.RunSync(PathsHandler.Setup);
 
         // Listen for and log all uncaught second-chance exceptions : XamlApp
         UnhandledException += (_, e) =>
@@ -296,7 +293,7 @@ public partial class App : Application
                 ElementSoundPlayer.State = ElementSoundPlayerState.Off;
 
                 Logger.Info("Creating a new CrashWindow view...");
-                _crashWindow = new CrashWindow(); // Create a new window
+                _crashWindow = new CrashWindow(args); // Create a new window
 
                 Logger.Info($"Activating {_crashWindow.GetType()}...");
                 _crashWindow.Activate(); // Activate the main window
@@ -328,8 +325,13 @@ public partial class App : Application
             }
 
         // Check if activated via uri
-        var activationUri = (AppInstance.GetCurrent().GetActivatedEventArgs().Data as
-            ProtocolActivatedEventArgs)?.Uri;
+        var activationUri = PathsHandler.IsAmethystPackaged
+            ? (AppInstance.GetCurrent().GetActivatedEventArgs().Data as
+                ProtocolActivatedEventArgs)?.Uri
+            : args.Length > 1 && args[1].StartsWith("amethyst-app:") &&
+              Uri.TryCreate(args[1], UriKind.RelativeOrAbsolute, out var au)
+                ? au
+                : null;
 
         // Check if there's any launch arguments
         if (activationUri is not null && activationUri.Segments.Length > 0)
@@ -683,7 +685,7 @@ public partial class App : Application
             if (!needToCreateNew)
             {
                 Logger.Fatal(new AbandonedMutexException("Startup failed! The app is already running."));
-                await "amethyst-app:crash-already-running".ToUri().LaunchAsync();
+                await "amethyst-app:crash-already-running".Launch();
 
                 await Task.Delay(3000);
                 Environment.Exit(0); // Exit peacefully
@@ -692,7 +694,7 @@ public partial class App : Application
         catch (Exception e)
         {
             Logger.Fatal(new AbandonedMutexException($"Startup failed! Mutex creation error: {e.Message}"));
-            await "amethyst-app:crash-already-running".ToUri().LaunchAsync();
+            await "amethyst-app:crash-already-running".Launch();
 
             await Task.Delay(3000);
             Environment.Exit(0); // Exit peacefully
@@ -700,7 +702,7 @@ public partial class App : Application
 
         Logger.Info("Starting the crash handler passing the app PID...");
         await ($"amethyst-app:crash-watchdog?pid={Environment.ProcessId}&log={Logger.LogFilePath}" +
-               $"&crash={Interfacing.CrashFile.FullName}").ToUri().LaunchAsync();
+               $"&crash={Interfacing.CrashFile.FullName}").Launch();
 
         // Disable internal sounds
         ElementSoundPlayer.State = ElementSoundPlayerState.Off;
@@ -884,9 +886,9 @@ public partial class App : Application
             // Update 1.2.13.0: reset configuration
             try
             {
-                if (ApplicationData.Current.LocalSettings.Values["SetupFinished"] as bool? ?? false)
+                if (PathsHandler.LocalSettings["SetupFinished"] as bool? ?? false)
                 {
-                    ApplicationData.Current.LocalSettings.Values.Remove("SetupFinished");
+                    PathsHandler.LocalSettings.Remove("SetupFinished");
                     AppData.Settings = new AppSettings(); // Reset application settings
                     AppData.Settings.SaveSettings(); // Save empty settings to file
 
@@ -896,7 +898,7 @@ public partial class App : Application
                         "a critical update, so you'll need to reconfigure it.");
 
                     // If there's an OVR driver folder, try to delete it if possible
-                    await (await ApplicationData.Current.LocalFolder.GetFolderAsync("Amethyst"))?.DeleteAsync();
+                    await (await PathsHandler.LocalFolder.GetFolderAsync("Amethyst"))?.DeleteAsync();
                 }
             }
             catch (Exception ex)

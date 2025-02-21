@@ -1,5 +1,6 @@
 ﻿using Windows.ApplicationModel;
 using Amethyst.Utils;
+using System.Reflection;
 
 namespace Amethyst.Classes;
 
@@ -10,7 +11,7 @@ public static class AppData
 
     // Internal version number
     public static (string Display, string Internal)
-        VersionString => (Package.Current.Id.Version.AsString(), "AZ_BUILD_NUMBER");
+        VersionString => (Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0.0", "AZ_BUILD_NUMBER");
 
     // Application settings
     public static AppSettings Settings { get; set; } = new();

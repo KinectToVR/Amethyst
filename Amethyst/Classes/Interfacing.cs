@@ -113,56 +113,47 @@ public static class Interfacing
 
     public static bool IsServiceEndpointPresent => ServiceEndpointStatusCode == 0;
 
-    public static FileInfo ProgramLocation => new(Assembly.GetExecutingAssembly().Location);
-
     public static AppSettingsReadEventHandler AppSettingsRead { get; set; } = (_, _) => { };
 
-    public static StorageFolder TemporaryFolder => ApplicationData.Current.TemporaryFolder;
+    public static FileInfo ProgramLocation => PathsHandler.ProgramLocation;
 
-    public static StorageFolder LocalFolder => ApplicationData.Current.LocalFolder;
+    public static StorageFolder TemporaryFolder => PathsHandler.TemporaryFolder;
+
+    public static StorageFolder LocalFolder => PathsHandler.LocalFolder;
 
     public static async Task<StorageFolder> GetPluginsFolder()
     {
-        return await LocalFolder
-            .CreateFolderAsync("Plugins", CreationCollisionOption.OpenIfExists);
+        return await PathsHandler.GetPluginsFolder();
     }
 
     public static async Task<StorageFolder> GetPluginsTempFolder()
     {
-        return await LocalFolder
-            .CreateFolderAsync("Plugins", CreationCollisionOption.OpenIfExists);
+        return await PathsHandler.GetPluginsTempFolder();
     }
 
     public static async Task<StorageFile> GetAppDataFile(string relativeFilePath)
     {
-        return await LocalFolder.CreateFileAsync(relativeFilePath, CreationCollisionOption.OpenIfExists);
+        return await PathsHandler.GetAppDataFile(relativeFilePath);
     }
 
     public static async Task<StorageFolder> GetAppDataPluginFolder(string relativeFilePath)
     {
-        return string.IsNullOrEmpty(relativeFilePath)
-            ? await GetPluginsFolder()
-            : await (await GetPluginsFolder())
-                .CreateFolderAsync(relativeFilePath, CreationCollisionOption.OpenIfExists);
+        return await PathsHandler.GetAppDataPluginFolder(relativeFilePath);
     }
 
     public static async Task<StorageFolder> GetTempPluginFolder(string relativeFilePath)
     {
-        return string.IsNullOrEmpty(relativeFilePath)
-            ? await GetPluginsTempFolder()
-            : await (await GetPluginsTempFolder())
-                .CreateFolderAsync(relativeFilePath, CreationCollisionOption.OpenIfExists);
+        return await PathsHandler.GetTempPluginFolder(relativeFilePath);
     }
 
     public static string GetAppDataFilePath(string relativeFilePath)
     {
-        return Path.Join(LocalFolder.Path, relativeFilePath);
+        return PathsHandler.GetAppDataFilePath(relativeFilePath);
     }
 
     public static string GetAppDataLogFilePath(string relativeFilePath)
     {
-        Directory.CreateDirectory(Path.Join(TemporaryFolder.Path, "Logs", "Amethyst"));
-        return Path.Join(TemporaryFolder.Path, "Logs", "Amethyst", relativeFilePath);
+        return PathsHandler.GetAppDataLogFilePath(relativeFilePath);
     }
 
     // Fail with an exit code (don't delete .crash)
@@ -172,7 +163,7 @@ public static class Interfacing
         Task.Run(async Task () =>
         {
             Logger.Info($"Activating the crash handler with #message: {message}");
-            await $"amethyst-app:crash-message#{HttpUtility.UrlEncode(message)}".ToUri().LaunchAsync();
+            await $"amethyst-app:crash-message#{HttpUtility.UrlEncode(message)}".Launch();
 
             Logger.Info("Waiting...");
             await Task.Delay(1000); // Wait for the crash handler to be activated
@@ -691,8 +682,10 @@ public static class Interfacing
             {
                 // DirectoryName -> REPO_ROOT\Amethyst\bin\x64\Debug\net7.0\win10-x64\AppX
                 if (!Debugger.IsAttached) return ProgramLocation.DirectoryName;
-                var result = Directory.GetParent(ProgramLocation.DirectoryName!)!
-                    .Parent!.Parent!.Parent!.Parent!.Parent!.FullName;
+                var results = Directory.GetParent(ProgramLocation.DirectoryName!)!
+                    .Parent!.Parent!.Parent!.Parent!;
+
+                var result = PathsHandler.IsAmethystPackaged ? results.Parent!.FullName : results.FullName;
                 return Directory.Exists(result) ? result : ProgramLocation.DirectoryName;
             }
             catch (Exception)
@@ -891,7 +884,10 @@ public static class Interfacing
             // Restart and exit with code 0
             if (FileUtils.IsCurrentProcessElevated() && !admin)
             {
-                info.Arguments = "amethyst-app:";
+                info.Arguments = PathsHandler.IsAmethystPackaged
+                    ? "amethyst-app:"
+                    : filenameOverride ?? ProgramLocation.FullName.Replace(".dll", ".exe");
+
                 info.FileName = "explorer.exe";
             }
 

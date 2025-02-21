@@ -1,6 +1,7 @@
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
@@ -316,48 +317,47 @@ public interface IDependency
     public Task<bool> Install(IProgress<InstallationProgress> progress, CancellationToken cancellationToken);
 }
 
-
 // Fix applier worker helper class
 public interface IFix
 {
-	/// <summary>
-	///     [Title]
-	///     The name of the fix to be applied
-	/// </summary>
-	public string Name { get; }
+    /// <summary>
+    ///     [Title]
+    ///     The name of the fix to be applied
+    /// </summary>
+    public string Name { get; }
 
-	/// <summary>
-	///     Whether it is a must to have this fix applied
-	///     (IsNecessary=true) for the plugin to be working properly
-	/// </summary>
-	public bool IsMandatory { get; }
+    /// <summary>
+    ///     Whether it is a must to have this fix applied
+    ///     (IsNecessary=true) for the plugin to be working properly
+    /// </summary>
+    public bool IsMandatory { get; }
 
-	/// <summary>
-	///     Check whether the fix is (already) applied
-	/// </summary>
-	public bool IsNecessary { get; }
+    /// <summary>
+    ///     Check whether the fix is (already) applied
+    /// </summary>
+    public bool IsNecessary { get; }
 
-	/// <summary>
-	///     If there is a need to accept an EULA, pass its contents here
-	/// </summary>
-	public string InstallerEula { get; }
+    /// <summary>
+    ///     If there is a need to accept an EULA, pass its contents here
+    /// </summary>
+    public string InstallerEula { get; }
 
-	/// <summary>
-	///     Perform the main installation action, reporting the progress
-	/// </summary>
-	/// <param name="progress">
-	///     Report the progress using InstallationProgress
-	/// </param>
-	/// <param name="cancellationToken">
-	///     CancellationToken for task cancellation
-	/// </param>
-	/// <param name="arg">
-	///     Optional argument
-	/// </param>
-	/// <returns>
-	///     Success?
-	/// </returns>
-	public Task<bool> Apply(IProgress<InstallationProgress> progress, CancellationToken cancellationToken, object? arg = null);
+    /// <summary>
+    ///     Perform the main installation action, reporting the progress
+    /// </summary>
+    /// <param name="progress">
+    ///     Report the progress using InstallationProgress
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     CancellationToken for task cancellation
+    /// </param>
+    /// <param name="arg">
+    ///     Optional argument
+    /// </param>
+    /// <returns>
+    ///     Success?
+    /// </returns>
+    public Task<bool> Apply(IProgress<InstallationProgress> progress, CancellationToken cancellationToken, object? arg = null);
 }
 
 // Plugin settings helper class
@@ -368,4 +368,38 @@ public interface IPluginSettings
 
     // Write a serialized object to the plugin settings
     public void SetSetting<T>(object key, T? value);
+}
+
+// Path helper class
+public interface IPathHelper
+{
+    // Main Amethyst.exe location
+    public FileInfo ProgramLocation { get; }
+
+    // AppData/TempState
+    public DirectoryInfo TemporaryFolder { get; }
+
+    // AppData/LocalState
+    public DirectoryInfo LocalFolder { get; }
+
+    // The location of ALL plugins folder
+    public Task<DirectoryInfo> GetPluginsFolder();
+
+    // The location of plugin working copies
+    public Task<DirectoryInfo> GetPluginsTempFolder();
+
+    // Get file from AppData/LocalState
+    public Task<FileInfo> GetAppDataFile(string relativeFilePath);
+
+    // Get folder from shared (not packed) plugin folder
+    public Task<DirectoryInfo> GetAppDataPluginFolder(string relativeFilePath);
+
+    // Get folder from working copy plugin folder
+    public Task<DirectoryInfo> GetTempPluginFolder(string relativeFilePath);
+
+    // Get file path from AppData/LocalState
+    public FileInfo GetAppDataFilePath(string relativeFilePath);
+
+    // Get log file path from AppData/TempState
+    public FileInfo GetAppDataLogFilePath(string relativeFilePath);
 }
