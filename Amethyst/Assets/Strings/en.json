@@ -1506,6 +1506,10 @@
             "translation": "Installing {0}..."
         },
         {
+	          "id": "/SharedStrings/Plugins/Fix/Contents/FixingPlaceholder",
+	          "translation": "Applying {0} fix..."
+        },
+        {
             "id": "/SharedStrings/Plugins/Dep/Contents/ProgressPlaceholder",
             "translation": "{0}%"
         },
@@ -1520,6 +1524,10 @@
         {
             "id": "/SharedStrings/Plugins/Dep/Contents/Success",
             "translation": "{0} installed successfully! Restart Amethyst to load this plugin."
+        },
+        {
+            "id": "/SharedStrings/Plugins/Dep/Contents/SuccessReload",
+            "translation": "{0} installed successfully! Restart Amethyst to reload this plugin."
         },
         {
             "id": "/SharedStrings/Plugins/Dep/Contents/Failure",
@@ -2132,6 +2140,14 @@
         {
             "id": "/GeneralPage/Calibration/Captions/Orientation/LookAt/Other",
             "translation": "Face the direction\nof your playspace!"
+        },
+        {
+            "id": "/PluginManager/Install",
+            "translation": "Install "
+        },
+        {
+            "id": "/PluginManager/Fix",
+            "translation": "Fix "
         }
     ]
 }

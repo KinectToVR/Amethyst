@@ -47,6 +47,7 @@ using WinRT.Interop;
 using WinUI.Fluent.Icons;
 using Newtonsoft.Json;
 using Amethyst.Controls.Snowflake;
+using System.Runtime.InteropServices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -400,6 +401,71 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                     var pluginLocation = Assembly.GetAssembly(plugin.Value.GetType()).Location;
                     var pluginFolder = Directory.GetParent(pluginLocation).FullName;
 
+                    // Prepare a null context for instantiation
+                    IDependencyInstaller installerContext = null;
+
+                    try
+                    {
+                        // Prepare assembly resources
+                        var coreAssemblies =
+                            Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll").ToList();
+                        coreAssemblies.Add(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Amethyst.Plugins.Contract.dll"));
+
+                        // Load the failed assembly for metadata retrieval
+                        var metadataContext = new MetadataLoadContext(new PathAssemblyResolver(coreAssemblies))
+                            .LoadFromAssemblyPath(pluginLocation);
+
+                        // Find the plugin export, if exists
+                        var placeholderGuid = Guid.NewGuid().ToString().ToUpper();
+                        var result = metadataContext.ExportedTypes.FirstOrDefault(x => x.CustomAttributes
+                            .Any(export => export.ConstructorArguments.FirstOrDefault().Value?.ToString() is "Guid"));
+
+                        // Check whether the plugin defines a dependency installer
+                        if (result?.GetMetadata<Type>("DependencyInstaller") is not null)
+                            try
+                            {
+                                var contextResult = new AssemblyLoadContext(placeholderGuid)
+                                    .LoadFromAssemblyPath(pluginLocation)
+                                    .GetType(result.GetMetadata<Type>(
+                                        "DependencyInstaller")?.FullName ?? string.Empty, true);
+
+                                // Instantiate the installer and capture it for the outer scope
+                                installerContext = contextResult.Instantiate<IDependencyInstaller>();
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex);
+                            }
+
+                        // Check whether the plugin defines a dependency installer
+                        // ReSharper disable once InvertIf | Metadata already checked
+                        if (installerContext is not null)
+                            try
+                            {
+                                // Set the device's string resources root to its provided folder
+                                // (If it wants to change it, it's gonna need to do that after OnLoad anyway)
+                                Logger.Info($"Registering ({plugin.Metadata.Name}, {plugin.Metadata.Guid}), INSTALLER " +
+                                            "default root language resource context (AppPlugins)...");
+
+                                Interfacing.Plugins.SetLocalizationResourcesRoot(Path.Join(pluginFolder, "Assets", "Strings"),
+                                    $"{result.GetMetadata("Guid", $"{placeholderGuid}")}");
+
+                                Logger.Info($"Overwriting ({plugin.Metadata.Name}, {plugin.Metadata.Guid}), INSTALLER " +
+                                            "'s localization host (IAmethystHost)...");
+
+                                // Allow the installer to use Amethyst APIs
+                                installerContext.Host = new CoreHost($"{result.GetMetadata("Guid", $"{placeholderGuid}")}");
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex);
+                            }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                    }
+
                     // Add the device to the 'attempted' list, mark as all fine
                     Logger.Info($"Adding ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                 "to the load-attempted device plugins list (AppPlugins)...");
@@ -413,7 +479,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
                         Version = new Version(plugin.Metadata.Version),
                         Folder = pluginFolder,
-                        Status = AppPlugins.PluginLoadError.NoError
+                        Status = AppPlugins.PluginLoadError.NoError,
+                        DependencyInstaller = installerContext
                     });
 
                     // Add the device to the global device list, add the plugin folder path
@@ -426,7 +493,7 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         Logger.Info($"There is a ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
                                     $"loaded from \"{existingDevice.Location}\"" +
                                     "already in the tracking device plugins list (AppPlugins)! " +
-                                    "However, it's version is lower - replacing it with the newer one...");
+                                    "However, its version is lower - replacing it with the newer one...");
 
                         AppPlugins.TrackingDevicesList.Remove(plugin.Metadata.Guid); // Remove
                     }
@@ -655,6 +722,71 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                             Path.Join(pluginFolder, "Assets", "Strings"))
                     });
 
+                    // Prepare a null context for instantiation
+                    IDependencyInstaller installerContext = null;
+
+                    try
+                    {
+                        // Prepare assembly resources
+                        var coreAssemblies =
+                            Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll").ToList();
+                        coreAssemblies.Add(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Amethyst.Plugins.Contract.dll"));
+
+                        // Load the failed assembly for metadata retrieval
+                        var metadataContext = new MetadataLoadContext(new PathAssemblyResolver(coreAssemblies))
+                            .LoadFromAssemblyPath(pluginLocation);
+
+                        // Find the plugin export, if exists
+                        var placeholderGuid = Guid.NewGuid().ToString().ToUpper();
+                        var result = metadataContext.ExportedTypes.FirstOrDefault(x => x.CustomAttributes
+                            .Any(export => export.ConstructorArguments.FirstOrDefault().Value?.ToString() is "Guid"));
+
+                        // Check whether the plugin defines a dependency installer
+                        if (result?.GetMetadata<Type>("DependencyInstaller") is not null)
+                            try
+                            {
+                                var contextResult = new AssemblyLoadContext(placeholderGuid)
+                                    .LoadFromAssemblyPath(pluginLocation)
+                                    .GetType(result.GetMetadata<Type>(
+                                        "DependencyInstaller")?.FullName ?? string.Empty, true);
+
+                                // Instantiate the installer and capture it for the outer scope
+                                installerContext = contextResult.Instantiate<IDependencyInstaller>();
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex);
+                            }
+
+                        // Check whether the plugin defines a dependency installer
+                        // ReSharper disable once InvertIf | Metadata already checked
+                        if (installerContext is not null)
+                            try
+                            {
+                                // Set the device's string resources root to its provided folder
+                                // (If it wants to change it, it's gonna need to do that after OnLoad anyway)
+                                Logger.Info($"Registering ({plugin.Metadata.Name}, {plugin.Metadata.Guid}), INSTALLER " +
+                                            "default root language resource context (AppPlugins)...");
+
+                                Interfacing.Plugins.SetLocalizationResourcesRoot(Path.Join(pluginFolder, "Assets", "Strings"),
+                                    $"{result.GetMetadata("Guid", $"{placeholderGuid}")}");
+
+                                Logger.Info($"Overwriting ({plugin.Metadata.Name}, {plugin.Metadata.Guid}), INSTALLER " +
+                                            "'s localization host (IAmethystHost)...");
+
+                                // Allow the installer to use Amethyst APIs
+                                installerContext.Host = new CoreHost($"{result.GetMetadata("Guid", $"{placeholderGuid}")}");
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex);
+                            }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                    }
+
                     // Set the device's string resources root to its provided folder
                     // (If it wants to change it, it's gonna need to do that after OnLoad anyway)
                     Logger.Info($"Registering ({plugin.Metadata.Name}, {plugin.Metadata.Guid}) " +
@@ -689,7 +821,8 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                         UpdateEndpoint = plugin.Metadata.UpdateEndpoint,
                         Version = new Version(plugin.Metadata.Version),
                         Folder = pluginFolder,
-                        Status = AppPlugins.PluginLoadError.NoError
+                        Status = AppPlugins.PluginLoadError.NoError,
+                        DependencyInstaller = installerContext
                     });
 
                     // Check if the loaded device is used as anything (AppData.Settings)
