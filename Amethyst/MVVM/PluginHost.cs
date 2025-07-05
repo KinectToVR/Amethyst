@@ -1354,7 +1354,7 @@ public class LoadAttemptedPlugin : INotifyPropertyChanged
             InstallHandler.HideProgress = false;
 
             InstallHandler.StageName = LocalizedJsonString(
-                    "/SharedStrings/Plugins/Fix/Contents/FixingPlaceholder").Format(dependency.Name);
+                "/SharedStrings/Plugins/Fix/Contents/FixingPlaceholder").Format(dependency.Name);
 
             InstallHandler.OnPropertyChanged();
 
@@ -1648,7 +1648,9 @@ public class InputActionBindingEntry : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    public string TestingValue => string.IsNullOrEmpty(TreeCurrentAction?.TestValue) ? "No data" : TreeCurrentAction.TestValue; // TODO
+    public string TestingValue => string.IsNullOrEmpty(TreeCurrentAction?.TestValue)
+        ? LocalizedJsonString("/InputActions/Picker/Testing/NoData")
+        : TreeCurrentAction!.TestValue;
 
     public static InputActionSource TreeCurrentAction { get; set; }
 }

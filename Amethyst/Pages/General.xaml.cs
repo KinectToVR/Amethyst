@@ -1581,12 +1581,12 @@ public sealed partial class General : Page, INotifyPropertyChanged
                                 "K2VRTEAM-AME2-APII-DVCE-CARAMLAMTHST" ||
                             x.TrackingState is not TrackedJointState.StateNotTracked).ToList();
 
-            if (AppData.Settings.TrackingDeviceGuid is "K2VRTEAM-AME2-APII-DVCE-CARAMLAMTHST" &&
-                joints.Any(x => x.Role is TrackedJointType.JointSpineShoulder))
-            {
-                var waistPose = joints.First(x => x.Role is TrackedJointType.JointSpineShoulder).Position;
-                joints.ForEach(x => x.Position = (x.Position - waistPose) with { Z = 3.0f });
-            }
+            //if (AppData.Settings.TrackingDeviceGuid is "K2VRTEAM-AME2-APII-DVCE-CARAMLAMTHST" &&
+            //    joints.Any(x => x.Role is TrackedJointType.JointSpineShoulder))
+            //{
+            //    var waistPose = joints.First(x => x.Role is TrackedJointType.JointSpineShoulder).Position;
+            //    joints.ForEach(x => x.Position = (x.Position - waistPose) with { Z = 3.0f });
+            //}
 
 #if DEBUG
             // Okay to do this here => the preview is forced on calibration

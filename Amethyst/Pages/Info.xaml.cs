@@ -464,7 +464,7 @@ public sealed partial class Info : Page, INotifyPropertyChanged
         AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
     }
 
-    private async void TelemetryToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+    private void TelemetryToggleSwitch_Toggled(object sender, RoutedEventArgs e)
     {
         if (!_infoPageLoadedOnce) return;
         AppData.Settings.IsTelemetryEnabled = (sender as ToggleSwitch)?.IsOn ?? true;

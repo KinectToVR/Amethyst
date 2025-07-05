@@ -111,8 +111,8 @@ stages:
               configuration: "$(buildConfiguration)"
               msbuildArgs:
                 '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true
-                /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml
-                /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\"
+                /p:RuntimeIdentifier=win-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win-$(buildPlatform).pubxml
+                /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net8.0\win-$(buildPlatform)\deploy\\"
                 /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)"
                 /p:PackageCertificateThumbprint="3C288874D8146BC9860512DAC28ED51528B8C39F" /p:PackageCertificatePassword="$(PackageCertificatePassword)"'
 
@@ -120,7 +120,7 @@ stages:
             displayName: Pack Amethyst - Signed
             inputs:
               targetType: inline
-              script: Copy-Item -Path "Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test\Amethyst_$(packageVersion)_$(buildPlatform).msix" -Destination "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
+              script: Copy-Item -Path "Amethyst\bin\$(buildConfiguration)\net8.0\win-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test\Amethyst_$(packageVersion)_$(buildPlatform).msix" -Destination "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
 
           - publish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
             displayName: Publish Amethyst - Signed
@@ -134,12 +134,12 @@ stages:
               configuration: "$(buildConfiguration)"
               msbuildArgs:
                 '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=false
-                /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml
+                /p:RuntimeIdentifier=win-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win-$(buildPlatform).pubxml
                 /p:WindowsPackageType=None /p:IncludeNativeLibrariesForSelfExtract=true'
 
           - task: ArchiveFiles@2
             inputs:
-              rootFolderOrFile: 'Amethyst\bin\$(buildPlatform)\$(buildConfiguration)\net7.0\win10-$(buildPlatform)'
+              rootFolderOrFile: 'Amethyst\bin\$(buildPlatform)\$(buildConfiguration)\net8.0\win-$(buildPlatform)'
               includeRootFolder: false
               archiveType: "zip"
               archiveFile: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_Unpackaged.zip"
@@ -170,14 +170,14 @@ stages:
               configuration: "$(buildConfiguration)"
               msbuildArgs:
                 '/t:Amethyst /p:Platform=$(buildPlatform) /p:PlatformTarget=$(buildPlatform) /p:Configuration=$(buildConfiguration) /p:GenerateAppxPackageOnBuild=true
-                /p:RuntimeIdentifier=win10-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win10-$(buildPlatform).pubxml
-                /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\\"
+                /p:RuntimeIdentifier=win-$(buildPlatform) /t:Amethyst /p:PublishProfile=Amethyst\Properties\PublishProfiles\win-$(buildPlatform).pubxml
+                /p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="bin\$(buildConfiguration)\net8.0\win-$(buildPlatform)\deploy\\"
                 /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=false'
 
           - task: CopyFiles@2
             displayName: Pack Amethyst - Unsigned
             inputs:
-              SourceFolder: 'Amethyst\bin\$(buildConfiguration)\net7.0\win10-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test'
+              SourceFolder: 'Amethyst\bin\$(buildConfiguration)\net8.0\win-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test'
               Contents: "Amethyst_$(packageVersion)_$(buildPlatform).msix"
               TargetFolder: $(Build.ArtifactStagingDirectory)
               preserveTimestamp: true

@@ -14,7 +14,7 @@ public static class SetupData
     public static bool LimitedHide { get; set; }
 }
 
-public class EnabledTemplateSelector : DataTemplateSelector
+public partial class EnabledTemplateSelector : DataTemplateSelector
 {
     public DataTemplate ItemTemplate { get; set; }
 
@@ -48,7 +48,7 @@ public static class Extensions
     }
 }
 
-public class InversionConverter : IValueConverter
+public partial class InversionConverter : IValueConverter
 {
     public object Convert(object value, Type targetType,
         object parameter, string language)
@@ -64,7 +64,7 @@ public class InversionConverter : IValueConverter
     }
 }
 
-public class InversionVisibilityConverter : IValueConverter
+public partial class InversionVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType,
         object parameter, string language)
@@ -82,7 +82,7 @@ public class InversionVisibilityConverter : IValueConverter
     }
 }
 
-public class InversionOpacityConverter : IValueConverter
+public partial class InversionOpacityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType,
         object parameter, string language)
@@ -103,7 +103,7 @@ public class InversionOpacityConverter : IValueConverter
     }
 }
 
-public class OpacityConverter : IValueConverter
+public partial class OpacityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType,
         object parameter, string language)

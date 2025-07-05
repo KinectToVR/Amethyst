@@ -11,6 +11,7 @@
 	xmlns:local="using:Amethyst.Pages" xmlns:util="using:Amethyst.Utils"
 	xmlns:media="using:CommunityToolkit.WinUI.UI.Media"
 	xmlns:icons="using:WinUI.Fluent.Icons"
+	xmlns:media1="using:CommunityToolkit.WinUI.Media"
 	Loaded="Page_Loaded" Unloaded="Page_OnUnloaded"
 	NavigationCacheMode="Required"
 	mc:Ignorable="d" Background="Transparent">
@@ -1169,7 +1170,7 @@
 									<Border Visibility="{Binding ElementName=LabelFineTuneNormal, Path=Visibility}"
 									        Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
 									        HorizontalAlignment="Center" VerticalAlignment="Center"
-									        Grid.Row="0" CornerRadius="4" BorderThickness="5"
+									        Grid.Row="0" CornerRadius="4" BorderThickness="5" Grid.Column="0"
 									        BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
 										<TextBlock
 											Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Labels/Grips/Right'), Mode=OneWay}"
@@ -1180,7 +1181,7 @@
 									<Border Visibility="{Binding ElementName=LabelFineTuneVive, Path=Visibility}"
 									        Margin="0,0,0,0" Padding="5,0" Width="Auto" Height="50"
 									        HorizontalAlignment="Center" VerticalAlignment="Center"
-									        Grid.Row="0" CornerRadius="4" BorderThickness="5"
+									        Grid.Row="0" CornerRadius="4" BorderThickness="5" Grid.Column="0"
 									        BorderBrush="{ThemeResource NoThemeColorSolidColorBrushOpposite}">
 										<TextBlock
 											Text="{x:Bind util:Translator.Get.String('/GeneralPage/Calibration/Labels/Grips/Right'), Mode=OneWay}"
@@ -1686,7 +1687,7 @@
 					</Grid.OpacityTransition>
 
 					<Grid.Background>
-						<media:BackdropBlurBrush Amount="25.0" />
+						<media1:BackdropBlurBrush Amount="25.0" />
 					</Grid.Background>
 
 					<StackPanel Opacity="1.0" HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -1713,7 +1714,7 @@
 					</Grid.OpacityTransition>
 
 					<Grid.Background>
-						<media:BackdropBlurBrush Amount="25.0" />
+						<media1:BackdropBlurBrush Amount="25.0" />
 					</Grid.Background>
 
 					<StackPanel Opacity="1.0" HorizontalAlignment="Center" VerticalAlignment="Center"

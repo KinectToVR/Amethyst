@@ -422,7 +422,7 @@ public static partial class VmdExtensions
         {
             return await folder.GetFileAsync(name);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return null;
         }

@@ -178,9 +178,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     private bool ShowPlaybackBar => Interfacing.ReplayManager.IsPlaying;
     private bool ServiceIsRelay => AppPlugins.CurrentServiceEndpoint.Guid is "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY";
     private bool RelayActiveInfoBarClosable => Interfacing.RelayBarOverride?.Closable ?? false;
-    private string RelayActiveInfoBarTitle => Interfacing.RelayBarOverride?.Title ?? "Amethyst running in relay mode!"; // TODO translate
-    private string RelayActiveInfoBarContent => Interfacing.RelayBarOverride?.Content ?? "All available devices will be forwarded to the receiver.";
-    private string RelayActiveInfoBarButtonContent => Interfacing.RelayBarOverride?.Button ?? "Relay Settings";
+    private string RelayActiveInfoBarTitle => Interfacing.RelayBarOverride?.Title ?? Interfacing.LocalizedJsonString("/Main/Info/Titles/Relay/Header");
+    private string RelayActiveInfoBarContent => Interfacing.RelayBarOverride?.Content ?? Interfacing.LocalizedJsonString("/Main/Info/Titles/Relay/Footer");
+    private string RelayActiveInfoBarButtonContent => Interfacing.RelayBarOverride?.Button ?? Interfacing.LocalizedJsonString("/Main/Info/Titles/Relay/Button");
     private bool ShowRelayActiveInfoBarButton => Interfacing.RelayBarOverride?.Click is not null;
     private InfoBarSeverity RelayActiveBarSeverity => RelayActiveInfoBarClosable ? InfoBarSeverity.Informational : InfoBarSeverity.Warning;
 
@@ -1374,15 +1374,15 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Check for updates : Lang
             try
             {
-                using var client = new RestClient();
                 var getDocsLanguages = "en";
 
                 // Language
                 try
                 {
                     Logger.Info("Checking available languages... [GET]");
-                    var response = await client.ExecuteGetAsync("https://docs.k2vr.tech/shared/locales.json",
-                        new RestRequest());
+                    var response = await new RestClient("https://docs.k2vr.tech/shared/locales.json")
+                        .ExecuteGetAsync(new RestRequest());
+
                     getDocsLanguages = response.Content ?? "en";
                 }
                 catch (Exception e)
@@ -1433,9 +1433,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
                 try
                 {
                     Logger.Info("Checking available notices... [GET]");
-                    var notice = JsonConvert.DeserializeObject<NoticeInfo>((await new RestClient().ExecuteGetAsync(
-                        "https://github.com/KinectToVR/Amethyst/releases/latest/download/NoticeInfo.json",
-                        new RestRequest())).Content!)!;
+                    var notice = JsonConvert.DeserializeObject<NoticeInfo>((
+                        await new RestClient("https://github.com/KinectToVR/Amethyst/releases/latest/download/NoticeInfo.json")
+                            .ExecuteGetAsync(new RestRequest())).Content!)!;
 
                     // Parse the loaded json
                     if (!notice.IsValid) return;

@@ -572,18 +572,6 @@ public static class ExceptionExtensions
 
 public static class RestExtensions
 {
-    public static Task<RestResponse<T>> ExecuteGetAsync<T>(this RestClient client, string baseUrl, RestRequest request)
-    {
-        client.Options.BaseUrl = new Uri(baseUrl);
-        return client.ExecuteGetAsync<T>(request);
-    }
-
-    public static Task<RestResponse> ExecuteGetAsync(this RestClient client, string baseUrl, RestRequest request)
-    {
-        client.Options.BaseUrl = new Uri(baseUrl);
-        return client.ExecuteGetAsync(request);
-    }
-
     public static Task<RestResponse> GetAsyncAuthorized(this RestClient client, RestRequest request)
     {
         if (AppData.Settings.GitHubToken.Valid)
@@ -591,18 +579,6 @@ public static class RestExtensions
                 $"bearer {AppData.Settings.GitHubToken.Token.Decrypt()}");
 
         return client.GetAsync(request);
-    }
-
-    public static Task<byte[]> ExecuteDownloadDataAsync(this RestClient client, string baseUrl, RestRequest request)
-    {
-        client.Options.BaseUrl = new Uri(baseUrl);
-        return client.DownloadDataAsync(request);
-    }
-
-    public static Task<Stream> ExecuteDownloadStreamAsync(this RestClient client, string baseUrl, RestRequest request)
-    {
-        client.Options.BaseUrl = new Uri(baseUrl);
-        return client.DownloadStreamAsync(request);
     }
 }
 
@@ -802,7 +778,7 @@ public class VisibilityTrigger : StateTriggerBase
     }
 }
 
-public class OffsetDigitsFormatter : INumberFormatter2, INumberParser
+public partial class OffsetDigitsFormatter : INumberFormatter2, INumberParser
 {
     public string FormatInt(long value)
     {

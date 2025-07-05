@@ -486,7 +486,7 @@ public static class AppPlugins
                             AppData.Settings.TrackingDeviceGuid =
                                 TrackingDevicesList.First(x => !x.Key.StartsWith("TRACKINGRELAY:") && !x.Value.IsOverride).Key;
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             var deviceGuid = TrackingDevicesList.First(x => !x.Key.StartsWith("TRACKINGRELAY:")).Key;
                             AppData.Settings.OverrideDevicesGuidMap.Remove(deviceGuid);

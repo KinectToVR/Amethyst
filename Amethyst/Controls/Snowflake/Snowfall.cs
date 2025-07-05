@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 
 namespace Amethyst.Controls.Snowflake;
 
-public class Snowflake : UserControl
+public partial class Snowflake : UserControl
 {
     private const int TotalVariants = 2;
 
@@ -30,7 +30,7 @@ public enum SnowflakeAnimation
     Fade
 }
 
-public class Snowfall : Canvas
+public partial class Snowfall : Canvas
 {
     /// <summary>
     ///     Property for <see cref="ScaleFactor" />.
@@ -69,7 +69,7 @@ public class Snowfall : Canvas
         nameof(LeaveAnimation), typeof(SnowflakeAnimation), typeof(Snowfall), new PropertyMetadata(SnowflakeAnimation.None));
 
     private readonly Random _random = new();
-    private DispatcherTimer? _timer;
+    private DispatcherTimer _timer;
 
     public Snowfall()
     {
@@ -143,7 +143,7 @@ public class Snowfall : Canvas
     private void Snowfall_Loaded(object sender, RoutedEventArgs e)
     {
         _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds((int)(1000.0 / EmissionRate)) };
-        _timer.Tick += (s, arg) => EmitSnowflake();
+        _timer.Tick += (_, _) => EmitSnowflake();
         _timer.Start();
     }
 
@@ -202,8 +202,8 @@ public class Snowfall : Canvas
         if (LeaveAnimation == SnowflakeAnimation.Fade)
             story.Children.Add(fadeOutAnimation);
 
-        flake.Loaded += (sender, args) => story.Begin();
-        story.Completed += (sender, e) => Children.Remove(flake);
+        flake.Loaded += (_, _) => story.Begin();
+        story.Completed += (_, _) => Children.Remove(flake);
     }
 
     private static DoubleAnimation GenerateAnimation(double x, Duration duration,

@@ -74,7 +74,7 @@
                 <Grid Grid.Row="5" Height="30"
                       Visibility="{x:Bind Error.HasAction, Mode=OneWay, Converter={StaticResource InversionVisibilityConverter}}" />
 
-                <TextBlock Grid.Row="6" FontSize="15"
+                <TextBlock Grid.Row="6" FontSize="15" HorizontalTextAlignment="Center"
                            Text="{x:Bind Error.Message, Mode=OneWay}" TextWrapping="WrapWholeWords"
                            HorizontalAlignment="Center" MaxWidth="700" />
 

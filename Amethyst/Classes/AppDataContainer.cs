@@ -107,9 +107,9 @@ public class AppDataContainer : INotifyPropertyChanged
     public void Remove(object key)
     {
         if (PathsHandler.IsAmethystPackaged)
-            SettingsDictionary.Remove(key);
-        else
             ApplicationData.Current.LocalSettings.Values.Remove(key?.ToString() ?? "INVALID");
+        else
+            SettingsDictionary.Remove(key);
 
         SaveSettings();
         OnPropertyChanged(nameof(SettingsDictionary));

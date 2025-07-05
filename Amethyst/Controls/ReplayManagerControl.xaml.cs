@@ -68,12 +68,36 @@ public sealed partial class ReplayManagerControl : Grid, INotifyPropertyChanged
         {
             return RecordingStage switch
             {
-                RecordingStageType.Transform => ["Capturing playspace orientation...", "Please don't move your headset"],
-                RecordingStageType.Recording => ["Time to bust some moves!", "Stand still when you're finished"],
-                RecordingStageType.Finished => ["Finished recording the replay!", "Processing the tracking data..."],
-                RecordingStageType.Cancelled => ["The recording was cancelled", "Cleaning up the mess..."],
-                RecordingStageType.Exception => ["Couldn't finish the recording!", ServiceException.Message],
-                _ => ["Choose a name for your replay", "and press 'Record' to start recording"] // TODO
+                RecordingStageType.Transform =>
+                [
+                    Interfacing.LocalizedJsonString("9007B4A4-5C0E-4A27-8F9A-5D96879F84CF"),
+                    Interfacing.LocalizedJsonString("068FBBEB-BC01-4C45-BB13-4F7450670879")
+                ],
+                RecordingStageType.Recording =>
+                [
+                    Interfacing.LocalizedJsonString("E62D6030-3C71-4252-9027-6AA9DCA428BF"),
+                    Interfacing.LocalizedJsonString("F0F8FD10-F62D-4AC1-928C-D2E78C2D2803")
+                ],
+                RecordingStageType.Finished =>
+                [
+                    Interfacing.LocalizedJsonString("15DCA6D0-9966-4E20-9667-30761DBB10BA"),
+                    Interfacing.LocalizedJsonString("9AADE704-1D3D-4DCB-8EA1-01CD92F8AD17")
+                ],
+                RecordingStageType.Cancelled =>
+                [
+                    Interfacing.LocalizedJsonString("AC5C8EE1-93FC-470B-95D9-A8AFFEA2377F"),
+                    Interfacing.LocalizedJsonString("825957E4-F95C-477B-8C8A-FEA9156559D9")
+                ],
+                RecordingStageType.Exception =>
+                [
+                    Interfacing.LocalizedJsonString("810C3FF8-85B6-4518-9575-849314CFD442"),
+                    ServiceException.Message
+                ],
+                _ =>
+                [
+                    Interfacing.LocalizedJsonString("B2863E3E-4399-4CAD-A68C-C97B22DE87F8"),
+                    Interfacing.LocalizedJsonString("F3BBC592-73BB-4D12-855E-9E9B5F7CD969")
+                ]
             };
         }
     }
