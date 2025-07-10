@@ -2277,6 +2277,30 @@
 		{
 			"id": "F3BBC592-73BB-4D12-855E-9E9B5F7CD969",
 			"translation": "and press 'Record' to start recording"
+		},
+		{
+			"id": "/JumpList/logs",
+			"translation": "View app logs"
+		},
+		{
+			"id": "/JumpList/report",
+			"translation": "Report a bug"
+		},
+		{
+			"id": "/JumpList/local-folder",
+			"translation": "Open data folder"
+		},
+		{
+			"id": "/JumpList/localize",
+			"translation": "Localize Amethyst"
+		},
+		{
+			"id": "SharedStrings/Buttons/Help/Docs/GeneralPage/Driver",
+			"translation": "Driver Troubleshooting"
+		},
+		{
+			"id": "SharedStrings/Buttons/Help/Docs/GeneralPage/OpenVR",
+			"translation": "SteamVR Troubleshooting"
 		}
 	]
 }

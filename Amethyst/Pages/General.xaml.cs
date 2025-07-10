@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License. See LICENSE in the project root for license information.
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,14 +28,8 @@ using WinRT;
 using Windows.Devices.Sensors;
 using Amethyst.Controls;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace Amethyst.Pages;
 
-/// <summary>
-///     An empty page that can be used on its own or navigated to within a Frame.
-/// </summary>
 public sealed partial class General : Page, INotifyPropertyChanged
 {
     public static bool IsPreviewActive { get; set; }
@@ -1581,12 +1572,12 @@ public sealed partial class General : Page, INotifyPropertyChanged
                                 "K2VRTEAM-AME2-APII-DVCE-CARAMLAMTHST" ||
                             x.TrackingState is not TrackedJointState.StateNotTracked).ToList();
 
-            //if (AppData.Settings.TrackingDeviceGuid is "K2VRTEAM-AME2-APII-DVCE-CARAMLAMTHST" &&
-            //    joints.Any(x => x.Role is TrackedJointType.JointSpineShoulder))
-            //{
-            //    var waistPose = joints.First(x => x.Role is TrackedJointType.JointSpineShoulder).Position;
-            //    joints.ForEach(x => x.Position = (x.Position - waistPose) with { Z = 3.0f });
-            //}
+            if (AppData.Settings.TrackingDeviceGuid is "K2VRTEAM-AME2-APII-DVCE-CARAMLAMTHST" &&
+                joints.Any(x => x.Role is TrackedJointType.JointSpineShoulder))
+            {
+                var centerPose = joints.First(x => x.Role is TrackedJointType.JointSpineShoulder).Position;
+                joints.ForEach(x => x.Position = (x.Position - centerPose) with { Z = 3.0f });
+            }
 
 #if DEBUG
             // Okay to do this here => the preview is forced on calibration

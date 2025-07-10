@@ -1,6 +1,15 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License. See LICENSE in the project root for license information.
-
+using Amethyst.Classes;
+using Amethyst.Installer.ViewModels;
+using Amethyst.Installer.Views;
+using Amethyst.Plugins.Contract;
+using Amethyst.Popups;
+using Amethyst.Schedulers;
+using Amethyst.Utils;
+using CommunityToolkit.WinUI.Helpers;
+using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppLifecycle;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,27 +27,13 @@ using Windows.Foundation;
 using Windows.Globalization;
 using Windows.Storage;
 using Windows.System.UserProfile;
+using Windows.UI.StartScreen;
 using Windows.UI.ViewManagement;
 using Windows.Web.Http;
-using Amethyst.Classes;
-using Amethyst.Installer.ViewModels;
-using Amethyst.Installer.Views;
-using Amethyst.Plugins.Contract;
-using Amethyst.Popups;
-using Amethyst.Schedulers;
-using Amethyst.Utils;
-using CommunityToolkit.WinUI.Helpers;
-using Microsoft.UI.Xaml;
-using Microsoft.Windows.AppLifecycle;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 namespace Amethyst;
 
-/// <summary>
-///     Provides application-specific behavior to supplement the default Application class.
-/// </summary>
 public partial class App : Application
 {
     private readonly List<Host> _views = [];
@@ -261,6 +256,41 @@ public partial class App : Application
                 return;
             }
 
+        // Try to register jump list entries if packaged
+        if (PathsHandler.IsAmethystPackaged)
+            try
+            {
+                if (JumpList.IsSupported())
+                {
+                    Logger.Info("Registering jump list entries...");
+
+                    var jumpList = await JumpList.LoadCurrentAsync();
+
+                    jumpList.SystemGroupKind = JumpListSystemGroupKind.None;
+                    jumpList.Items.Clear();
+
+                    void AddItem(string id)
+                    {
+                        var taskItem = JumpListItem.CreateWithArguments(id,
+                            Interfacing.LocalizedJsonString($"/JumpList/{id}"));
+
+                        taskItem.Logo = new Uri($"ms-appx:///Assets/Jumps/{id}.png");
+                        jumpList.Items.Add(taskItem);
+                    }
+
+                    AddItem("logs");
+                    AddItem("report");
+                    AddItem("local-folder");
+                    AddItem("localize");
+                   
+                    await jumpList.SaveAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+
         // Check if activated via uri
         var activationUri = PathsHandler.IsAmethystPackaged
             ? (AppInstance.GetCurrent().GetActivatedEventArgs().Data as
@@ -269,6 +299,10 @@ public partial class App : Application
               Uri.TryCreate(args[1], UriKind.RelativeOrAbsolute, out var au)
                 ? au
                 : null;
+
+        if (AppInstance.GetCurrent()?.GetActivatedEventArgs()?.Data is
+            Windows.ApplicationModel.Activation.LaunchActivatedEventArgs launchArgs)
+            activationUri = new Uri($"amethyst-app:{launchArgs.Arguments}");
 
         // Check if there's any launch arguments
         if (activationUri is not null && activationUri.Segments.Length > 0)
@@ -379,34 +413,37 @@ public partial class App : Application
                     try
                     {
                         Logger.Info("Creating a data file list base...");
-                        var fileList = new List<AppDataFile>
-                            { new(await Interfacing.GetAppDataFile("AmethystSettings.json")) };
+                        var fileList = new List<AppDataFile>();
 
                         Logger.Info("Searching for recent log files...");
                         fileList.AddRange(await new DirectoryInfo(Interfacing.GetAppDataLogFilePath(""))
-                            .GetFiles().OrderByDescending(x => x.LastWriteTime).ToList().Take(3)
+                            .GetFiles().OrderByDescending(x => x.LastWriteTime).ToList()
+                            .Where(x => File.ReadAllText(x.FullName).Contains("com_k2vr_amethyst"))
+                            .Take(3)
                             .Select(async x => new AppDataFile(await StorageFile.GetFileFromPathAsync(x.FullName)))
                             .WhenAll()); // Collect the last 3 log files and wait for them
 
                         try
                         {
-                            if (AppData.Settings.ServiceEndpointGuid is "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR")
-                            {
-                                Logger.Info("Trying to collect SteamVR server logs...");
-                                var vrServerLog = new FileInfo(Path.Join(
-                                    FileUtils.GetSteamInstallDirectory(), @"logs\vrserver.txt"));
+                            //if (AppData.Settings.ServiceEndpointGuid is "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR")
+                            //{
 
-                                if (vrServerLog.Exists)
-                                {
-                                    if (fileList.Count > 3) fileList.RemoveAt(1); // Remove the first (current) log
-                                    fileList.Add(new AppDataFile(
-                                        await StorageFile.GetFileFromPathAsync(vrServerLog.FullName)));
-                                }
-                            }
-                            else
+                            Logger.Info("Trying to collect SteamVR server logs...");
+                            var vrServerLog = new FileInfo(Path.Join(
+                                FileUtils.GetSteamInstallDirectory(), @"logs\vrserver.txt"));
+
+                            if (vrServerLog.Exists)
                             {
-                                Logger.Info("Skipping collection of SteamVR server logs...");
+                                if (fileList.Count > 3) fileList.RemoveAt(1); // Remove the first (current) log
+                                fileList.Add(new AppDataFile(
+                                    await StorageFile.GetFileFromPathAsync(vrServerLog.FullName)));
                             }
+
+                            //}
+                            //else
+                            //{
+                            //    Logger.Info("Skipping collection of SteamVR server logs...");
+                            //}
                         }
                         catch (Exception e)
                         {
@@ -639,7 +676,7 @@ public partial class App : Application
 
         Logger.Info("Starting the crash handler passing the app PID...");
         await ($"amethyst-app:crash-watchdog?pid={Environment.ProcessId}&log={Logger.LogFilePath}" +
-               $"&crash={Interfacing.CrashFile.FullName}").Launch();
+               $"&crash={Interfacing.CrashFile?.FullName}").Launch();
 
         // Disable internal sounds
         ElementSoundPlayer.State = ElementSoundPlayerState.Off;

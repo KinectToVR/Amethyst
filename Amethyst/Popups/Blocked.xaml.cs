@@ -18,14 +18,8 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using WinUI.Fluent.Icons;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace Amethyst.Popups;
 
-/// <summary>
-///     An empty page that can be used on its own or navigated to within a Frame.
-/// </summary>
 public sealed partial class Blocked : Page, INotifyPropertyChanged
 {
     private readonly List<string> _languageList = [];

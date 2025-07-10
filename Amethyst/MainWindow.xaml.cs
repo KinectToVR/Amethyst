@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License. See LICENSE in the project root for license information.
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,14 +46,8 @@ using Newtonsoft.Json;
 using Amethyst.Controls.Snowflake;
 using System.Runtime.InteropServices;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace Amethyst;
 
-/// <summary>
-///     An empty window that can be used on its own or navigated to within a Frame.
-/// </summary>
 public sealed partial class MainWindow : Window, INotifyPropertyChanged
 {
     private DesktopAcrylicController _acrylicController;
@@ -1634,6 +1625,13 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
         // Change the docs button's text
         HelpFlyoutDocsButton.Text = Interfacing.CurrentAppState switch
         {
+            "general" when AppPlugins.CurrentServiceEndpoint.Guid is "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR" &&
+                           AppPlugins.CurrentServiceEndpoint.ServiceStatus is -1 =>
+                Interfacing.LocalizedJsonString("SharedStrings/Buttons/Help/Docs/GeneralPage/Driver"),
+            "general" when AppPlugins.CurrentServiceEndpoint.Guid is "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR" &&
+                           AppPlugins.CurrentServiceEndpoint.ServiceStatus is 1 =>
+                Interfacing.LocalizedJsonString("SharedStrings/Buttons/Help/Docs/GeneralPage/OpenVR"),
+
             "general" => Interfacing.LocalizedJsonString(
                 "/SharedStrings/Buttons/Help/Docs/GeneralPage/Overview"),
             "calibration" => Interfacing.LocalizedJsonString(
@@ -1724,11 +1722,18 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
         await Launcher.LaunchUriAsync(new Uri(Interfacing.CurrentAppState switch
         {
-            "calibration" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/calibration/",
-            "calibration_auto" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/calibration/#3",
-            "calibration_manual" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/calibration/#6",
+            "general" when AppPlugins.CurrentServiceEndpoint.Guid is "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR" &&
+                           AppPlugins.CurrentServiceEndpoint.ServiceStatus is -1 =>
+                $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/app/steamvr-driver-codes/",
+            "general" when AppPlugins.CurrentServiceEndpoint.Guid is "K2VRTEAM-AME2-APII-SNDP-SENDPTOPENVR" &&
+                           AppPlugins.CurrentServiceEndpoint.ServiceStatus is 1 =>
+                $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/app/steamvr-driver-codes/",
+
+            "calibration" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/app/calibration/",
+            "calibration_auto" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/app/calibration/#3",
+            "calibration_manual" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/app/calibration/#6",
             "devices" or "offsets" or "settings" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/",
-            "overrides" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/overrides/",
+            "overrides" => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/app/overrides/",
             "info" => "https://opencollective.com/k2vr",
             "general" or _ => $"https://docs.k2vr.tech/{Interfacing.DocsLanguageCode}/"
         }));
