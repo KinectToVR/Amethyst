@@ -576,10 +576,15 @@ public class AppTracker : INotifyPropertyChanged
     // Additionally, this adds the offsets
     public Quaternion GetFullOrientation(RotationTrackingFilterOption? filter = null)
     {
+        var offsetPitchCorrection = Role is
+            TrackerType.TrackerLeftHand or TrackerType.TrackerRightHand
+            ? 90f // Handed trackers have a 90-degree pitch offset
+            : 0f; // But for god's sake, don't touch anything else
+
         return GetFilteredOrientation(filter) *
                Quaternion.CreateFromYawPitchRoll(
                    OrientationOffset.Y * MathF.PI / 180f,
-                   OrientationOffset.X * MathF.PI / 180f,
+                   (OrientationOffset.X + offsetPitchCorrection) * MathF.PI / 180f,
                    OrientationOffset.Z * MathF.PI / 180f);
     }
 
@@ -608,10 +613,15 @@ public class AppTracker : INotifyPropertyChanged
             OrientationTrackingOption != JointRotationTrackingOption.FollowHmdRotation)
             rawOrientation = calibrationRotation * rawOrientation;
 
+        var offsetPitchCorrection = Role is
+            TrackerType.TrackerLeftHand or TrackerType.TrackerRightHand
+            ? 90f // Handed trackers have a 90-degree pitch offset
+            : 0f; // But for god's sake, don't touch anything else
+
         // Return the calibrated orientation with offset
         return Quaternion.CreateFromYawPitchRoll(
             OrientationOffset.Y * MathF.PI / 180f,
-            OrientationOffset.X * MathF.PI / 180f,
+            (OrientationOffset.X + offsetPitchCorrection) * MathF.PI / 180f,
             OrientationOffset.Z * MathF.PI / 180f) * rawOrientation;
     }
 
