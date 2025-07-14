@@ -2750,53 +2750,53 @@
 		},
 		{
 			"id": "/GeneralPage/Titles/Relay",
-			"translation": "Tracking Relay"
+			"translation": "Ripetitore Tracking"
 		},
 		{
 			"id": "/InputActions/Picker/NoSelection",
 			"translation":
-				"Click on supported devices and joints to expand their action lists,\nand select an action to preview its description, test, or use it."
+				"Clicca sui dispositivi supportati per espandere la loro lista azioni,\ne seleziona un'azione per visualizzare la sua descrizione, testarla o usarla."
 		},
 		{
 			"id": "/InputActions/Picker/NoImage",
 			"translation":
-				"The selected action doesn't provide any image or other custom settings,\nmake sure you understand its description and how to use it."
+				"L'azione selezionata non ha alcun'immagine o impostazioni personalizzate.\nAssicurati di aver compreso la sua descrizione e come utilizzarla."
 		},
 		{
 			"id": "/InputActions/Picker/Use",
-			"translation": "Use"
+			"translation": "Usa"
 		},
 		{
 			"id": "/InputActions/Picker/NoSelectionHeader",
-			"translation": "No selection"
+			"translation": "Nessuna selezione"
 		},
 		{
 			"id": "/InputActions/Picker/Testing/NoData",
-			"translation": "No data"
+			"translation": "Nessun dato"
 		},
 		{
 			"id": "/InputActions/Picker/Options/Hidden",
-			"translation": "Hidden"
+			"translation": "Nascosto"
 		},
 		{
 			"id": "/InputActions/Picker/Options/Disabled",
-			"translation": "Disabled"
+			"translation": "Disabilitato"
 		},
 		{
 			"id": "/Main/InfoBars/Emulation/Title",
-			"translation": "Headset emulation active"
+			"translation": "Emulazione visore attiva"
 		},
 		{
 			"id": "/Main/InfoBars/Emulation/Message",
-			"translation": "Use calibration to set up pose transform correction if needed"
+			"translation": "Usa la calibrazione per configurare la correzione delle pose se necessario"
 		},
 		{
 			"id": "/Main/InfoBars/Playback/Title",
-			"translation": "{0} is playing"
+			"translation": "{0} è in riproduzione"
 		},
 		{
 			"id": "/Main/InfoBars/Playback/Message",
-			"translation": "Amethyst is using tracking data from a recording"
+			"translation": "Amethyst sta utilizzando dati del tracking di una registrazione"
 		},
 		{
 			"id": "/Main/InfoBars/Playback/Stop",
@@ -2804,11 +2804,11 @@
 		},
 		{
 			"id": "/Recordings/Picker/Options/New",
-			"translation": "New recording"
+			"translation": "Nuova registrazione"
 		},
 		{
 			"id": "/SettingsPage/Placeholders/NewRecording",
-			"translation": "New Tracking Replay"
+			"translation": "Nuovo Replay Tracking"
 		},
 		{
 			"id": "/Recordings/Buttons/Play",
@@ -2816,137 +2816,145 @@
 		},
 		{
 			"id": "/Recordings/Buttons/Export",
-			"translation": "Export"
+			"translation": "Esporta"
 		},
 		{
 			"id": "/Recordings/Buttons/Remove",
-			"translation": "Remove"
+			"translation": "Rimuovi"
 		},
 		{
 			"id": "/Recordings/Buttons/Record",
-			"translation": "Record"
+			"translation": "Registra"
 		},
 		{
 			"id": "/Recordings/Picker/NoSelection",
 			"translation":
-				"Click on one of the saved recordings to preview it.\nYou'll be able to adjust, play, or delete it forever."
+				"Clicca su una delle registrazioni salvate per visualizzarla.\nPotrai modificarla, riprodurla, o cancellarla per sempre."
 		},
 		{
 			"id": "/Recordings/Title/NoSelection",
-			"translation": "No selection"
+			"translation": "Nessuna selezione"
 		},
 		{
 			"id": "/SettingsPage/Buttons/ReplayManager",
-			"translation": "Manage tracking recordings"
+			"translation": "Configura registrazioni tracking"
 		},
 		{
 			"id": "/Recordings/Buttons/SettingUp",
-			"translation": "Setting up..."
+			"translation": "Configurazione in corso..."
 		},
 		{
 			"id": "/GeneralPage/Calibration/Subs/RotationOnly",
-			"translation": "Rotation only"
+			"translation": "Solo rotazione"
 		},
 		{
 			"id": "/GeneralPage/Calibration/Captions/RotationOnly/Top",
 			"translation":
-				"Calibration is running in rotation-only mode because Amethyst is not receiving any positional headset tracking data."
+				"La calibrazione è in modalità solo rotazione perché Amethyst non sta ricevendo alcun dato posizionale del visore."
 		},
 		{
 			"id": "/GeneralPage/Calibration/Captions/RotationOnly/Bottom",
-			"translation": "If this is a mistake, please verify your setup and try again."
+			"translation": "Se pensi ci sia un errore, verifica il tuo setup e riprova."
 		},
 		{
 			"id": "/GeneralPage/Calibration/Captions/Orientation/Stand",
-			"translation": "Please stand still!"
+			"translation": "Stai fermo!"
 		},
 		{
 			"id": "/GeneralPage/Calibration/Captions/Orientation/LookAt/Kinect",
-			"translation": "Look at the Kinect!"
+			"translation": "Guarda il Kinect!"
 		},
 		{
 			"id": "/GeneralPage/Calibration/Captions/Orientation/LookAt/Other",
-			"translation": "Face the direction\nof your playspace!"
+			"translation": "Guarda in direzione\ndel tuo spazio di gioco!"
 		},
 		{
 			"id": "/PluginManager/Install",
-			"translation": "Install "
+			"translation": "Installa "
 		},
 		{
 			"id": "/PluginManager/Fix",
-			"translation": "Fix "
+			"translation": "Ripara "
 		},
 		{
 			"id": "/Main/Info/Titles/Relay/Header",
-			"translation": "Amethyst running in relay mode!"
+			"translation": "Amethyst è in modalità ripetitore!"
 		},
 		{
 			"id": "/Main/Info/Titles/Relay/Footer",
-			"translation": "All available devices will be forwarded to the receiver."
+			"translation": "Tutti i dispositivi disponibili verranno inoltrati al ricevitore."
 		},
 		{
 			"id": "/Main/Info/Titles/Relay/Button",
-			"translation": "Relay Settings"
+			"translation": "Impostazioni Ripetitore"
 		},
 		{
 			"id": "9007B4A4-5C0E-4A27-8F9A-5D96879F84CF",
-			"translation": "Capturing playspace orientation..."
+			"translation": "Catturando orientazione spazio di gioco..."
 		},
 		{
 			"id": "068FBBEB-BC01-4C45-BB13-4F7450670879",
-			"translation": "Please don't move your headset"
+			"translation": "Non muovere il visore"
 		},
 		{
 			"id": "E62D6030-3C71-4252-9027-6AA9DCA428BF",
-			"translation": "Time to bust some moves!"
+			"translation": "E ora scatenati!"
 		},
 		{
 			"id": "F0F8FD10-F62D-4AC1-928C-D2E78C2D2803",
-			"translation": "Stand still when you're finished"
+			"translation": "Rimani fermo quando hai finito"
 		},
 		{
 			"id": "15DCA6D0-9966-4E20-9667-30761DBB10BA",
-			"translation": "Finished recording the replay!"
+			"translation": "Fine registrazione del replay!"
 		},
 		{
 			"id": "9AADE704-1D3D-4DCB-8EA1-01CD92F8AD17",
-			"translation": "Processing the tracking data..."
+			"translation": "Processando i dati del tracking..."
 		},
 		{
 			"id": "AC5C8EE1-93FC-470B-95D9-A8AFFEA2377F",
-			"translation": "The recording was cancelled"
+			"translation": "La registrazione è stata cancellata"
 		},
 		{
 			"id": "825957E4-F95C-477B-8C8A-FEA9156559D9",
-			"translation": "Cleaning up the mess..."
+			"translation": "Pulendo il macello..."
 		},
 		{
 			"id": "810C3FF8-85B6-4518-9575-849314CFD442",
-			"translation": "Couldn't finish the recording!"
+			"translation": "Impossibile finire la registrazione!"
 		},
 		{
 			"id": "B2863E3E-4399-4CAD-A68C-C97B22DE87F8",
-			"translation": "Choose a name for your replay"
+			"translation": "Scegli un nome per il tuo replay"
 		},
 		{
 			"id": "F3BBC592-73BB-4D12-855E-9E9B5F7CD969",
-			"translation": "and press 'Record' to start recording"
+			"translation": "e premi 'Registra' per iniziare a registrare"
 		},
 		{
 			"id": "/JumpList/logs",
-			"translation": "View app logs"
+			"translation": "Visualizza log app"
 		},
 		{
 			"id": "/JumpList/report",
-			"translation": "Report a bug"
+			"translation": "Segnala un bug"
 		},
 		{
 			"id": "/JumpList/local-folder",
-			"translation": "Open data folder"
+			"translation": "Apri foglio dati"
 		},
 		{
 			"id": "/JumpList/localize",
-			"translation": "Localize Amethyst"
+			"translation": "Traduci Amethyst"
+		},
+		{
+			"id": "SharedStrings/Buttons/Help/Docs/GeneralPage/Driver",
+			"translation": "Risoluzione problemi Driver"
+		},
+		{
+			"id": "SharedStrings/Buttons/Help/Docs/GeneralPage/OpenVR",
+			"translation": "Risoluzione problemi SteamVR"
 		}
 	]
 }
