@@ -1995,14 +1995,32 @@
 		},
 		{
 			"id": "/NUX/Tip12/Title",
-			"translation": "Grazie!",
+			"translation": "Gestione plugin",
 			"translatorComment": ""
 		},
 		{
 			"id": "/NUX/Tip12/Content",
 			"translation":
-				"Amethyst ci ha messo un po' per essere realizzato fino al suo stato attuale, quindi divertiti!\n\n12 di 14",
+				"Questi sono i plugin che sono attualmente installati su Amethyst. Da questa lista puoi scegliere quali plugin attivare, aggiornare e puoi vedere se ci sono errori.\n\n12 di 14",
 			"translatorComment": ""
+		},
+		{
+			"id": "/NUX/Tip13/Title",
+			"translation": "Ottenere nuovi plugin"
+		},
+		{
+			"id": "/NUX/Tip13/Content",
+			"translation":
+				"Amethyst ti permette di cercare nuovi plugin e di installarli direttamente nell'app. Inoltre puoi incollare link diretti, o trascinare file ZIP.\n\n13 di 14"
+		},
+		{
+			"id": "/NUX/Tip14/Title",
+			"translation": "Grazie!"
+		},
+		{
+			"id": "/NUX/Tip14/Content",
+			"translation":
+				"Amethyst ci ha messo un po' per essere realizzato fino al suo stato attuale, buon divertimento!\n\n14 di 14",
 		},
 		{
 			"id": "/CrashHandler/Content/Crash/NoJoints",
