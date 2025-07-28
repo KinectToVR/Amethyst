@@ -607,7 +607,14 @@ public static class Main
                         else
                         {
                             serverLoops++; // Else increase passed loops counter and wait
-                            await Task.Delay(TimeSpan.FromTicks(diffTicks), cancellationToken.Token);
+                            try
+                            {
+                                await Task.Delay(TimeSpan.FromTicks(diffTicks), cancellationToken.Token);
+                            }
+                            catch (TaskCanceledException)
+                            {
+                                Logger.Warn("The loop's delay has been cancelled, continuing the loop...");
+                            }
                         }
 
 #pragma warning disable CA1806 // Do not ignore method results
