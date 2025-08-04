@@ -449,7 +449,9 @@ public class AppTracker : INotifyPropertyChanged
 
             // Reset everything if both overrides are set to false
             if (!IsOverridden) OverrideGuid = string.Empty;
+
             OnPropertyChanged(); // All
+            AppData.Settings.SaveSettings();
         }
     }
 
@@ -477,7 +479,9 @@ public class AppTracker : INotifyPropertyChanged
 
             // Reset everything if both overrides are set to false
             if (!IsOverridden) OverrideGuid = string.Empty;
+
             OnPropertyChanged(); // All
+            AppData.Settings.SaveSettings();
         }
     }
 

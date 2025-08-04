@@ -12,6 +12,7 @@ namespace Amethyst.Controls;
 
 public sealed partial class OverrideExpander : UserControl, INotifyPropertyChanged
 {
+    private bool _areChangesValid;
     private List<AppTracker> _trackers = [];
 
     public OverrideExpander()
@@ -96,7 +97,15 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
                     .SelectedOverrideJointIdForSelectedDevice);
 
         if ((((ComboBox)sender).DataContext as AppTracker)!.SelectedOverrideJointIdForSelectedDevice ==
-            ((ComboBox)sender).SelectedIndex) return; // Check if already okay
+            ((ComboBox)sender).SelectedIndex)
+        {
+            if (((ComboBox)sender).SelectedIndex is 0)
+                (((ComboBox)sender).DataContext as AppTracker)!.SelectedOverrideJointIdForSelectedDevice = -1;
+
+            return; // Check if already okay
+        }
+
+        if (!_areChangesValid) return;
 
         // Signal the just-selected tracked joint (checker copied from AppTracker.cs)
         if (((ComboBox)sender).SelectedIndex > 0)
@@ -114,38 +123,16 @@ public sealed partial class OverrideExpander : UserControl, INotifyPropertyChang
     {
         if (!Devices.DisableJointExpanderSounds)
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Show);
+
+        _areChangesValid = true;
     }
 
     private void OverrideTrackerCombo_OnDropDownClosed(object sender, object e)
     {
         if (!Devices.DisableJointExpanderSounds)
             AppSounds.PlayAppSound(AppSounds.AppSoundType.Hide);
-    }
 
-    private void OverridePositionSwitch_Toggled(object sender, RoutedEventArgs e)
-    {
-        // Don't even care if we're not set up yet
-        if (!((sender as ToggleSwitch)?.IsLoaded ?? false) ||
-            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
-
-        AppSounds.PlayAppSound(((ToggleSwitch)sender).IsOn
-            ? AppSounds.AppSoundType.ToggleOn
-            : AppSounds.AppSoundType.ToggleOff);
-
-        // OnPropertyChanged(); // Not needed anymore
-    }
-
-    private void OverrideOrientationSwitch_Toggled(object sender, RoutedEventArgs e)
-    {
-        // Don't even care if we're not set up yet
-        if (!((sender as ToggleSwitch)?.IsLoaded ?? false) ||
-            !IsAnyTrackerEnabled || !Shared.Devices.DevicesJointsValid) return;
-
-        AppSounds.PlayAppSound(((ToggleSwitch)sender).IsOn
-            ? AppSounds.AppSoundType.ToggleOn
-            : AppSounds.AppSoundType.ToggleOff);
-
-        // OnPropertyChanged(); // Not needed anymore
+        _areChangesValid = false;
     }
 
     private void OverridesItemsExpander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
