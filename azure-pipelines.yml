@@ -122,9 +122,9 @@ stages:
           #     targetType: inline
           #     script: Copy-Item -Path "Amethyst\bin\$(buildConfiguration)\net8.0\win-$(buildPlatform)\deploy\Amethyst_$(packageVersion)_Test\Amethyst_$(packageVersion)_$(buildPlatform).msix" -Destination "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
 
-          - publish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
-            displayName: Publish Amethyst - Signed
-            artifact: signed
+          # - publish: "$(Build.ArtifactStagingDirectory)/Amethyst_$(packageVersion)_$(buildPlatform)_TestSigned.msix"
+          #   displayName: Publish Amethyst - Signed
+          #   artifact: signed
 
           - task: VSBuild@1
             displayName: Build (publish) Amethyst - Unpackaged
