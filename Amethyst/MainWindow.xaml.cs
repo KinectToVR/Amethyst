@@ -554,8 +554,9 @@ public sealed partial class MainWindow : Window, INotifyPropertyChanged
             // Check if we have enough plugins to run the app
             if (!AppPlugins.TrackingDevicesList.Any(x => x.Key is not "K2VRTEAM-AME2-APII-DVCE-TRACKINGRELAY"))
             {
-                Logger.Fatal(new CompositionException("No plugins (tracking devices) loaded! Shutting down..."));
-                Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoDevices"));
+                // Logger.Fatal(new CompositionException("No plugins (tracking devices) loaded! Shutting down..."));
+                // Interfacing.Fail(Interfacing.LocalizedJsonString("/CrashHandler/Content/Crash/NoDevices"));
+                Logger.Error("No plugins loaded! Launching in restricted/dev mode.");
             }
 
             Logger.Info("Registration of tracking device plugins has ended, there are " +

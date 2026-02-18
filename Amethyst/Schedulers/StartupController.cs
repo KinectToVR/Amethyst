@@ -49,7 +49,7 @@ public static class StartupController
             try
             {
                 // Save scheduled startup tasks
-                File.WriteAllText(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Startup.json"),
+                File.WriteAllText(PathsHandler.GetAppDataFilePath("Startup.json"),
                     JsonConvert.SerializeObject(StartupTasks, Formatting.Indented,
                         new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }));
             }
@@ -66,7 +66,7 @@ public static class StartupController
             {
                 // Read scheduled startup tasks
                 StartupTasks = JsonConvert.DeserializeObject<ObservableCollection<StartupTask>>
-                               (File.ReadAllText(Path.Join(Interfacing.ProgramLocation.DirectoryName, "Startup.json")),
+                               (File.ReadAllText(PathsHandler.GetAppDataFilePath("Startup.json")),
                                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }) ??
                                [];
             }
